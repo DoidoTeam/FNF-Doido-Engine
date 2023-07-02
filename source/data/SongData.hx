@@ -17,7 +17,7 @@ typedef SwagSong =
 
 	var player1:String;
 	var player2:String;
-	//var assetModifier:String
+	//var assetModifier:String;
 }
 typedef SwagSection =
 {
@@ -33,7 +33,7 @@ typedef SwagSection =
 class SongData
 {
 	// use these to whatever
-	public static function defaultSong():SwagSong
+	inline public static function defaultSong():SwagSong
 	{
 		return
 		{
@@ -47,7 +47,7 @@ class SongData
 			player2: "dad",
 		};
 	}
-	public static function defaultSection():SwagSection
+	inline public static function defaultSection():SwagSection
 	{
 		return
 		{
@@ -63,7 +63,7 @@ class SongData
 		return 'assets/songs/${song}/${song}.json';
 
 	// stuff from fnf
-	public static function loadFromJson(jsonInput:String):SwagSong
+	inline public static function loadFromJson(jsonInput:String):SwagSong
 	{
 		var rawJson = File.getContent(songJson(jsonInput)).trim();
 
@@ -73,7 +73,7 @@ class SongData
 		return parseJSONshit(rawJson);
 	}
 
-	public static function parseJSONshit(rawJson:String):SwagSong
+	inline public static function parseJSONshit(rawJson:String):SwagSong
 	{
 		var swagShit:SwagSong = cast Json.parse(rawJson).song;
 		return swagShit;

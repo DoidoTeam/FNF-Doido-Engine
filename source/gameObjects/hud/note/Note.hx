@@ -80,6 +80,7 @@ class Note extends FlxSprite
 
 	public var canHit:Bool = true;
 	public var gotHit:Bool = false;
+	public var gotHold:Bool = false; // only works for holds (duh)
 
 	public var parentNote:Note = null;
 

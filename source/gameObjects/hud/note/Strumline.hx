@@ -56,7 +56,7 @@ class Strumline extends FlxGroup
 	{
 		super.update(elapsed);
 	}
-
+	
 	public function addNote(note:Note)
 	{
 		allNotes.add(note);

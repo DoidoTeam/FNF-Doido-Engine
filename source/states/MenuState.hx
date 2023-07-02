@@ -47,7 +47,7 @@ class MenuState extends MusicBeatState
 		warn.scale.set(0.45,0.45);
 		warn.updateHitbox();
 		warn.x = FlxG.width / 2;
-		warn.y = FlxG.height - warn.height;
+		warn.y = FlxG.height - warn.height - 8;
 		add(warn);
 
 		changeSelection();

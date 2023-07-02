@@ -207,6 +207,8 @@ class PlayState extends MusicBeatState
 				}
 
 				note.gotHit = true;
+				if(note.holdLength > 0)
+					note.gotHold = true;
 
 				if(!note.isHold)
 				{
@@ -229,6 +231,7 @@ class PlayState extends MusicBeatState
 				if(thisStrumline.botplay) return;
 
 				note.gotHit = false;
+				note.gotHold= false;
 				note.canHit = false;
 				note.alpha = 0.1;
 
@@ -258,7 +261,7 @@ class PlayState extends MusicBeatState
 			// only works on long notes!!
 			note.onHold = function()
 			{
-				note.gotHit = true;
+				note.gotHold = true;
 
 				// if not finished
 				if(note.holdHitLength < note.holdLength - Conductor.stepCrochet)
@@ -270,7 +273,6 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			//thisStrumline.addNote(note);
 			thisStrumline.unspawnNotes.push(note);
 		}
 
@@ -371,7 +373,10 @@ class PlayState extends MusicBeatState
 		else
 		{
 			if(judge <= Timings.timingsMap.get('shit')[1])
+			{
+				//trace("that was shit");
 				note.onMiss();
+			}
 		}
 
 		hudBuild.updateText();
@@ -449,22 +454,26 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			var canHitNotes:Array<Note> = [];
-
 			for(unsNote in strumline.unspawnNotes)
 			{
 				var spawnTime:Float = 1000;
 
 				if(unsNote.songTime - Conductor.songPos <= spawnTime
-				&& unsNote.canHit && !unsNote.gotHit)
+				&& unsNote.canHit && !unsNote.gotHit && !unsNote.gotHold)
 					strumline.addNote(unsNote);
 			}
 			for(note in strumline.allNotes)
 			{
 				var despawnTime:Float = 300;
 
-				if(Conductor.songPos >= note.songTime + note.holdLength + Conductor.stepCrochet + despawnTime)
+				if(Conductor.songPos >= note.songTime + note.holdLength /*+ Conductor.stepCrochet*/ + despawnTime)
+				//if(Conductor.songPos >= note.songTime - despawnTime)
+				{
+					//trace("trace removed note!!");
+					if(!note.gotHit || !note.gotHold) note.canHit = false;
+
 					strumline.removeNote(note);
+				}
 			}
 
 			// downscroll
@@ -485,16 +494,10 @@ class PlayState extends MusicBeatState
 
 				note.y += downMult * ((note.songTime - Conductor.songPos) * (strumline.scrollSpeed * 0.45));
 
-				//note.canHit = true;
-				if(-(note.songTime - Conductor.songPos) >= Timings.timingsMap.get("good")[0] && !note.gotHit && note.canHit)
+				if(Conductor.songPos >= note.songTime + Timings.timingsMap.get("good")[0] && !note.gotHit && note.canHit)
 				{
+					//trace("too late");
 					note.onMiss();
-				}
-
-				if(Math.abs(note.songTime - Conductor.songPos) <= Timings.minTiming)
-				{
-					if(canHitNotes[note.noteData] == null && note.canHit && !note.gotHit)
-						canHitNotes[note.noteData] = note;
 				}
 
 				if(strumline.botplay)
@@ -555,13 +558,13 @@ class PlayState extends MusicBeatState
 					if(!holdParent.canHit && hold.canHit)
 						hold.onMiss();
 
-					var pressedCheck:Bool = (pressed[hold.noteData] && holdParent.gotHit && hold.canHit);
+					var pressedCheck:Bool = (pressed[hold.noteData] && holdParent.gotHold && hold.canHit);
 
 					if(!strumline.isPlayer || strumline.botplay)
-						pressedCheck = (holdParent.gotHit && hold.canHit);
+						pressedCheck = (holdParent.gotHold && hold.canHit);
 
 					if(hold.isHoldEnd)
-						pressedCheck = (holdParent.gotHit && holdParent.canHit);
+						pressedCheck = (holdParent.gotHold && holdParent.canHit);
 
 					if(pressedCheck)
 					{
@@ -597,14 +600,12 @@ class PlayState extends MusicBeatState
 					{
 						if(released.contains(true))
 						{					
-							if(released[hold.noteData] && hold.canHit && holdParent.gotHit && !hold.isHoldEnd)
+							if(released[hold.noteData] && hold.canHit && holdParent.gotHold && !hold.isHoldEnd)
 							{
 								thisStrum.playAnim("static");
 
 								if(hold.holdHitLength >= hold.holdLength - Conductor.stepCrochet)
-								{
 									hold.onHit();
-								}
 								else
 									hold.onMiss();
 							}
@@ -612,38 +613,57 @@ class PlayState extends MusicBeatState
 					}
 					else
 					{
-						if(holdParent.gotHit && !hold.isHoldEnd)
+						if(holdParent.gotHold && !hold.isHoldEnd)
 						{
 							if(hold.holdHitLength >= hold.holdLength - Conductor.stepCrochet)
 								hold.onHit();
 							else
 							{
 								hold.onHold();
-								thisStrum.playAnim("confirm");
+								//thisStrum.playAnim("confirm");
 							}
 						}
 					}
 				}
 			}
 
-			if(strumline.isPlayer && !strumline.botplay)
+			if(justPressed.contains(true) && !strumline.botplay)
 			{
-				//if(justPressed.contains(true))
-				//{
-					for(i in 0...canHitNotes.length)
+				for(i in 0...justPressed.length)
+				{
+					if(justPressed[i])
 					{
-						if(canHitNotes[i] != null)
-						{
-							var note = canHitNotes[i];
+						var possibleHitNotes:Array<Note> = []; // gets the possible ones
+						var canHitNote:Note = null;
 
-							if(justPressed[i])
+						for(note in strumline.noteGroup)
+						{
+							var noteDiff:Float = (note.songTime - Conductor.songPos);
+
+							if(noteDiff <= Timings.minTiming && note.canHit && !note.gotHit && note.noteData == i)
 							{
-								canHitNotes.remove(note);
-								note.onHit();
+								possibleHitNotes.push(note);
+								canHitNote = note;
 							}
 						}
+
+						// if the note actually exists then you got it
+						if(canHitNote != null)
+						{
+							for(note in possibleHitNotes)
+							{
+								if(note.songTime < canHitNote.songTime)
+									canHitNote = note;
+							}
+
+							canHitNote.onHit();
+						}
+						else
+						{
+							//trace("ghost tapped " + i + " loll");
+						}
 					}
-				//}
+				}
 			}
 
 			// dumb stuff!!!
@@ -685,8 +705,8 @@ class PlayState extends MusicBeatState
 
 		if(health <= 0)
 		{
-			persistentDraw = false;
-			openSubState(new GameOverSubState(boyfriend));
+			/*persistentDraw = false;
+			openSubState(new GameOverSubState(boyfriend));*/
 		}
 
 		camGame.zoom = FlxMath.lerp(camGame.zoom, defaultCamZoom, elapsed * 6);
@@ -750,7 +770,7 @@ class PlayState extends MusicBeatState
 
 		if(inst.playing)
 		{
-			if(Math.abs(Conductor.songPos - inst.time) >= 100)
+			if(Math.abs(Conductor.songPos - inst.time) >= 40)
 			{
 				Conductor.songPos = inst.time;
 				trace("synced song");
