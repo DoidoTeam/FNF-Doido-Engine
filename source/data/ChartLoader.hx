@@ -65,7 +65,9 @@ class ChartLoader
 
 					holdNote.strumlineID = holdNoteEnd.strumlineID = swagNote.strumlineID;
 
+					swagNote.holdLength = susLength;
 					holdNote.holdLength = susLength;
+					holdNoteEnd.holdLength = susLength;
 
 					unspawnNotes.push(holdNote);
 					unspawnNotes.push(holdNoteEnd);
@@ -86,11 +88,8 @@ class ChartLoader
 			}
 		}*/
 
-		unspawnNotes.sort(sortByShit);
+		unspawnNotes.sort(NoteUtil.sortByShit);
 
 		return unspawnNotes;
 	}
-
-	public static function sortByShit(Obj1:Note, Obj2:Note):Int
-		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.songTime, Obj2.songTime);
 }

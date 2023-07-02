@@ -40,8 +40,11 @@ class Paths
 	public static function sound(key:String):String
 		return 'assets/sounds/$key.ogg';
 
-	public static function song(key:String):String
-		return 'assets/songs/$key.ogg';
+	public static function inst(key:String):String
+		return 'assets/songs/$key/Inst.ogg';
+
+	public static function vocals(key:String):String
+		return 'assets/songs/$key/Voices.ogg';
 	
 	public static function image(key:String):FlxGraphic
 		return returnGraphic(key);

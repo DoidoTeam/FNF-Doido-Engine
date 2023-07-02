@@ -26,7 +26,7 @@ class Controls
 		return checkBind(bind, JUST_RELEASED);
 	}
 
-	// very dumb yea... but still works so :/
+	// very dumb yea... but still works tho :/
 	private function checkBind(bind:String, state:FlxInputState):Bool
 	{
 		if(!SaveData.gameControls.exists(bind)) return false;

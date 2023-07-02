@@ -20,38 +20,54 @@ class StrumNote extends FlxSprite
 	public var scaleOffset:FlxPoint = new FlxPoint(0,0);
 	public var initialPos:FlxPoint = new FlxPoint(0,0);
 
+	private var direction:String = "left";
+
 	public function reloadStrum(strumData:Int, ?strumType:String = "default"):StrumNote
 	{
 		this.strumData = strumData;
 		this.strumType = strumType;
 		strumSize = 1.0;
 
-		frames = Paths.getSparrowAtlas("notes/" + strumType + "/strums");
-
-		var direc:String = NoteUtil.getDirection(strumData);
+		direction = NoteUtil.getDirection(strumData);
 
 		switch(strumType)
 		{
 			default:
 				strumSize = 0.7;
-				animation.addByPrefix("static",  'strum $direc static',  24, false);
-				animation.addByPrefix("pressed", 'strum $direc pressed', 12, false);
-				animation.addByPrefix("confirm", 'strum $direc confirm', 24, false);
+				frames = Paths.getSparrowAtlas("notes/base/strums");
+
+				addDefaultAnims();
 
 				addOffset("static", 0, 0);
 				addOffset("pressed", -2, -2);
 				addOffset("confirm", 36, 36);
 
-				playAnim("static");
+				switch(strumType)
+				{
+					case "doido":
+						frames = Paths.getSparrowAtlas("notes/doido/strums");
+						addDefaultAnims();
+						strumSize = 0.95;
+						addOffset("confirm", 6.5, 8);
+				}
 		}
+		playAnim("static"); // once to get the scale offset
 
 		scale.set(strumSize, strumSize);
 		updateHitbox();
 		scaleOffset.set(offset.x, offset.y);
 
-		playAnim("static");
+		playAnim("static"); // twice to use the scale offset
 
 		return this;
+	}
+
+	// just so i dont have to type everything over and over again
+	public function addDefaultAnims()
+	{
+		animation.addByPrefix("static",  'strum $direction static',  24, false);
+		animation.addByPrefix("pressed", 'strum $direction pressed', 12, false);
+		animation.addByPrefix("confirm", 'strum $direction confirm', 24, false);
 	}
 
 	public var animOffsets:Map<String, Array<Float>> = [];

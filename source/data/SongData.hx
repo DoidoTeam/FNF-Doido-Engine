@@ -60,7 +60,7 @@ class SongData
 	}
 
 	inline static public function songJson(song:String)
-		return 'assets/songs/${song}/chart.json';
+		return 'assets/songs/${song}/${song}.json';
 
 	// stuff from fnf
 	public static function loadFromJson(jsonInput:String):SwagSong

@@ -101,13 +101,18 @@ class HudClass extends FlxGroup
 			);
 			icon.updateHitbox();
 
-			icon.y = barY - icon.height / 2;
+			icon.y = barY - icon.height / 2 - 12;
 			icon.x = barX;
 
 			if(icon == iconDad)
 				icon.x -= icon.width - 24;
 			else
 				icon.x -= 24;
+
+			if(icon == iconDad)
+				icon.setAnim(2 - PlayState.health);
+			else
+				icon.setAnim(PlayState.health);
 		}
 	}
 

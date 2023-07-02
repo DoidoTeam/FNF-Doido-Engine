@@ -12,6 +12,9 @@ class Strumline extends FlxGroup
 	public var holdGroup:FlxTypedGroup<Note>;
 	public var allNotes:FlxTypedGroup<Note>;
 
+	// everybody gets one
+	public var unspawnNotes:Array<Note> = [];
+
 	public var x:Float = 0;
 	public var downscroll:Bool = false;
 	public var scrollSpeed:Float = 2.8;
@@ -21,7 +24,7 @@ class Strumline extends FlxGroup
 
 	public var character:Character;
 
-	public function new(x:Float, ?character:Character, ?downscroll:Bool, ?isPlayer = false, ?botplay = true)
+	public function new(x:Float, ?character:Character, ?downscroll:Bool, ?isPlayer = false, ?botplay = true, ?assetModifier:String = "base")
 	{
 		super();
 		this.x = x;
@@ -42,7 +45,7 @@ class Strumline extends FlxGroup
 		for(i in 0...4)
 		{
 			var strum = new StrumNote();
-			strum.reloadStrum(i, "default");
+			strum.reloadStrum(i, assetModifier);
 			strumGroup.add(strum);
 		}
 
@@ -61,6 +64,15 @@ class Strumline extends FlxGroup
 			holdGroup.add(note);
 		else
 			noteGroup.add(note);
+	}
+
+	public function removeNote(note:Note)
+	{
+		allNotes.remove(note);
+		if(note.isHold)
+			holdGroup.remove(note);
+		else
+			noteGroup.remove(note);
 	}
 
 	public function updateHitbox()

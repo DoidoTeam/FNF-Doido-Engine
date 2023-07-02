@@ -16,6 +16,7 @@ class HealthIcon extends FlxSprite
 
 	public function setIcon(curIcon:String = "face", isPlayer:Bool = false):HealthIcon
 	{
+		this.curIcon = curIcon;
 		if(!FileSystem.exists('assets/images/icons/icon-${curIcon}.png'))
 			return setIcon("face", isPlayer);
 
@@ -31,11 +32,11 @@ class HealthIcon extends FlxSprite
 		return this;
 	}
 
-	public function setLife(health:Float = 1)
+	public function setAnim(health:Float = 1)
 	{
 		var daFrame:Int = 0;
 
-		if(health < 0.3)
+		if(health < 0.6)
 			daFrame = 1;
 
 		animation.curAnim.curFrame = daFrame;

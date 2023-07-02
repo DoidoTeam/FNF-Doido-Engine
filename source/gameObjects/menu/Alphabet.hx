@@ -1,0 +1,205 @@
+package gameObjects.menu;
+
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxPoint;
+
+using StringTools;
+
+enum AlphabetAlign
+{
+	LEFT;
+	CENTER;
+	RIGHT;
+}
+class Alphabet extends FlxSpriteGroup
+{
+	public var align:AlphabetAlign = LEFT;
+
+	public function new(x:Float = 0, y:Float = 0, ?text:String = "", bold:Bool = false)
+	{
+		super(x, y);
+		this.bold = bold;
+		this.text = text;
+	}
+
+	public var text(default, set):String = "";
+	public var textArray:Array<String> = [];
+	public var bold:Bool = false;
+
+	public function set_text(v:String):String
+	{
+		text = v;
+		textArray = text.split("");
+		typeTxt();
+		return v;
+	}
+
+	public var letters:String = "abcdefghijklmnopqrstuvwxyzç";
+	public var numbers:String = "0123456789";
+	public var symbols:String = "#$%&()*+-:;<=>@[]^_'!¨?/|~";
+	public var arrows:String  = "←↓↑→";
+
+	public function typeTxt()
+	{
+		clear();
+
+		var lastWidth:Float = 0;
+		var daRow:Int = 0;
+
+		for(i in 0...textArray.length)
+		{
+			var daLetter:String = textArray[i];
+
+			lineWidth[daRow] = lastWidth;
+
+			if(daLetter == "\\")
+			{
+				daRow++;
+				lastWidth = 0;
+				continue;
+			}
+
+			//trace('da letter ' + i);
+			if(daLetter == " ") 
+			{
+				lastWidth += 35 * scale.x;
+				lineWidth[daRow] = lastWidth;
+				continue;
+			}
+
+			var letter = new AlphaLetter();
+			letter.row = daRow;
+			add(letter);
+
+			letter.ID = i; // using this for typing
+
+			// letters
+			if(letters.contains(daLetter.toLowerCase()))
+			{
+				letter.makeLetter(daLetter, bold);
+			}
+			// numbers
+			if(numbers.contains(daLetter))
+			{
+				letter.makeNumber(daLetter, bold);
+			}
+			// symbols
+			if(symbols.contains(daLetter))
+			{
+				letter.makeSymbol(daLetter, bold);
+			}
+			// arrows
+			if(arrows.contains(daLetter))
+			{
+				letter.makeArrow(daLetter);
+			}
+
+			letter.lastWidth = lastWidth;
+			lastWidth += letter.width;
+			
+		}
+
+		updateHitbox();
+	}
+
+	public var lineWidth:Array<Float> = [];
+
+	public var letterSpace:FlxPoint = new FlxPoint();
+
+	override function updateHitbox()
+	{
+		super.updateHitbox();
+		for(rawLetter in members)
+		{
+			rawLetter.scale.set(scale.x, scale.y);
+			rawLetter.updateHitbox();
+
+			if(Std.isOfType(rawLetter, AlphaLetter))
+			{
+				var letter = cast(rawLetter, AlphaLetter);
+
+				letter.x = x + ((letter.lastWidth * scale.x) + (letter.letterOffset.x * scale.x));
+
+				switch(align)
+				{
+					default:
+					case CENTER:
+						letter.x -= (lineWidth[letter.row] * scale.x) / 2;
+					case RIGHT:
+						letter.x -= (lineWidth[letter.row] * scale.x);
+				}
+
+				// i hate you i hate you i hate you i hate you
+				letter.y = y + (letter.boxHeight * scale.y * (letter.row + 1));
+				letter.y -= letter.height - (letter.letterOffset.y * scale.y);
+			}
+		}
+	}
+}
+class AlphaLetter extends FlxSprite
+{
+	public var lastWidth:Float = 0;
+	public var row:Int = 0;
+
+	public var boxHeight:Float = 70;
+
+	public var letterOffset:FlxPoint = new FlxPoint();
+
+	public function new()
+	{
+		super();
+		//makeGraphic(30, 50, 0xFFFFFFFF);
+		frames = Paths.getSparrowAtlas("menu/alphabet");
+	}
+
+	function addAnim(animName:String, animXml:String)
+	{
+		animation.addByPrefix(animName, animXml, 24, true);
+		animation.play(animName);
+		updateHitbox();
+	}
+
+	public function makeLetter(key:String, bold:Bool = false)
+	{
+		if(!bold)
+		{
+			var captPref:String = (key == key.toUpperCase()) ? "capital" : "lowercase";
+
+			addAnim(key, '${key.toUpperCase()} ${captPref}');
+		}
+		else
+		{
+			addAnim(key, '${key.toUpperCase()} bold');
+		}
+	}
+
+	public function makeNumber(key:String, bold:Bool = false)
+	{
+		if(!bold)
+			addAnim(key, '${key}0');
+		else
+			addAnim(key, '$key bold');
+	}
+
+	public function makeSymbol(key:String, bold:Bool = false)
+	{
+		var daBold:String = bold ? " bold" : "0";
+
+		switch(key)
+		{
+			default: addAnim(key, '${key}${daBold}');
+		}
+
+		switch(key)
+		{
+			case "-": letterOffset.y = -20;
+		}
+	}
+
+	public function makeArrow(key:String)
+	{
+
+	}
+}
