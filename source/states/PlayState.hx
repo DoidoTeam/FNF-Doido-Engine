@@ -61,12 +61,15 @@ class PlayState extends MusicBeatState
 
 	public var camFollow:FlxObject = new FlxObject();
 
+	public static var paused:Bool = false;
+
 	public function resetStatics()
 	{
 		health = 1;
 		defaultCamZoom = 1.0;
 		assetModifier = "base";
 		Timings.init();
+		paused = false;
 	}
 
 	override public function create()
@@ -77,7 +80,7 @@ class PlayState extends MusicBeatState
 		if(SONG == null)
 			SONG = SongData.loadFromJson("ugh_fnf");
 
-		if(false)
+		if(true)
 			assetModifier = "doido";
 
 		Conductor.setBPM(SONG.bpm);
@@ -323,6 +326,10 @@ class PlayState extends MusicBeatState
 		{
 			music.stop();
 			music.play();
+
+			if(paused) {
+				music.pause();
+			}
 		}
 	}
 
@@ -389,6 +396,7 @@ class PlayState extends MusicBeatState
 
 		if(FlxG.keys.justPressed.ENTER)
 		{
+			paused = true;
 			openSubState(new PauseSubState());
 		}
 
@@ -793,5 +801,11 @@ class PlayState extends MusicBeatState
 		{
 			Main.switchState(new MenuState());
 		}
+	}
+
+	override public function onFocusLost():Void
+	{
+		openSubState(new PauseSubState());
+		super.onFocusLost();
 	}
 }

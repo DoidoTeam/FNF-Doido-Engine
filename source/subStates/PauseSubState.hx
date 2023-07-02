@@ -67,6 +67,7 @@ class PauseSubState extends MusicBeatSubState
 			switch(optionShit[curSelected])
 			{
 				case "resume":
+					PlayState.paused = false;
 					close();
 
 				case "restart song":
