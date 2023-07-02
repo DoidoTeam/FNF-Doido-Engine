@@ -4,6 +4,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 
+using StringTools;
+
 class Character extends FlxSprite
 {
 	public function new() {
@@ -16,6 +18,9 @@ class Character extends FlxSprite
 	public var holdTimer:Float = 0;
 	public var holdLength:Float = 1;
 
+	public var singAnims:Array<String> = [];
+	public var missAnims:Array<String> = [];
+
 	public var scaleOffset:FlxPoint = new FlxPoint();
 
 	public function reloadChar(curChar:String = "bf", isPlayer:Bool = false):Character
@@ -24,6 +29,7 @@ class Character extends FlxSprite
 		this.isPlayer = isPlayer;
 
 		holdLength = 1;
+		addSingPrefix(); // none
 
 		var storedPos:Array<Float> = [x, y];
 
@@ -73,7 +79,10 @@ class Character extends FlxSprite
 
 				flipX = true;
 
-				//scale.set(0.5, 0.5);
+				if(!isPlayer)
+				{
+					singAnims = ["firstDeath", "firstDeath", "firstDeath", "firstDeath"];
+				}
 
 			default:
 				return reloadChar("bf", isPlayer);
@@ -90,6 +99,19 @@ class Character extends FlxSprite
 		setPosition(storedPos[0], storedPos[1]);
 
 		return this;
+	}
+
+	public function addSingPrefix(prefix:String = "")
+	{
+		singAnims = ["singLEFT", "singDOWN", "singUP", "singRIGHT"];
+
+		for(i in 0...singAnims.length)
+		{
+			missAnims[i] = singAnims[i] + "miss";
+
+			singAnims[i] += prefix;
+			missAnims[i] += prefix;
+		}
 	}
 
 	public var danced:Bool = false;

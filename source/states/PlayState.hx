@@ -80,7 +80,7 @@ class PlayState extends MusicBeatState
 		if(SONG == null)
 			SONG = SongData.loadFromJson("ugh_fnf");
 
-		if(true)
+		if(false)
 			assetModifier = "doido";
 
 		Conductor.setBPM(SONG.bpm);
@@ -195,7 +195,7 @@ class PlayState extends MusicBeatState
 					thisStrumline = strumline;
 			}
 
-			var direc = NoteUtil.getDirection(note.noteData);
+			//var direc = NoteUtil.getDirection(note.noteData);
 			var thisStrum = thisStrumline.strumGroup.members[note.noteData];
 			var thisChar = thisStrumline.character;
 
@@ -222,7 +222,7 @@ class PlayState extends MusicBeatState
 
 				if(thisChar != null && !note.isHold)
 				{
-					thisChar.playAnim('sing' + direc.toUpperCase(), true);
+					thisChar.playAnim(thisChar.singAnims[note.noteData], true);
 					thisChar.holdTimer = 0;
 
 					if(note.noteType != 'default')
@@ -250,7 +250,7 @@ class PlayState extends MusicBeatState
 				{
 					if(thisChar != null)
 					{
-						thisChar.playAnim('sing' + direc.toUpperCase() + 'miss', true);
+						thisChar.playAnim(thisChar.missAnims[note.noteData], true);
 						thisChar.holdTimer = 0;
 					}
 
@@ -271,7 +271,7 @@ class PlayState extends MusicBeatState
 				{
 					thisStrum.playAnim("confirm");
 
-					thisChar.playAnim('sing' + direc.toUpperCase(), true);
+					thisChar.playAnim(thisChar.singAnims[note.noteData], true);
 					thisChar.holdTimer = 0;
 				}
 			}
@@ -347,6 +347,7 @@ class PlayState extends MusicBeatState
 
 	override function closeSubState()
 	{
+		activateTimers(true);
 		super.closeSubState();
 		if(startedSong)
 		{
@@ -356,6 +357,22 @@ class PlayState extends MusicBeatState
 				syncSong();
 			}
 		}
+	}
+
+	// for pausing timers and tweens
+	function activateTimers(apple:Bool = true)
+	{
+		FlxTimer.globalManager.forEach(function(tmr:FlxTimer)
+		{
+			if(!tmr.finished)
+				tmr.active = apple;
+		});
+
+		FlxTween.globalManager.forEach(function(twn:FlxTween)
+		{
+			if(!twn.finished)
+				twn.active = apple;
+		});
 	}
 
 	public function popUpRating(note:Note, miss:Bool = false)
@@ -389,6 +406,9 @@ class PlayState extends MusicBeatState
 		hudBuild.updateText();
 	}
 
+	// if youre holding a note
+	public var isSinging:Bool = false;
+
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -396,8 +416,7 @@ class PlayState extends MusicBeatState
 
 		if(FlxG.keys.justPressed.ENTER)
 		{
-			paused = true;
-			openSubState(new PauseSubState());
+			pauseSong();	
 		}
 
 		if(FlxG.keys.justPressed.R)
@@ -439,6 +458,8 @@ class PlayState extends MusicBeatState
 			controls.released("RIGHT")
 		];
 
+		isSinging = false;
+
 		// strumline handler!!
 		for(strumline in strumlines.members)
 		{
@@ -450,12 +471,16 @@ class PlayState extends MusicBeatState
 					{
 						if(!["pressed", "confirm"].contains(strum.animation.curAnim.name))
 							strum.playAnim("pressed");
+						
+						if(strum.animation.curAnim.name == "confirm")
+							isSinging = true;
 					}
 					else
 						strum.playAnim("static");
 				}
 				else
 				{
+					// how botplay handles it
 					if(strum.animation.curAnim.name == "confirm"
 					&& strum.animation.curAnim.finished)
 						strum.playAnim("static");
@@ -754,11 +779,11 @@ class PlayState extends MusicBeatState
 			{
 				var canIdle = (char.holdTimer >= char.holdLength);
 
-				/*if(char.isPlayer)
+				if(char.isPlayer)
 				{
-					if(pressed.contains(true))
+					if(isSinging)
 						canIdle = false;
-				}*/
+				}
 
 				if(canIdle)
 					char.dance();
@@ -805,7 +830,14 @@ class PlayState extends MusicBeatState
 
 	override public function onFocusLost():Void
 	{
-		openSubState(new PauseSubState());
+		if(!paused) pauseSong();
 		super.onFocusLost();
+	}
+
+	public function pauseSong()
+	{
+		paused = true;
+		activateTimers(false);
+		openSubState(new PauseSubState());
 	}
 }
