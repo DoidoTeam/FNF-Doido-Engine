@@ -79,10 +79,10 @@ class Character extends FlxSprite
 
 				flipX = true;
 
-				if(!isPlayer)
+				/*if(!isPlayer)
 				{
 					singAnims = ["firstDeath", "firstDeath", "firstDeath", "firstDeath"];
-				}
+				}*/
 
 			default:
 				return reloadChar("bf", isPlayer);

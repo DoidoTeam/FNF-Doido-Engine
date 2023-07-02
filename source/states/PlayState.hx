@@ -78,7 +78,7 @@ class PlayState extends MusicBeatState
 		resetStatics();
 
 		if(SONG == null)
-			SONG = SongData.loadFromJson("ugh_fnf");
+			SONG = SongData.loadFromJson("ugh");
 
 		if(false)
 			assetModifier = "doido";
@@ -725,6 +725,24 @@ class PlayState extends MusicBeatState
 						note.scale.y = thisStrum.scale.y;
 				}
 			}
+			/*else
+			{
+				var daPos = (Conductor.songPos);
+
+				while(daPos > Conductor.crochet * 1.5)
+				{
+					daPos -= Conductor.crochet * 1.5;
+				}
+
+				var strumY:Float = strumline.downscroll ? FlxG.height : -NoteUtil.noteWidth();
+				if(Conductor.songPos > 0)
+					strumY += (daPos * downMult * (strumline.scrollSpeed * 0.45));
+
+				for(strum in strumline.strumGroup)
+				{
+					strum.y = strumY;
+				}
+			}*/
 		}
 
 		var curSection = PlayState.SONG.notes[Std.int(curStep / 16)];
@@ -805,8 +823,14 @@ class PlayState extends MusicBeatState
 		{
 			if(Math.abs(Conductor.songPos - inst.time) >= 40)
 			{
-				Conductor.songPos = inst.time;
 				trace("synced song");
+				Conductor.songPos = inst.time;
+				for(music in musicList)
+					if(music != inst)
+					{
+						music.time = inst.time;
+						music.play();
+					}
 			}
 		}
 
@@ -815,14 +839,14 @@ class PlayState extends MusicBeatState
 
 	public function checkEndSong():Void
 	{
-		var biggerLength:Float = inst.length;
+		var smallerLength:Float = inst.length;
 		for(music in musicList)
 		{
-			if(music.length > biggerLength)
-				biggerLength = music.length;
+			if(music.length < smallerLength)
+				smallerLength = music.length;
 		}
 
-		if(Conductor.songPos >= biggerLength)
+		if(Conductor.songPos >= smallerLength)
 		{
 			Main.switchState(new MenuState());
 		}
