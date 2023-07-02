@@ -5,14 +5,22 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxGame;
 import openfl.display.Sprite;
+import data.FPSCounter;
 
 class Main extends Sprite
 {
+	public static var fpsVar:FPSCounter;
+
 	public function new()
 	{
 		super();
 		
 		addChild(new FlxGame(0, 0, Init, 120, 120, true));
+
+		#if !mobile
+		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
+		addChild(fpsVar);
+		#end
 	}
 
 	public static var gFont:String = Paths.font("vcr.ttf");//"Nokia Cellphone FC Small";
