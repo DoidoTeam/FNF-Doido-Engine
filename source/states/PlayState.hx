@@ -1,5 +1,8 @@
 package states;
 
+#if desktop
+import data.Discord.DiscordClient;
+#end
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
@@ -278,6 +281,11 @@ class PlayState extends MusicBeatState
 
 			thisStrumline.unspawnNotes.push(note);
 		}
+
+		#if desktop
+		// Updating Discord Rich Presence
+		DiscordClient.changePresence("Playing: " + SONG.song, null);
+		#end
 
 		//trace("where is it");
 		startCountdown();

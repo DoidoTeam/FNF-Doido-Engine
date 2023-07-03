@@ -1,5 +1,8 @@
 package states;
 
+#if desktop
+import data.Discord.DiscordClient;
+#end
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -23,6 +26,12 @@ class MenuState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+
+		#if desktop
+		// Updating Discord Rich Presence
+		DiscordClient.changePresence("In the Song Selection", null);
+		#end
+
 		var bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(80,80,80));
 		bg.screenCenter();
 		add(bg);
