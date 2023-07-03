@@ -11,7 +11,6 @@ class Init extends MusicBeatState
 	override function create()
 	{
 		super.create();
-		
 		SaveData.init();
 
 		FlxSprite.defaultAntialiasing = false;

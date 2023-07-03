@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="menuArrows.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="arrow left0000" x="3" y="3" width="53" height="91"/>
+	<SubTexture name="arrow push left0000" x="59" y="3" width="53" height="91"/>
+	<SubTexture name="arrow push right0000" x="115" y="3" width="53" height="91"/>
+	<SubTexture name="arrow right0000" x="171" y="3" width="53" height="91"/>
+</TextureAtlas>

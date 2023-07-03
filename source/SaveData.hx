@@ -32,6 +32,11 @@ class SaveData
 			gameControls.get('DOWN')[0] = FlxKey.X;
 			gameControls.get('UP')[0] 	= FlxKey.NUMPADTWO;
 			gameControls.get('RIGHT')[0]= FlxKey.NUMPADTHREE;
+
+			gameControls.get('LEFT')[2] = FlxKey.D;
+			gameControls.get('DOWN')[2] = FlxKey.F;
+			gameControls.get('UP')[2] 	= FlxKey.J;
+			gameControls.get('RIGHT')[2]= FlxKey.K;
 		}
 	}
 	

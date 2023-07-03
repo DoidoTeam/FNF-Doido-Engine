@@ -3,16 +3,32 @@ package;
 import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
-import openfl.display.BitmapData;
+import flixel.system.FlxSound;
 import lime.utils.Assets;
+import openfl.display.BitmapData;
+import openfl.media.Sound;
 import sys.FileSystem;
 import sys.io.File;
+
+using StringTools;
 
 class Paths
 {
 	public static var renderedGraphics:Map<String, FlxGraphic> = [];
+	public static var renderedSounds:Map<String, Sound> = [];
+
+	// idk
+	public static function getPath(key:String):String
+		return 'assets/$key';
 	
-	public static function returnGraphic(key:String)
+	public static function getSound(key:String):Sound
+	{
+		if(!renderedSounds.exists(key))
+			renderedSounds.set(key, Sound.fromFile(getPath('$key.ogg')));
+		
+		return renderedSounds.get(key);
+	}
+	public static function getGraphic(key:String):FlxGraphic
 	{
 		var path = 'assets/images/$key.png';
 		if(FileSystem.exists(path))
@@ -20,9 +36,8 @@ class Paths
 			if(!renderedGraphics.exists(path))
 			{
 				var bitmap = BitmapData.fromFile(path);
-				var newGraphic:FlxGraphic;
 				
-				newGraphic = FlxGraphic.fromBitmapData(bitmap, false, key, false);
+				var newGraphic = FlxGraphic.fromBitmapData(bitmap, false, key, false);
 				trace('created new image $key');
 				
 				renderedGraphics.set(path, newGraphic);
@@ -33,31 +48,56 @@ class Paths
 		trace('$key doesnt exist, fuck');
 		return null;
 	}
-	
-	public static function music(key:String):String
-		return 'assets/music/$key.ogg';
-	
-	public static function sound(key:String):String
-		return 'assets/sounds/$key.ogg';
 
-	public static function inst(key:String):String
-		return 'assets/songs/$key/Inst.ogg';
+	public static var dumpExclusions:Array<String> = [];
+	public static function clearMemory()
+	{	
+		// sprite handler
+		var clearCount:Int = 0;
+		for(key => graphic in renderedGraphics)
+		{
+			trace('cleared $key');
+			clearCount++;
+			
+			if (openfl.Assets.cache.hasBitmapData(key))
+				openfl.Assets.cache.removeBitmapData(key);
+			
+			graphic.dump();
+			graphic.destroy();
+			FlxG.bitmap.remove(graphic);
+			renderedGraphics.remove(key);
+		}
+		trace('cleared $clearCount assets');
+		
+		// sound clearing
+		for (key => sound in renderedSounds)
+		{
+			if(!dumpExclusions.contains(key))
+			{
+				Assets.cache.clear(key);
+				renderedSounds.remove(key);
+			}
+		}
+	}
+	
+	public static function music(key:String):Sound
+		return getSound('music/$key');
+	
+	public static function sound(key:String):Sound
+		return getSound('sounds/$key');
 
-	public static function vocals(key:String):String
-		return 'assets/songs/$key/Voices.ogg';
+	public static function inst(key:String):Sound
+		return getSound('songs/$key/Inst');
+
+	public static function vocals(key:String):Sound
+		return getSound('songs/$key/Voices');
 	
 	public static function image(key:String):FlxGraphic
-		return returnGraphic(key);
+		return getGraphic(key);
 	
 	public static function font(key:String):String
-		return 'assets/fonts/$key';
-		
-	public static function file(key:String):String
-		return 'assets/$key';
+		return getPath('fonts/$key');
 	
 	public static function getSparrowAtlas(key:String)
-	{
-		var spriteSheet:FlxGraphic = returnGraphic(key);
-		return FlxAtlasFrames.fromSparrow(spriteSheet, 'assets/images/$key.xml');
-	}
+		return FlxAtlasFrames.fromSparrow(getGraphic(key), 'assets/images/$key.xml');
 }

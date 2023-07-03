@@ -51,19 +51,18 @@ class Alphabet extends FlxSpriteGroup
 		{
 			var daLetter:String = textArray[i];
 
-			lineWidth[daRow] = lastWidth;
-
 			if(daLetter == "\\")
 			{
 				daRow++;
 				lastWidth = 0;
+				lineWidth[daRow] = 0;
 				continue;
 			}
 
 			//trace('da letter ' + i);
 			if(daLetter == " ") 
 			{
-				lastWidth += 35 * scale.x;
+				lastWidth += 35;
 				lineWidth[daRow] = lastWidth;
 				continue;
 			}
@@ -90,9 +89,13 @@ class Alphabet extends FlxSpriteGroup
 				letter.makeSymbol(daLetter, bold);
 			}
 
+			// just so the width stays consistent
+			letter.scale.set(1,1);
+			letter.updateHitbox();
+
 			letter.lastWidth = lastWidth;
 			lastWidth += letter.width;
-			
+			lineWidth[daRow] = lastWidth;
 		}
 
 		updateHitbox();

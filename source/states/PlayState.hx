@@ -1,8 +1,6 @@
 package states;
 
-#if desktop
 import data.Discord.DiscordClient;
-#end
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
@@ -282,10 +280,10 @@ class PlayState extends MusicBeatState
 			thisStrumline.unspawnNotes.push(note);
 		}
 
-		#if desktop
+		//#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("Playing: " + SONG.song, null);
-		#end
+		//#end
 
 		//trace("where is it");
 		startCountdown();
@@ -362,8 +360,8 @@ class PlayState extends MusicBeatState
 			for(music in musicList)
 			{
 				music.play();
-				syncSong();
 			}
+			syncSong(true);
 		}
 	}
 
@@ -823,22 +821,26 @@ class PlayState extends MusicBeatState
 		syncSong();
 	}
 
-	public function syncSong():Void
+	public function syncSong(?forced:Bool = false):Void
 	{
 		if(!startedSong) return;
 
-		if(inst.playing)
+		for(music in musicList)
 		{
-			if(Math.abs(Conductor.songPos - inst.time) >= 40)
+			if(music.playing && music.length > 0)
 			{
-				trace("synced song");
-				Conductor.songPos = inst.time;
-				for(music in musicList)
+				if(Math.abs(Conductor.songPos - music.time) >= 40 || forced)
+				{
+					// makes everyone sync to the instrumental
+					trace("synced song");
+					Conductor.songPos = inst.time;
+					
 					if(music != inst)
 					{
 						music.time = inst.time;
 						music.play();
 					}
+				}
 			}
 		}
 

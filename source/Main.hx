@@ -13,9 +13,7 @@ import haxe.io.Path;
 import sys.FileSystem;
 import sys.io.File;
 import openfl.Lib;
-#if desktop
 import data.Discord.DiscordClient;
-#end
 
 using StringTools;
 
@@ -26,17 +24,16 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
-		
 		addChild(new FlxGame(0, 0, Init, 120, 120, true));
 
-		#if !mobile
+		#if desktop
 		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
 		#end
 
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 
-		#if desktop
+		#if DISCORD_RPC
 		if (!DiscordClient.isInitialized) {
 			DiscordClient.initialize();
 			Application.current.window.onClose.add(function() {
@@ -49,17 +46,43 @@ class Main extends Sprite
 	public static var gFont:String = Paths.font("vcr.ttf");//"Nokia Cellphone FC Small";
 	
 	public static var skipTrans:Bool = true; // starts on but it turns false inside Init
-	public static function switchState(target:FlxState):Void
+	public static function switchState(?target:FlxState):Void
 	{
-		if(skipTrans)
-			return FlxG.switchState(target);
-		
 		var trans = new GameTransition(false);
 		trans.finishCallback = function()
 		{
-			FlxG.switchState(target);
+			if(target != null)
+			{
+				
+				FlxG.switchState(target);
+			}
+			else
+				FlxG.resetState();
 		}
+
+		if(skipTrans)
+		{
+			trans.finishCallback();
+			return;
+		}
+		
 		FlxG.state.openSubState(trans);
+	}
+
+	public static function changeFramerate(rawFps:Float = 120)
+	{
+		var newFps:Int = Math.floor(rawFps);
+
+		if(newFps > FlxG.updateFramerate)
+		{
+			FlxG.updateFramerate = newFps;
+			FlxG.drawFramerate   = newFps;
+		}
+		else
+		{
+			FlxG.drawFramerate   = newFps;
+			FlxG.updateFramerate = newFps;
+		}
 	}
 
 	function onCrash(e:UncaughtErrorEvent):Void

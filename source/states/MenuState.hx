@@ -1,8 +1,6 @@
 package states;
 
-#if desktop
 import data.Discord.DiscordClient;
-#end
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -27,10 +25,8 @@ class MenuState extends MusicBeatState
 	{
 		super.create();
 
-		#if desktop
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Song Selection", null);
-		#end
 
 		var bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(80,80,80));
 		bg.screenCenter();
@@ -62,8 +58,6 @@ class MenuState extends MusicBeatState
 		changeSelection();
 	}
 
-	var daAlign:Int = 1;
-
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -72,16 +66,9 @@ class MenuState extends MusicBeatState
 		if(controls.justPressed("UI_DOWN"))
 			changeSelection(1);
 
-		if(FlxG.keys.justPressed.M)
+		if(FlxG.keys.justPressed.O)
 		{
-			daAlign++;
-			if(daAlign > 2) daAlign = 0;
-
-			for(item in optionGroup.members)
-			{
-				item.align = [AlphabetAlign.LEFT, AlphabetAlign.CENTER, AlphabetAlign.RIGHT][daAlign];
-				item.updateHitbox();
-			}
+			Main.switchState(new states.menu.OptionsState());
 		}
 
 		if(controls.justPressed("ACCEPT"))

@@ -14,6 +14,7 @@ class MusicBeatState extends FlxState
 	override function create()
 	{
 		super.create();
+		Paths.clearMemory();
 		
 		trace('switched to ${Type.getClassName(Type.getClass(FlxG.state))}');
 		

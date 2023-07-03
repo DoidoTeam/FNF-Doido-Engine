@@ -1,5 +1,6 @@
 package data;
 
+import flixel.FlxG;
 import haxe.Timer;
 import openfl.events.Event;
 import openfl.text.TextField;
@@ -78,8 +79,8 @@ class FPSCounter extends TextField
 
 		var currentCount = times.length;
 		currentFPS = Math.round((currentCount + cacheCount) / 2);
-		if (currentFPS > 120) currentFPS = 120;
-
+		//if (currentFPS > FlxG.updateFramerate) currentFPS = FlxG.updateFramerate;
+		
 		if (currentCount != cacheCount /*&& visible*/)
 		{
 			text = "FPS: " + currentFPS;
@@ -91,7 +92,7 @@ class FPSCounter extends TextField
 			#end
 
 			textColor = 0xFFFFFFFF;
-			if (memoryMegas > 3000 || currentFPS <= 30)
+			if(memoryMegas > 3000 || currentFPS <= 30)
 			{
 				textColor = 0xFFFF0000;
 			}
