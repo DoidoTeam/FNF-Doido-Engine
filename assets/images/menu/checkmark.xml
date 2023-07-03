@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="checkmark.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="false0000" x="3" y="3" width="98" height="110"/>
+	<SubTexture name="false0001" x="104" y="3" width="98" height="110"/>
+	<SubTexture name="false0002" x="205" y="3" width="98" height="110"/>
+	<SubTexture name="false0003" x="306" y="3" width="98" height="110"/>
+	<SubTexture name="false0004" x="407" y="3" width="98" height="110"/>
+	<SubTexture name="false0005" x="3" y="116" width="98" height="110"/>
+	<SubTexture name="false0006" x="104" y="116" width="98" height="110"/>
+	<SubTexture name="true0000" x="205" y="116" width="98" height="110"/>
+	<SubTexture name="true0001" x="306" y="116" width="98" height="110"/>
+	<SubTexture name="true0002" x="407" y="116" width="98" height="110"/>
+	<SubTexture name="true0003" x="3" y="229" width="98" height="110"/>
+	<SubTexture name="true0004" x="104" y="229" width="98" height="110"/>
+</TextureAtlas>

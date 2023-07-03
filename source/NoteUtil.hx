@@ -12,7 +12,7 @@ class NoteUtil
 	{
 		return (160 * 0.7); // 112
 	}
-
+	
 	public static function sortByShit(Obj1:Note, Obj2:Note):Int
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.songTime, Obj2.songTime);
 }

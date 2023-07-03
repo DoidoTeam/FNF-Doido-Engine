@@ -24,6 +24,15 @@ class SaveData
 		FlxG.save.bind("save-data", "Doido-Engine-FNF"); // these are for other stuff
 		load();
 		save();
+
+		var diogoPlaying:Bool = true;
+		if(diogoPlaying)
+		{
+			gameControls.get('LEFT')[0] = FlxKey.Z;
+			gameControls.get('DOWN')[0] = FlxKey.X;
+			gameControls.get('UP')[0] 	= FlxKey.NUMPADTWO;
+			gameControls.get('RIGHT')[0]= FlxKey.NUMPADTHREE;
+		}
 	}
 	
 	public static function load()

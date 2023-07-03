@@ -38,8 +38,7 @@ class Alphabet extends FlxSpriteGroup
 
 	public var letters:String = "abcdefghijklmnopqrstuvwxyzç";
 	public var numbers:String = "0123456789";
-	public var symbols:String = "#$%&()*+-:;<=>@[]^_'!¨?/|~";
-	public var arrows:String  = "←↓↑→";
+	public var symbols:String = "#$%&()*+-:;<=>@[]^_!¨?/|~'\"";
 
 	public function typeTxt()
 	{
@@ -89,11 +88,6 @@ class Alphabet extends FlxSpriteGroup
 			if(symbols.contains(daLetter))
 			{
 				letter.makeSymbol(daLetter, bold);
-			}
-			// arrows
-			if(arrows.contains(daLetter))
-			{
-				letter.makeArrow(daLetter);
 			}
 
 			letter.lastWidth = lastWidth;
@@ -185,12 +179,21 @@ class AlphaLetter extends FlxSprite
 
 	public function makeSymbol(key:String, bold:Bool = false)
 	{
-		var daBold:String = bold ? " bold" : "0";
-
-		switch(key)
+		var animName:String = switch(key)
 		{
-			default: addAnim(key, '${key}${daBold}');
+			default: key;
+			case "'": "apostraphie";
+			case ",": "comma";
+			case "!": "exclamation point";
+			case '"': "parentheses start";
+			case ".": "period";
+			case "?": "question mark";
+			case "/": "slash forward";
+			case "÷": "heart";
 		}
+
+		animName += (bold ? " bold" : "0");
+		addAnim(key, animName);
 
 		switch(key)
 		{
@@ -200,6 +203,13 @@ class AlphaLetter extends FlxSprite
 
 	public function makeArrow(key:String)
 	{
-
+		//trace('why $key');
+		switch(key.toLowerCase())
+		{
+			case "left": addAnim("arrowL", "arrow left");
+			case "down": addAnim("arrowD", "arrow down");
+			case "up": 	 addAnim("arrowU", "arrow up");
+			case "right":addAnim("arrowR", "arrow right");
+		}
 	}
 }
