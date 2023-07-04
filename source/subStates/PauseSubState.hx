@@ -8,17 +8,21 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.system.FlxSound;
+import data.Conductor;
 import data.GameData.MusicBeatSubState;
 import gameObjects.menu.AlphabetMenu;
 import states.*;
 
 class PauseSubState extends MusicBeatSubState
 {
-	var optionShit:Array<String> = ["resume", "restart song", "exit to menu"];
+	var optionShit:Array<String> = ["resume", "restart song", "exit to options", "exit to menu"];
 
 	var curSelected:Int = 0;
 
 	var optionsGrp:FlxTypedGroup<AlphabetMenu>;
+
+	var pauseSong:FlxSound;
 
 	public function new()
 	{
@@ -43,7 +47,23 @@ class PauseSubState extends MusicBeatSubState
 			newItem.x = 0;
 		}
 
+		pauseSong = new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song.toLowerCase()), true, false);
+		if(Conductor.songPos > 0)
+		{
+			pauseSong.play(Conductor.songPos);
+			pauseSong.pitch = 0.9;
+			pauseSong.volume = 0;
+			FlxTween.tween(pauseSong, {volume: 0.45}, 3, {startDelay: 1});
+		}
+		FlxG.sound.list.add(pauseSong);
+
 		changeSelection();
+	}
+
+	override function close()
+	{
+		pauseSong.stop();
+		super.close();
 	}
 
 	override function update(elapsed:Float)
@@ -71,7 +91,10 @@ class PauseSubState extends MusicBeatSubState
 					close();
 
 				case "restart song":
-					Main.switchState(new PlayState());
+					Main.switchState();
+
+				case "exit to options":
+					Main.switchState(new states.menu.OptionsState(new PlayState()));
 
 				case "exit to menu":
 					Main.switchState(new MenuState());

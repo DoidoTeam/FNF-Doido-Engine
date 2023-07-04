@@ -21,7 +21,9 @@ class Character extends FlxSprite
 	public var singAnims:Array<String> = [];
 	public var missAnims:Array<String> = [];
 
-	public var scaleOffset:FlxPoint = new FlxPoint();
+	public var globalOffset:FlxPoint = new FlxPoint();
+	public var cameraOffset:FlxPoint = new FlxPoint();
+	private var scaleOffset:FlxPoint = new FlxPoint();
 
 	public function reloadChar(curChar:String = "bf", isPlayer:Bool = false):Character
 	{
@@ -32,10 +34,54 @@ class Character extends FlxSprite
 		addSingPrefix(); // none
 
 		var storedPos:Array<Float> = [x, y];
+		globalOffset.set();
+		cameraOffset.set();
 
 		// what
 		switch(curChar)
 		{
+			case "gemamugen":
+				frames = Paths.getSparrowAtlas("characters/gemamugen/gemamugen");
+
+				animation.addByPrefix('idle', 		'idle', 24, true);
+				animation.addByPrefix('idle-alt',	'chacharealsmooth', 24, true);
+				animation.addByPrefix('singLEFT', 	'left', 24, false);
+				animation.addByPrefix('singDOWN', 	'down', 24, false);
+				animation.addByPrefix('singUP', 	'up', 24, false);
+				animation.addByPrefix('singRIGHT', 	'right', 24, false);
+
+				addOffset('idle');
+				addOffset('idle-alt',	-30,	0.5);
+				addOffset('singLEFT',	114.5, 	-7);
+				addOffset('singDOWN',	-1,	 	-5);
+				addOffset('singUP',		-0.5,	152);
+				addOffset('singRIGHT',	30,  	-4.5);
+
+				playAnim('idle');
+
+				scale.set(2,2);
+				globalOffset.x = -300;
+				cameraOffset.y = -180;
+
+			case "bf-pixel":
+				frames = Paths.getSparrowAtlas("characters/bf-pixel/bfPixel");
+
+				animation.addByPrefix('idle', 'BF IDLE', 24, false);
+				animation.addByPrefix('singUP', 'BF UP NOTE', 24, false);
+				animation.addByPrefix('singLEFT', 'BF LEFT NOTE', 24, false);
+				animation.addByPrefix('singRIGHT', 'BF RIGHT NOTE', 24, false);
+				animation.addByPrefix('singDOWN', 'BF DOWN NOTE', 24, false);
+				animation.addByPrefix('singUPmiss', 'BF UP MISS', 24, false);
+				animation.addByPrefix('singLEFTmiss', 'BF LEFT MISS', 24, false);
+				animation.addByPrefix('singRIGHTmiss', 'BF RIGHT MISS', 24, false);
+				animation.addByPrefix('singDOWNmiss', 'BF DOWN MISS', 24, false);
+
+				playAnim('idle');
+
+				flipX = true;
+				antialiasing = false;
+				scale.set(6,6);
+
 			case "bf":
 				frames = Paths.getSparrowAtlas("characters/bf/BOYFRIEND");
 

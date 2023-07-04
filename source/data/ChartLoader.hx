@@ -32,10 +32,13 @@ class ChartLoader
 				/* - late || + early */
 				var daStrumTime:Float = songNotes[0];
 				var daNoteData:Int = Std.int(songNotes[1] % 4);
-				var daNoteType:String = 'default';
+				var daNoteType:String = 'none';
 				// very stupid but I'm lazy
 				if(songNotes.length > 2)
 					daNoteType = songNotes[3];
+
+				// psych event notes come on
+				if(songNotes[1] < 0) continue;
 				
 				// create the new note
 				var swagNote:Note = new Note();

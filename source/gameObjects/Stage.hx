@@ -16,6 +16,18 @@ class Stage extends FlxGroup
 		foreground = new FlxGroup();
 	}
 
+	public function reloadStageFromSong(song:String = "test"):Void
+	{
+		switch(song.toLowerCase())
+		{
+			case "collision":
+				reloadStage("mugen");
+
+			default:
+				reloadStage("stage");
+		}
+	}
+
 	public function reloadStage(curStage:String = "")
 	{
 		this.clear();
@@ -24,7 +36,14 @@ class Stage extends FlxGroup
 		this.curStage = curStage;
 		switch(curStage)
 		{
+			case "mugen":
+				PlayState.defaultCamZoom = 0.7;
+
+				var bg = new FlxSprite(-640, -1000).loadGraphic(Paths.image("backgrounds/mugen/mugen"));
+				add(bg);
+
 			default:
+				this.curStage = "stage";
 				PlayState.defaultCamZoom = 0.9;
 
 				var bg = new FlxSprite(-600, -600).loadGraphic(Paths.image("backgrounds/stage/stageback"));

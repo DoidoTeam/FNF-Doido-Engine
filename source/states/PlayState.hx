@@ -64,7 +64,7 @@ class PlayState extends MusicBeatState
 
 	public static var paused:Bool = false;
 
-	public function resetStatics()
+	function resetStatics()
 	{
 		health = 1;
 		defaultCamZoom = 1.0;
@@ -81,8 +81,8 @@ class PlayState extends MusicBeatState
 		if(SONG == null)
 			SONG = SongData.loadFromJson("ugh");
 
-		if(false)
-			assetModifier = "doido";
+		if(SONG.song.toLowerCase() == "collision")
+			assetModifier = "pixel";
 
 		Conductor.setBPM(SONG.bpm);
 		Conductor.mapBPMChanges(SONG);
@@ -103,7 +103,7 @@ class PlayState extends MusicBeatState
 		//camGame.zoom = 0.6;
 
 		stageBuild = new Stage();
-		stageBuild.reloadStage("stage");
+		stageBuild.reloadStageFromSong(SONG.song);
 		add(stageBuild);
 
 		camGame.zoom = defaultCamZoom;
@@ -120,6 +120,12 @@ class PlayState extends MusicBeatState
 
 		characters.push(dad);
 		characters.push(boyfriend);
+
+		for(char in characters)
+		{
+			char.x += char.globalOffset.x;
+			char.y += char.globalOffset.y;
+		}
 
 		var addList:Array<FlxBasic> = [dad, boyfriend];
 
@@ -141,20 +147,28 @@ class PlayState extends MusicBeatState
 		add(strumlines);
 
 		//strumline.scrollSpeed = 4.0; // 2.8
-		var daStrumSize:Array<Float> = [FlxG.width / 2, FlxG.width / 4];
+		var strumPos:Array<Float> = [FlxG.width / 2, FlxG.width / 4];
+		var downscroll:Bool = SaveData.data.get("Downscroll");
 
-		dadStrumline = new Strumline(daStrumSize[0] - daStrumSize[1], dad, false, false, true, assetModifier);
+		dadStrumline = new Strumline(strumPos[0] - strumPos[1], dad, downscroll, false, true, assetModifier);
 		dadStrumline.ID = 0;
 		strumlines.add(dadStrumline);
 
-		//dadStrumline.scrollSpeed = 3.4;
-
-		bfStrumline = new Strumline(daStrumSize[0] + daStrumSize[1], boyfriend, false, true, false, assetModifier);
+		bfStrumline = new Strumline(strumPos[0] + strumPos[1], boyfriend, downscroll, true, false, assetModifier);
 		bfStrumline.ID = 1;
 		strumlines.add(bfStrumline);
 
+		if(SaveData.data.get("Middlescroll"))
+		{
+			dadStrumline.x -= strumPos[0]; // goes offscreen
+			bfStrumline.x  -= strumPos[1]; // goes to the middle
+		}
+
 		for(strumline in strumlines.members)
+		{
 			strumline.scrollSpeed = SONG.speed;
+			strumline.updateHitbox();
+		}
 
 		hudBuild.updateHitbox(bfStrumline.downscroll);
 
@@ -205,6 +219,7 @@ class PlayState extends MusicBeatState
 			note.onHit = function()
 			{
 				// when the player hits notes
+				vocals.volume = 1;
 				if(thisStrumline.isPlayer)
 				{
 					popUpRating(note, false);
@@ -226,13 +241,15 @@ class PlayState extends MusicBeatState
 					thisChar.playAnim(thisChar.singAnims[note.noteData], true);
 					thisChar.holdTimer = 0;
 
-					if(note.noteType != 'default')
-						thisChar.playAnim('hey');
+					/*if(note.noteType != 'none')
+						thisChar.playAnim('hey');*/
 				}
 			};
 			note.onMiss = function()
 			{
 				if(thisStrumline.botplay) return;
+
+				vocals.volume = 0;
 
 				note.gotHit = false;
 				note.gotHold= false;
@@ -265,6 +282,7 @@ class PlayState extends MusicBeatState
 			// only works on long notes!!
 			note.onHold = function()
 			{
+				vocals.volume = 1;
 				note.gotHold = true;
 
 				// if not finished
@@ -666,7 +684,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			if(justPressed.contains(true) && !strumline.botplay)
+			if(justPressed.contains(true) && !strumline.botplay && strumline.isPlayer)
 			{
 				for(i in 0...justPressed.length)
 				{
@@ -699,7 +717,24 @@ class PlayState extends MusicBeatState
 						}
 						else
 						{
-							//trace("ghost tapped " + i + " loll");
+							// ghost tapped lol
+							if(!SaveData.data.get("Ghost Tapping"))
+							{
+								vocals.volume = 0;
+								var thisChar = strumline.character;
+								if(thisChar != null)
+								{
+									thisChar.playAnim(thisChar.missAnims[i], true);
+									thisChar.holdTimer = 0;
+								}
+
+								var missJudge:Float = Timings.timingsMap.get("miss")[1];
+								health += 0.05 * missJudge;
+								Timings.score += Math.floor(100 * missJudge);
+								Timings.addAccuracy(missJudge);
+								Timings.misses++;
+								hudBuild.updateText();
+							}
 						}
 					}
 				}
@@ -778,9 +813,12 @@ class PlayState extends MusicBeatState
 
 		if(char != null)
 		{
-			var playerMult:Int = char.isPlayer ? -1 : 1;
+			var playerMult:Int = (char.isPlayer ? -1 : 1);
 
 			camFollow.setPosition(char.getMidpoint().x + (200 * playerMult), char.getMidpoint().y - 20);
+
+			camFollow.x += char.cameraOffset.x * playerMult;
+			camFollow.y += char.cameraOffset.y;
 		}
 
 		camFollow.x += offsetX;
@@ -827,7 +865,7 @@ class PlayState extends MusicBeatState
 
 		for(music in musicList)
 		{
-			if(music.playing && music.length > 0)
+			if(music.playing && music.length > 0 && Conductor.songPos < music.length)
 			{
 				if(Math.abs(Conductor.songPos - music.time) >= 40 || forced)
 				{

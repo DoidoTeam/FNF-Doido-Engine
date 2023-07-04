@@ -13,7 +13,7 @@ class StrumNote extends FlxSprite
 	}
 
 	public var strumData:Int = 0;
-	public var strumType:String = "default";
+	public var assetModifier:String = "default";
 
 	// use these to modchart
 	public var strumSize:Float = 1.0;
@@ -22,16 +22,30 @@ class StrumNote extends FlxSprite
 
 	private var direction:String = "left";
 
-	public function reloadStrum(strumData:Int, ?strumType:String = "default"):StrumNote
+	public function reloadStrum(strumData:Int, ?assetModifier:String = "default"):StrumNote
 	{
 		this.strumData = strumData;
-		this.strumType = strumType;
+		this.assetModifier = assetModifier;
 		strumSize = 1.0;
 
 		direction = NoteUtil.getDirection(strumData);
 
-		switch(strumType)
+		switch(assetModifier)
 		{
+			case "pixel":
+				strumSize = 6;
+				loadGraphic(Paths.image("notes/pixel/notesPixel"), true, 17, 17);
+
+				animation.add("static",  [strumData], 						12, false);
+				animation.add("pressed", [strumData + 8], 					12, false);
+				animation.add("confirm", [strumData + 12, strumData + 16], 	12, false);
+
+				antialiasing = false;
+
+				addOffset("static");
+				addOffset("pressed");
+				addOffset("confirm");
+
 			default:
 				strumSize = 0.7;
 				frames = Paths.getSparrowAtlas("notes/base/strums");
@@ -42,7 +56,7 @@ class StrumNote extends FlxSprite
 				addOffset("pressed", -2, -2);
 				addOffset("confirm", 36, 36);
 
-				switch(strumType)
+				switch(assetModifier)
 				{
 					case "doido":
 						frames = Paths.getSparrowAtlas("notes/doido/strums");

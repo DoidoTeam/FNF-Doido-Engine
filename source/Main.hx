@@ -24,13 +24,6 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
-		addChild(new FlxGame(0, 0, Init, 120, 120, true));
-
-		#if desktop
-		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
-		addChild(fpsVar);
-		#end
-
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 
 		#if DISCORD_RPC
@@ -41,9 +34,16 @@ class Main extends Sprite
 			});
 		}
 		#end
+
+		addChild(new FlxGame(0, 0, Init, 120, 120, true));
+
+		#if desktop
+		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
+		addChild(fpsVar);
+		#end
 	}
 
-	public static var gFont:String = Paths.font("vcr.ttf");//"Nokia Cellphone FC Small";
+	public static var gFont:String = Paths.font("vcr.ttf");
 	
 	public static var skipTrans:Bool = true; // starts on but it turns false inside Init
 	public static function switchState(?target:FlxState):Void
@@ -51,11 +51,8 @@ class Main extends Sprite
 		var trans = new GameTransition(false);
 		trans.finishCallback = function()
 		{
-			if(target != null)
-			{
-				
+			if(target != null)		
 				FlxG.switchState(target);
-			}
 			else
 				FlxG.resetState();
 		}

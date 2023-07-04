@@ -28,6 +28,8 @@ class Alphabet extends FlxSpriteGroup
 	public var textArray:Array<String> = [];
 	public var bold:Bool = false;
 
+	public final boxHeight:Float = 70;
+
 	public function set_text(v:String):String
 	{
 		text = v;
@@ -129,7 +131,7 @@ class Alphabet extends FlxSpriteGroup
 				}
 
 				// i hate you i hate you i hate you i hate you
-				letter.y = y + (letter.boxHeight * scale.y * (letter.row + 1));
+				letter.y = y + (boxHeight * scale.y * (letter.row + 1));
 				letter.y -= letter.height - (letter.letterOffset.y * scale.y);
 			}
 		}
@@ -139,8 +141,6 @@ class AlphaLetter extends FlxSprite
 {
 	public var lastWidth:Float = 0;
 	public var row:Int = 0;
-
-	public var boxHeight:Float = 70;
 
 	public var letterOffset:FlxPoint = new FlxPoint();
 

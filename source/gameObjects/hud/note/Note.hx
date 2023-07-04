@@ -23,8 +23,27 @@ class Note extends FlxSprite
 		this.noteType = noteType;
 		noteSize = 1.0;
 
+		var direction:String = NoteUtil.getDirection(noteData);
+
 		switch(assetModifier)
 		{
+			case "pixel":
+				noteSize = 6;
+				if(!isHold)
+				{
+					loadGraphic(Paths.image("notes/pixel/notesPixel"), true, 17, 17);
+
+					animation.add(direction, [noteData + 4], 0, false);
+				}
+				else
+				{
+					loadGraphic(Paths.image("notes/pixel/notesEnds"), true, 7, 6);
+
+					animation.add(direction, [noteData + (isHoldEnd ? 4 : 0)], 0, false);
+				}
+				antialiasing = false;
+				animation.play(direction);
+
 			default:
 				switch(noteType)
 				{
@@ -39,13 +58,12 @@ class Note extends FlxSprite
 								noteSize = 1.0;
 						}
 
-						var direc:String 	= NoteUtil.getDirection(noteData);
 						var typeName:String = (isHold ? (isHoldEnd ? " hold end" : " hold") : "");
 
 						// oxi
-						animation.addByPrefix('${direc}${typeName}', 'note ${direc}${typeName}0', 24, true);
+						animation.addByPrefix('${direction}${typeName}', 'note ${direction}${typeName}0', 24, true);
 
-						animation.play('${direc}${typeName}');
+						animation.play('${direction}${typeName}');
 				}
 		}
 

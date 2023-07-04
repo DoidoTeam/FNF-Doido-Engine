@@ -23,16 +23,18 @@ class AlphabetMenu extends Alphabet
 	public var spaceX:Float = 50;
 	public var spaceY:Float = 200;
 
+	public var posUpdate:Bool = true;
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		updatePos(elapsed * 12);
+		if(posUpdate)
+			updatePos(elapsed * 12);
 	}
 
 	public function updatePos(lerp:Float = 1)
 	{
 		x = FlxMath.lerp(x, xTo + (spaceX * focusY * scale.x), lerp);
-
 		y = FlxMath.lerp(y, yTo + (spaceY * focusY * scale.y), lerp);
 	}
 }

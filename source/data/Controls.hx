@@ -26,18 +26,18 @@ class Controls
 		return checkBind(bind, JUST_RELEASED);
 	}
 
-	// very dumb yea... but still works tho :/
-	private function checkBind(bind:String, state:FlxInputState):Bool
+	// soon it will work with gamepads but for now just supports keyboard
+	private function checkBind(bind:String, inputState:FlxInputState):Bool
 	{
-		if(!SaveData.gameControls.exists(bind))
+		if(!SaveData.keyControls.exists(bind))
 		{
 			trace("that bind does not exist dumbass");
 			return false;
 		}
 
-		for(key in SaveData.gameControls.get(bind))
+		for(key in SaveData.keyControls.get(bind))
 		{
-			if(FlxG.keys.checkStatus(key, state))
+			if(FlxG.keys.checkStatus(key, inputState))
 				return true;
 		}
 

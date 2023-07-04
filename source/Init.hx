@@ -12,9 +12,7 @@ class Init extends MusicBeatState
 	{
 		super.create();
 		SaveData.init();
-
-		FlxSprite.defaultAntialiasing = false;
-		
+				
 		FlxG.fixedTimestep = false;
 		FlxG.mouse.useSystemCursor = true;
 		//FlxG.mouse.visible = false;

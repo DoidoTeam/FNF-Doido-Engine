@@ -30,7 +30,7 @@ class Paths
 	}
 	public static function getGraphic(key:String):FlxGraphic
 	{
-		var path = 'assets/images/$key.png';
+		var path = getPath('images/$key.png');
 		if(FileSystem.exists(path))
 		{
 			if(!renderedGraphics.exists(path))
