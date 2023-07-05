@@ -24,10 +24,10 @@ import gameObjects.hud.*;
 import gameObjects.hud.note.*;
 import subStates.*;
 
+using StringTools;
+
 class PlayState extends MusicBeatState
 {
-	//public var song:FlxSound;
-
 	// song stuff
 	public static var SONG:SwagSong;
 	public var inst:FlxSound;
@@ -46,6 +46,7 @@ class PlayState extends MusicBeatState
 	public var characters:Array<Character> = [];
 	public var dad:Character;
 	public var boyfriend:Character;
+	public var gf:Character;
 
 	// strumlines
 	public var strumlines:FlxTypedGroup<Strumline>;
@@ -58,6 +59,7 @@ class PlayState extends MusicBeatState
 	// cameras!!
 	public var camGame:FlxCamera;
 	public var camHUD:FlxCamera;
+	public var camOther:FlxCamera; // used so substates dont collide with camHUD.alpha or camHUD.visible
 	public static var defaultCamZoom:Float = 1.0;
 
 	public var camFollow:FlxObject = new FlxObject();
@@ -69,6 +71,7 @@ class PlayState extends MusicBeatState
 		health = 1;
 		defaultCamZoom = 1.0;
 		assetModifier = "base";
+		SplashNote.resetStatics();
 		Timings.init();
 		paused = false;
 	}
@@ -93,9 +96,13 @@ class PlayState extends MusicBeatState
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
 
+		camOther = new FlxCamera();
+		camOther.bgColor.alpha = 0;
+
 		// adding the cameras
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD, false);
+		FlxG.cameras.add(camOther, false);
 
 		// default camera
 		FlxG.cameras.setDefaultDrawTarget(camGame, true);
@@ -225,6 +232,16 @@ class PlayState extends MusicBeatState
 					popUpRating(note, false);
 				}
 
+				if(!note.isHold)
+				{
+					var noteDiff:Float = Math.abs(note.songTime - Conductor.songPos);
+					if(noteDiff <= Timings.timingsMap.get("sick")[0] || !thisStrumline.isPlayer)
+					{
+						thisStrumline.playSplash(note);
+					}
+				}
+
+				// anything else
 				note.gotHit = true;
 				if(note.holdLength > 0)
 					note.gotHold = true;
@@ -295,15 +312,17 @@ class PlayState extends MusicBeatState
 				}
 			}
 
+			//if(thisStrumline.isPlayer)
+			//{
+				thisStrumline.addSplash(note);
+			//}
+
 			thisStrumline.unspawnNotes.push(note);
 		}
 
-		//#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Playing: " + SONG.song, null);
-		//#end
+		DiscordClient.changePresence("Playing: " + SONG.song.toUpperCase().replace("-", " "), null);
 
-		//trace("where is it");
 		startCountdown();
 	}
 
@@ -438,15 +457,15 @@ class PlayState extends MusicBeatState
 		super.update(elapsed);
 		camGame.followLerp = elapsed * 3;
 
-		if(FlxG.keys.justPressed.ENTER)
+		if(controls.justPressed("PAUSE"))
 		{
-			pauseSong();	
+			pauseSong();
 		}
 
-		if(FlxG.keys.justPressed.R)
+		if(controls.justPressed("RESET"))
 			health = 0;
 
-		if(FlxG.keys.justPressed.SPACE)
+		/*if(FlxG.keys.justPressed.SPACE)
 		{
 			for(strumline in strumlines.members)
 			{
@@ -454,7 +473,7 @@ class PlayState extends MusicBeatState
 				strumline.updateHitbox();
 			}
 			hudBuild.updateHitbox(bfStrumline.downscroll);
-		}
+		}*/
 
 		//strumline.scrollSpeed = 2.8 + Math.sin(FlxG.game.ticks / 500) * 1.5;
 
@@ -524,9 +543,7 @@ class PlayState extends MusicBeatState
 				var despawnTime:Float = 300;
 
 				if(Conductor.songPos >= note.songTime + note.holdLength /*+ Conductor.stepCrochet*/ + despawnTime)
-				//if(Conductor.songPos >= note.songTime - despawnTime)
 				{
-					//trace("trace removed note!!");
 					if(!note.gotHit || !note.gotHold) note.canHit = false;
 
 					strumline.removeNote(note);

@@ -12,6 +12,8 @@ class Strumline extends FlxGroup
 	public var holdGroup:FlxTypedGroup<Note>;
 	public var allNotes:FlxTypedGroup<Note>;
 
+	public var splashGroup:FlxTypedGroup<SplashNote>;
+
 	// everybody gets one
 	public var unspawnNotes:Array<Note> = [];
 
@@ -38,9 +40,12 @@ class Strumline extends FlxGroup
 		holdGroup = new FlxTypedGroup<Note>();
 		allNotes = new FlxTypedGroup<Note>();
 
+		splashGroup = new FlxTypedGroup<SplashNote>();
+
 		add(strumGroup);
 		add(holdGroup);
 		add(noteGroup);
+		add(splashGroup);
 
 		for(i in 0...4)
 		{
@@ -73,6 +78,49 @@ class Strumline extends FlxGroup
 			holdGroup.remove(note);
 		else
 			noteGroup.remove(note);
+	}
+
+	public function addSplash(note:Note)
+	{
+		switch(SaveData.data.get("Note Splashes"))
+		{
+			case "PLAYER": if(!isPlayer) return;
+			case "OFF": return;
+		}
+
+		var pref:String = '-' + NoteUtil.getDirection(note.noteData) + '-' + note.strumlineID;
+
+		if(!SplashNote.existentModifiers.contains(note.assetModifier + pref)
+		|| !SplashNote.existentTypes.contains(note.noteType + pref))
+		{
+			SplashNote.existentModifiers.push(note.assetModifier + pref);
+			SplashNote.existentTypes.push(note.noteType + pref);
+
+			var splash = new SplashNote();
+			splash.reloadSplash(note);
+			splash.visible = false;
+			splashGroup.add(splash);
+			
+			//trace('added ${note.assetModifier + pref} ${note.noteType + pref}');
+		}
+	}
+
+	public function playSplash(note:Note)
+	{
+		for(splash in splashGroup.members)
+		{
+			if(splash.assetModifier == note.assetModifier
+			&& splash.noteType == note.noteType
+			&& splash.noteData == note.noteData)
+			{
+				//trace("played");
+				var thisStrum = strumGroup.members[splash.noteData];
+				splash.x = thisStrum.x + thisStrum.width / 2 - splash.width / 2;
+				splash.y = thisStrum.y + thisStrum.height/ 2 - splash.height/ 2;
+
+				splash.playAnim();
+			}
+		}
 	}
 
 	public function updateHitbox()

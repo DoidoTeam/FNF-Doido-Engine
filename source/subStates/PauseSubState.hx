@@ -69,7 +69,6 @@ class PauseSubState extends MusicBeatSubState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
 		var lastCam = FlxG.cameras.list[FlxG.cameras.list.length - 1];
 		for(item in members)
 		{
@@ -99,6 +98,13 @@ class PauseSubState extends MusicBeatSubState
 				case "exit to menu":
 					Main.switchState(new MenuState());
 			}
+		}
+
+		// works the same as resume
+		if(controls.justPressed("BACK"))
+		{
+			PlayState.paused = false;
+			close();
 		}
 	}
 

@@ -37,7 +37,8 @@ class Controls
 
 		for(key in SaveData.keyControls.get(bind))
 		{
-			if(FlxG.keys.checkStatus(key, inputState))
+			if(FlxG.keys.checkStatus(key, inputState)
+			&& key != FlxKey.NONE)
 				return true;
 		}
 

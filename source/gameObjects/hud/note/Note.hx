@@ -14,6 +14,7 @@ class Note extends FlxSprite
 	}
 
 	public var noteSize:Float = 1.0;
+	public var assetModifier:String = "base";
 
 	public function reloadNote(songTime:Float, noteData:Int, ?noteType:String = "default", ?assetModifier:String = "base"):Note
 	{
@@ -21,6 +22,7 @@ class Note extends FlxSprite
 		this.songTime = songTime;
 		this.noteData = noteData;
 		this.noteType = noteType;
+		this.assetModifier = assetModifier;
 		noteSize = 1.0;
 
 		var direction:String = NoteUtil.getDirection(noteData);

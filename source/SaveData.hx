@@ -35,9 +35,10 @@ class SaveData
 			"Disabling it might increase the fps at the cost of smoother sprites."
 		],
 		"Note Splashes" => [
-			true,
-			CHECKMARK,
-			"Whether a splash appear when you hit a note perfectly."
+			"ON",
+			SELECTOR,
+			"Whether a splash appear when you hit a note perfectly.",
+			["ON", "PLAYER", "OFF"],
 		],
 		"Ratings on HUD" => [
 			true,
