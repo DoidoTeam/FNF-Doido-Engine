@@ -814,6 +814,7 @@ class PlayState extends MusicBeatState
 
 		if(health <= 0)
 		{
+			activateTimers(false);
 			persistentDraw = false;
 			openSubState(new GameOverSubState(boyfriend));
 		}

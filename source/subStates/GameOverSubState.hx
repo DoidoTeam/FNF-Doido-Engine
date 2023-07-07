@@ -74,6 +74,7 @@ class GameOverSubState extends MusicBeatSubState
 
 			new FlxTimer().start(2.0, function(tmr:FlxTimer)
 			{
+				Main.skipClearMemory = true;
 				Main.switchState(new PlayState());
 			});
 
