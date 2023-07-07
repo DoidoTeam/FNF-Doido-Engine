@@ -26,7 +26,10 @@ class GameOverSubState extends MusicBeatSubState
 		add(bf);
 
 		if(!bf.animation.exists("firstDeath"))
+		{
+			bf.scale.set(1,1); bf.updateHitbox();
 			bf.reloadChar("bf", bf.isPlayer);
+		}
 
 		bf.playAnim("firstDeath");
 

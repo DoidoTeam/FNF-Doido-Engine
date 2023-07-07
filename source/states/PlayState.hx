@@ -463,7 +463,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if(Controls.justPressed("RESET"))
-			health = 0;
+			startGameOver();
 
 		/*if(FlxG.keys.justPressed.SPACE)
 		{
@@ -814,9 +814,7 @@ class PlayState extends MusicBeatState
 
 		if(health <= 0)
 		{
-			activateTimers(false);
-			persistentDraw = false;
-			openSubState(new GameOverSubState(boyfriend));
+			startGameOver();
 		}
 
 		camGame.zoom = FlxMath.lerp(camGame.zoom, defaultCamZoom, elapsed * 6);
@@ -920,7 +918,7 @@ class PlayState extends MusicBeatState
 
 	override public function onFocusLost():Void
 	{
-		if(!paused) pauseSong();
+		if(!paused && !isDead) pauseSong();
 		super.onFocusLost();
 	}
 
@@ -929,5 +927,15 @@ class PlayState extends MusicBeatState
 		paused = true;
 		activateTimers(false);
 		openSubState(new PauseSubState());
+	}
+
+	public var isDead:Bool = false;
+
+	public function startGameOver()
+	{
+		isDead = true;
+		activateTimers(false);
+		persistentDraw = false;
+		openSubState(new GameOverSubState(boyfriend));
 	}
 }
