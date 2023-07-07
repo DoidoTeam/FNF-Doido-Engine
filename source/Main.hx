@@ -45,6 +45,7 @@ class Main extends Sprite
 
 	public static var gFont:String = Paths.font("vcr.ttf");
 	
+	public static var skipClearMemory:Bool = false; // dont
 	public static var skipTrans:Bool = true; // starts on but it turns false inside Init
 	public static function switchState(?target:FlxState):Void
 	{
@@ -55,15 +56,21 @@ class Main extends Sprite
 				FlxG.switchState(target);
 			else
 				FlxG.resetState();
-		}
+		};
 
 		if(skipTrans)
 		{
-			trans.finishCallback();
-			return;
+			return trans.finishCallback();
 		}
 		
 		FlxG.state.openSubState(trans);
+	}
+
+	// so you dont have to type it every time
+	public static function skipStuff(?ohreally:Bool = true):Void
+	{
+		skipClearMemory = ohreally;
+		skipTrans = ohreally;
 	}
 
 	public static function changeFramerate(rawFps:Float = 120)

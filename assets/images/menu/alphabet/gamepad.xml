@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="gamepad.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="gpad A0000" x="3" y="3" width="49" height="53"/>
+	<SubTexture name="gpad A0001" x="3" y="3" width="49" height="53"/>
+	<SubTexture name="gpad A0002" x="55" y="3" width="49" height="53"/>
+	<SubTexture name="gpad A0003" x="55" y="3" width="49" height="53"/>
+	<SubTexture name="gpad B0000" x="107" y="3" width="53" height="49"/>
+	<SubTexture name="gpad B0001" x="107" y="3" width="53" height="49"/>
+	<SubTexture name="gpad B0002" x="163" y="3" width="53" height="49"/>
+	<SubTexture name="gpad B0003" x="163" y="3" width="53" height="49"/>
+	<SubTexture name="gpad L down0000" x="219" y="3" width="61" height="60"/>
+	<SubTexture name="gpad L down0001" x="219" y="3" width="61" height="60"/>
+	<SubTexture name="gpad L down0002" x="283" y="3" width="61" height="60"/>
+	<SubTexture name="gpad L down0003" x="283" y="3" width="61" height="60"/>
+	<SubTexture name="gpad L left0000" x="347" y="3" width="61" height="60"/>
+	<SubTexture name="gpad L left0001" x="347" y="3" width="61" height="60"/>
+	<SubTexture name="gpad L left0002" x="3" y="66" width="61" height="60"/>
+	<SubTexture name="gpad L left0003" x="3" y="66" width="61" height="60"/>
+	<SubTexture name="gpad L right0000" x="67" y="66" width="61" height="60"/>
+	<SubTexture name="gpad L right0001" x="67" y="66" width="61" height="60"/>
+	<SubTexture name="gpad L right0002" x="131" y="66" width="61" height="60"/>
+	<SubTexture name="gpad L right0003" x="131" y="66" width="61" height="60"/>
+	<SubTexture name="gpad L up0000" x="195" y="66" width="61" height="60"/>
+	<SubTexture name="gpad L up0001" x="195" y="66" width="61" height="60"/>
+	<SubTexture name="gpad L up0002" x="259" y="66" width="61" height="60"/>
+	<SubTexture name="gpad L up0003" x="259" y="66" width="61" height="60"/>
+	<SubTexture name="gpad LB0000" x="323" y="66" width="65" height="56"/>
+	<SubTexture name="gpad LB0001" x="323" y="66" width="65" height="56"/>
+	<SubTexture name="gpad LB0002" x="3" y="129" width="65" height="56"/>
+	<SubTexture name="gpad LB0003" x="3" y="129" width="65" height="56"/>
+	<SubTexture name="gpad LT0000" x="71" y="129" width="41" height="92"/>
+	<SubTexture name="gpad LT0001" x="71" y="129" width="41" height="92"/>
+	<SubTexture name="gpad LT0002" x="115" y="129" width="40" height="91" frameX="0" frameY="-1" frameWidth="41" frameHeight="92"/>
+	<SubTexture name="gpad LT0003" x="115" y="129" width="40" height="91" frameX="0" frameY="-1" frameWidth="41" frameHeight="92"/>
+	<SubTexture name="gpad R down0000" x="158" y="129" width="64" height="62"/>
+	<SubTexture name="gpad R down0001" x="158" y="129" width="64" height="62"/>
+	<SubTexture name="gpad R down0002" x="225" y="129" width="64" height="62"/>
+	<SubTexture name="gpad R down0003" x="225" y="129" width="64" height="62"/>
+	<SubTexture name="gpad R left0000" x="292" y="129" width="64" height="62"/>
+	<SubTexture name="gpad R left0001" x="292" y="129" width="64" height="62"/>
+	<SubTexture name="gpad R left0002" x="359" y="129" width="64" height="62"/>
+	<SubTexture name="gpad R left0003" x="359" y="129" width="64" height="62"/>
+	<SubTexture name="gpad R right0000" x="3" y="224" width="64" height="62"/>
+	<SubTexture name="gpad R right0001" x="3" y="224" width="64" height="62"/>
+	<SubTexture name="gpad R right0002" x="70" y="224" width="64" height="62"/>
+	<SubTexture name="gpad R right0003" x="70" y="224" width="64" height="62"/>
+	<SubTexture name="gpad R up0000" x="137" y="224" width="64" height="62"/>
+	<SubTexture name="gpad R up0001" x="137" y="224" width="64" height="62"/>
+	<SubTexture name="gpad R up0002" x="204" y="224" width="64" height="62"/>
+	<SubTexture name="gpad R up0003" x="204" y="224" width="64" height="62"/>
+	<SubTexture name="gpad RB0000" x="271" y="224" width="65" height="56"/>
+	<SubTexture name="gpad RB0001" x="271" y="224" width="65" height="56"/>
+	<SubTexture name="gpad RB0002" x="339" y="224" width="65" height="56"/>
+	<SubTexture name="gpad RB0003" x="339" y="224" width="65" height="56"/>
+	<SubTexture name="gpad RT0000" x="3" y="289" width="44" height="92"/>
+	<SubTexture name="gpad RT0001" x="3" y="289" width="44" height="92"/>
+	<SubTexture name="gpad RT0002" x="50" y="289" width="43" height="92" frameX="0" frameY="0" frameWidth="44" frameHeight="92"/>
+	<SubTexture name="gpad RT0003" x="50" y="289" width="43" height="92" frameX="0" frameY="0" frameWidth="44" frameHeight="92"/>
+	<SubTexture name="gpad X0000" x="96" y="289" width="53" height="49"/>
+	<SubTexture name="gpad X0001" x="96" y="289" width="53" height="49"/>
+	<SubTexture name="gpad X0002" x="152" y="289" width="53" height="49"/>
+	<SubTexture name="gpad X0003" x="152" y="289" width="53" height="49"/>
+	<SubTexture name="gpad Y0000" x="208" y="289" width="49" height="53"/>
+	<SubTexture name="gpad Y0001" x="208" y="289" width="49" height="53"/>
+	<SubTexture name="gpad Y0002" x="260" y="289" width="49" height="53"/>
+	<SubTexture name="gpad Y0003" x="260" y="289" width="49" height="53"/>
+	<SubTexture name="gpad dpad down0000" x="312" y="289" width="57" height="59"/>
+	<SubTexture name="gpad dpad down0001" x="312" y="289" width="57" height="59"/>
+	<SubTexture name="gpad dpad down0002" x="3" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad down0003" x="3" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad left0000" x="63" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad left0001" x="63" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad left0002" x="123" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad left0003" x="123" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad right0000" x="183" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad right0001" x="183" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad right0002" x="243" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad right0003" x="243" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad up0000" x="303" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad up0001" x="303" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad up0002" x="363" y="384" width="57" height="59"/>
+	<SubTexture name="gpad dpad up0003" x="363" y="384" width="57" height="59"/>
+	<SubTexture name="gpad select0000" x="3" y="446" width="55" height="35"/>
+	<SubTexture name="gpad select0001" x="3" y="446" width="55" height="35"/>
+	<SubTexture name="gpad select0002" x="61" y="446" width="55" height="35"/>
+	<SubTexture name="gpad select0003" x="61" y="446" width="55" height="35"/>
+	<SubTexture name="gpad start0000" x="119" y="446" width="53" height="39"/>
+	<SubTexture name="gpad start0001" x="119" y="446" width="53" height="39"/>
+	<SubTexture name="gpad start0002" x="175" y="446" width="53" height="39"/>
+	<SubTexture name="gpad start0003" x="175" y="446" width="53" height="39"/>
+	<SubTexture name="gpad what0000" x="231" y="446" width="39" height="63"/>
+	<SubTexture name="gpad what0001" x="231" y="446" width="39" height="63"/>
+	<SubTexture name="gpad what0002" x="273" y="446" width="39" height="63"/>
+	<SubTexture name="gpad what0003" x="273" y="446" width="39" height="63"/>
+</TextureAtlas>

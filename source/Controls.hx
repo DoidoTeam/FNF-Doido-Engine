@@ -1,0 +1,132 @@
+package;
+
+import flixel.FlxG;
+import flixel.input.gamepad.FlxGamepad;
+import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
+import flixel.input.keyboard.FlxKey;
+import flixel.input.FlxInput.FlxInputState;
+
+class Controls
+{
+	public static function justPressed(bind:String):Bool
+	{
+		return checkBind(bind, JUST_PRESSED);
+	}
+
+	public static function pressed(bind:String):Bool
+	{
+		return checkBind(bind, PRESSED);
+	}
+
+	public static function released(bind:String):Bool
+	{
+		return checkBind(bind, JUST_RELEASED);
+	}
+
+	public static function checkBind(bind:String, inputState:FlxInputState):Bool
+	{
+		if(!allControls.exists(bind))
+		{
+			trace("that bind does not exist dumbass");
+			return false;
+		}
+
+		for(i in 0...allControls.get(bind)[0].length)
+		{
+			var key:FlxKey = allControls.get(bind)[0][i];
+			if(FlxG.keys.checkStatus(key, inputState)
+			&& key != FlxKey.NONE)
+				return true;
+		}
+
+		// gamepads
+		if(FlxG.gamepads.firstActive != null)
+		for(i in 0...allControls.get(bind)[1].length)
+		{
+			var key:FlxPad = allControls.get(bind)[1][i];
+			if(FlxG.gamepads.firstActive.checkStatus(key, inputState)
+			&& key != FlxPad.NONE)
+				return true;
+		}
+
+		return false;
+	}
+
+	/*
+	** [0]: keyboard
+	** [1]: gamepad
+	*/
+	public static var allControls:Map<String, Array<Dynamic>> = [
+		'LEFT' => [
+			[FlxKey.A, FlxKey.LEFT],
+			[FlxPad.LEFT_TRIGGER, FlxPad.DPAD_LEFT],
+		],
+		'DOWN' => [
+			[FlxKey.S, FlxKey.DOWN],
+			[FlxPad.LEFT_SHOULDER, FlxPad.DPAD_DOWN],
+		],
+		'UP' => [
+			[FlxKey.W, FlxKey.UP],
+			[FlxPad.RIGHT_SHOULDER, FlxPad.DPAD_UP],
+		],
+		'RIGHT' => [
+			[FlxKey.D, FlxKey.RIGHT],
+			[FlxPad.RIGHT_TRIGGER, FlxPad.DPAD_RIGHT],
+		],
+
+		// ui controls
+		'UI_LEFT' => [
+			[FlxKey.A, FlxKey.LEFT],
+			[FlxPad.LEFT_STICK_DIGITAL_LEFT, FlxPad.DPAD_LEFT],
+		],
+		'UI_DOWN' => [
+			[FlxKey.S, FlxKey.DOWN],
+			[FlxPad.LEFT_STICK_DIGITAL_DOWN, FlxPad.DPAD_DOWN],
+		],
+		'UI_UP' => [
+			[FlxKey.W, FlxKey.UP],
+			[FlxPad.LEFT_STICK_DIGITAL_UP, FlxPad.DPAD_UP],
+		],
+		'UI_RIGHT' => [
+			[FlxKey.D, FlxKey.RIGHT],
+			[FlxPad.LEFT_STICK_DIGITAL_RIGHT, FlxPad.DPAD_RIGHT],
+		],
+
+		// ui buttons
+		'ACCEPT' => [
+			[FlxKey.SPACE, FlxKey.ENTER],
+			[FlxPad.A, FlxPad.X],
+		],
+		'BACK' => [
+			[FlxKey.X, FlxKey.BACKSPACE, FlxKey.ESCAPE],
+			[FlxPad.B],
+		],
+		'PAUSE' => [
+			[FlxKey.P,	FlxKey.ENTER, FlxKey.ESCAPE],
+			[FlxPad.START],
+		],
+		'RESET' => [
+			[FlxKey.R, FlxKey.NONE],
+			[FlxPad.BACK, FlxPad.NONE],
+		],
+	];
+
+	public static function load()
+	{
+		if(SaveData.saveFile.data.allControls == null
+		|| Lambda.count(allControls) != Lambda.count(SaveData.saveFile.data.allControls))
+		{
+			SaveData.saveFile.data.allControls = allControls;
+		}
+
+		allControls = SaveData.saveFile.data.allControls;
+
+		save();
+	}
+
+	public static function save()
+	{
+		SaveData.saveFile.data.allControls = allControls;
+		SaveData.save();
+	}
+}

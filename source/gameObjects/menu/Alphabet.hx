@@ -148,7 +148,7 @@ class AlphaLetter extends FlxSprite
 	{
 		super();
 		//makeGraphic(30, 50, 0xFFFFFFFF);
-		frames = Paths.getSparrowAtlas("menu/alphabet");
+		frames = Paths.getSparrowAtlas("menu/alphabet/default");
 	}
 
 	function addAnim(animName:String, animXml:String)

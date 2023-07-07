@@ -76,12 +76,12 @@ class PauseSubState extends MusicBeatSubState
 				cast(item, FlxBasic).cameras = [lastCam];
 		}
 
-		if(controls.justPressed("UI_UP"))
+		if(Controls.justPressed("UI_UP"))
 			changeSelection(-1);
-		if(controls.justPressed("UI_DOWN"))
+		if(Controls.justPressed("UI_DOWN"))
 			changeSelection(1);
 
-		if(controls.justPressed("ACCEPT"))
+		if(Controls.justPressed("ACCEPT"))
 		{
 			switch(optionShit[curSelected])
 			{
@@ -90,6 +90,7 @@ class PauseSubState extends MusicBeatSubState
 					close();
 
 				case "restart song":
+					Main.skipStuff();
 					Main.switchState();
 
 				case "exit to options":
@@ -101,7 +102,7 @@ class PauseSubState extends MusicBeatSubState
 		}
 
 		// works the same as resume
-		if(controls.justPressed("BACK"))
+		if(Controls.justPressed("BACK"))
 		{
 			PlayState.paused = false;
 			close();

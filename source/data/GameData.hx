@@ -9,16 +9,21 @@ import data.Conductor.BPMChangeEvent;
 
 class MusicBeatState extends FlxState
 {
-	private var controls:Controls = new Controls();
+	//private var controls:Controls = new Controls();
 
 	override function create()
 	{
 		super.create();
-		Paths.clearMemory();
-		
 		trace('switched to ${Type.getClassName(Type.getClass(FlxG.state))}');
+
+		if(!Main.skipClearMemory)
+			Paths.clearMemory();
 		
-		openSubState(new GameTransition(true));
+		if(!Main.skipTrans)
+			openSubState(new GameTransition(true));
+
+		// go back to default automatically i dont want to do it
+		Main.skipStuff(false);
 	}
 
 	private var _curStep = 0; // fake curStep
@@ -77,7 +82,7 @@ class MusicBeatState extends FlxState
 
 class MusicBeatSubState extends FlxSubState
 {
-	private var controls:Controls = new Controls();
+	//private var controls:Controls = new Controls();
 
 	override function create()
 	{

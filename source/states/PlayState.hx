@@ -94,7 +94,7 @@ class PlayState extends MusicBeatState
 		camGame = new FlxCamera();
 		
 		camHUD = new FlxCamera();
-		camHUD.bgColor.alpha = 0;
+		camHUD.bgColor.alphaFloat = 0;
 
 		camOther = new FlxCamera();
 		camOther.bgColor.alpha = 0;
@@ -457,12 +457,12 @@ class PlayState extends MusicBeatState
 		super.update(elapsed);
 		camGame.followLerp = elapsed * 3;
 
-		if(controls.justPressed("PAUSE"))
+		if(Controls.justPressed("PAUSE"))
 		{
 			pauseSong();
 		}
 
-		if(controls.justPressed("RESET"))
+		if(Controls.justPressed("RESET"))
 			health = 0;
 
 		/*if(FlxG.keys.justPressed.SPACE)
@@ -483,22 +483,22 @@ class PlayState extends MusicBeatState
 		Conductor.songPos += elapsed * 1000;
 
 		var pressed:Array<Bool> = [
-			controls.pressed("LEFT"),
-			controls.pressed("DOWN"),
-			controls.pressed("UP"),
-			controls.pressed("RIGHT")
+			Controls.pressed("LEFT"),
+			Controls.pressed("DOWN"),
+			Controls.pressed("UP"),
+			Controls.pressed("RIGHT")
 		];
 		var justPressed:Array<Bool> = [
-			controls.justPressed("LEFT"),
-			controls.justPressed("DOWN"),
-			controls.justPressed("UP"),
-			controls.justPressed("RIGHT")
+			Controls.justPressed("LEFT"),
+			Controls.justPressed("DOWN"),
+			Controls.justPressed("UP"),
+			Controls.justPressed("RIGHT")
 		];
 		var released:Array<Bool> = [
-			controls.released("LEFT"),
-			controls.released("DOWN"),
-			controls.released("UP"),
-			controls.released("RIGHT")
+			Controls.released("LEFT"),
+			Controls.released("DOWN"),
+			Controls.released("UP"),
+			Controls.released("RIGHT")
 		];
 
 		isSinging = false;
@@ -814,8 +814,8 @@ class PlayState extends MusicBeatState
 
 		if(health <= 0)
 		{
-			/*persistentDraw = false;
-			openSubState(new GameOverSubState(boyfriend));*/
+			persistentDraw = false;
+			openSubState(new GameOverSubState(boyfriend));
 		}
 
 		camGame.zoom = FlxMath.lerp(camGame.zoom, defaultCamZoom, elapsed * 6);

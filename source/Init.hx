@@ -19,6 +19,5 @@ class Init extends MusicBeatState
 		FlxGraphic.defaultPersist = true;
 		
 		Main.switchState(new MenuState());
-		Main.skipTrans = false;
 	}
 }

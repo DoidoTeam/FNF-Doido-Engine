@@ -13,8 +13,8 @@ class SplashNote extends FlxSprite
 
 	/*
 	**	these are used so each note gets their own splash
-	**	but if that splash already exists, then it gets
-	**	the same sprite, so there are not
+	**	but if that splash already exists, then it spawns
+	**	the same splash, so there are not
 	** 	8204+ splashes created each song
 	*/
 	public static var existentModifiers:Array<String> = [];

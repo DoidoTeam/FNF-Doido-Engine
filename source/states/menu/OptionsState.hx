@@ -6,6 +6,8 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 import data.GameData.MusicBeatState;
 import gameObjects.menu.AlphabetMenu;
 import gameObjects.menu.options.*;
@@ -47,9 +49,16 @@ class OptionsState extends MusicBeatState
 		],
 	];
 
+	public static var bgColors:Map<String, FlxColor> = [
+		"main" 		=> 0xFFcf68f7,
+		"gameplay"	=> 0xFF83e6aa,
+		"appearence"=> 0xFFf58ea9,
+		"controls"  => 0xFF8295f5,
+	];
+
 	public static var curCat:String = "main";
 
-	var curSelected:Int = 0;
+	static var curSelected:Int = 0;
 	static var storedSelected:Map<String, Int> = [];
 
 	var grpTexts:FlxTypedGroup<AlphabetMenu>;
@@ -86,10 +95,21 @@ class OptionsState extends MusicBeatState
 
 	public function reloadCat(curCat:String = "main")
 	{
+		storedSelected.set(OptionsState.curCat, curSelected);
+
 		OptionsState.curCat = curCat;
 		grpTexts.clear();
 		grpAttachs.clear();
-		curSelected = 0;
+
+		if(storedSelected.exists(curCat))
+			curSelected = storedSelected.get(curCat);
+		else
+			curSelected = 0;
+
+		if(bgColors.exists(curCat))
+			bg.color = bgColors.get(curCat);
+		else
+			bg.color = bgColors.get("main");
 
 		if(curCat == "main")
 		{
@@ -257,29 +277,40 @@ class OptionsState extends MusicBeatState
 
 		updateAttachPos();
 
-		if(controls.justPressed("BACK"))
+		if(Controls.justPressed("BACK"))
 		{
 			if(curCat == "main")
+			{
+				storedSelected.set("main", curSelected);
 				Main.switchState(backTarget);//new states.MenuState();
+			}
 			else
 				reloadCat("main");
 		}
 
-		if(controls.justPressed("UI_UP"))
+		if(Controls.justPressed("UI_UP"))
 			changeSelection(-1);
-		if(controls.justPressed("UI_DOWN"))
+		if(Controls.justPressed("UI_DOWN"))
 			changeSelection(1);
 
-		if(controls.justPressed("ACCEPT"))
+		if(Controls.justPressed("ACCEPT"))
 		{
 			if(curCat == "main")
 			{
+				storedSelected.set("main", curSelected);
 				var daOption:String = grpTexts.members[curSelected].text;
-				switch(daOption)
+				switch(daOption.toLowerCase())
 				{
 					default:
 						if(optionShit.exists(daOption))
 							reloadCat(daOption);
+
+					case "controls":
+						new FlxTimer().start(0.1, function(tmr:FlxTimer)
+						{
+							Main.skipStuff();
+							Main.switchState(new ControlsState());
+						});
 				}
 			}
 			else
@@ -296,27 +327,27 @@ class OptionsState extends MusicBeatState
 			}
 		}
 		
-		if(controls.pressed("UI_LEFT") || controls.pressed("UI_RIGHT"))
+		if(Controls.pressed("UI_LEFT") || Controls.pressed("UI_RIGHT"))
 		{
 			var curAttach = grpAttachs.members[curSelected];
 			if(Std.isOfType(curAttach, OptionSelector))
 			{
 				var selector = cast(curAttach, OptionSelector);
 
-				if(controls.justPressed("UI_LEFT") || controls.justPressed("UI_RIGHT"))
+				if(Controls.justPressed("UI_LEFT") || Controls.justPressed("UI_RIGHT"))
 				{
 					selectorTimer = -0.5;
 
-					if(controls.justPressed("UI_LEFT"))
+					if(Controls.justPressed("UI_LEFT"))
 						selector.updateValue(-1);
 					else
 						selector.updateValue(1);
 				}
 
-				if(controls.pressed("UI_LEFT"))
+				if(Controls.pressed("UI_LEFT"))
 					selector.arrowL.animation.play("push");
 
-				if(controls.pressed("UI_RIGHT"))
+				if(Controls.pressed("UI_RIGHT"))
 					selector.arrowR.animation.play("push");
 
 				if(selectorTimer != Math.NEGATIVE_INFINITY && !Std.isOfType(selector.bounds[0], String))
@@ -325,15 +356,15 @@ class OptionsState extends MusicBeatState
 					if(selectorTimer >= 0.02)
 					{
 						selectorTimer = 0;
-						if(controls.pressed("UI_LEFT"))
+						if(Controls.pressed("UI_LEFT"))
 							selector.updateValue(-1);
-						if(controls.pressed("UI_RIGHT"))
+						if(Controls.pressed("UI_RIGHT"))
 							selector.updateValue(1);
 					}
 				}
 			}
 		}
-		if(controls.released("UI_LEFT") || controls.released("UI_RIGHT"))
+		if(Controls.released("UI_LEFT") || Controls.released("UI_RIGHT"))
 		{
 			selectorTimer = Math.NEGATIVE_INFINITY;
 			for(attach in grpAttachs.members)
@@ -341,10 +372,10 @@ class OptionsState extends MusicBeatState
 				if(Std.isOfType(attach, OptionSelector))
 				{
 					var selector = cast(attach, OptionSelector);
-					if(controls.released("UI_LEFT"))
+					if(Controls.released("UI_LEFT"))
 						selector.arrowL.animation.play("idle");
 
-					if(controls.released("UI_RIGHT"))
+					if(Controls.released("UI_RIGHT"))
 						selector.arrowR.animation.play("idle");
 				}
 			}

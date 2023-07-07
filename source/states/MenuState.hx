@@ -61,9 +61,9 @@ class MenuState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if(controls.justPressed("UI_UP"))
+		if(Controls.justPressed("UI_UP"))
 			changeSelection(-1);
-		if(controls.justPressed("UI_DOWN"))
+		if(Controls.justPressed("UI_DOWN"))
 			changeSelection(1);
 
 		if(FlxG.keys.justPressed.O)
@@ -71,7 +71,7 @@ class MenuState extends MusicBeatState
 			Main.switchState(new states.menu.OptionsState());
 		}
 
-		if(controls.justPressed("ACCEPT"))
+		if(Controls.justPressed("ACCEPT"))
 		{
 			PlayState.SONG = SongData.loadFromJson(optionShit[curSelected]);
 			Main.switchState(new PlayState());

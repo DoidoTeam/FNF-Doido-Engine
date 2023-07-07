@@ -59,7 +59,7 @@ class SaveData
 		],
 	];
 
-	public static var keyControls:Map<String, Array<FlxKey>> = [
+	/*public static var keyControls:Map<String, Array<FlxKey>> = [
 		'LEFT' 		=> 	[A, FlxKey.LEFT],
 		'DOWN' 		=> 	[S, FlxKey.DOWN],
 		'UP' 		=>	[W, FlxKey.UP],
@@ -74,7 +74,7 @@ class SaveData
 		'BACK' 		=>	[X,				FlxKey.BACKSPACE,	FlxKey.ESCAPE],
 		'PAUSE' 	=> 	[P,				FlxKey.ENTER,		FlxKey.ESCAPE],
 		'RESET' 	=> 	[R, 			FlxKey.NONE],
-	];
+	];*/
 	
 	public static var saveFile:FlxSave;
 	public static function init()
@@ -84,19 +84,7 @@ class SaveData
 		FlxG.save.bind("save-data", "Doido-Engine-FNF"); // these are for other stuff
 		load();
 
-		var diogoPlaying:Bool = true;
-		if(diogoPlaying)
-		{
-			keyControls.get('LEFT')[0] = FlxKey.Z;
-			keyControls.get('DOWN')[0] = FlxKey.X;
-			keyControls.get('UP')[0] 	= FlxKey.NUMPADTWO;
-			keyControls.get('RIGHT')[0]= FlxKey.NUMPADTHREE;
-
-			keyControls.get('LEFT')[2] = FlxKey.D;
-			keyControls.get('DOWN')[2] = FlxKey.F;
-			keyControls.get('UP')[2] 	= FlxKey.J;
-			keyControls.get('RIGHT')[2]= FlxKey.K;
-		}
+		Controls.load();
 	}
 	
 	public static function load()
@@ -108,20 +96,14 @@ class SaveData
 			
 			saveFile.data.settings = data;
 		}
-		if(saveFile.data.keyControls == null || Lambda.count(keyControls) != Lambda.count(saveFile.data.keyControls))
-		{
-			saveFile.data.keyControls = keyControls;
-		}
 		
 		data 		= saveFile.data.settings;
-		keyControls = saveFile.data.keyControls;
 		save();
 	}
 	
 	public static function save()
 	{
 		saveFile.data.settings = data;
-		saveFile.data.keyControls = keyControls;
 		saveFile.flush();
 		update();
 	}
