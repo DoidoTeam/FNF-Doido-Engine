@@ -933,6 +933,8 @@ class PlayState extends MusicBeatState
 
 	public function startGameOver()
 	{
+		if(isDead) return;
+
 		isDead = true;
 		activateTimers(false);
 		persistentDraw = false;
