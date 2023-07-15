@@ -32,7 +32,7 @@ class SplashNote extends FlxSprite
 
 	public function reloadSplash(note:Note)
 	{
-		var direction:String = NoteUtil.getDirection(note.noteData);
+		var direction:String = CoolUtil.getDirection(note.noteData);
 
 		assetModifier = note.assetModifier;
 		noteType = note.noteType;

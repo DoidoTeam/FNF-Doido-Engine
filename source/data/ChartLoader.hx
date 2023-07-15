@@ -91,8 +91,13 @@ class ChartLoader
 			}
 		}*/
 
-		unspawnNotes.sort(NoteUtil.sortByShit);
+		unspawnNotes.sort(CoolUtil.sortByShit);
 
 		return unspawnNotes;
+	}
+
+	public static function getChartForEditor()
+	{
+		
 	}
 }

@@ -5,12 +5,11 @@ import flixel.FlxBasic;
 import flixel.FlxState;
 import flixel.FlxSubState;
 import flixel.FlxSprite;
+import flixel.addons.ui.FlxUIState;
 import data.Conductor.BPMChangeEvent;
 
-class MusicBeatState extends FlxState
+class MusicBeatState extends FlxUIState
 {
-	//private var controls:Controls = new Controls();
-
 	override function create()
 	{
 		super.create();
@@ -66,24 +65,23 @@ class MusicBeatState extends FlxState
 
 		if(curStep % 4 == 0)
 			beatHit();
+
+		for(item in members)
+		{
+			if (item._stepHit != null)
+				item._stepHit(curStep);
+		}
 	}
 
 	private function beatHit()
 	{
 		// finally you're useful for something
 		curBeat = Math.floor(curStep / 4);
-		for(change in Conductor.bpmChangeMap)
-		{
-			if(curStep >= change.stepTime && Conductor.bpm != change.bpm)
-				Conductor.setBPM(change.bpm);
-		}
 	}
 }
 
 class MusicBeatSubState extends FlxSubState
 {
-	//private var controls:Controls = new Controls();
-
 	override function create()
 	{
 		super.create();

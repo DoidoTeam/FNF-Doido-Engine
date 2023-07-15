@@ -88,7 +88,7 @@ class Strumline extends FlxGroup
 			case "OFF": return;
 		}
 
-		var pref:String = '-' + NoteUtil.getDirection(note.noteData) + '-' + note.strumlineID;
+		var pref:String = '-' + CoolUtil.getDirection(note.noteData) + '-' + note.strumlineID;
 
 		if(!SplashNote.existentModifiers.contains(note.assetModifier + pref)
 		|| !SplashNote.existentTypes.contains(note.noteType + pref))
@@ -130,7 +130,7 @@ class Strumline extends FlxGroup
 			strum.y = (!downscroll ? 25 : FlxG.height - strum.height - 25);
 
 			strum.x = x;
-			strum.x += NoteUtil.noteWidth() * strum.strumData;
+			strum.x += CoolUtil.noteWidth() * strum.strumData;
 		}
 
 		var lastStrum = strumGroup.members[strumGroup.members.length - 1];

@@ -68,17 +68,24 @@ class OptionsState extends MusicBeatState
 	var bg:FlxSprite;
 
 	// makes you able to go to the options and go back to the state you were before
-	var backTarget:FlxState;
-	public function new(?backTarget:FlxState)
+	static var backTarget:FlxState;
+	public function new(?newBackTarget:FlxState)
 	{
 		super();
-		if(backTarget == null) backTarget = new states.MenuState();
-		this.backTarget = backTarget;
+		if(newBackTarget == null)
+		{
+			newBackTarget = new states.MenuState();
+			if(backTarget == null)
+				backTarget = newBackTarget;
+		}
+		else
+			backTarget = newBackTarget;
 	}
 
 	override function create()
 	{
 		super.create();
+		CoolUtil.playMusic("lilBitBack");
 		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
 		bg.scale.set(1.2,1.2); bg.updateHitbox();
 		bg.screenCenter();
@@ -110,6 +117,8 @@ class OptionsState extends MusicBeatState
 			bg.color = bgColors.get(curCat);
 		else
 			bg.color = bgColors.get("main");
+
+		FlxG.sound.play(Paths.sound("menu/scrollMenu"));
 
 		if(curCat == "main")
 		{
@@ -241,6 +250,9 @@ class OptionsState extends MusicBeatState
 			}
 		}
 
+		if(change != 0)
+			FlxG.sound.play(Paths.sound("menu/scrollMenu"));
+
 		// uhhh
 		selectorTimer = Math.NEGATIVE_INFINITY;
 	}
@@ -282,7 +294,9 @@ class OptionsState extends MusicBeatState
 			if(curCat == "main")
 			{
 				storedSelected.set("main", curSelected);
-				Main.switchState(backTarget);//new states.MenuState();
+				FlxG.sound.play(Paths.sound("menu/cancelMenu"));
+				Main.switchState(backTarget);
+				backTarget = null;
 			}
 			else
 				reloadCat("main");
@@ -323,6 +337,8 @@ class OptionsState extends MusicBeatState
 
 					SaveData.data.set(optionShit[curCat][curSelected], checkmark.value);
 					SaveData.save();
+
+					FlxG.sound.play(Paths.sound("menu/scrollMenu"));
 				}
 			}
 		}
@@ -337,6 +353,7 @@ class OptionsState extends MusicBeatState
 				if(Controls.justPressed("UI_LEFT") || Controls.justPressed("UI_RIGHT"))
 				{
 					selectorTimer = -0.5;
+					FlxG.sound.play(Paths.sound("menu/scrollMenu"));
 
 					if(Controls.justPressed("UI_LEFT"))
 						selector.updateValue(-1);

@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
+import data.Highscore;
 
 enum SettingType
 {
@@ -85,6 +86,7 @@ class SaveData
 		load();
 
 		Controls.load();
+		Highscore.load();
 	}
 	
 	public static function load()
@@ -97,7 +99,7 @@ class SaveData
 			saveFile.data.settings = data;
 		}
 		
-		data 		= saveFile.data.settings;
+		data = saveFile.data.settings;
 		save();
 	}
 	

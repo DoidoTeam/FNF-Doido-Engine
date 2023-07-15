@@ -3,7 +3,7 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="FNF: Doido Engine 3.0" file="Funkin Doido" main="Main" version="0.0.1" company="DiogoTV" />
+	<app title="FNF: Doido Engine 3.0" file="Funkin Doido" main="Main" version="3.0.0" company="DiogoTV" />
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
@@ -24,27 +24,27 @@
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" />
 
 	<!--Mobile-specific-->
-	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" />
+	<window if="mobile" orientation="landscape" fullscreen="true" resizable="false" />
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<set name="BUILD_DIR" value="export" />
+	<set name="BUILD_DIR" value="export/debug" if="debug" />
+	<set name="BUILD_DIR" value="export/release" unless="debug" />
+
 	<source path="source" />
 	<assets path="assets" />
+
+	<!-- _____________________________ Custom Defines ___________________________ -->
+
+	<define name="DISCORD_RPC" if="desktop" unless="web || neko" />
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
-
-	<define name="DISCORD_RPC" if="desktop" unless="web || neko" />
-
+	<haxelib name="flixel-addons" />
+	<haxelib name="flixel-ui" />
 	<haxelib name="discord_rpc" if="DISCORD_RPC"/>
-	
-	<!--In case you want to use the addons package-->
-	<!--<haxelib name="flixel-addons" />-->
-
-	<!--In case you want to use the ui package-->
-	<!--<haxelib name="flixel-ui" />-->
 
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->
@@ -79,9 +79,21 @@
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
-	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
+	<!--<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />-->
+
+	<!-- Always enable Null Object Reference check for crash dialog -->
+	<haxedef name="HXCPP_CHECK_POINTER" if="release" />
+	<haxedef name="HXCPP_STACK_LINE" 	if="release" />
 
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
+	<icon path="art/icon/icon16.png" 	size='16'  />
+	<icon path="art/icon/icon32.png" 	size='32'  />
+	<icon path="art/icon/icon64.png" 	size='64'  />
+	<icon path="art/icon/icon128.png" 	size='128' />
+	<icon path="art/icon/icon256.png" 	size='256' />
+	<icon path="art/icon/icon512.png" 	size='512' />
+	<icon path="art/icon/iconOG.png" />
+
 </project>

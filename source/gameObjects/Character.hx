@@ -21,6 +21,10 @@ class Character extends FlxSprite
 	public var singAnims:Array<String> = [];
 	public var missAnims:Array<String> = [];
 
+	// warning, only uses this
+	// if the current character doesnt have game over anims
+	public var deathChar:String = "bf";
+
 	public var globalOffset:FlxPoint = new FlxPoint();
 	public var cameraOffset:FlxPoint = new FlxPoint();
 	private var scaleOffset:FlxPoint = new FlxPoint();
@@ -32,6 +36,11 @@ class Character extends FlxSprite
 
 		holdLength = 1;
 		addSingPrefix(); // none
+
+		flipX = false;
+		scale.set(1,1);
+		antialiasing = FlxSprite.defaultAntialiasing;
+		deathChar = "bf";
 
 		var storedPos:Array<Float> = [x, y];
 		globalOffset.set();
@@ -77,6 +86,29 @@ class Character extends FlxSprite
 				animation.addByPrefix('singDOWNmiss', 'BF DOWN MISS', 24, false);
 
 				playAnim('idle');
+
+				flipX = true;
+				antialiasing = false;
+				scale.set(6,6);
+
+				deathChar = "bf-pixel-dead";
+				if(isPlayer)
+					Paths.preloadGraphic("characters/bf-pixel/bfPixelsDEAD");
+
+			case "bf-pixel-dead":
+				frames = Paths.getSparrowAtlas("characters/bf-pixel/bfPixelsDEAD");
+
+				animation.addByPrefix('singUP', "BF Dies pixel", 24, false);
+				animation.addByPrefix('firstDeath', "BF Dies pixel", 24, false);
+				animation.addByPrefix('deathLoop', "Retry Loop", 24, true);
+				animation.addByPrefix('deathConfirm', "RETRY CONFIRM", 24, false);
+				animation.play('firstDeath');
+
+				addOffset('firstDeath');
+				addOffset('deathLoop', -6.16);
+				addOffset('deathConfirm', -6.16);
+				
+				playAnim("firstDeath");
 
 				flipX = true;
 				antialiasing = false;

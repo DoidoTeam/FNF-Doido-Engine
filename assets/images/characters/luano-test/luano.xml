@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="luano.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="luano idle0000" x="3" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0001" x="3" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0002" x="3" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0003" x="723" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0004" x="723" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0005" x="723" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0006" x="1443" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0007" x="1443" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0008" x="1443" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0009" x="2163" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0010" x="2163" y="3" width="717" height="440"/>
+	<SubTexture name="luano idle0011" x="2163" y="3" width="717" height="440"/>
+	<SubTexture name="luano punch0000" x="2883" y="3" width="717" height="440"/>
+	<SubTexture name="luano punch0001" x="2883" y="3" width="717" height="440"/>
+	<SubTexture name="luano punch0002" x="3603" y="3" width="717" height="440"/>
+	<SubTexture name="luano punch0003" x="3603" y="3" width="717" height="440"/>
+	<SubTexture name="luano punch0004" x="4323" y="3" width="717" height="440"/>
+	<SubTexture name="luano punch0005" x="4323" y="3" width="717" height="440"/>
+	<SubTexture name="luano punch0006" x="3" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0007" x="3" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0008" x="723" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0009" x="723" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0010" x="1443" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0011" x="1443" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0012" x="2163" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0013" x="2163" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0014" x="2883" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0015" x="3603" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0016" x="3603" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0017" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0018" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0019" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0020" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0021" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0022" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0023" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0024" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0025" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0026" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0027" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0028" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0029" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0030" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0031" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0032" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0033" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0034" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano punch0035" x="4323" y="446" width="717" height="440"/>
+	<SubTexture name="luano walk left0000" x="3" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0001" x="3" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0002" x="723" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0003" x="723" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0004" x="1443" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0005" x="1443" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0006" x="2163" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0007" x="2163" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0008" x="2883" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0009" x="2883" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0010" x="3603" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0011" x="3603" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0012" x="4323" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0013" x="4323" y="889" width="717" height="440"/>
+	<SubTexture name="luano walk left0014" x="3" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk left0015" x="3" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0000" x="723" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0001" x="723" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0002" x="1443" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0003" x="1443" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0004" x="2163" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0005" x="2163" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0006" x="2883" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0007" x="2883" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0008" x="3603" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0009" x="3603" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0010" x="4323" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0011" x="4323" y="1332" width="717" height="440"/>
+	<SubTexture name="luano walk right0012" x="3" y="1775" width="717" height="440"/>
+	<SubTexture name="luano walk right0013" x="3" y="1775" width="717" height="440"/>
+	<SubTexture name="luano walk right0014" x="723" y="1775" width="717" height="440"/>
+	<SubTexture name="luano walk right0015" x="723" y="1775" width="717" height="440"/>
+</TextureAtlas>

@@ -16,14 +16,15 @@ using StringTools;
 
 class MenuState extends MusicBeatState
 {
-	var optionShit:Array<String> = ["disruption", "ugh", "collision", "lunar-odyssey"];
-	static var curSelected:Int = 1;
+	var optionShit:Array<String> = ["freeplay", "options"];
+	static var curSelected:Int = 0;
 
 	var optionGroup:FlxTypedGroup<Alphabet>;
 
 	override function create()
 	{
 		super.create();
+		CoolUtil.playMusic("freakyMenu");
 
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Song Selection", null);
@@ -46,15 +47,6 @@ class MenuState extends MusicBeatState
 			optionGroup.add(item);
 		}
 
-		var warn = new Alphabet(0,0, "WARNING\\scores wont save for now", true);
-		warn.color = 0xFFFF0000;
-		warn.align = CENTER;
-		warn.scale.set(0.45,0.45);
-		warn.updateHitbox();
-		warn.x = FlxG.width / 2;
-		warn.y = FlxG.height - warn.height - 8;
-		add(warn);
-
 		changeSelection();
 	}
 
@@ -66,15 +58,16 @@ class MenuState extends MusicBeatState
 		if(Controls.justPressed("UI_DOWN"))
 			changeSelection(1);
 
-		if(FlxG.keys.justPressed.O)
-		{
-			Main.switchState(new states.menu.OptionsState());
-		}
-
 		if(Controls.justPressed("ACCEPT"))
 		{
-			PlayState.SONG = SongData.loadFromJson(optionShit[curSelected]);
-			Main.switchState(new PlayState());
+			switch(optionShit[curSelected])
+			{
+				case "freeplay":
+					Main.switchState(new states.menu.FreeplayState());
+
+				case "options":
+					Main.switchState(new states.menu.OptionsState());
+			}
 		}
 	}
 

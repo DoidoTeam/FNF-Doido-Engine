@@ -25,7 +25,7 @@ class Note extends FlxSprite
 		this.assetModifier = assetModifier;
 		noteSize = 1.0;
 
-		var direction:String = NoteUtil.getDirection(noteData);
+		var direction:String = CoolUtil.getDirection(noteData);
 
 		switch(assetModifier)
 		{
@@ -92,6 +92,7 @@ class Note extends FlxSprite
 
 	public var isHold:Bool = false;
 	public var isHoldEnd:Bool = false;
+	public var isPressing:Bool = false;
 	public var holdLength:Float = 0;
 	public var holdHitLength:Float = 0;
 

@@ -122,5 +122,8 @@ class PauseSubState extends MusicBeatSubState
 			if(item.ID == curSelected)
 				item.alpha = 1;
 		}
+
+		if(change != 0)
+			FlxG.sound.play(Paths.sound("menu/scrollMenu"));
 	}
 }

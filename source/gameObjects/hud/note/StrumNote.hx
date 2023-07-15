@@ -28,7 +28,7 @@ class StrumNote extends FlxSprite
 		this.assetModifier = assetModifier;
 		strumSize = 1.0;
 
-		direction = NoteUtil.getDirection(strumData);
+		direction = CoolUtil.getDirection(strumData);
 
 		switch(assetModifier)
 		{

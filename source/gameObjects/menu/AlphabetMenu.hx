@@ -3,6 +3,7 @@ package gameObjects.menu;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
+import gameObjects.hud.HealthIcon;
 
 /*
 **	instead of it being all mashed into one place
@@ -24,6 +25,9 @@ class AlphabetMenu extends Alphabet
 	public var spaceY:Float = 200;
 
 	public var posUpdate:Bool = true;
+
+	// freeplay
+	public var icon:HealthIcon = null;
 
 	override function update(elapsed:Float)
 	{

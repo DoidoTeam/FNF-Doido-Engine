@@ -39,19 +39,29 @@ class Timings
 		updateAccuracy();
 	}
 
+	public static function diffToRating(noteDiff:Float):String
+		return diffFormat(noteDiff)[0];
+
 	public static function diffToJudge(noteDiff:Float):Float
+		return diffFormat(noteDiff)[1];
+
+	public static function diffFormat(noteDiff:Float):Array<Dynamic>
 	{
 		noteDiff = Math.abs(noteDiff);
 
+		var daRating:String = "miss";
 		var daJudge:Float = timingsMap.get("miss")[1];
 
 		for(key => data in timingsMap)
 		{
 			if(noteDiff < data[0] && daJudge < data[1])
+			{
 				daJudge = data[1];
+				daRating = key;
+			}
 		}
 
-		return daJudge;
+		return [daRating, daJudge];
 	}
 
 	public static function updateAccuracy()
