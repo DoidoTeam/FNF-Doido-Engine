@@ -19,8 +19,9 @@ using StringTools;
 class FreeplayState extends MusicBeatState
 {
 	var songList:Array<Array<Dynamic>> = [
-		["disruption", 		"3d-bambi"],
+		["hecker",			"hecker"],
 		["ugh",				"tankman"],
+		["disruption", 		"3d-bambi"],
 		["collision",		"gemamugen"],
 		["lunar-odyssey",	"luano-day"],
 	];

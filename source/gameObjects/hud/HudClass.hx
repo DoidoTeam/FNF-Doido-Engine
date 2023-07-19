@@ -47,7 +47,7 @@ class HudClass extends FlxGroup
 		add(iconBf);
 
 		infoTxt = new FlxText(0, 0, 0, "nothing");
-		infoTxt.setFormat(Main.gFont, 18, 0xFFFFFFFF);
+		infoTxt.setFormat(Main.gFont, 18, 0xFFFFFFFF, CENTER);
 		infoTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 		add(infoTxt);
 

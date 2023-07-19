@@ -203,9 +203,20 @@ class FlxState extends FlxGroup
 		{
 			update(elapsed);
 
-			for(item in members)
-			if (item._update != null)
-				item._update(elapsed);
+			function loopGroup(group:FlxGroup):Void
+			{
+				if(group == null) return;
+				for(item in group.members)
+				{
+					if(item == null) continue;
+					if(Std.isOfType(item, FlxGroup))
+						loopGroup(cast item);
+
+					if (item._update != null)
+						item._update(elapsed);
+				}
+			}
+			loopGroup(this);
 		}
 
 		if (_requestSubStateReset)

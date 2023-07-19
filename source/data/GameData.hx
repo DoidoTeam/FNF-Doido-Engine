@@ -6,6 +6,7 @@ import flixel.FlxState;
 import flixel.FlxSubState;
 import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIState;
+import flixel.group.FlxGroup;
 import data.Conductor.BPMChangeEvent;
 
 class MusicBeatState extends FlxUIState
@@ -66,11 +67,20 @@ class MusicBeatState extends FlxUIState
 		if(curStep % 4 == 0)
 			beatHit();
 
-		for(item in members)
+		function loopGroup(group:FlxGroup):Void
 		{
-			if (item._stepHit != null)
-				item._stepHit(curStep);
+			if(group == null) return;
+			for(item in group.members)
+			{
+				if(item == null) continue;
+				if(Std.isOfType(item, FlxGroup))
+					loopGroup(cast item);
+	
+				if (item._stepHit != null)
+					item._stepHit(curStep);
+			}
 		}
+		loopGroup(this);
 	}
 
 	private function beatHit()
