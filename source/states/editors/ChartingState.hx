@@ -183,14 +183,16 @@ class ChartingState extends MusicBeatState
 		for(grid in sectionGrids.members)
 		{
 			if(shouldGridReload)
+			{
 				grid.reloadGrid(
 					getSection(curSection + (grid.ID - 1)).lengthInSteps,
 					GRID_ZOOM,
 					grid.ID
 				);
 
-			if(grid.ID == 1)
-				mainGrid = grid.grid;
+				if(grid.ID == 1)
+					mainGrid = grid.grid;
+			}
 		}
 	}
 
