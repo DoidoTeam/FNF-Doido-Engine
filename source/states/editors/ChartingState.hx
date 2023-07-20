@@ -765,7 +765,7 @@ class ChartingState extends MusicBeatState
 						{
 							var numTxt:String = Std.string(allNoteTypes.indexOf(swagNote.noteType));
 							if(!allNoteTypes.contains(swagNote.noteType))
-								numTxt = "??";
+								numTxt = "?";
 
 							var typeTxt = new FlxText(0,0,0,numTxt,16);
 							typeTxt.setFormat(Main.gFont, Math.floor(GRID_SIZE / 1.3), 0xFFFFFFFF, CENTER);
