@@ -106,6 +106,9 @@ class Paths
 	
 	public static function font(key:String):String
 		return getPath('fonts/$key');
+
+	public static function text(key:String):String
+		return Assets.getText(getPath('$key.txt')).trim();
 	
 	public static function getSparrowAtlas(key:String)
 		return FlxAtlasFrames.fromSparrow(getGraphic(key), 'assets/images/$key.xml');
