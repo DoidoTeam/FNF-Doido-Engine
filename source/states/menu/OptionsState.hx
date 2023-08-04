@@ -19,7 +19,7 @@ class OptionsState extends MusicBeatState
 	[
 		"main" => [
 			"gameplay",
-			"appearence",
+			"appearance",
 			"controls",
 		],
 		"gameplay" => [
@@ -42,7 +42,7 @@ class OptionsState extends MusicBeatState
 			"Framerate Cap",
 			"Framerate Cap",*/
 		],
-		"appearence" => [
+		"appearance" => [
 			"Antialiasing",
 			"Note Splashes",
 			"Ratings on HUD",

@@ -22,6 +22,8 @@ class HudClass extends FlxGroup
 	public var iconBf:HealthIcon;
 	public var iconDad:HealthIcon;
 
+	public var invertedIcons:Bool = false;
+
 	public function new()
 	{
 		super();
@@ -40,11 +42,15 @@ class HudClass extends FlxGroup
 
 		iconDad = new HealthIcon();
 		iconDad.setIcon(PlayState.SONG.player2, false);
+		iconDad.ID = 0;
 		add(iconDad);
 
 		iconBf = new HealthIcon();
 		iconBf.setIcon(PlayState.SONG.player1, true);
+		iconBf.ID = 1;
 		add(iconBf);
+
+		changeIcon(0, iconDad.curIcon);
 
 		infoTxt = new FlxText(0, 0, 0, "nothing");
 		infoTxt.setFormat(Main.gFont, 18, 0xFFFFFFFF, CENTER);
@@ -90,7 +96,11 @@ class HudClass extends FlxGroup
 
 	public function updateIconPos()
 	{
-		var barX:Float = (healthBarBG.x + (healthBarBG.width * (2 - PlayState.health) / 2));
+		var formatHealth = (2 - PlayState.health);
+		if(invertedIcons)
+			formatHealth = PlayState.health;
+
+		var barX:Float = (healthBarBG.x + (healthBarBG.width * (formatHealth) / 2));
 		var barY:Float = (healthBarBG.y + healthBarBG.height / 2);
 
 		for(icon in [iconDad, iconBf])
@@ -104,16 +114,43 @@ class HudClass extends FlxGroup
 			icon.y = barY - icon.height / 2 - 12;
 			icon.x = barX;
 
-			if(icon == iconDad)
+			var leftIcon = iconDad;
+			if(invertedIcons)
+				leftIcon = iconBf;
+
+			if(icon == leftIcon)
 				icon.x -= icon.width - 24;
 			else
 				icon.x -= 24;
 
-			if(icon == iconDad)
+			if(!icon.isPlayer)
 				icon.setAnim(2 - PlayState.health);
 			else
 				icon.setAnim(PlayState.health);
+
+			if(!invertedIcons)
+				icon.flipX = icon.isPlayer;
+			else
+				icon.flipX = !icon.isPlayer;
 		}
+
+		healthBar.flipX = invertedIcons;
+	}
+
+	public function changeIcon(iconID:Int = 0, newIcon:String = "face")
+	{
+		for(icon in [iconDad, iconBf])
+		{
+			if(icon.ID == iconID)
+				icon.setIcon(newIcon, icon.isPlayer);
+		}
+		updateIconPos();
+
+		healthBar.createFilledBar(
+			HealthIcon.getColor(iconDad.curIcon),
+			HealthIcon.getColor(iconBf.curIcon)
+		);
+		healthBar.updateBar();
 	}
 
 	public function beatHit(curBeat:Int = 0)

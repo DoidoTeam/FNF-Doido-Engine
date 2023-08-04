@@ -18,8 +18,12 @@ class Character extends FlxSprite
 	public var holdTimer:Float = 0;
 	public var holdLength:Float = 1;
 
+	public var idleAnims:Array<String> = [];
 	public var singAnims:Array<String> = [];
 	public var missAnims:Array<String> = [];
+
+	public var quickDancer:Bool = false;
+	public var specialAnim:Bool = false;
 
 	// warning, only uses this
 	// if the current character doesnt have game over anims
@@ -29,13 +33,15 @@ class Character extends FlxSprite
 	public var cameraOffset:FlxPoint = new FlxPoint();
 	private var scaleOffset:FlxPoint = new FlxPoint();
 
-	public function reloadChar(curChar:String = "bf", isPlayer:Bool = false):Character
+	public function reloadChar(curChar:String = "bf"):Character
 	{
 		this.curChar = curChar;
-		this.isPlayer = isPlayer;
 
 		holdLength = 1;
+		idleAnims = ["idle"];
 		addSingPrefix(); // none
+
+		quickDancer = false;
 
 		flipX = false;
 		scale.set(1,1);
@@ -162,8 +168,59 @@ class Character extends FlxSprite
 					singAnims = ["firstDeath", "firstDeath", "firstDeath", "firstDeath"];
 				}*/
 
+			case "gf":
+				// GIRLFRIEND CODE
+				frames = Paths.getSparrowAtlas('characters/gf/GF_assets');
+				animation.addByPrefix('cheer', 'GF Cheer', 24, false);
+				animation.addByPrefix('singLEFT', 'GF left note', 24, false);
+				animation.addByPrefix('singRIGHT', 'GF Right Note', 24, false);
+				animation.addByPrefix('singUP', 'GF Up Note', 24, false);
+				animation.addByPrefix('singDOWN', 'GF Down Note', 24, false);
+				animation.addByIndices('sad', 'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, false);
+				animation.addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
+				animation.addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+				animation.addByIndices('hairBlow', "GF Dancing Beat Hair blowing", [0, 1, 2, 3], "", 24);
+				animation.addByIndices('hairFall', "GF Dancing Beat Hair Landing", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "", 24, false);
+				animation.addByPrefix('scared', 'GF FEAR', 24);
+
+				addOffset('cheer');
+				addOffset('sad', -2, -2);
+				addOffset('danceLeft', 0, -9);
+				addOffset('danceRight', 0, -9);
+
+				addOffset("singUP", 0, 4);
+				addOffset("singRIGHT", 0, -20);
+				addOffset("singLEFT", 0, -19);
+				addOffset("singDOWN", 0, -20);
+				addOffset('hairBlow', 45, -8);
+				addOffset('hairFall', 0, -9);
+
+				addOffset('scared', -2, -17);
+
+				playAnim('danceRight');
+				cameraOffset.x -= 100;
+				idleAnims = ["danceLeft", "danceRight"];
+				quickDancer = true;
+
+			case "dad":
+				// DAD ANIMATION LOADING CODE
+				frames = Paths.getSparrowAtlas("characters/dad/DADDY_DEAREST");
+				animation.addByPrefix('idle', 'Dad idle dance', 24);
+				animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
+				animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24);
+				animation.addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24);
+				animation.addByPrefix('singLEFT', 'Dad Sing Note LEFT', 24);
+
+				addOffset('idle');
+				addOffset("singUP", -6, 50);
+				addOffset("singRIGHT", 0, 27);
+				addOffset("singLEFT", -10, 10);
+				addOffset("singDOWN", 0, -30);
+
+				playAnim('idle');
+
 			default:
-				return reloadChar("bf", isPlayer);
+				return reloadChar(isPlayer ? "bf" : "dad", isPlayer);
 		}
 
 		updateHitbox();
@@ -192,23 +249,20 @@ class Character extends FlxSprite
 		}
 	}
 
-	public var danced:Bool = false;
+	private var curDance:Int = 0;
 
 	public function dance(forced:Bool = false)
 	{
+		if(specialAnim) return;
+
 		switch(curChar)
 		{
 			default:
-				if(animation.exists("danceLeft"))
-				{
-					danced = !danced;
-					if(danced)
-						playAnim("danceLeft");
-					else
-						playAnim("danceRight");
-				}
-				else
-					playAnim("idle");
+				playAnim(idleAnims[curDance]);
+				curDance++;
+
+				if (curDance >= idleAnims.length)
+					curDance = 0;
 		}
 	}
 
@@ -232,12 +286,12 @@ class Character extends FlxSprite
 	{
 		animation.play(animName, forced, reversed, frame);
 
-		if(animOffsets.exists(animName))
+		try
 		{
 			var daOffset = animOffsets.get(animName);
 			offset.set(daOffset[0] * scale.x, daOffset[1] * scale.y);
 		}
-		else
+		catch(e)
 			offset.set(0,0);
 
 		// useful for pixel notes since their offsets are not 0, 0 by default

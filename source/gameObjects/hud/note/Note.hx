@@ -24,8 +24,11 @@ class Note extends FlxSprite
 		this.noteType = noteType;
 		this.assetModifier = assetModifier;
 		noteSize = 1.0;
+		mustMiss = false;
 
 		var direction:String = CoolUtil.getDirection(noteData);
+
+		antialiasing = FlxSprite.defaultAntialiasing;
 
 		switch(assetModifier)
 		{
@@ -57,7 +60,7 @@ class Note extends FlxSprite
 						{
 							case "doido":
 								frames = Paths.getSparrowAtlas("notes/doido/notes");
-								noteSize = 1.0;
+								noteSize = 0.95;
 						}
 
 						var typeName:String = (isHold ? (isHoldEnd ? " hold end" : " hold") : "");
@@ -69,8 +72,26 @@ class Note extends FlxSprite
 				}
 		}
 
+		switch(noteType)
+		{
+			case "bomb":
+				mustMiss = true;
+				if(!isHold)
+				{
+					noteSize = 0.95;
+					frames = Paths.getSparrowAtlas("notes/doido/bomb");
+					animation.addByPrefix('bomb', 'bomb', 0, false);
+					animation.play('bomb');
+				}
+				else
+					color = 0xFF000000;
+		}
+
 		if(isHold)
+		{
 			alpha = 0.8;
+			antialiasing = false;
+		}
 
 		scale.set(noteSize, noteSize);
 		updateHitbox();
@@ -86,6 +107,9 @@ class Note extends FlxSprite
 	public var songTime:Float = 0;
 	public var noteData:Int = 0;
 	public var noteType:String = "default";
+
+	// in case you want to avoid notes this will do
+	public var mustMiss:Bool = false;
 
 	// doesnt actually change the scroll speed, just changes the hold note size
 	public var scrollSpeed:Float = Math.NEGATIVE_INFINITY;

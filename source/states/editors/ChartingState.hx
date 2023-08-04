@@ -57,6 +57,7 @@ class ChartingState extends MusicBeatState
 	var allNoteTypes:Array<String> = [
 		'none',
 		'no animation',
+		'bomb',
 	];
 
 	var selectSquare:FlxSprite;
@@ -196,7 +197,7 @@ class ChartingState extends MusicBeatState
 		}
 	}
 
-	//var songNameInput:FlxUIInputText;
+	var copySectTxt:FlxText;
 	var typingShit:Array<FlxUIInputText> = [];
 
 	function addUIStuff()
@@ -276,7 +277,7 @@ class ChartingState extends MusicBeatState
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
 
-		var characters:Array<String> = ["bf", "bf-pixel", "gemamugen"];
+		var characters = CoolUtil.charList();
 
 		var player1DropDown = new FlxUIDropDownMenu(140, 115, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 		{
@@ -351,19 +352,45 @@ class ChartingState extends MusicBeatState
 		stepperSectionBPM.value = Conductor.bpm;
 		//getSection(curSection).bpm = stepper.value;
 
+		copySectTxt = new FlxText(0,0,0,"");
+
 		var stepperCopy = new FlxUINumericStepper(110, 130, 1, 1, -999, 999, 0);
-		var copyButton = new FlxButton(10, 130, "Copy last section", function()
+		stepperCopy.name = 'section_copy';
+		var copyButton = new FlxButton(10, 130, "Copy last sect", function()
 		{
-			var lastSwag:SwagSection = getSection(curSection - Std.int(stepperCopy.value));
-			for(i in 0...lastSwag.sectionNotes.length)
+			if(Std.int(stepperCopy.value) == 0) return;
+			var daSec:Int = curSection - Std.int(stepperCopy.value);
+			if(daSec < 0) daSec = 0;
+
+			var daNums:Array<Int> = [curSection, daSec];
+			if (daNums[1] < daNums[0])
+				daNums.reverse();
+
+			var copyOffset:Float = 0;
+			var daCrochet:Float = Conductor.calcStep(Conductor.bpm);
+			for(i in daNums[0]...daNums[1])
 			{
-				var cn:Array<Dynamic> = lastSwag.sectionNotes[i];
+				//trace('looped $i');
+				var section = getSection(i);
+				if(section.changeBPM)
+					daCrochet = Conductor.calcStep(section.bpm);
+
+				copyOffset += (section.lengthInSteps * daCrochet);
+			}
+			for(i in 0...getSection(daSec).sectionNotes.length)
+			{
+				var cn:Array<Dynamic> = getSection(daSec).sectionNotes[i];
 				var note:Array<Dynamic> = [cn[0], cn[1], cn[2], cn[3]];
-				note[0] += (conductorOffset); // goes to the current section
+
+				note[0] += copyOffset * ((stepperCopy.value > 0) ? 1 : -1);
+
 				getSection(curSection).sectionNotes.push(note);
 			}
 			reloadSection(curSection, false);
 		});
+
+		copySectTxt.text = 'Section: ' + (curSection - 1);
+		copySectTxt.setPosition(stepperCopy.x + stepperCopy.width + 8, stepperCopy.y);
 
 		var clearSectionButton = new FlxButton(10, 150, "Clear Section", function() {
 			getSection(curSection).sectionNotes = [];
@@ -383,6 +410,7 @@ class ChartingState extends MusicBeatState
 
 		tabSect.add(stepperLength);
 		tabSect.add(stepperSectionBPM);
+		tabSect.add(copySectTxt);
 		tabSect.add(stepperCopy);
 		tabSect.add(copyButton);
 		tabSect.add(check_mustHitSection);
@@ -452,7 +480,7 @@ class ChartingState extends MusicBeatState
 
 		var stepperZoom = new FlxUINumericStepper(10, 20, 1, 1, 1, 4, 0);
 		stepperZoom.name = 'grid_zoom';
-		stepperZoom.value = 1;
+		stepperZoom.value = GRID_ZOOM;
 
 		var allSnaps:Array<Int> = [0, 4, 8, 12, 16, 20, 24, 32, 48, 64, 96, 192];
 		var formatSnaps:Array<String> = [];
@@ -537,6 +565,8 @@ class ChartingState extends MusicBeatState
 						case 'section_length':
 							getSection(curSection).lengthInSteps = Math.floor(stepper.value);
 							reloadSection(curSection, false);
+						case 'section_copy':
+							copySectTxt.text = 'Section: ' + (curSection - Math.floor(stepper.value));
 						case 'grid_zoom':
 							GRID_ZOOM = (stepper.value);
 							reloadSection(curSection, false);
@@ -746,8 +776,10 @@ class ChartingState extends MusicBeatState
 						holdNote.reloadNote(daStrumTime, daNoteData, daNoteType, PlayState.assetModifier);
 						renderedNotes.add(holdNote);
 
-						holdNote.setGraphicSize(Math.floor(GRID_SIZE / 4),
-							Math.floor(FlxMath.remapToRange(noteSustain, 0, Conductor.stepCrochet, 0, GRID_SIZE * GRID_ZOOM)));
+						var formatHoldSize = FlxMath.remapToRange(noteSustain, 0, Conductor.stepCrochet, 0, GRID_SIZE * GRID_ZOOM);
+						formatHoldSize += GRID_SIZE * (GRID_ZOOM - 1);
+
+						holdNote.setGraphicSize(Math.floor(GRID_SIZE / 4), Math.floor(formatHoldSize));
 						holdNote.updateHitbox();
 
 						holdNote.y = swagNote.y + GRID_SIZE;
@@ -762,12 +794,10 @@ class ChartingState extends MusicBeatState
 					if(curSection == daSec)
 					{
 						swagNote.ID = 1;
-						//trace(swagNote.noteType);
-						if(!["none", "default"].contains(swagNote.noteType))
+						if(allNoteTypes.contains(swagNote.noteType) && swagNote.noteType != "none")
 						{
+							//trace(swagNote.noteType);
 							var numTxt:String = Std.string(allNoteTypes.indexOf(swagNote.noteType));
-							if(!allNoteTypes.contains(swagNote.noteType))
-								numTxt = "?";
 
 							var typeTxt = new FlxText(0,0,0,numTxt,16);
 							typeTxt.setFormat(Main.gFont, Math.floor(GRID_SIZE / 1.3), 0xFFFFFFFF, CENTER);
@@ -831,6 +861,8 @@ class ChartingState extends MusicBeatState
 							stepper.value = getSection(curSection).lengthInSteps;
 						case "section_bpm":
 							stepper.value = Conductor.bpm;
+						case "section_copy":
+							copySectTxt.text = 'Section: ' + (curSection - Math.floor(stepper.value));
 					}
 				}
 			}
@@ -842,7 +874,8 @@ class ChartingState extends MusicBeatState
 		for(note in renderedNotes.members)
 		{
 			note.gotHit = false;
-			if(note.songTime < Conductor.songPos - Conductor.stepCrochet)
+			if(note.songTime < Conductor.songPos - Conductor.stepCrochet
+			|| note.mustMiss)
 				note.gotHit = true;
 		}
 	}
@@ -879,7 +912,7 @@ class ChartingState extends MusicBeatState
 
 			if(FlxG.keys.pressed.W || FlxG.keys.pressed.S)
 			{
-				Conductor.songPos += 1000 * elapsed * (FlxG.keys.pressed.W ? -1 : 1);
+				Conductor.songPos += 1000 * elapsed * (FlxG.keys.pressed.W ? -1 : 1) / GRID_ZOOM;
 			}
 		}
 		if(FlxG.mouse.wheel != 0)
@@ -893,7 +926,7 @@ class ChartingState extends MusicBeatState
 			}
 			else
 			{
-				Conductor.songPos += -FlxG.mouse.wheel * 5000 * elapsed;
+				Conductor.songPos += -FlxG.mouse.wheel * 5000 * elapsed / GRID_ZOOM;
 			}
 		}
 

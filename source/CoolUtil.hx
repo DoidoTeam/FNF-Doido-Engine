@@ -4,8 +4,34 @@ import flixel.FlxG;
 import flixel.util.FlxSort;
 import gameObjects.hud.note.Note;
 
+using StringTools;
+
 class CoolUtil
 {
+	inline public static function formatChar(char:String):String
+	{
+		return char.substring(0, char.lastIndexOf('-'));
+	}
+
+	public static function charList():Array<String>
+	{
+		return [
+			"bf",
+			"gf",
+			"dad",
+		];
+	}
+
+	public static function coolTextFile(key:String):Array<String>
+	{
+		var daList:Array<String> = Paths.text(key).split('\n');
+
+		for(i in 0...daList.length)
+			daList[i] = daList[i].trim();
+
+		return daList;
+	}
+
 	public static function getDirection(i:Int)
 		return ["left", "down", "up", "right"][i];
 

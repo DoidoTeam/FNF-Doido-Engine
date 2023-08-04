@@ -3,11 +3,17 @@ package gameObjects;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.math.FlxPoint;
 import states.PlayState;
 
 class Stage extends FlxGroup
 {
 	public var curStage:String = "";
+
+	public var bfPos:FlxPoint  = new FlxPoint();
+	public var dadPos:FlxPoint = new FlxPoint();
+	public var gfPos:FlxPoint  = new FlxPoint();
+	public var hasGf:Bool = true;
 
 	public var foreground:FlxGroup;
 
@@ -32,6 +38,11 @@ class Stage extends FlxGroup
 	{
 		this.clear();
 		foreground.clear();
+
+		gfPos.set(600,550);
+		dadPos.set(50,700);
+		bfPos.set(850,700);
+		hasGf = true;
 
 		this.curStage = curStage;
 		switch(curStage)
@@ -58,6 +69,4 @@ class Stage extends FlxGroup
 				add(curtains);
 		}
 	}
-
-	
 }

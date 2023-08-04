@@ -2,31 +2,42 @@ package gameObjects.hud;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.util.FlxColor;
 import sys.FileSystem;
 
 class HealthIcon extends FlxSprite
 {
-	public var curIcon:String = "";
-
 	public function new()
 	{
 		super();
 		setIcon("face");
 	}
 
+	public var isPlayer:Bool = false;
+	public var curIcon:String = "";
+	public var maxFrames:Int = 0;
+
 	public function setIcon(curIcon:String = "face", isPlayer:Bool = false):HealthIcon
 	{
 		this.curIcon = curIcon;
 		if(!FileSystem.exists('assets/images/icons/icon-${curIcon}.png'))
-			return setIcon("face", isPlayer);
+		{
+			if(curIcon.contains('-'))
+				return setIcon(CoolUtil.formatChar(curIcon), isPlayer);
+			else
+				return setIcon("face", isPlayer);
+		}
 
 		var iconGraphic = Paths.image("icons/icon-" + curIcon);
 
-		loadGraphic(iconGraphic, true, Math.floor(iconGraphic.width / 2), iconGraphic.height);
+		maxFrames = Math.floor(iconGraphic.width / 150);
 
-		animation.add("icon", [0,1], 0, false);
+		loadGraphic(iconGraphic, true, Math.floor(iconGraphic.width / maxFrames), iconGraphic.height);
+
+		animation.add("icon", [for(i in 0...maxFrames) i], 0, false);
 		animation.play("icon");
 
+		this.isPlayer = isPlayer;
 		flipX = isPlayer;
 
 		return this;
@@ -34,11 +45,45 @@ class HealthIcon extends FlxSprite
 
 	public function setAnim(health:Float = 1)
 	{
+		health /= 2;
 		var daFrame:Int = 0;
 
-		if(health < 0.6)
+		if(health < 0.3)
 			daFrame = 1;
 
+		if(health > 0.7)
+			daFrame = 2;
+
+		if(daFrame >= maxFrames)
+			daFrame = 0;
+
 		animation.curAnim.curFrame = daFrame;
+	}
+
+	public static function getColor(char:String = ""):FlxColor
+	{
+		var colorMap:Map<String, FlxColor> = [
+			"face" 		=> 0xFFA1A1A1,
+			"bf" 		=> 0xFF31B0D1,
+			"gf" 		=> 0xFFA5004D,
+			"dad"		=> 0xFFAF66CE,
+		];
+
+		function loopMap()
+		{
+			if(!colorMap.exists(char))
+			{
+				if(char.contains('-'))
+				{
+					char = CoolUtil.formatChar(char);
+					loopMap();
+				}
+				else
+					char = "face";
+			}
+		}
+		loopMap();
+
+		return colorMap.get(char);
 	}
 }
