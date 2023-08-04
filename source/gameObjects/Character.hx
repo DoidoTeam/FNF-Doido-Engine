@@ -220,7 +220,7 @@ class Character extends FlxSprite
 				playAnim('idle');
 
 			default:
-				return reloadChar(isPlayer ? "bf" : "dad", isPlayer);
+				return reloadChar(isPlayer ? "bf" : "dad");
 		}
 
 		updateHitbox();

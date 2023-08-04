@@ -28,7 +28,7 @@ class GameOverSubState extends MusicBeatSubState
 		// if your character doesnt have death anims
 		// the game reloads its deathChar (default is "bf")
 		if(!bf.animation.exists("firstDeath"))
-			bf.reloadChar(bf.deathChar, bf.isPlayer);
+			bf.reloadChar(bf.deathChar);
 
 		bf.playAnim("firstDeath");
 
