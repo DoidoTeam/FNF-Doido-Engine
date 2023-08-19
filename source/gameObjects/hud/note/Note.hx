@@ -149,4 +149,21 @@ class Note extends FlxSprite
 		if(gotHit && !isHold)
 			visible = false;
 	}
+	
+	// sets (probably) every value the note has to the default value
+	public function resetNote()
+	{
+		visible = true;
+		canHit = true;
+		gotHit = false;
+		gotHold = false;
+		isPressing = false;
+		
+		clipRect = new flixel.math.FlxRect(
+			0,
+			0,
+			frameWidth,
+			frameHeight + 16
+		);
+	}
 }

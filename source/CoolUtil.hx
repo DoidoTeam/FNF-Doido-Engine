@@ -12,13 +12,26 @@ class CoolUtil
 	{
 		return char.substring(0, char.lastIndexOf('-'));
 	}
+	
+	public static function getDiffs(?week:String):Array<String>
+	{
+		return switch(week)
+		{
+			case "salsicha": ["easy", "canon", "mania"];
+		
+			default: ["easy", "normal", "hard"];
+		}
+	}
 
 	public static function charList():Array<String>
 	{
 		return [
-			"bf",
-			"gf",
 			"dad",
+			"gf",
+			"bf",
+			"bf-pixel",
+			"bf-pixel-dead",
+			"gemamugen",
 		];
 	}
 

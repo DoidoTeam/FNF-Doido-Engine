@@ -51,6 +51,22 @@ class Controls
 
 		return false;
 	}
+	
+	public static function setSoundKeys(?empty:Bool = false)
+	{
+		if(empty)
+		{
+			FlxG.sound.muteKeys 		= [];
+			FlxG.sound.volumeDownKeys 	= [];
+			FlxG.sound.volumeUpKeys 	= [];
+		}
+		else
+		{
+			FlxG.sound.muteKeys 		= [ZERO,  NUMPADZERO];
+			FlxG.sound.volumeDownKeys 	= [MINUS, NUMPADMINUS];
+			FlxG.sound.volumeUpKeys 	= [PLUS,  NUMPADPLUS];
+		}
+	}
 
 	/*
 	** [0]: keyboard

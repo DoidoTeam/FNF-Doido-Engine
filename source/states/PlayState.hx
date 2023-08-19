@@ -9,6 +9,7 @@ import flixel.FlxObject;
 import flixel.FlxSubState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
@@ -40,6 +41,7 @@ class PlayState extends MusicBeatState
 	public static var songLength:Float = 0;
 
 	// extra stuff
+	public static var songDiff:String = "normal";
 	public static var assetModifier:String = "base";
 	public static var health:Float = 1;
 	// score, misses, accuracy and other stuff
@@ -131,15 +133,15 @@ class PlayState extends MusicBeatState
 		camGame.zoom = defaultCamZoom;
 		hudBuild = new HudClass();
 
-		gf = new Character();
-		gf.reloadChar("gf");
-
 		/*
 		*	if you want to change characters
 		*	use changeChar(charVar, "new char");
 		*	dont do it for non-singers tho (like gf)
 		*	because it reloads the hud icons
 		*/
+		gf = new Character();
+		changeChar(gf, "gf", false);
+		
 		dad = new Character();
 		changeChar(dad, SONG.player2);
 
@@ -165,9 +167,6 @@ class PlayState extends MusicBeatState
 				char.setPosition(gf.x, gf.y);
 				gf.visible = false;
 			}
-
-			char.x += char.globalOffset.x;
-			char.y += char.globalOffset.y;
 
 			addList.push(char);
 		}
@@ -285,19 +284,50 @@ class PlayState extends MusicBeatState
 		{
 			case "disruption":
 				// faz o dad voar só na disruption
-				var initialPos = [dad.x + 100, dad.y - 100];
+				var initialPos = [dad.x - (dad.width / 2) + 100, dad.y - 100];
 				var flyTime:Float = 0;
 				dad._update = function(elapsed:Float)
 				{
 					flyTime += elapsed * Math.PI;
 					dad.y = initialPos[1] + Math.sin(flyTime) * 100;
 					dad.x = initialPos[0] + Math.cos(flyTime) * 100;
+					
+					if(startedSong)
+					{
+						for(strum in dadStrumline.strumGroup)
+						{
+							var fuckyoubambi:Int = ((strum.strumData % 2 == 0) ? -1 : 1);
+						
+							strum.x = strum.initialPos.x + Math.sin(flyTime / 2) * 20 * fuckyoubambi;
+							strum.y = strum.initialPos.y + Math.cos(flyTime / 2) * 20 * fuckyoubambi;
+							strum.scale.x = strum.strumSize + Math.sin(flyTime / 2) * 0.3;
+							strum.scale.y = strum.strumSize - Math.sin(flyTime / 2) * 0.3;
+						}
+						for(uNote in dadStrumline.unspawnNotes)
+						{
+							if(uNote.visible)
+							{
+								var daStrum = dadStrumline.strumGroup.members[uNote.noteData];
+								uNote.scale.x = daStrum.scale.x;
+								if(!uNote.isHold)
+									uNote.scale.y = daStrum.scale.y;
+							}
+						}
+					}
 				}
 		}
 
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("Playing: " + SONG.song.toUpperCase().replace("-", " "), null);
-
+		
+		for(strumline in strumlines.members)
+		{
+			var strumMult:Int = (strumline.downscroll ? 1 : -1);
+			for(strum in strumline.strumGroup)
+			{
+				strum.y += FlxG.height / 4 * strumMult;
+			}
+		}
 		startCountdown();
 	}
 
@@ -306,10 +336,26 @@ class PlayState extends MusicBeatState
 	public function startCountdown()
 	{
 		var daCount:Int = 0;
-
+		
 		var countTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
 		{
 			Conductor.songPos = -Conductor.crochet * (4 - daCount);
+			
+			if(daCount == 0)
+			{
+				for(strumline in strumlines.members)
+				{
+					var strumMult:Int = (strumline.downscroll ? 1 : -1);
+					for(strum in strumline.strumGroup)
+					{
+						var strumData:Int = (strumline.isPlayer ? strum.strumData : 3 - strum.strumData);
+						FlxTween.tween(strum, {y: strum.y - FlxG.height / 4 * strumMult}, Conductor.crochet / 1000, {
+							ease: FlxEase.cubeOut,
+							startDelay: Conductor.crochet / 2 / 1000 * strumData,
+						});
+					}
+				}
+			}
 
 			if(daCount == 4)
 			{
@@ -597,7 +643,10 @@ class PlayState extends MusicBeatState
 		{
 			add(daRating);
 
-			daRating.setPos(boyfriend.x, boyfriend.y);
+			daRating.setPos(
+				boyfriend.x + boyfriend.ratingsOffset.x,
+				boyfriend.y + boyfriend.ratingsOffset.y
+			);
 		}
 
 		hudBuild.updateText();
@@ -620,18 +669,20 @@ class PlayState extends MusicBeatState
 		{
 			if(ChartingState.SONG.song != SONG.song)
 				ChartingState.curSection = 0;
+			
+			ChartingState.songDiff = songDiff;
 
 			ChartingState.SONG = SONG;
 			Main.switchState(new ChartingState());
 		}
-		/*if(FlxG.keys.justPressed.EIGHT)
+		if(FlxG.keys.justPressed.EIGHT)
 		{
 			var char = dad;
 			if(FlxG.keys.pressed.SHIFT)
 				char = boyfriend;
 
-			Main.switchState(new CharacterEditorState(char.curChar, char.curChar));
-		}*/
+			Main.switchState(new CharacterEditorState(char.curChar));
+		}
 
 		/*if(FlxG.keys.justPressed.SPACE)
 		{
@@ -985,6 +1036,15 @@ class PlayState extends MusicBeatState
 		}
 		hudBuild.beatHit(curBeat);
 
+		if(curBeat % 8 == 0)
+		{
+			/*changeStage((stageBuild.curStage == "stage") ? "mugen" : "stage");
+
+			var isStage:Bool = (stageBuild.curStage == "stage");
+			changeChar(dad, 	  isStage ? "dad" : "gemamugen");
+			changeChar(boyfriend, isStage ? "bf" : "bf-pixel");*/
+		}
+
 		if(curBeat % 4 == 0)
 		{
 			zoomCamera(0.05, 0.025);
@@ -1005,6 +1065,17 @@ class PlayState extends MusicBeatState
 	{
 		super.stepHit();
 		syncSong();
+		
+		/*if(curBeat >= 8)
+		{
+			Conductor.songPos = 0;
+			for(music in musicList)
+				music.time = 0;
+			
+			for(line in strumlines.members)
+			for(uNote in line.unspawnNotes)
+				uNote.resetNote();
+		}*/
 	}
 
 	public function syncSong(?forced:Bool = false):Void
@@ -1038,7 +1109,7 @@ class PlayState extends MusicBeatState
 		// works like endSong() if forced
 		if(Conductor.songPos >= songLength || forced)
 		{
-			Highscore.addScore(SONG.song.toLowerCase(), {
+			Highscore.addScore(SONG.song.toLowerCase() + '-' + songDiff, {
 				score: 		Timings.score,
 				accuracy: 	Timings.accuracy,
 				misses: 	Timings.misses,
@@ -1079,29 +1150,27 @@ class PlayState extends MusicBeatState
 	}
 
 	// funny thingy
-	public function changeChar(char:Character, newChar:String = "bf")
+	public function changeChar(char:Character, newChar:String = "bf", ?iconToo:Bool = true)
 	{
+		// gets the original position
+		var storedPos = new FlxPoint(
+			char.x - char.globalOffset.x,
+			char.y + char.height - char.globalOffset.y
+		);
+		// changes the character
 		char.reloadChar(newChar);
+		// puts it to the new right position
+		char.setPosition(
+			storedPos.x + char.globalOffset.x,
+			storedPos.y - char.height + char.globalOffset.y
+		);
 
-		var fnfChar:Array<Character> = [gf, dad, boyfriend];
-		if(fnfChar.contains(char))
+		if(iconToo)
 		{
-			var charPos = stageBuild.gfPos;
-			if(char == boyfriend)
-				charPos = stageBuild.bfPos;
-			if(char == dad)
-				charPos = stageBuild.dadPos;
-
-			char.setPosition(charPos.x, charPos.y);
-			char.y -= char.height;
-
-			if(char == gf)
-				char.x -= char.width / 2;
+			// updating icons
+			var daID:Int = (char.isPlayer ? 1 : 0);
+			hudBuild.changeIcon(daID, char.curChar);
 		}
-
-		// updating icons
-		var daID:Int = (char.isPlayer ? 1 : 0);
-		hudBuild.changeIcon(daID, char.curChar);
 	}
 
 	// funny thingy
@@ -1120,5 +1189,11 @@ class PlayState extends MusicBeatState
 
 		boyfriend.setPosition(stageBuild.bfPos.x, stageBuild.bfPos.y);
 		boyfriend.y -= boyfriend.height;
+
+		for(char in [gf, dad, boyfriend])
+		{
+			char.x += char.globalOffset.x;
+			char.y += char.globalOffset.y;
+		}
 	}
 }

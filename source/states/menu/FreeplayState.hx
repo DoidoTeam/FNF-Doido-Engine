@@ -6,6 +6,8 @@ import flixel.FlxObject;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
 import data.Highscore;
 import data.Highscore.ScoreData;
 import data.GameData.MusicBeatState;
@@ -18,17 +20,31 @@ using StringTools;
 
 class FreeplayState extends MusicBeatState
 {
-	var songList:Array<Array<Dynamic>> = [
-		["hecker",			"hecker"],
-		["ugh",				"tankman"],
-		["disruption", 		"3d-bambi"],
-		["collision",		"gemamugen"],
-		["lunar-odyssey",	"luano-day"],
-	];
+	var songList:Array<Array<Dynamic>> = [];
+	
+	function addWeek(songs:Array<String>, icons:Array<String>, ?color:FlxColor)
+	{
+		for(i in 0...songs.length)
+		{
+			var icon:String	= (icons.length - 1 >= i) ? icons[i] : icons[0];
+			
+			addSong(songs[i], icon, color);
+		}
+	}
+	
+	function addSong(name:String, icon:String, ?color:FlxColor)
+	{
+		if(color == null)
+			color = HealthIcon.getColor(icon);
+	
+		songList.push([name, icon, color]);
+	}
 
 	static var curSelected:Int = 0;
+	static var curDiff:Int = 1;
 
 	var bg:FlxSprite;
+	var bgTween:FlxTween;
 	var grpItems:FlxGroup;
 
 	var scoreCounter:ScoreCounter;
@@ -40,6 +56,13 @@ class FreeplayState extends MusicBeatState
 		bg.scale.set(1.2,1.2); bg.updateHitbox();
 		bg.screenCenter();
 		add(bg);
+		
+		addWeek(["bopeebo", "fresh", "dadbattle"], ["dad"]);
+		addSong("hecker", 		"hecker");
+		addSong("ugh",			"tankman");
+		addSong("disruption", 	"3d-bambi");
+		addSong("collision", 	"gemamugen");
+		addSong("lunar-odyssey","luano-day");
 
 		grpItems = new FlxGroup();
 		add(grpItems);
@@ -79,16 +102,38 @@ class FreeplayState extends MusicBeatState
 			changeSelection(-1);
 		if(Controls.justPressed("UI_DOWN"))
 			changeSelection(1);
+		if(Controls.justPressed("UI_LEFT"))
+			changeDiff(-1);
+		if(Controls.justPressed("UI_RIGHT"))
+			changeDiff(1);
 
 		if(Controls.justPressed("ACCEPT"))
 		{
-			CoolUtil.playMusic();
-			PlayState.SONG = SongData.loadFromJson(songList[curSelected][0]);
-			Main.switchState(new PlayState());
+			try
+			{
+				var diff = CoolUtil.getDiffs()[curDiff];
+				
+				//trace('$diff');
+				//trace('songs/${songList[curSelected][0]}/${songList[curSelected][0]}-${diff}');
+			
+				PlayState.SONG = SongData.loadFromJson(songList[curSelected][0], diff);
+				CoolUtil.playMusic();
+				
+				PlayState.songDiff = diff;
+				
+				Main.switchState(new PlayState());
+			}
+			catch(e)
+			{
+				FlxG.sound.play(Paths.sound('menu/cancelMenu'));
+			}
 		}
 
 		if(Controls.justPressed("BACK"))
+		{
+			FlxG.sound.play(Paths.sound('menu/cancelMenu'));
 			Main.switchState(new MenuState());
+		}
 
 		for(rawItem in grpItems.members)
 		{
@@ -100,6 +145,14 @@ class FreeplayState extends MusicBeatState
 				item.icon.alpha = item.alpha;
 			}
 		}
+	}
+	
+	public function changeDiff(change:Int = 0)
+	{
+		curDiff += change;
+		curDiff = FlxMath.wrap(curDiff, 0, CoolUtil.getDiffs().length - 1);
+		
+		updateScoreCount();
 	}
 
 	public function changeSelection(?change:Int = 0)
@@ -119,12 +172,18 @@ class FreeplayState extends MusicBeatState
 					item.alpha = 1;
 			}
 		}
+		
+		if(bgTween != null) bgTween.cancel();
+		bgTween = FlxTween.color(bg, 0.4, bg.color, songList[curSelected][2]);
 
 		if(change != 0)
 			FlxG.sound.play(Paths.sound("menu/scrollMenu"));
 		
-		scoreCounter.updateDisplay(songList[curSelected][0]);
+		updateScoreCount();
 	}
+	
+	public function updateScoreCount()
+		scoreCounter.updateDisplay(songList[curSelected][0], CoolUtil.getDiffs()[curDiff]);
 }
 /*
 *	instead of it being separate objects in FreeplayState
@@ -135,6 +194,7 @@ class ScoreCounter extends FlxGroup
 	public var bg:FlxSprite;
 
 	public var text:FlxText;
+	public var diffTxt:FlxText;
 
 	public var realValues:ScoreData;
 	public var lerpValues:ScoreData;
@@ -150,6 +210,10 @@ class ScoreCounter extends FlxGroup
 		text.setFormat(Main.gFont, 36, 0xFFFFFFFF, LEFT);
 		//text.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 		add(text);
+		
+		diffTxt = new FlxText(0,0,0,"< DURO >");
+		diffTxt.setFormat(Main.gFont, 36, 0xFFFFFFFF, LEFT);
+		add(diffTxt);
 
 		realValues = {score: 0, accuracy: 0, misses: 0};
 		lerpValues = {score: 0, accuracy: 0, misses: 0};
@@ -176,7 +240,7 @@ class ScoreCounter extends FlxGroup
 			lerpValues.misses = realValues.misses;
 
 		bg.scale.x = ((text.width + 8) / 32);
-		bg.scale.y = ((text.height+ 8) / 32);
+		bg.scale.y = ((text.height + diffTxt.height + 8) / 32);
 		bg.updateHitbox();
 
 		bg.y = 0;
@@ -184,10 +248,15 @@ class ScoreCounter extends FlxGroup
 
 		text.x = FlxG.width - text.width - 4;
 		text.y = 4;
+		
+		diffTxt.x = bg.x + bg.width / 2 - diffTxt.width / 2;
+		diffTxt.y = text.y + text.height;
 	}
 
-	public function updateDisplay(song:String)
+	public function updateDisplay(song:String, diff:String)
 	{
-		realValues = Highscore.getScore(song);
+		realValues = Highscore.getScore('${song}-${diff}');
+		diffTxt.text = '< ${diff.toUpperCase()} >';
+		update(0);
 	}
 }

@@ -3,6 +3,7 @@ package data;
 import haxe.Json;
 import haxe.format.JsonParser;
 import lime.utils.Assets;
+import sys.FileSystem;
 import sys.io.File;
 
 using StringTools;
@@ -59,23 +60,22 @@ class SongData
 		};
 	}
 
-	inline static public function songJson(song:String)
-		return 'assets/songs/${song}/${song}.json';
-
 	// stuff from fnf
-	inline public static function loadFromJson(jsonInput:String):SwagSong
+	inline public static function loadFromJson(jsonInput:String, ?diff:String = "normal"):SwagSong
 	{
-		var rawJson = File.getContent(songJson(jsonInput)).trim();
-
-		while (!rawJson.endsWith("}"))
-			rawJson = rawJson.substr(0, rawJson.length - 1);
-
-		return parseJSONshit(rawJson);
-	}
-
-	inline public static function parseJSONshit(rawJson:String):SwagSong
-	{
-		var swagShit:SwagSong = cast Json.parse(rawJson).song;
-		return swagShit;
+		var formatPath = jsonInput + '-' + diff;
+		
+		if(!FileSystem.exists(Paths.getPath('songs/$jsonInput/$formatPath.json')))
+			formatPath = '$jsonInput';
+			
+		trace('$jsonInput/$formatPath');
+		
+		var daSong:SwagSong = cast Paths.json('songs/$jsonInput/$formatPath').song;
+		
+		daSong.song = daSong.song.toLowerCase();
+		if(daSong.song.contains(' '))
+			daSong.song.replace(' ', '-');
+		
+		return daSong;
 	}
 }

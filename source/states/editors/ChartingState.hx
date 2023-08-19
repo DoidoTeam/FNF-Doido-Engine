@@ -44,6 +44,7 @@ using StringTools;
 class ChartingState extends MusicBeatState
 {
 	public static var SONG:SwagSong = SongData.defaultSong();
+	public static var songDiff:String = "normal";
 
 	public static var curSection:Int = 0;
 
@@ -85,6 +86,7 @@ class ChartingState extends MusicBeatState
 	{
 		super.create();
 		reloadAudio();
+		Controls.setSoundKeys(true);
 
 		// setting up the cameras
 		var camGame = new FlxCamera();
@@ -211,23 +213,27 @@ class ChartingState extends MusicBeatState
 		tabSong.name = "Song";
 		UI_box.addGroup(tabSong);
 
-		var songNameInput = new FlxUIInputText(10, 10, 180, SONG.song, 8);
+		var songNameInput = new FlxUIInputText(10, 20, 180, SONG.song, 8);
 		songNameInput.name = "song_name";
 		typingShit.push(songNameInput);
 
-		var check_voices = new FlxUICheckBox(10, 30, null, null, "Has voice track", 100);
+		var check_voices = new FlxUICheckBox(10, 40, null, null, "Has voices", 48);
 		check_voices.checked = SONG.needsVoices;
 		check_voices.name = "check_voices";
+		
+		var songDiffInput = new FlxUIInputText(10+70, 50, 180-70, songDiff, 8);
+		songDiffInput.name = "song_diff";
+		typingShit.push(songDiffInput);
 
 		var saveButton = new FlxButton(200, 10, "Save", function() {
 			var json = {"song": SONG};
 
-			var data:String = Json.stringify(json);
+			var data:String = Json.stringify(json, "\t");
 
 			if(data != null && data.length > 0)
 			{
 				var _file = new FileReference();
-				_file.save(data.trim(), SONG.song.toLowerCase() + ".json");
+				_file.save(data.trim(), '${SONG.song.toLowerCase()}-$songDiff.json');
 			}
 		});
 
@@ -248,7 +254,7 @@ class ChartingState extends MusicBeatState
 			var daSong:String = SONG.song.toLowerCase();
 			if(FileSystem.exists(Paths.getPath('songs/$daSong/$daSong.json')))
 			{
-				SONG = SongData.loadFromJson(daSong);
+				SONG = SongData.loadFromJson(daSong, songDiff);
 				curSection = 0;
 				Main.switchState();
 			}
@@ -268,14 +274,14 @@ class ChartingState extends MusicBeatState
 				});
 			}
 		});
-
-		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, 80, 0.1, 1, 0.1, 10, 1);
-		stepperSpeed.value = SONG.speed;
-		stepperSpeed.name = 'song_speed';
-
-		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 65, 1, 1, 1, 339, 0);
+		
+		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 65+5, 1, 1, 1, 339, 0);
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
+
+		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, 80+5, 0.1, 1, 0.1, 10, 1);
+		stepperSpeed.value = SONG.speed;
+		stepperSpeed.name = 'song_speed';	
 
 		var characters = CoolUtil.charList();
 
@@ -307,8 +313,11 @@ class ChartingState extends MusicBeatState
 		});
 		clearSongButton.color = FlxColor.RED;
 		clearSongButton.label.color = FlxColor.WHITE;
-
+		
+		tabSong.add(new FlxText(songNameInput.x, songNameInput.y - 15, 0, "Song Name: "));
 		tabSong.add(songNameInput);
+		tabSong.add(new FlxText(songDiffInput.x, songDiffInput.y - 15, 0, "Difficulty: "));
+		tabSong.add(songDiffInput);
 		tabSong.add(check_voices);
 		tabSong.add(saveButton);
 		tabSong.add(getAutoSave);
@@ -523,6 +532,8 @@ class ChartingState extends MusicBeatState
 				{
 					case 'song_name':
 						SONG.song = input.text.toLowerCase();
+					case 'song_diff':
+						songDiff = input.text.toLowerCase();
 				}
 
 			case FlxUICheckBox.CLICK_EVENT:

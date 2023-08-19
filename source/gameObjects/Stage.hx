@@ -10,6 +10,7 @@ class Stage extends FlxGroup
 {
 	public var curStage:String = "";
 
+	// things to help your stage get better
 	public var bfPos:FlxPoint  = new FlxPoint();
 	public var dadPos:FlxPoint = new FlxPoint();
 	public var gfPos:FlxPoint  = new FlxPoint();
@@ -39,9 +40,9 @@ class Stage extends FlxGroup
 		this.clear();
 		foreground.clear();
 
-		gfPos.set(600,550);
-		dadPos.set(50,700);
-		bfPos.set(850,700);
+		gfPos.set(650, 550);
+		dadPos.set(100,700);
+		bfPos.set(850, 700);
 		hasGf = true;
 
 		this.curStage = curStage;
@@ -52,6 +53,10 @@ class Stage extends FlxGroup
 
 				var bg = new FlxSprite(-640, -1000).loadGraphic(Paths.image("backgrounds/mugen/mugen"));
 				add(bg);
+
+				hasGf = false;
+				dadPos.x -= 100;
+				//gfPos.y += 80;
 
 			default:
 				this.curStage = "stage";

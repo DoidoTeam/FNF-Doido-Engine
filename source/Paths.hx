@@ -1,5 +1,6 @@
 package;
 
+import haxe.Json;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
@@ -109,6 +110,16 @@ class Paths
 
 	public static function text(key:String):String
 		return Assets.getText(getPath('$key.txt')).trim();
+
+	public static function json(key:String):Dynamic
+	{
+		var rawJson = File.getContent(getPath('$key.json')).trim();
+
+		while(!rawJson.endsWith("}"))
+			rawJson = rawJson.substr(0, rawJson.length - 1);
+
+		return Json.parse(rawJson);
+	}
 	
 	public static function getSparrowAtlas(key:String)
 		return FlxAtlasFrames.fromSparrow(getGraphic(key), 'assets/images/$key.xml');

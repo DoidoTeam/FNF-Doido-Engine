@@ -15,6 +15,8 @@ class MusicBeatState extends FlxUIState
 	{
 		super.create();
 		trace('switched to ${Type.getClassName(Type.getClass(FlxG.state))}');
+		
+		Controls.setSoundKeys();
 
 		if(!Main.skipClearMemory)
 			Paths.clearMemory();
@@ -26,7 +28,7 @@ class MusicBeatState extends FlxUIState
 		Main.skipStuff(false);
 	}
 
-	private var _curStep = 0; // fake curStep
+	private var _curStep = 0; // actual curStep
 	private var curStep = 0;
 	private var curBeat = 0;
 
@@ -38,18 +40,7 @@ class MusicBeatState extends FlxUIState
 
 	private function updateBeat()
 	{
-		var lastChange:BPMChangeEvent = {
-			stepTime: 0,
-			songTime: 0,
-			bpm: 0
-		}
-		for(change in Conductor.bpmChangeMap)
-		{
-			if (Conductor.songPos >= change.songTime)
-				lastChange = change;
-		}
-
-		_curStep = lastChange.stepTime + Math.floor((Conductor.songPos - lastChange.songTime) / Conductor.stepCrochet);
+		_curStep = Conductor.calcStateStep();
 
 		if(_curStep != curStep)
 			stepHit();
@@ -97,3 +88,4 @@ class MusicBeatSubState extends FlxSubState
 		super.create();
 	}
 }
+

@@ -59,4 +59,20 @@ class Conductor
 
 	public static function calcStep(bpm:Float):Float
 		return calcBeat(bpm) / 4;
+	
+	public static function calcStateStep():Int
+	{
+		var lastChange:BPMChangeEvent = {
+			stepTime: 0,
+			songTime: 0,
+			bpm: 0
+		}
+		for(change in bpmChangeMap)
+		{
+			if (songPos >= change.songTime)
+				lastChange = change;
+		}
+
+		return lastChange.stepTime + Math.floor((songPos - lastChange.songTime) / stepCrochet);
+	}
 }

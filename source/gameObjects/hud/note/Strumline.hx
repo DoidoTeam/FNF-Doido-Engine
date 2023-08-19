@@ -127,8 +127,9 @@ class Strumline extends FlxGroup
 	{
 		for(strum in strumGroup.members)
 		{
-			strum.y = (!downscroll ? 25 : FlxG.height - strum.height - 25);
-
+			// 25
+			strum.y = (!downscroll ? 40 : FlxG.height - strum.height - 40);
+			
 			strum.x = x;
 			strum.x += CoolUtil.noteWidth() * strum.strumData;
 		}

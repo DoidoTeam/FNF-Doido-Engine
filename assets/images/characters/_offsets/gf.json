@@ -1,0 +1,71 @@
+{
+	"globalOffset": [
+		0,
+		0
+	],
+	"animOffsets": [
+		[
+			"scared",
+			-2,
+			-8
+		],
+		[
+			"singDOWN",
+			0,
+			-11
+		],
+		[
+			"danceRight",
+			0,
+			0
+		],
+		[
+			"singUP",
+			0,
+			13
+		],
+		[
+			"danceLeft",
+			0,
+			0
+		],
+		[
+			"hairBlow",
+			45,
+			1
+		],
+		[
+			"singRIGHT",
+			0,
+			-11
+		],
+		[
+			"hairFall",
+			0,
+			0
+		],
+		[
+			"cheer",
+			0,
+			9
+		],
+		[
+			"sad",
+			-2,
+			-12
+		],
+		[
+			"singLEFT",
+			0,
+			-10
+		]
+	],
+	"ratingsOffset": [
+		0,
+		0
+	],
+	"cameraOffset": [
+		-160,
+		0
+	]
+}
