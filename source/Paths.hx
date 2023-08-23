@@ -123,6 +123,37 @@ class Paths
 	
 	public static function getSparrowAtlas(key:String)
 		return FlxAtlasFrames.fromSparrow(getGraphic(key), 'assets/images/$key.xml');
+		
+	public static function readDir(dir:String, ?type:String, ?removeType:Bool = true):Array<String>
+	{
+		var rawList:Array<String> = [];
+		var theList:Array<String> = [];
+		
+		try
+		{
+			rawList = FileSystem.readDirectory(getPath(dir));
+			for(i in 0...rawList.length)
+			{
+				if(type != null)
+				{
+					// 
+					if(!rawList[i].endsWith(type))
+						rawList[i] = "";
+					
+					// cleans it
+					if(removeType)
+						rawList[i] = rawList[i].replace(type, "");
+				}
+				
+				// adds it to the real list if its not empty
+				if(rawList[i] != "")
+					theList.push(rawList[i]);
+			}
+		} catch(e) {}
+		
+		trace(theList);
+		return theList;
+	}
 
 	// preload stuff for playstate
 	// so it doesnt lag whenever it gets called out

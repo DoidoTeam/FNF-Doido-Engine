@@ -52,6 +52,7 @@ class FreeplayState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+		CoolUtil.playMusic("freakyMenu");
 		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
 		bg.scale.set(1.2,1.2); bg.updateHitbox();
 		bg.screenCenter();
@@ -61,8 +62,10 @@ class FreeplayState extends MusicBeatState
 		addSong("hecker", 		"hecker");
 		addSong("ugh",			"tankman");
 		addSong("disruption", 	"3d-bambi");
+		addSong("exploitation", "true-expunged");
 		addSong("collision", 	"gemamugen");
 		addSong("lunar-odyssey","luano-day");
+		addSong("escape-from-california","moldygh");
 
 		grpItems = new FlxGroup();
 		add(grpItems);
@@ -115,7 +118,8 @@ class FreeplayState extends MusicBeatState
 				
 				//trace('$diff');
 				//trace('songs/${songList[curSelected][0]}/${songList[curSelected][0]}-${diff}');
-			
+				
+				PlayState.playList = [];
 				PlayState.SONG = SongData.loadFromJson(songList[curSelected][0], diff);
 				CoolUtil.playMusic();
 				
@@ -205,14 +209,16 @@ class ScoreCounter extends FlxGroup
 		bg = new FlxSprite().makeGraphic(32, 32, 0xFF000000);
 		bg.alpha = 0.4;
 		add(bg);
+		
+		var txtSize:Int = 28; // 36
 
 		text = new FlxText(0, 0, 0, "");
-		text.setFormat(Main.gFont, 36, 0xFFFFFFFF, LEFT);
+		text.setFormat(Main.gFont, txtSize, 0xFFFFFFFF, LEFT);
 		//text.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 		add(text);
 		
 		diffTxt = new FlxText(0,0,0,"< DURO >");
-		diffTxt.setFormat(Main.gFont, 36, 0xFFFFFFFF, LEFT);
+		diffTxt.setFormat(Main.gFont, txtSize, 0xFFFFFFFF, LEFT);
 		add(diffTxt);
 
 		realValues = {score: 0, accuracy: 0, misses: 0};

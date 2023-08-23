@@ -16,7 +16,7 @@ using StringTools;
 
 class MenuState extends MusicBeatState
 {
-	var optionShit:Array<String> = ["freeplay", "options"];
+	var optionShit:Array<String> = ["story mode", "freeplay", "options"];
 	static var curSelected:Int = 0;
 
 	var optionGroup:FlxTypedGroup<Alphabet>;
@@ -62,6 +62,9 @@ class MenuState extends MusicBeatState
 		{
 			switch(optionShit[curSelected])
 			{
+				case "story mode":
+					Main.switchState(new states.menu.StoryMenuState());
+			
 				case "freeplay":
 					Main.switchState(new states.menu.FreeplayState());
 

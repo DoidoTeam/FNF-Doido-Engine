@@ -26,6 +26,7 @@ import gameObjects.hud.*;
 import gameObjects.hud.note.*;
 import shaders.*;
 import states.editors.*;
+import states.menu.*;
 import subStates.*;
 
 using StringTools;
@@ -39,6 +40,12 @@ class PlayState extends MusicBeatState
 	public var musicList:Array<FlxSound> = [];
 
 	public static var songLength:Float = 0;
+	
+	// story mode stuff
+	public static var playList:Array<String> = [];
+	public static var curWeek:String = '';
+	public static var isStoryMode:Bool = false;
+	public static var weekScore:Int = 0;
 
 	// extra stuff
 	public static var songDiff:String = "normal";
@@ -746,7 +753,9 @@ class PlayState extends MusicBeatState
 
 			for(unsNote in strumline.unspawnNotes)
 			{
-				var spawnTime:Float = 1000;
+				var spawnTime:Int = 1000;
+				if(strumline.scrollSpeed <= 1.5)
+					spawnTime = 5000;
 
 				if(unsNote.songTime - Conductor.songPos <= spawnTime
 				&& unsNote.canHit && !unsNote.gotHit && !unsNote.gotHold)
@@ -754,7 +763,7 @@ class PlayState extends MusicBeatState
 			}
 			for(note in strumline.allNotes)
 			{
-				var despawnTime:Float = 300;
+				var despawnTime:Int = 300;
 
 				if(Conductor.songPos >= note.songTime + note.holdLength + Conductor.stepCrochet + despawnTime)
 				{
@@ -1103,18 +1112,45 @@ class PlayState extends MusicBeatState
 
 		checkEndSong();
 	}
-
-	public function checkEndSong(?forced:Bool = false):Void
+	
+	// checks if the song is allowed to end
+	public function checkEndSong():Void
 	{
-		// works like endSong() if forced
-		if(Conductor.songPos >= songLength || forced)
+		if(Conductor.songPos >= songLength)
+			endSong();
+	}
+	// ends it all
+	public function endSong()
+	{
+		Highscore.addScore(SONG.song.toLowerCase() + '-' + songDiff, {
+			score: 		Timings.score,
+			accuracy: 	Timings.accuracy,
+			misses: 	Timings.misses,
+		});
+		
+		weekScore += Timings.score;
+		
+		if(playList.length <= 0)
 		{
-			Highscore.addScore(SONG.song.toLowerCase() + '-' + songDiff, {
-				score: 		Timings.score,
-				accuracy: 	Timings.accuracy,
-				misses: 	Timings.misses,
-			});
-			Main.switchState(new MenuState());
+			if(isStoryMode)
+			{
+				Highscore.addScore('week-$curWeek-$songDiff', {
+					score: 		weekScore,
+					accuracy: 	0,
+					misses: 	0,
+				});
+				Main.switchState(new StoryMenuState());
+			}
+			else
+				Main.switchState(new FreeplayState());
+		}
+		else
+		{
+			SONG = SongData.loadFromJson(playList[0], songDiff);
+			playList.remove(playList[0]);
+			
+			//trace(playList);
+			Main.switchState(new PlayState());
 		}
 	}
 

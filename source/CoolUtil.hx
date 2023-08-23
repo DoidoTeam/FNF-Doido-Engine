@@ -17,8 +17,6 @@ class CoolUtil
 	{
 		return switch(week)
 		{
-			case "salsicha": ["easy", "canon", "mania"];
-		
 			default: ["easy", "normal", "hard"];
 		}
 	}

@@ -16,10 +16,11 @@ import states.*;
 
 class PauseSubState extends MusicBeatSubState
 {
-	var optionShit:Array<String> = ["resume", "restart song", "exit to options", "exit to menu"];
+	var optionShit:Array<String> = ["resume", "restart song", "botplay", "options", "exit to menu"];
 
 	var curSelected:Int = 0;
-
+	
+	var textsGrp:FlxTypedGroup<FlxText>;
 	var optionsGrp:FlxTypedGroup<AlphabetMenu>;
 
 	var pauseSong:FlxSound;
@@ -41,10 +42,35 @@ class PauseSubState extends MusicBeatSubState
 			var newItem = new AlphabetMenu(0, 0, optionShit[i], true);
 			newItem.ID = i;
 			newItem.focusY = i - curSelected;
+			// isn't as accurate to base game
+			newItem.spaceX = 25;
+			newItem.spaceY = 150; // 200
+			// but it looks better
 			newItem.updatePos();
 			optionsGrp.add(newItem);
 
 			newItem.x = 0;
+		}
+		
+		textsGrp = new FlxTypedGroup<FlxText>();
+		add(textsGrp);
+		
+		var textArray:Array<String> = [
+			PlayState.SONG.song,
+			PlayState.songDiff,
+		];
+		for(i in 0...textArray.length)
+		{
+			if(textArray[i] == "") continue;
+		
+			var text = new FlxText(0,0,0,textArray[i].toUpperCase());
+			text.setFormat(Main.gFont, 36, 0xFFFFFFFF, RIGHT);
+			text.setPosition(FlxG.width - text.width - 10, 10 + 40 * i);
+			textsGrp.add(text);
+			
+			text.alpha = 0.00001;
+			text.y -= 20;
+			FlxTween.tween(text, {y: text.y + 20, alpha: 1}, 0.4, {ease: FlxEase.quadOut, startDelay: 0.2 + 0.1 * i});
 		}
 
 		pauseSong = new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song.toLowerCase()), true, false);
@@ -85,6 +111,9 @@ class PauseSubState extends MusicBeatSubState
 		{
 			switch(optionShit[curSelected])
 			{
+				default:
+					FlxG.sound.play(Paths.sound("menu/cancelMenu"));
+			
 				case "resume":
 					PlayState.paused = false;
 					close();
@@ -93,7 +122,7 @@ class PauseSubState extends MusicBeatSubState
 					Main.skipStuff();
 					Main.switchState();
 
-				case "exit to options":
+				case "options":
 					Main.switchState(new states.menu.OptionsState(new PlayState()));
 
 				case "exit to menu":
