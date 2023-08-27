@@ -907,12 +907,12 @@ class ChartingState extends MusicBeatState
 				Main.switchState(new PlayState());
 			}
 
-			if(FlxG.keys.justPressed.ESCAPE)
+			/*if(FlxG.keys.justPressed.ESCAPE)
 			{
 				ChartTestState.startConductor = conductorOffset;
 				ChartTestState.SONG = SONG;
 				Main.switchState(new ChartTestState());
-			}
+			}*/
 
 			if(FlxG.keys.justPressed.SPACE)
 			{

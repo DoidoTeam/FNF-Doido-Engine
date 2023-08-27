@@ -43,9 +43,9 @@ class Strumline extends FlxGroup
 		splashGroup = new FlxTypedGroup<SplashNote>();
 
 		add(strumGroup);
+		add(splashGroup);
 		add(holdGroup);
 		add(noteGroup);
-		add(splashGroup);
 
 		for(i in 0...4)
 		{

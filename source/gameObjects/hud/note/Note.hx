@@ -27,8 +27,8 @@ class Note extends FlxSprite
 		mustMiss = false;
 
 		var direction:String = CoolUtil.getDirection(noteData);
-
 		antialiasing = FlxSprite.defaultAntialiasing;
+		setAlpha();
 
 		switch(assetModifier)
 		{
@@ -88,10 +88,7 @@ class Note extends FlxSprite
 		}
 
 		if(isHold)
-		{
-			alpha = 0.8;
 			antialiasing = false;
-		}
 
 		scale.set(noteSize, noteSize);
 		updateHitbox();
@@ -103,7 +100,7 @@ class Note extends FlxSprite
 
 	// you can use this to fix 
 	public var noteOffset:FlxPoint = new FlxPoint(0,0);
-
+	
 	public var songTime:Float = 0;
 	public var noteData:Int = 0;
 	public var noteType:String = "default";
@@ -113,37 +110,46 @@ class Note extends FlxSprite
 
 	// doesnt actually change the scroll speed, just changes the hold note size
 	public var scrollSpeed:Float = Math.NEGATIVE_INFINITY;
-
+	
+	// hold note stuff
+	public var noteCrochet:Float = 0;
 	public var isHold:Bool = false;
 	public var isHoldEnd:Bool = false;
-	public var isPressing:Bool = false;
 	public var holdLength:Float = 0;
 	public var holdHitLength:Float = 0;
-
-	// instead of mustPress, the notes are placed by their strumlineID's
-	public var strumlineID:Int = 0;
-
-	public var canHit:Bool = true;
-	public var gotHit:Bool = false;
-	public var gotHold:Bool = false; // only works for holds (duh)
-
 	public var parentNote:Note = null;
+
+	// instead of mustPress, the strumline is determined by their strumlineID's
+	public var strumlineID:Int = 0;
+	
+	public var missed:Bool = false;
+	public var gotHit:Bool = false;
+	public var gotHeld:Bool = false;
+	
+	public var spawned:Bool = false;
+	//public var canDespawn:Bool = false;
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 	}
-
-	// change these to whatever you want on PlayState
-	public dynamic function onHit()  {}
-	public dynamic function onMiss() {}
-	public dynamic function onHold() {}
+	
+	public var realAlpha:Float = 1;
+	public function setAlpha():Void
+	{
+		var multAlpha:Float = 1;
+		if(isHold)
+			multAlpha = 0.7;
+		if(missed)
+			multAlpha = 0.2;
+		
+		// change realAlpha instead of alpha for this effect
+		alpha = realAlpha * multAlpha;
+	}
 
 	public function checkActive():Void
 	{
 		visible = active = alive = (Math.abs(songTime - Conductor.songPos) < Conductor.crochet * 2);
-
-		//visible = active = alive = false;
 
 		// making sure you dont see it anymore
 		if(gotHit && !isHold)
@@ -154,16 +160,18 @@ class Note extends FlxSprite
 	public function resetNote()
 	{
 		visible = true;
-		canHit = true;
+		missed = false;
 		gotHit = false;
-		gotHold = false;
-		isPressing = false;
+		gotHeld = false;
+		holdHitLength = 0;
+		spawned = false;
 		
 		clipRect = new flixel.math.FlxRect(
 			0,
 			0,
 			frameWidth,
-			frameHeight + 16
+			frameHeight
 		);
+		setAlpha();
 	}
 }

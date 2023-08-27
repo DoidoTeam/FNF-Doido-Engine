@@ -20,12 +20,12 @@ class ChartLoader
 		
 		for(section in SONG.notes)
 		{
-			/*for(event in Conductor.bpmChangeMap)
+			for(event in Conductor.bpmChangeMap)
 				if(event.stepTime == (daSection * 16))
 				{
 					noteCrochet = Conductor.calcStep(event.bpm);
 					trace('changed note bpm ${event.bpm}');
-				}*/
+				}
 			
 			for (songNotes in section.sectionNotes)
 			{
@@ -55,24 +55,50 @@ class ChartLoader
 				var susLength:Float = songNotes[2];
 				if(susLength > 0)
 				{
-					var holdNote:Note = new Note();
-					holdNote.isHold = true;
-					holdNote.reloadNote(daStrumTime, daNoteData, daNoteType);
+					var daParent:Note = swagNote;
+					
+					swagNote.holdLength = susLength;
+					swagNote.noteCrochet = noteCrochet;
+					
+					var holdLoop:Int = Math.floor(susLength / noteCrochet);
+					if (holdLoop <= 0)
+						holdLoop = 1;
+					
+					for(j in 0...holdLoop)
+					{
+						var holdNote:Note = new Note();
+						holdNote.isHold = true;
+						holdNote.reloadNote(daStrumTime, daNoteData, daNoteType);
 
+						holdNote.parentNote = daParent;
+						holdNote.strumlineID = swagNote.strumlineID;
+						
+						// uhhh
+						holdNote.holdLength = susLength;
+						holdNote.noteCrochet = noteCrochet;
+
+						unspawnNotes.push(holdNote);
+						
+						//holdNote.ID = j + 1;
+						/*holdNote.color = flixel.util.FlxColor.fromRGB(
+							FlxG.random.int(0,255),
+							FlxG.random.int(0,255),
+							FlxG.random.int(0,255)
+						);*/
+						
+						daParent = holdNote;
+					}
+					
 					var holdNoteEnd:Note = new Note();
 					holdNoteEnd.isHold = holdNoteEnd.isHoldEnd = true;
 					holdNoteEnd.reloadNote(daStrumTime, daNoteData, daNoteType);
-
-					holdNote.parentNote = swagNote;
-					holdNoteEnd.parentNote = holdNote;
-
-					holdNote.strumlineID = holdNoteEnd.strumlineID = swagNote.strumlineID;
-
-					swagNote.holdLength = susLength;
-					holdNote.holdLength = susLength;
+					
+					holdNoteEnd.parentNote = daParent;
+					holdNoteEnd.strumlineID = daParent.strumlineID;
+					
 					holdNoteEnd.holdLength = susLength;
-
-					unspawnNotes.push(holdNote);
+					holdNoteEnd.noteCrochet = noteCrochet;
+					
 					unspawnNotes.push(holdNoteEnd);
 				}
 			}

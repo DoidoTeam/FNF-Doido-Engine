@@ -72,6 +72,8 @@ class SongData
 		
 		var daSong:SwagSong = cast Paths.json('songs/$jsonInput/$formatPath').song;
 		
+		// no need for SONG.song.toLowerCase() every time
+		// the game auto-lowercases it now
 		daSong.song = daSong.song.toLowerCase();
 		if(daSong.song.contains(' '))
 			daSong.song.replace(' ', '-');
