@@ -31,6 +31,7 @@ import gameObjects.*;
 import gameObjects.hud.note.*;
 import gameObjects.hud.HealthIcon;
 import states.PlayState;
+import subStates.editors.*;
 import haxe.Json;
 import lime.utils.Assets;
 import openfl.events.Event;
@@ -85,8 +86,10 @@ class ChartingState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+		CoolUtil.playMusic();
 		reloadAudio();
 		Controls.setSoundKeys(true);
+		FlxG.mouse.visible = true;
 
 		// setting up the cameras
 		var camGame = new FlxCamera();
@@ -238,12 +241,7 @@ class ChartingState extends MusicBeatState
 		});
 
 		var getAutoSave = new FlxButton(200, 30, "Load Autosave", function() {
-			if(FlxG.save.data.chartAutoSave != null)
-			{
-				SONG = FlxG.save.data.chartAutoSave;
-				curSection = 0;
-				Main.switchState();
-			}
+			openSubState(new ChartAutoSaveSubState());
 		});
 
 		var reloadSong = new FlxButton(200, 50, "Reload Audio", function() {
@@ -890,6 +888,10 @@ class ChartingState extends MusicBeatState
 				note.gotHit = true;
 		}
 	}
+	
+	// even if you leave the state the 
+	// value will still count the 5 minutes
+	static var autosavetimer:Float = 0;
 
 	override function update(elapsed:Float)
 	{
@@ -898,21 +900,31 @@ class ChartingState extends MusicBeatState
 		for(item in typingShit)
 			if(item.hasFocus)
 				isTyping = true;
+		
+		// autosaves every 5 minutes
+		autosavetimer += elapsed;
+		if(autosavetimer >= 60 * 5)
+		{
+			trace('autosaved');
+			autosavetimer = 0;
+			ChartAutoSaveSubState.addSave(SONG, songDiff);
+		}
 
 		if(!isTyping)
 		{
 			if(FlxG.keys.justPressed.ENTER)
 			{
+				FlxG.mouse.visible = false;
+				ChartAutoSaveSubState.addSave(SONG, songDiff);
 				PlayState.SONG = SONG;
 				Main.switchState(new PlayState());
 			}
 
-			/*if(FlxG.keys.justPressed.ESCAPE)
+			if(FlxG.keys.justPressed.ESCAPE)
 			{
-				ChartTestState.startConductor = conductorOffset;
-				ChartTestState.SONG = SONG;
-				Main.switchState(new ChartTestState());
-			}*/
+				ChartTestSubState.startConductor = conductorOffset;
+				openSubState(new ChartTestSubState());
+			}
 
 			if(FlxG.keys.justPressed.SPACE)
 			{
@@ -1115,6 +1127,13 @@ class ChartingState extends MusicBeatState
 
 		if(FlxG.keys.justPressed.T)
 			updateInfoTxt();
+	}
+	
+	// i know what im doing!! (im not)
+	override function openSubState(target:flixel.FlxSubState)
+	{
+		playing = false;
+		super.openSubState(target);
 	}
 
 	override function stepHit()

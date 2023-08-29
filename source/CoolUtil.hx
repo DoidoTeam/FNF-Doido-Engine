@@ -8,6 +8,7 @@ using StringTools;
 
 class CoolUtil
 {
+	// general things
 	inline public static function formatChar(char:String):String
 	{
 		return char.substring(0, char.lastIndexOf('-'));
@@ -42,7 +43,30 @@ class CoolUtil
 
 		return daList;
 	}
-
+	
+	public static function posToTimer(mil:Float = 0, ?divisor:String = ":"):String
+	{
+		if(mil < 0) mil = 0;
+		// gets song pos and makes a timer out of it
+		var sec:Int = Math.floor(mil / 1000);
+		var min:Int = Math.floor(sec / 60);
+		
+		function forceZero(shit:String):String
+		{
+			while(shit.length <= 1)
+				shit = '0' + shit;
+			return shit;
+		}
+		
+		var disSec:String = '${sec % 60}';
+		var disMin:String = '$min';
+		disSec = forceZero(disSec);
+		//disMin = forceZero(disMin);
+		
+		return '$disMin$divisor$disSec';
+	}
+	
+	// NOTE STUFF
 	public static function getDirection(i:Int)
 		return ["left", "down", "up", "right"][i];
 
@@ -54,7 +78,7 @@ class CoolUtil
 	public static function sortByShit(Obj1:Note, Obj2:Note):Int
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.songTime, Obj2.songTime);
 
-	// easier music management stuff
+	// music management stuff
 	public static var curMusic:String = "none";
 	public static function playMusic(?key:String, ?vol:Float = 1)
 	{

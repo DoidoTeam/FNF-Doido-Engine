@@ -84,7 +84,7 @@ class Strumline extends FlxGroup
 	{
 		switch(SaveData.data.get("Note Splashes"))
 		{
-			case "PLAYER": if(!isPlayer) return;
+			case "PLAYER ONLY": if(!isPlayer) return;
 			case "OFF": return;
 		}
 

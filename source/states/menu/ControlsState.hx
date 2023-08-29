@@ -19,14 +19,9 @@ class ControlsState extends MusicBeatState
 	var curMenu:String = "main";
 
 	var grpMain:FlxTypedGroup<Alphabet>;
-
-	var controlList:Array<String> = [
-		"LEFT",
-		"DOWN",
-		"UP",
-		"RIGHT",
-		"RESET",
-	];
+	
+	// check Controls's changeableControls to add more keys
+	var controlList:Array<String> = [];
 
 	var grpLabel:FlxTypedGroup<Alphabet>;
 	var grpControlsA:FlxTypedGroup<Alphabet>;
@@ -38,6 +33,8 @@ class ControlsState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+		controlList = Controls.changeableControls;
+		
 		var bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
 		bg.scale.set(1.2,1.2); bg.updateHitbox();
 		bg.screenCenter();

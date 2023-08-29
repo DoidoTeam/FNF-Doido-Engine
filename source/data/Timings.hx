@@ -77,7 +77,7 @@ class Timings
 	{
 		var result:String = "F";
 
-		function uuh(daRank:String, maxAcc:Float, minAcc:Float):String
+		function calc(daRank:String, maxAcc:Float, minAcc:Float):String
 		{
 			var daR:String = result;
 			if(accuracy > minAcc && accuracy <= maxAcc)
@@ -87,12 +87,13 @@ class Timings
 			return daR;
 		}
 
-		result = uuh("S", 100, 	95);
-		result = uuh("A", 95, 	80);
-		result = uuh("B", 80, 	75);
-		result = uuh("C", 75, 	65);
-		result = uuh("D", 65, 	60);
-
+		result = calc("S", 100, 95);
+		result = calc("A", 95, 	80);
+		result = calc("B", 80, 	75);
+		result = calc("C", 75, 	65);
+		result = calc("D", 65, 	60);
+		
+		// you cant give a result without notes :/
 		if(notesHit == 0)
 			result = "N/A";
 

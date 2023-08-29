@@ -67,12 +67,19 @@ class Controls
 			FlxG.sound.volumeUpKeys 	= [PLUS,  NUMPADPLUS];
 		}
 	}
-
+	
+	// self explanatory (i think)
+	public static final changeableControls:Array<String> = [
+		'LEFT', 'DOWN', 'UP', 'RIGHT',
+		'RESET',
+	];
+	
 	/*
 	** [0]: keyboard
 	** [1]: gamepad
 	*/
 	public static var allControls:Map<String, Array<Dynamic>> = [
+		// gameplay controls
 		'LEFT' => [
 			[FlxKey.A, FlxKey.LEFT],
 			[FlxPad.LEFT_TRIGGER, FlxPad.DPAD_LEFT],
@@ -88,6 +95,10 @@ class Controls
 		'RIGHT' => [
 			[FlxKey.D, FlxKey.RIGHT],
 			[FlxPad.RIGHT_TRIGGER, FlxPad.DPAD_RIGHT],
+		],
+		'RESET' => [
+			[FlxKey.R, FlxKey.NONE],
+			[FlxPad.BACK, FlxPad.NONE],
 		],
 
 		// ui controls
@@ -114,16 +125,12 @@ class Controls
 			[FlxPad.A, FlxPad.X],
 		],
 		'BACK' => [
-			[FlxKey.X, FlxKey.BACKSPACE, FlxKey.ESCAPE],
+			[FlxKey.BACKSPACE, FlxKey.ESCAPE],
 			[FlxPad.B],
 		],
 		'PAUSE' => [
-			[FlxKey.P,	FlxKey.ENTER, FlxKey.ESCAPE],
+			[FlxKey.ENTER, FlxKey.ESCAPE],
 			[FlxPad.START],
-		],
-		'RESET' => [
-			[FlxKey.R, FlxKey.NONE],
-			[FlxPad.BACK, FlxPad.NONE],
 		],
 	];
 
@@ -134,8 +141,14 @@ class Controls
 		{
 			SaveData.saveFile.data.allControls = allControls;
 		}
-
-		allControls = SaveData.saveFile.data.allControls;
+		
+		// allControls = SaveData.saveFile.data.allControls;
+		var impControls:Map<String, Array<Dynamic>> = SaveData.saveFile.data.allControls;
+		for(label => key in impControls)
+		{
+			if(changeableControls.contains(label))
+				allControls.set(label, key);
+		}
 
 		save();
 	}

@@ -5,14 +5,18 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.util.FlxColor;
+import data.Conductor;
 import data.Timings;
 import states.PlayState;
 
 class HudClass extends FlxGroup
 {
 	public var infoTxt:FlxText;
+	public var timeTxt:FlxText;
 
 	// health bar
 	public var healthBarBG:FlxSprite;
@@ -52,10 +56,15 @@ class HudClass extends FlxGroup
 
 		changeIcon(0, iconDad.curIcon);
 
-		infoTxt = new FlxText(0, 0, 0, "nothing");
-		infoTxt.setFormat(Main.gFont, 18, 0xFFFFFFFF, CENTER);
+		infoTxt = new FlxText(0, 0, 0, "hi there! i am using whatsapp");
+		infoTxt.setFormat(Main.gFont, 20, 0xFFFFFFFF, CENTER);
 		infoTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 		add(infoTxt);
+		
+		timeTxt = new FlxText(0, 0, 0, "balls");
+		timeTxt.setFormat(Main.gFont, 32, 0xFFFFFFFF, CENTER);
+		timeTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
+		add(timeTxt);
 
 		updateHitbox();
 	}
@@ -65,12 +74,21 @@ class HudClass extends FlxGroup
 	public function updateText()
 	{
 		infoTxt.text = "";
-
+		
 		infoTxt.text += 			'Score: '		+ Timings.score;
 		infoTxt.text += separator + 'Accuracy: '	+ Timings.accuracy + "%" + ' [${Timings.getRank()}]';
 		infoTxt.text += separator + 'Misses: '		+ Timings.misses;
 
 		infoTxt.screenCenter(X);
+	}
+	
+	public function updateTimeTxt()
+	{
+		timeTxt.text
+		= CoolUtil.posToTimer(Conductor.songPos)
+		+ ' / '
+		+ CoolUtil.posToTimer(PlayState.songLength);
+		timeTxt.screenCenter(X);
 	}
 
 	public function updateHitbox(downscroll:Bool = false)
@@ -84,6 +102,29 @@ class HudClass extends FlxGroup
 		updateText();
 		infoTxt.screenCenter(X);
 		infoTxt.y = healthBarBG.y + healthBarBG.height + 4;
+		
+		updateTimeTxt();
+		timeTxt.y = downscroll ? (FlxG.height - timeTxt.height - 8) : (8);
+	}
+	
+	public function setAlpha(hudAlpha:Float = 1, ?tweenTime:Float = 0)
+	{
+		// put the items you want to set invisible when the song starts here
+		var allItems:Array<FlxSprite> = [
+			infoTxt,
+			timeTxt,
+			healthBar,
+			healthBarBG,
+			iconBf,
+			iconDad,
+		];
+		for(item in allItems)
+		{
+			if(tweenTime <= 0)
+				item.alpha = hudAlpha;
+			else
+				FlxTween.tween(item, {alpha: hudAlpha}, tweenTime, {ease: FlxEase.cubeOut});
+		}
 	}
 
 	override function update(elapsed:Float)
@@ -92,6 +133,7 @@ class HudClass extends FlxGroup
 		healthBar.percent = (PlayState.health * 50);
 
 		updateIconPos();
+		updateTimeTxt();
 	}
 
 	public function updateIconPos()

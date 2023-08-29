@@ -46,6 +46,7 @@ class OptionsState extends MusicBeatState
 			"Antialiasing",
 			"Note Splashes",
 			"Ratings on HUD",
+			"Split Holds",
 		],
 	];
 
@@ -154,9 +155,9 @@ class OptionsState extends MusicBeatState
 				item.focusY = i;
 
 				item.align = LEFT;
-				item.scale.set(0.9,0.9);
+				item.scale.set(0.7,0.7);
 				item.updateHitbox();
-
+				
 				item.xTo = 128;
 				item.spaceX = 0;
 
@@ -184,7 +185,7 @@ class OptionsState extends MusicBeatState
 					switch(daDisplay[1])
 					{
 						case CHECKMARK:
-							var daCheck = new OptionCheckmark(SaveData.data.get(daOption), 0.9);
+							var daCheck = new OptionCheckmark(SaveData.data.get(daOption), 0.7);
 							daCheck.ID = i;
 							daCheck.x = FlxG.width - 128 - daCheck.width;
 							grpAttachs.add(daCheck);

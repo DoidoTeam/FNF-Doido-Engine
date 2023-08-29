@@ -39,7 +39,7 @@ class SaveData
 			"ON",
 			SELECTOR,
 			"Whether a splash appear when you hit a note perfectly.",
-			["ON", "PLAYER", "OFF"],
+			["ON", "PLAYER ONLY", "OFF"],
 		],
 		"Ratings on HUD" => [
 			true,
@@ -52,6 +52,12 @@ class SaveData
 			"Self explanatory.",
 			[30, 360]
 		],
+		
+		"Split Holds" => [
+			false,
+			CHECKMARK,
+			"Cuts the end of each hold note like classic engines did."
+		],
 
 		// this one doesnt actually appear at the regular options menu
 		"Song Offset" => [
@@ -59,23 +65,6 @@ class SaveData
 			[-500, 500]
 		],
 	];
-
-	/*public static var keyControls:Map<String, Array<FlxKey>> = [
-		'LEFT' 		=> 	[A, FlxKey.LEFT],
-		'DOWN' 		=> 	[S, FlxKey.DOWN],
-		'UP' 		=>	[W, FlxKey.UP],
-		'RIGHT' 	=> 	[D, FlxKey.RIGHT],
-
-		'UI_LEFT' 	=>	[A, FlxKey.LEFT],
-		'UI_DOWN' 	=>	[S, FlxKey.DOWN],
-		'UI_UP' 	=> 	[W, FlxKey.UP],
-		'UI_RIGHT'	=>	[D, FlxKey.RIGHT],
-
-		'ACCEPT' 	=> 	[FlxKey.SPACE, 	FlxKey.ENTER],
-		'BACK' 		=>	[X,				FlxKey.BACKSPACE,	FlxKey.ESCAPE],
-		'PAUSE' 	=> 	[P,				FlxKey.ENTER,		FlxKey.ESCAPE],
-		'RESET' 	=> 	[R, 			FlxKey.NONE],
-	];*/
 	
 	public static var saveFile:FlxSave;
 	public static function init()
@@ -87,6 +76,9 @@ class SaveData
 
 		Controls.load();
 		Highscore.load();
+		
+		// uhhh
+		subStates.editors.ChartAutoSaveSubState.load();
 	}
 	
 	public static function load()

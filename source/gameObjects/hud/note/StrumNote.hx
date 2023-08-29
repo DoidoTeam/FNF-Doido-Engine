@@ -51,10 +51,16 @@ class StrumNote extends FlxSprite
 				frames = Paths.getSparrowAtlas("notes/base/strums");
 
 				addDefaultAnims();
-
+				
 				addOffset("static", 0, 0);
 				addOffset("pressed", -2, -2);
 				addOffset("confirm", 36, 36);
+				
+				// i hate up and down strum
+				if(strumData == 1)
+					addOffset("confirm", 37, 38);
+				if(strumData == 2)
+					addOffset("confirm", 38, 36);
 
 				switch(assetModifier)
 				{

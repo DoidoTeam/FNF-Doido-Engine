@@ -28,19 +28,19 @@ class OptionSelector extends FlxTypedGroup<FlxSprite>
 		arrowL.frames = Paths.getSparrowAtlas("menu/menuArrows");
 		arrowL.animation.addByPrefix("idle", "arrow left", 0, false);
 		arrowL.animation.addByPrefix("push", "arrow push left", 0, false);
-		arrowL.scale.set(0.8,0.8); arrowL.updateHitbox();
+		arrowL.scale.set(0.6,0.6); arrowL.updateHitbox();
 		arrowL.animation.play("idle");
 
 		arrowR = new FlxSprite();
 		arrowR.frames = Paths.getSparrowAtlas("menu/menuArrows");
 		arrowR.animation.addByPrefix("idle", "arrow right", 0, false);
 		arrowR.animation.addByPrefix("push", "arrow push right", 0, false);
-		arrowR.scale.set(0.8,0.8); arrowR.updateHitbox();
+		arrowR.scale.set(0.6,0.6); arrowR.updateHitbox();
 		arrowR.animation.play("idle");
 
 		// value display
 		text = new Alphabet(0, 0, Std.string(value), true);
-		text.scale.set(0.9,0.9);
+		text.scale.set(0.7,0.7);
 		text.updateHitbox();
 
 		add(arrowL);
