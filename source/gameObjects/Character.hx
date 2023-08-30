@@ -147,6 +147,8 @@ class Character extends FlxSprite
 
 				idleAnims = ["danceLeft", "danceRight"];
 				quickDancer = true;
+				
+				flipX = isPlayer;
 
 			case "dad":
 				// DAD ANIMATION LOADING CODE

@@ -207,20 +207,35 @@ class PlayState extends MusicBeatState
 		{
 			dadStrumline.x -= strumPos[0]; // goes offscreen
 			bfStrumline.x  -= strumPos[1]; // goes to the middle
-
-			// whatever
-			var guitar = new DistantNoteShader();
+			
+			// the best thing ever
+			/*var guitar = new DistantNoteShader();
 			guitar.downscroll = downscroll;
-			camStrum.setFilters([new openfl.filters.ShaderFilter(cast guitar.shader)]);
+			camStrum.setFilters([new openfl.filters.ShaderFilter(cast guitar.shader)]);*/
 		}
 
 		for(strumline in strumlines.members)
 		{
 			strumline.scrollSpeed = SONG.speed;
 			strumline.updateHitbox();
+			// updating this for modcharts or other stuff
+			for(strum in strumline.strumGroup)
+				strum.initialPos.set(strum.x, strum.y);
 		}
 
 		hudBuild.updateHitbox(bfStrumline.downscroll);
+		
+		/*for(strumline in strumlines.members)
+		{
+			strumline.isPlayer = !strumline.isPlayer;
+			strumline.botplay = !strumline.botplay;
+			if(!strumline.isPlayer)
+			{
+				strumline.downscroll = !strumline.downscroll;
+				strumline.scrollSpeed = 1.0;
+			}
+			strumline.updateHitbox();
+		}*/
 
 		var daSong:String = SONG.song.toLowerCase();
 
@@ -354,11 +369,10 @@ class PlayState extends MusicBeatState
 			{
 				for(strumline in strumlines.members)
 				{
-					var strumMult:Int = (strumline.downscroll ? 1 : -1);
 					for(strum in strumline.strumGroup)
 					{
 						var strumData:Int = (strumline.isPlayer ? strum.strumData : 3 - strum.strumData);
-						FlxTween.tween(strum, {y: strum.y - FlxG.height / 4 * strumMult}, Conductor.crochet / 1000, {
+						FlxTween.tween(strum, {y: strum.initialPos.y}, Conductor.crochet / 1000, {
 							ease: FlxEase.cubeOut,
 							startDelay: Conductor.crochet / 2 / 1000 * strumData,
 						});
@@ -669,7 +683,7 @@ class PlayState extends MusicBeatState
 	var released:Array<Bool> 	= [];
 	
 	var playerSinging:Bool = false;
-
+	
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -775,6 +789,7 @@ class PlayState extends MusicBeatState
 
 				if(unsNote.songTime - Conductor.songPos <= spawnTime && !unsNote.spawned)
 				{
+					unsNote.y = FlxG.height * 4;
 					unsNote.spawned = true;
 					strumline.addNote(unsNote);
 				}
@@ -798,11 +813,12 @@ class PlayState extends MusicBeatState
 			for(note in strumline.noteGroup)
 			{
 				var thisStrum = strumline.strumGroup.members[note.noteData];
-
+				
+				// follows the strum
 				note.x = thisStrum.x + note.noteOffset.x;
 				note.y = thisStrum.y + (thisStrum.height / 12 * downMult) + (note.noteOffset.y * downMult);
 				
-				// adjusting
+				// adjusting according to the song position
 				note.y += downMult * ((note.songTime - Conductor.songPos) * (strumline.scrollSpeed * 0.45));
 
 				if(Conductor.songPos >= note.songTime + Timings.timingsMap.get("good")[0]
