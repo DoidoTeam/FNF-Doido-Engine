@@ -266,13 +266,6 @@ class ChartTestSubState extends MusicBeatSubState
 		else
 			onNoteMiss(note, strumline);
 	}
-	public function checkNoteMiss(note:Note, strumline:Strumline)
-	{
-		if(note.mustMiss)
-			onNoteHit(note, strumline);
-		else
-			onNoteMiss(note, strumline);
-	}
 
 	// actual functions
 	function onNoteHit(note:Note, strumline:Strumline)
@@ -316,14 +309,13 @@ class ChartTestSubState extends MusicBeatSubState
 		note.missed = true;
 		note.setAlpha();
 
-		// put global stuff inside onlyOnce
+		// put stuff inside onlyOnce
 		var onlyOnce:Bool = false;
-
 		if(!note.isHold)
 			onlyOnce = true;
 		else
 		{
-			if(!note.isHoldEnd && note.parentNote.gotHit)
+			if(note.parentNote.gotHit)
 				onlyOnce = true;
 		}
 
@@ -522,8 +514,8 @@ class ChartTestSubState extends MusicBeatSubState
 				
 				if(Conductor.songPos >= note.songTime + note.holdLength + Conductor.crochet + despawnTime)
 				{
-					if(!note.gotHit && !note.missed)
-						checkNoteMiss(note, strumline);
+					if(!note.gotHit && !note.missed && !note.mustMiss && !strumline.botplay)
+						onNoteMiss(note, strumline);
 					
 					strumline.removeNote(note);
 				}
@@ -542,18 +534,21 @@ class ChartTestSubState extends MusicBeatSubState
 				// adjusting
 				note.y += downMult * ((note.songTime - Conductor.songPos) * (strumline.scrollSpeed * 0.45));
 
-				if(Conductor.songPos >= note.songTime + Timings.timingsMap.get("good")[0]
-				&& !note.gotHit && !note.missed)
-				{
-					checkNoteMiss(note, strumline);
-				}
-
 				if(strumline.botplay)
 				{
-					if(note.songTime - Conductor.songPos <= 0 && !note.gotHit)
+					// hitting notes automatically
+					if(note.songTime - Conductor.songPos <= 0 && !note.gotHit && !note.mustMiss)
 					{
-						if(!note.mustMiss)
-							checkNoteHit(note, strumline);
+						checkNoteHit(note, strumline);
+					}
+				}
+				else
+				{
+					// missing notes automatically
+					if(Conductor.songPos >= note.songTime + Timings.timingsMap.get("good")[0]
+					&& !note.gotHit && !note.missed && !note.mustMiss)
+					{
+						onNoteMiss(note, strumline);
 					}
 				}
 
@@ -652,14 +647,14 @@ class ChartTestSubState extends MusicBeatSubState
 							hold.missed = false;
 							hold.gotHit = true;
 						}
-						else if(!pressed[hold.noteData] && !strumline.botplay)
+						else if(!pressed[hold.noteData] && !strumline.botplay && strumline.isPlayer)
 						{
-							checkNoteMiss(hold, strumline);
+							onNoteMiss(hold, strumline);
 						}
 					}
 					
 					if(holdParent.missed && !hold.missed)
-						checkNoteMiss(hold, strumline);
+						onNoteMiss(hold, strumline);
 				}
 			}
 
@@ -699,15 +694,14 @@ class ChartTestSubState extends MusicBeatSubState
 						}
 						else
 						{
-							// ghost tapped lol
+							// you ghost tapped lol
 							if(!SaveData.data.get("Ghost Tapping"))
 							{
 								vocals.volume = 0;
-
+								
 								var note = new Note();
-								note.reloadNote(0,0,"none",assetModifier);
-								FlxG.sound.play(Paths.sound('miss/missnote' + FlxG.random.int(1, 3)), 0.55);
-								popUpRating(note, strumline, true);
+								note.reloadNote(0, i, "none", assetModifier);
+								onNoteMiss(note, strumline);
 							}
 						}
 					}

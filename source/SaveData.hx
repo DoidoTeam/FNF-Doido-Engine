@@ -18,45 +18,62 @@ class SaveData
 		"Ghost Tapping" => [
 			true,
 			CHECKMARK,
-			"Makes you able to press keys freely without missing notes."
+			"Makes you able to press keys freely without missing notes"
 		],
 		"Downscroll" => [
 			false,
 			CHECKMARK,
-			"Makes the notes go down instead of up."
+			"Makes the notes go down instead of up"
 		],
 		"Middlescroll" => [
 			false,
 			CHECKMARK,
-			"Disables the opponent's notes and moves yours to the middle."
+			"Disables the opponent's notes and moves yours to the middle"
 		],
 		"Antialiasing" => [
 			true,
 			CHECKMARK,
-			"Disabling it might increase the fps at the cost of smoother sprites."
+			"Disabling it might increase the fps at the cost of smoother sprites"
 		],
 		"Note Splashes" => [
 			"ON",
 			SELECTOR,
-			"Whether a splash appear when you hit a note perfectly.",
+			"Whether a splash appear when you hit a note perfectly",
 			["ON", "PLAYER ONLY", "OFF"],
 		],
 		"Ratings on HUD" => [
 			true,
 			CHECKMARK,
-			"Makes the ratings stick on the HUD."
+			"Makes the ratings stick on the HUD"
 		],
 		"Framerate Cap"	=> [
 			120,
 			SELECTOR,
-			"Self explanatory.",
+			"Self explanatory",
 			[30, 360]
 		],
 		
 		"Split Holds" => [
 			false,
 			CHECKMARK,
-			"Cuts the end of each hold note like classic engines did."
+			"Cuts the end of each hold note like classic engines did"
+		],
+		"Smooth Healthbar" => [
+			true,
+			CHECKMARK,
+			"Makes the healthbar go up and down smoothly"
+		],
+		"Song Timer" => [
+			true,
+			CHECKMARK,
+			"Makes the song timer visible"
+		],
+		
+		"Cutscenes" => [
+			"ON",
+			SELECTOR,
+			"Decides if the song cutscenes should play",
+			["ON", "FREEPLAY OFF", "OFF"],
 		],
 
 		// this one doesnt actually appear at the regular options menu

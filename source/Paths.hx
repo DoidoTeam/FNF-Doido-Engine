@@ -122,7 +122,10 @@ class Paths
 	}
 	
 	public static function getSparrowAtlas(key:String)
-		return FlxAtlasFrames.fromSparrow(getGraphic(key), 'assets/images/$key.xml');
+		return FlxAtlasFrames.fromSparrow(getGraphic(key), getPath('images/$key.xml'));
+	
+	public static function getPackerAtlas(key:String)
+		return FlxAtlasFrames.fromSpriteSheetPacker(getGraphic(key), getPath('images/$key.txt'));
 		
 	public static function readDir(dir:String, ?type:String, ?removeType:Bool = true):Array<String>
 	{

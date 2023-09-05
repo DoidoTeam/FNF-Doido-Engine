@@ -21,12 +21,14 @@ class HudClass extends FlxGroup
 	// health bar
 	public var healthBarBG:FlxSprite;
 	public var healthBar:FlxBar;
+	var smoothBar:Bool = true;
 
 	// icon stuff
 	public var iconBf:HealthIcon;
 	public var iconDad:HealthIcon;
 
 	public var invertedIcons:Bool = false;
+	public var health:Float = 1;
 
 	public function new()
 	{
@@ -43,6 +45,8 @@ class HudClass extends FlxGroup
 		healthBar.createFilledBar(0xFFFF0000, 0xFF00FF00);
 		healthBar.updateBar();
 		add(healthBar);
+		
+		smoothBar = SaveData.data.get('Smooth Healthbar');
 
 		iconDad = new HealthIcon();
 		iconDad.setIcon(PlayState.SONG.player2, false);
@@ -61,15 +65,17 @@ class HudClass extends FlxGroup
 		infoTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 		add(infoTxt);
 		
-		timeTxt = new FlxText(0, 0, 0, "balls");
+		timeTxt = new FlxText(0, 0, 0, "nuts / balls even");
 		timeTxt.setFormat(Main.gFont, 32, 0xFFFFFFFF, CENTER);
 		timeTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
+		timeTxt.visible = SaveData.data.get('Song Timer');
 		add(timeTxt);
 
 		updateHitbox();
+		health = PlayState.health;
 	}
 
-	public final separator:String = " || ";
+	public final separator:String = " | ";
 
 	public function updateText()
 	{
@@ -130,7 +136,11 @@ class HudClass extends FlxGroup
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		healthBar.percent = (PlayState.health * 50);
+		health = FlxMath.lerp(health, PlayState.health, elapsed * 8);
+		if(Math.abs(health - PlayState.health) <= 0.00001 || !smoothBar)
+			health = PlayState.health;
+		
+		healthBar.percent = (health * 50);
 
 		updateIconPos();
 		updateTimeTxt();
@@ -138,9 +148,9 @@ class HudClass extends FlxGroup
 
 	public function updateIconPos()
 	{
-		var formatHealth = (2 - PlayState.health);
+		var formatHealth = (2 - health);
 		if(invertedIcons)
-			formatHealth = PlayState.health;
+			formatHealth = health;
 
 		var barX:Float = (healthBarBG.x + (healthBarBG.width * (formatHealth) / 2));
 		var barY:Float = (healthBarBG.y + healthBarBG.height / 2);
@@ -166,9 +176,9 @@ class HudClass extends FlxGroup
 				icon.x -= 24;
 
 			if(!icon.isPlayer)
-				icon.setAnim(2 - PlayState.health);
+				icon.setAnim(2 - health);
 			else
-				icon.setAnim(PlayState.health);
+				icon.setAnim(health);
 
 			if(!invertedIcons)
 				icon.flipX = icon.isPlayer;

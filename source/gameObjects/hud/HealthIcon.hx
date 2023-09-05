@@ -67,6 +67,8 @@ class HealthIcon extends FlxSprite
 			"bf" 		=> 0xFF31B0D1,
 			"gf" 		=> 0xFFA5004D,
 			"dad"		=> 0xFFAF66CE,
+			"senpai"	=> 0xFFFFAA6F,
+			"spirit"	=> 0xFFFF3C6E,
 		];
 
 		function loopMap()

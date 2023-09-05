@@ -122,7 +122,11 @@ class Strumline extends FlxGroup
 			}
 		}
 	}
-
+	
+	/*
+	*	sets up the notes positions
+	*	you can change it but i dont recommend it
+	*/
 	public function updateHitbox()
 	{
 		for(strum in strumGroup.members)

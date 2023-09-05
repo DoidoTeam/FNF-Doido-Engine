@@ -22,13 +22,13 @@ class FreeplayState extends MusicBeatState
 {
 	var songList:Array<Array<Dynamic>> = [];
 	
-	function addWeek(songs:Array<String>, icons:Array<String>, ?color:FlxColor)
+	function addWeek(songs:Array<String>, icons:Array<String>)
 	{
 		for(i in 0...songs.length)
 		{
 			var icon:String	= (icons.length - 1 >= i) ? icons[i] : icons[0];
 			
-			addSong(songs[i], icon, color);
+			addSong(songs[i], icon, null);
 		}
 	}
 	
@@ -59,6 +59,7 @@ class FreeplayState extends MusicBeatState
 		add(bg);
 		
 		addWeek(["bopeebo", "fresh", "dadbattle"], ["dad"]);
+		addWeek(["senpai", "roses", "thorns"], ["senpai","senpai","spirit"]);
 		addSong("hecker", 		"hecker");
 		addSong("ugh",			"tankman");
 		addSong("disruption", 	"3d-bambi");

@@ -30,6 +30,9 @@ class CoolUtil
 			"bf",
 			"bf-pixel",
 			"bf-pixel-dead",
+			"senpai",
+			"senpai-angry",
+			"spirit",
 			"gemamugen",
 		];
 	}
@@ -69,7 +72,7 @@ class CoolUtil
 	// NOTE STUFF
 	public static function getDirection(i:Int)
 		return ["left", "down", "up", "right"][i];
-
+	
 	public static function noteWidth()
 	{
 		return (160 * 0.7); // 112

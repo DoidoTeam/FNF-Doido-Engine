@@ -15,7 +15,7 @@ class Note extends FlxSprite
 
 	public var noteSize:Float = 1.0;
 	public var assetModifier:String = "base";
-
+	
 	public function reloadNote(songTime:Float, noteData:Int, ?noteType:String = "default", ?assetModifier:String = "base"):Note
 	{
 		var storedPos:Array<Float> = [x, y];
@@ -166,12 +166,7 @@ class Note extends FlxSprite
 		holdHitLength = 0;
 		spawned = false;
 		
-		clipRect = new flixel.math.FlxRect(
-			0,
-			0,
-			frameWidth,
-			frameHeight
-		);
+		clipRect = null;
 		setAlpha();
 	}
 }

@@ -71,6 +71,12 @@ class StoryMenuState extends MusicBeatState
 			["bopeebo", "fresh", "dadbattle"],
 			"dad", "bf", "gf"
 		);
+		addWeek(
+			"week6",
+			"hating simulator (ft. moawling)",
+			["senpai", "roses", "thorns"],
+			"senpai", "bf", "gf"
+		);
 		
 		grpWeeks = new FlxTypedGroup<FlxSprite>();
 		add(grpWeeks);
@@ -275,11 +281,6 @@ class StoryMenuState extends MusicBeatState
 			trackTxt.text += song.toUpperCase() + '\n';
 		trackTxt.x = 200 - (trackTxt.width / 2);
 		
-		// gets them
-		scoreCount[0] = Highscore.getScore('week-' + daWeek.fileName + '-' + curDiff).score;
-		
-		//scoreCount[0] += FlxG.random.int(0, 2546688);
-		
 		weekNameTxt.text = weekList[curWeek].weekName.toUpperCase();
 		weekNameTxt.x = FlxG.width - weekNameTxt.width - 8;
 		changeDiff();
@@ -293,6 +294,10 @@ class StoryMenuState extends MusicBeatState
 		diffInt = FlxMath.wrap(diffInt, 0, 2);
 		
 		curDiff = CoolUtil.getDiffs()[diffInt];
+		
+		// scoreCount[0] += FlxG.random.int(0, 2546688);
+		// updates the score
+		scoreCount[0] = Highscore.getScore('week-' + weekList[curWeek].fileName + '-' + curDiff).score;
 		
 		diffSelector.changeDiff(curDiff);
 	}
@@ -337,6 +342,10 @@ class StoryChar extends FlxSprite
 		
 		switch(char)
 		{
+			case "senpai":
+				animation.addByPrefix("idle", "idle", 24, true);
+				globalOffset.x -= 35;
+				
 			case "dad":
 				animation.addByPrefix("idle", "idle", 24, true);
 				scale.set(0.45,0.45);

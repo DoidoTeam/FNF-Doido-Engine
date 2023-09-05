@@ -6,6 +6,9 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
+import flixel.text.FlxText;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import data.GameData.MusicBeatState;
@@ -26,10 +29,17 @@ class OptionsState extends MusicBeatState
 			"Ghost Tapping",
 			"Downscroll",
 			"Middlescroll",
+			"Cutscenes",
 			"Framerate Cap",
-
+			
 			// dont ask
 			/*"Framerate Cap",
+			"Framerate Cap",
+			"Framerate Cap",
+			"Framerate Cap",
+			"Framerate Cap",
+			"Framerate Cap",
+			"Framerate Cap",
 			"Framerate Cap",
 			"Framerate Cap",
 			"Framerate Cap",
@@ -46,6 +56,8 @@ class OptionsState extends MusicBeatState
 			"Antialiasing",
 			"Note Splashes",
 			"Ratings on HUD",
+			"Song Timer",
+			"Smooth Healthbar",
 			"Split Holds",
 		],
 	];
@@ -64,6 +76,7 @@ class OptionsState extends MusicBeatState
 
 	var grpTexts:FlxTypedGroup<AlphabetMenu>;
 	var grpAttachs:FlxTypedGroup<FlxBasic>;
+	var infoTxt:FlxText;
 
 	// objects
 	var bg:FlxSprite;
@@ -97,6 +110,11 @@ class OptionsState extends MusicBeatState
 
 		add(grpTexts);
 		add(grpAttachs);
+		
+		infoTxt = new FlxText(0, 0, FlxG.width * 0.92, "");
+		infoTxt.setFormat(Main.gFont, 28, 0xFFFFFFFF, CENTER);
+		infoTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
+		add(infoTxt);
 
 		reloadCat();
 	}
@@ -167,7 +185,7 @@ class OptionsState extends MusicBeatState
 
 				item.updatePos();
 
-				if(optionShit.get(curCat).length <= 7)
+				if(optionShit.get(curCat).length <= 9)
 				{
 					item.posUpdate = false;
 
@@ -224,9 +242,9 @@ class OptionsState extends MusicBeatState
 			{
 				item.alpha = 1;
 			}
-			if(curSelected > 7)
+			if(curSelected > 9)
 			{
-				item.focusY -= curSelected - 7;
+				item.focusY -= curSelected - 9;
 			}
 		}
 		for(item in grpAttachs.members)
@@ -248,6 +266,22 @@ class OptionsState extends MusicBeatState
 				{
 					i.alpha = daAlpha;
 				}
+			}
+		}
+		
+		infoTxt.text = "";
+		if(curCat != "main")
+		{
+			try{
+				
+				infoTxt.text = SaveData.displaySettings.get(grpTexts.members[curSelected].text)[2];
+				infoTxt.y = FlxG.height - infoTxt.height - 16;
+				infoTxt.screenCenter(X);
+				
+				infoTxt.y -= 30;
+				
+			} catch(e) {
+				trace("no description found");
 			}
 		}
 
@@ -287,8 +321,9 @@ class OptionsState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
 		updateAttachPos();
+		if(infoTxt.text != "")
+			infoTxt.y = FlxMath.lerp(infoTxt.y, FlxG.height - infoTxt.height - 16, elapsed * 8);
 
 		if(Controls.justPressed("BACK"))
 		{

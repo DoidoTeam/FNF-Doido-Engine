@@ -23,13 +23,15 @@ class GameOverSubState extends MusicBeatSubState
 	{
 		super();
 		this.bf = bf;
+	}
+	
+	override function create()
+	{
+		super.create();
 		add(bf);
-
-		// if your character doesnt have death anims
-		// the game reloads its deathChar (default is "bf")
-		if(!bf.animation.exists("firstDeath"))
-			bf.reloadChar(bf.deathChar);
-
+		// the game loads the deathChar you set in Character.hx (default is "bf")
+		bf.reloadChar(bf.deathChar);
+		
 		bf.playAnim("firstDeath");
 
 		bfFollow = new FlxObject(bf.x + bf.width / 2, bf.y + bf.height / 2);
@@ -38,11 +40,12 @@ class GameOverSubState extends MusicBeatSubState
 		{
 			FlxG.camera.follow(bfFollow, LOCKON, FlxG.elapsed * 1);
 		});
-
-		switch(PlayState.SONG.song.toLowerCase())
+		
+		// death sound
+		FlxG.sound.play(switch(PlayState.SONG.song)
 		{
-			default: FlxG.sound.play(Paths.music("death/deathSound"));
-		}
+			default: Paths.music("death/deathSound");
+		});
 	}
 
 	override function update(elapsed:Float)
