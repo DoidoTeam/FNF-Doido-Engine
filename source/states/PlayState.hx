@@ -7,6 +7,7 @@ import flixel.FlxCamera;
 import flixel.FlxSprite;
 import flixel.FlxObject;
 import flixel.FlxSubState;
+import flixel.addons.effects.FlxTrail;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
@@ -29,6 +30,7 @@ import shaders.*;
 import states.editors.*;
 import states.menu.*;
 import subStates.*;
+import sys.FileSystem;
 
 using StringTools;
 
@@ -163,7 +165,8 @@ class PlayState extends MusicBeatState
 		*	so it doesnt reload the icons
 		*/
 		gf = new Character();
-		changeChar(gf, "gf", false);
+		// check changeStage to change gf
+		//changeChar(gf, "gf", false);
 		
 		dad = new Character();
 		changeChar(dad, SONG.player2);
@@ -488,25 +491,36 @@ class PlayState extends MusicBeatState
 			if(daCount != 4)
 			{
 				var soundName:String = ["3", "2", "1", "Go"][daCount];
-
-				FlxG.sound.play(Paths.sound("countdown/intro" + soundName));
-
-				/*var hehe = new gameObjects.menu.Alphabet(0, 0, ["3", "2", "1", "GO"][daCount], true);
-				hehe.cameras = [camHUD];
-				hehe.screenCenter();
-				hudBuild.add(hehe);*/
+				
+				var soundPath:String = assetModifier;
+				if(!Paths.fileExists('sounds/countdown/$soundPath/intro$soundName.ogg'))
+					soundPath = 'base';
+				
+				FlxG.sound.play(Paths.sound('countdown/$soundPath/intro$soundName'));
+				
 				if(daCount >= 1)
 				{
 					var countName:String = ["ready", "set", "go"][daCount - 1];
+					
+					var spritePath:String = assetModifier;
+					if(!Paths.fileExists('images/hud/$spritePath/$countName.png'))
+						spritePath = 'base';
 
 					var countSprite = new FlxSprite();
-					countSprite.loadGraphic(Paths.image("hud/base/" + countName));
-					countSprite.scale.set(0.65,0.65); countSprite.updateHitbox();
+					countSprite.loadGraphic(Paths.image('hud/$spritePath/$countName'));
+					switch(spritePath)
+					{
+						case "pixel":
+							countSprite.scale.set(6.5,6.5);
+							countSprite.antialiasing = false;
+						default:
+							countSprite.scale.set(0.65,0.65);
+					}
+					countSprite.updateHitbox();
 					countSprite.screenCenter();
 					countSprite.cameras = [camHUD];
 					hudBuild.add(countSprite);
 
-					//new FlxTimer().start(Conductor.stepCrochet * 3.8 / 1000, function(tmr:FlxTimer)
 					FlxTween.tween(countSprite, {alpha: 0}, Conductor.stepCrochet * 2.8 / 1000, {
 						startDelay: Conductor.stepCrochet * 1 / 1000,
 						onComplete: function(twn:FlxTween)
@@ -1359,7 +1373,7 @@ class PlayState extends MusicBeatState
 		camHUD.zoom += hudZoom;
 		camStrum.zoom += hudZoom;
 	}
-
+	
 	// funny thingy
 	public function changeChar(char:Character, newChar:String = "bf", ?iconToo:Bool = true)
 	{
@@ -1382,6 +1396,19 @@ class PlayState extends MusicBeatState
 			var daID:Int = (char.isPlayer ? 1 : 0);
 			hudBuild.changeIcon(daID, char.curChar);
 		}
+		
+		var evilTrail = char._dynamic["evilTrail"];
+		if(evilTrail != null)
+		{
+			remove(evilTrail);
+			evilTrail = null;
+		}
+		switch(newChar)
+		{
+			case 'spirit':
+				evilTrail = new FlxTrail(char, null, 4, 24, 0.3, 0.069);
+				add(evilTrail);
+		}
 	}
 
 	// funny thingy
@@ -1390,10 +1417,16 @@ class PlayState extends MusicBeatState
 		stageBuild.reloadStage(newStage);
 
 		// gfpos
-		gf.setPosition(stageBuild.gfPos.x, stageBuild.gfPos.y);
-		gf.x -= gf.width / 2;
-		gf.y -= gf.height;
-		gf.visible = stageBuild.hasGf;
+		if(stageBuild.gfVersion == "") {
+			changeChar(gf, boyfriend.curChar, false);
+			gf.visible = false;
+		} else {
+			changeChar(gf, stageBuild.gfVersion, false);
+			gf.setPosition(stageBuild.gfPos.x, stageBuild.gfPos.y);
+			gf.x -= gf.width / 2;
+			gf.y -= gf.height;
+			gf.visible = true;
+		}
 
 		dad.setPosition(stageBuild.dadPos.x, stageBuild.dadPos.y);
 		dad.y -= dad.height;
@@ -1405,6 +1438,12 @@ class PlayState extends MusicBeatState
 		{
 			char.x += char.globalOffset.x;
 			char.y += char.globalOffset.y;
+		}
+		
+		switch(newStage)
+		{
+			default:
+				// add your custom stuff here
 		}
 	}
 	

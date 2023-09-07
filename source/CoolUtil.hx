@@ -30,6 +30,7 @@ class CoolUtil
 			"bf",
 			"bf-pixel",
 			"bf-pixel-dead",
+			"gf-pixel",
 			"senpai",
 			"senpai-angry",
 			"spirit",
@@ -67,6 +68,22 @@ class CoolUtil
 		//disMin = forceZero(disMin);
 		
 		return '$disMin$divisor$disSec';
+	}
+	
+	inline public static function intArray(end:Int, start:Int = 0):Array<Int>
+	{
+		if(start > end) {
+			var oldStart = start;
+			start = end;
+			end = oldStart;
+		}
+		
+		var result:Array<Int> = [];
+		for(i in start...end + 1)
+		{
+			result.push(i);
+		}
+		return result;
 	}
 	
 	// NOTE STUFF

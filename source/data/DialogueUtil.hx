@@ -1,5 +1,6 @@
 package data;
 
+import flixel.text.FlxText.FlxTextBorderStyle;
 import gameObjects.Dialogue.DialogueData;
 import gameObjects.Dialogue.DialoguePage;
 
@@ -22,19 +23,24 @@ class DialogueUtil
 					pages:[
 						{
 							boxSkin: 'school',
-							// character
-							charLeft:  'senpai',
-							charRight: '',
-							charFocus: 'left',
+							fontFamily: 'pixel.otf',
+							fontColor: 0xFF3F2021,
+							fontScale: 0.8,
 							
-							text: 'Ah, a new fair maiden has come\nin search of true love!',
+							fontBorderType: SHADOW,
+							fontBorderColor: 0xFFD89494,
+							fontBorderSize: 4,
+							
+							// character
+							char: 'senpai',
+							
+							text: 'Ah, a new fair maiden has come in\nsearch of true love!',
 						},
 						{
-							text: 'A serenade between gentlemen shall decide\nwhere her beautiful heart shall reside.'
+							text: 'A serenade between gentlemen shall\ndecide where her beautiful heart shall\nreside.'
 						},
 						{
-							charRight: 'bf-pixel',
-							charFocus: 'right',
+							char: 'bf-pixel',
 							text: 'Beep bo bop',
 						}
 					]
@@ -45,19 +51,23 @@ class DialogueUtil
 					pages:[
 						{
 							boxSkin: 'school',
+							fontFamily: 'pixel.otf',
+							fontColor: 0xFF3F2021,
+							fontScale: 0.8,
+							
+							fontBorderType: SHADOW,
+							fontBorderColor: 0xFFD89494,
+							fontBorderSize: 4,
 							// character
-							charLeft:  'senpai-angry',
-							charRight: '',
-							charFocus: 'left',
+							char: 'senpai-angry',
 							
 							text: 'Not bad for an ugly worm.',
 						},
 						{
-							text: "But this time I'll rip your nuts off right\nafter your girlfriend finishes gargling mine."
+							text: "But this time I'll rip your nuts off\nright after your girlfriend finishes\ngargling mine."
 						},
 						{
-							charRight: 'bf-pixel',
-							charFocus: 'right',
+							char: 'bf-pixel',
 							text: 'Bop beep be be skdoo bep',
 						}
 					]
@@ -68,26 +78,30 @@ class DialogueUtil
 					pages:[
 						{
 							boxSkin: 'school-evil',
+							fontFamily: 'pixel.otf',
+							fontColor: 0xFFFFFFFF,
+							fontScale: 0.8,
+							fontBorderSize: 0,
 							// character
-							charLeft:  'spirit',
-							charRight: '',
-							charFocus: 'left',
+							char:  'spirit',
 							
-							text: 'Direct contact with real humans,\nafter being trapped in here for so long...',
+							text: 'Direct contact with real humans, after\nbeing trapped in here for so long...',
 						},
 						{
 							text: "and HER of all people."
 						},
 						{
-							text: "I'll make her father pay for what he's\ndone to me and all the others...."
+							text: "I'll make her father pay for what he's done\nto me and all the others...."
 						},
 						{
 							text: "I'll beat you and make you take my place."
 						},
 						{
-							text: "You don't mind your bodies being borrowed right?"
+							fontColor: 0xFFFF0000,
+							text: "You don't mind your bodies being borrowed\nright?"
 						},
 						{
+							fontScale: 2.5,
 							text: "It's only fair..."
 						},
 					]

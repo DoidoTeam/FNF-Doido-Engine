@@ -23,6 +23,9 @@ class Paths
 	public static function getPath(key:String):String
 		return 'assets/$key';
 	
+	public static function fileExists(filePath:String):Bool
+		return FileSystem.exists(getPath(filePath));
+	
 	public static function getSound(key:String):Sound
 	{
 		if(!renderedSounds.exists(key))
@@ -121,9 +124,11 @@ class Paths
 		return Json.parse(rawJson);
 	}
 	
+	// sparrow (.xml) sheets
 	public static function getSparrowAtlas(key:String)
 		return FlxAtlasFrames.fromSparrow(getGraphic(key), getPath('images/$key.xml'));
 	
+	// packer (.txt) sheets
 	public static function getPackerAtlas(key:String)
 		return FlxAtlasFrames.fromSpriteSheetPacker(getGraphic(key), getPath('images/$key.txt'));
 		

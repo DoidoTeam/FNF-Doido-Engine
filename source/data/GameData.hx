@@ -42,7 +42,7 @@ class MusicBeatState extends FlxUIState
 	{
 		_curStep = Conductor.calcStateStep();
 
-		if(_curStep != curStep)
+		while(_curStep != curStep)
 			stepHit();
 	}
 
@@ -102,7 +102,7 @@ class MusicBeatSubState extends FlxSubState
 	{
 		_curStep = Conductor.calcStateStep();
 
-		if(_curStep != curStep)
+		while(_curStep != curStep)
 			stepHit();
 	}
 

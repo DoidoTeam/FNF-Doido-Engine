@@ -137,9 +137,22 @@ class Character extends FlxSprite
 				idleAnims = ["firstDeath"];
 
 				flipX = true;
-				antialiasing = false;
 				scale.set(6,6);
-
+				antialiasing = false;
+				
+			case "gf-pixel":
+				frames = Paths.getSparrowAtlas("characters/gf-pixel/gfPixel");
+				
+				animation.addByIndices('danceLeft',  'GF IDLE', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
+				animation.addByIndices('danceRight', 'GF IDLE', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+				
+				idleAnims = ["danceLeft", "danceRight"];
+				
+				scale.set(6,6);
+				antialiasing = false;
+				quickDancer = true;
+				flipX = isPlayer;
+				
 			case "bf":
 				frames = Paths.getSparrowAtlas("characters/bf/BOYFRIEND");
 
@@ -180,7 +193,6 @@ class Character extends FlxSprite
 
 				idleAnims = ["danceLeft", "danceRight"];
 				quickDancer = true;
-				
 				flipX = isPlayer;
 
 			case "dad":
@@ -212,7 +224,7 @@ class Character extends FlxSprite
 					cameraOffset.set(charData.cameraOffset[0], charData.cameraOffset[1]);
 					ratingsOffset.set(charData.ratingsOffset[0], charData.ratingsOffset[1]);
 				} catch(e) {
-					trace('$curChar not found');
+					trace('$curChar offsets not found');
 				}
 		}
 		

@@ -3,6 +3,7 @@ package gameObjects;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.text.FlxText;
@@ -10,6 +11,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import gameObjects.menu.Alphabet;
 
 typedef DialogueData = {
 	var pages:Array<DialoguePage>;
@@ -17,12 +19,19 @@ typedef DialogueData = {
 typedef DialoguePage = {
 	// box
 	var ?boxSkin:String;
-	// actual text
-	var ?text:String;
 	// character
-	var ?charLeft:String;
-	var ?charRight:String;
-	var ?charFocus:String;
+	var ?char:String;
+	var ?charAnim:String;
+	// dialogue text
+	var ?text:String;
+	// text settings
+	var ?fontFamily:String;
+	var ?fontScale:Float;
+	var ?fontColor:Int;
+	// text border
+	var ?fontBorderType:FlxTextBorderStyle;
+	var ?fontBorderColor:Int;
+	var ?fontBorderSize:Float;
 }
 class Dialogue extends FlxGroup
 {
@@ -31,22 +40,24 @@ class Dialogue extends FlxGroup
 	public function new()
 	{
 		super();
-		charL = new DialogueChar();
-		charR = new DialogueChar();
-		charL.visible = false;
-		charR.visible = false;
+		grpChar = new FlxTypedGroup<DialogueChar>();
 		box = new DialogueBox();
+		
 		text = new FlxText(0, 0, 0, "");
 		text.setFormat(Main.gFont, 36, 0xFFFFFFFF, LEFT);
 		text.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
+		text.antialiasing = false;
+		
+		textAlphabet = new Alphabet(0,0,"",true);
+		textAlphabet.visible = false;
+		add(textAlphabet);
 		
 		bg = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFF000000);
 		bg.screenCenter();
 		bg.alpha = 0.3;
 		add(bg);
 		
-		add(charL);
-		add(charR);
+		add(grpChar);
 		add(box);
 		add(text);
 	}
@@ -55,22 +66,36 @@ class Dialogue extends FlxGroup
 	
 	public var bg:FlxSprite;
 	public var box:DialogueBox;
-	public var charL:DialogueChar;
-	public var charR:DialogueChar;
+	public var grpChar:FlxTypedGroup<DialogueChar>;
 	public var text:FlxText;
+	public var textAlphabet:Alphabet;
+	
+	public var fontScale:Float = 1.0;
+	
+	var fontBorderSize:Float = 1.5;
+	var fontBorderColor:Int = 0xFF000000;
+	var fontBorderType:FlxTextBorderStyle = OUTLINE;
 	
 	public function load(data:DialogueData)
 	{
 		this.data = data;
 		// preloading
+		var spawnedChars:Array<String> = [];
 		for(page in data.pages)
 		{
 			if(page.boxSkin != null)
 				box.reloadBox(page.boxSkin);
-			if(page.charLeft != null)
-				charL.reloadChar(page.charLeft);
-			if(page.charRight != null)
-				charR.reloadChar(page.charRight);
+			//if(page.char != null)
+			//	char.reloadChar(page.char);
+			if(page.char != null)
+			{
+				if(!spawnedChars.contains(page.char))
+				{
+					var char = new DialogueChar();
+					char.reloadChar(page.char);
+					grpChar.add(char);
+				}
+			}
 		}
 		// first page
 		changePage(false);
@@ -107,6 +132,17 @@ class Dialogue extends FlxGroup
 		}
 		else
 			text.text = typeTxt;
+		
+		if(textAlphabet.visible)
+			textAlphabet.text = text.text.replace("\n", "\\");
+		
+		if(box != null)
+		{
+			text.x = box.x + box.txtPos.x;
+			text.y = box.y + box.txtPos.y;
+			
+			textAlphabet.setPosition(text.x, text.y);
+		}
 	}
 	
 	var typeLoop:Int = 0;
@@ -122,6 +158,7 @@ class Dialogue extends FlxGroup
 	}
 	
 	public var curPage:Int = 0;
+	public var activeChar:DialogueChar;
 	
 	public function changePage(change:Bool = true):Void
 	{
@@ -138,40 +175,68 @@ class Dialogue extends FlxGroup
 			if(swagPage.boxSkin != null)
 				box.reloadBox(swagPage.boxSkin);
 			
+			if(swagPage.fontFamily != null)
+			{
+				textAlphabet.visible = false;
+				text.visible = false;
+				if(swagPage.fontFamily == 'Alphabet')
+					textAlphabet.visible = true;
+				else
+				{
+					text.visible = true;
+					text.font = Paths.font(swagPage.fontFamily);
+				}
+			}
+			
+			//text.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
+			if(swagPage.fontBorderType != null)
+				fontBorderType = swagPage.fontBorderType;
+			if(swagPage.fontBorderColor != null)
+				fontBorderColor = swagPage.fontBorderColor;
+			if(swagPage.fontBorderSize != null)
+				fontBorderSize = swagPage.fontBorderSize;
+			
+			text.setBorderStyle(fontBorderType, fontBorderColor, fontBorderSize);
+			
+			if(swagPage.fontScale != null)
+			{
+				fontScale = swagPage.fontScale;
+				text.size = Math.floor(36 * fontScale);
+				text.updateHitbox();
+				
+				textAlphabet.scale.set(fontScale, fontScale);
+				textAlphabet.updateHitbox();
+			}
+			if(swagPage.fontColor != null)
+			{
+				text.color = swagPage.fontColor;
+				textAlphabet.color = swagPage.fontColor;
+			}
+			
 			if(swagPage.text != null)
 			{
 				//text.text = swagPage.text;
 				startTyping(swagPage.text);
-				if(box != null)
+			}
+			
+			if(swagPage.char != null)
+			{
+				for(char in grpChar.members)
 				{
-					text.x = box.x + box.txtPos.x;
-					text.y = box.y + box.txtPos.y;
+					char.isActive = false;
+					if(char.curChar == swagPage.char)
+					{
+						char.isActive = true;
+						activeChar = char;
+					}
 				}
 			}
 			
-			function loadChar(daChar:DialogueChar, newChar:String)
+			if(swagPage.charAnim != null)
 			{
-				daChar.visible = true;
-				if(newChar == '')
-					daChar.visible = false;
-				
-				daChar.reloadChar(newChar);
+				if(activeChar != null)
+					activeChar.playAnim(swagPage.charAnim);
 			}
-			
-			if(swagPage.charFocus != null)
-			{
-				charL.alpha = charR.alpha = 0.4;
-				switch(swagPage.charFocus)
-				{
-					case 'left': charL.alpha = 1;
-					case 'right':charR.alpha = 1;
-				}
-			}
-			
-			if(swagPage.charLeft != null)
-				loadChar(charL, swagPage.charLeft);
-			if(swagPage.charRight != null)
-				loadChar(charR, swagPage.charRight);
 		}
 		catch(e)
 		{
@@ -186,58 +251,75 @@ class DialogueChar extends FlxSprite
 		super();
 	}
 	
+	public var startPos:FlxPoint = new FlxPoint();
+	public var activePos:FlxPoint = new FlxPoint();
+	public var isActive:Bool = false;
+	
 	public var curChar:String = '';
 	public function reloadChar(curChar:String):DialogueChar
 	{
 		this.curChar = curChar;
+		startPos.set(-500, 700);
+		activePos.set(100, 700);
 		switch(curChar)
 		{
 			case 'bf-pixel':
 				loadGraphic(Paths.image('dialogue/chars/bf-pixel/bf-pixel'));
 				antialiasing = false;
-				scale.set(6,6);
+				scale.set(5,5);
 				updateHitbox();
 				
 				defaultPos();
-				x += 300;
-				
-				fakeAnimate([x + 200, x]);
+				x += 240;
+				startPos.set(x + 200, y);
+				activePos.set(x, y);
 			
 			case 'senpai'|'senpai-angry'|'spirit':
 				loadGraphic(Paths.image('dialogue/chars/senpai/$curChar'));
 				antialiasing = false;
-				scale.set(6,6);
+				scale.set(5,5);
 				updateHitbox();
 				
 				defaultPos();
-				x -= 300;
-				
+				x -= 240;
 				if(curChar == 'spirit')
-					y += 165;
+					y += 130;
 				
-				fakeAnimate([x - 200, x]);
+				startPos.set(x - 200, y);
+				activePos.set(x, y);
 				
 			default:
 				return reloadChar('bf-pixel');
 		}
+		setPosition(startPos.x, startPos.y);
+		alpha = 0;
 		return this;
 	}
 	
 	function defaultPos()
 	{
 		screenCenter(X);
-		y = FlxG.height - height - 335; // 320
+		y = FlxG.height - height - 285; // 320
 	}
 	
-	function fakeAnimate(daPos:Array<Float>, time:Float = 0.45, ?ease:EaseFunction)
+	public function playAnim(animName:String = '')
 	{
-		if(daPos.length < 2) daPos = [0,0];
-		if(ease == null) ease = FlxEase.cubeOut;
+		try{
+			animation.play(animName, false, false, 0);
+		}
+		catch(e) {}
+	}
+	
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+		var daPos:FlxPoint = startPos;
+		if(isActive)
+			daPos = activePos;
 		
-		x = daPos[0];
-		var storedAlpha:Float = alpha;
-		alpha = 0;
-		FlxTween.tween(this, {x: daPos[1], alpha: storedAlpha}, time, {ease: ease});
+		x = FlxMath.lerp(x, daPos.x, elapsed * 8);
+		y = FlxMath.lerp(y, daPos.y, elapsed * 8);
+		alpha = FlxMath.lerp(alpha, isActive ? 1 : 0, elapsed * 10);
 	}
 }
 class DialogueBox extends FlxSprite
@@ -259,15 +341,15 @@ class DialogueBox extends FlxSprite
 			case "school":
 				loadGraphic(Paths.image('dialogue/box/pixel/school'));
 				antialiasing = false;
-				scale.set(6,6);
+				scale.set(5,5);
 				updateHitbox();
 				
 				fakeAnimate([0.05, 0.15, 0.5, 0.88, 1.0], 12, false);
 				
-				txtPos.set(100,90);
+				txtPos.set(85,70);
 				
 			case "school-evil":
-				makeGraphic(190 * 6, 42 * 6, 0xFF000000);
+				makeGraphic(190 * 5, 42 * 5, 0xFF000000);
 				
 				fakeAnimate([0.05, 0.15, 0.5, 0.98, 1.0], 12, true);
 				
