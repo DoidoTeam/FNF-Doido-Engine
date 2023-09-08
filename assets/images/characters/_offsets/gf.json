@@ -10,12 +10,17 @@
 			-8
 		],
 		[
+			"danceRight",
+			0,
+			0
+		],
+		[
 			"singDOWN",
 			0,
 			-11
 		],
 		[
-			"danceRight",
+			"danceLeft",
 			0,
 			0
 		],
@@ -25,14 +30,14 @@
 			13
 		],
 		[
-			"danceLeft",
-			0,
-			0
-		],
-		[
 			"hairBlow",
 			45,
 			1
+		],
+		[
+			"cheer",
+			0,
+			9
 		],
 		[
 			"singRIGHT",
@@ -45,19 +50,14 @@
 			0
 		],
 		[
-			"cheer",
+			"singLEFT",
 			0,
-			9
+			-10
 		],
 		[
 			"sad",
 			-2,
 			-12
-		],
-		[
-			"singLEFT",
-			0,
-			-10
 		]
 	],
 	"ratingsOffset": [
@@ -65,7 +65,7 @@
 		0
 	],
 	"cameraOffset": [
-		-160,
-		0
+		-230,
+		-100
 	]
 }

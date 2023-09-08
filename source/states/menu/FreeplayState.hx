@@ -58,11 +58,12 @@ class FreeplayState extends MusicBeatState
 		bg.screenCenter();
 		add(bg);
 		
+		addWeek(["tutorial"], ["gf"]);
 		addWeek(["bopeebo", "fresh", "dadbattle"], ["dad"]);
 		addWeek(["senpai", "roses", "thorns"], ["senpai","senpai","spirit"]);
-		addSong("hecker", 		"hecker");
-		addSong("ugh",			"tankman");
-		addSong("disruption", 	"3d-bambi");
+		//addSong("hecker", 		"hecker");
+		//addSong("ugh",			"tankman");
+		//addSong("disruption", 	"3d-bambi");
 		addSong("exploitation", "true-expunged");
 		addSong("collision", 	"gemamugen");
 		addSong("lunar-odyssey","luano-day");

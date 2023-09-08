@@ -82,6 +82,7 @@ class PlayState extends MusicBeatState
 	
 	public static var cameraSpeed:Float = 1.0;
 	public static var defaultCamZoom:Float = 1.0;
+	public static var extraCamZoom:Float = 0.0;
 	public static var forcedCamPos:Null<FlxPoint>;
 
 	public static var camFollow:FlxObject = new FlxObject();
@@ -94,6 +95,7 @@ class PlayState extends MusicBeatState
 		health = 1;
 		cameraSpeed = 1.0;
 		defaultCamZoom = 1.0;
+		extraCamZoom = 0.0;
 		forcedCamPos = null;
 		assetModifier = "base";
 		Timings.init();
@@ -154,7 +156,7 @@ class PlayState extends MusicBeatState
 		stageBuild.reloadStageFromSong(SONG.song);
 		add(stageBuild);
 		
-		camGame.zoom = defaultCamZoom;
+		camGame.zoom = defaultCamZoom + extraCamZoom;
 		hudBuild = new HudClass();
 		hudBuild.setAlpha(0);
 		
@@ -1173,10 +1175,10 @@ class PlayState extends MusicBeatState
 		function lerpCamZoom(daCam:FlxCamera, target:Float = 1.0, speed:Int = 6)
 			daCam.zoom = FlxMath.lerp(daCam.zoom, target, elapsed * speed);
 			
-		lerpCamZoom(camGame, defaultCamZoom);
+		lerpCamZoom(camGame, defaultCamZoom + extraCamZoom);
 		lerpCamZoom(camHUD);
 		lerpCamZoom(camStrum);
-
+		
 		health = FlxMath.bound(health, 0, 2); // bounds the health
 	}
 	
@@ -1188,6 +1190,15 @@ class PlayState extends MusicBeatState
 		{
 			if(sect.mustHitSection)
 				followCamera(bfStrumline.character);
+			
+			switch(SONG.song)
+			{
+				case "tutorial":
+					// shakes the camera a little when zooming
+					FlxTween.tween(PlayState, {extraCamZoom: (sect.mustHitSection ? 0 : 0.5)}, Conductor.crochet / 1000, {
+						ease: !sect.mustHitSection ? FlxEase.cubeOut : FlxEase.cubeInOut
+					});
+			}
 		}
 	}
 
@@ -1418,7 +1429,7 @@ class PlayState extends MusicBeatState
 
 		// gfpos
 		if(stageBuild.gfVersion == "") {
-			changeChar(gf, boyfriend.curChar, false);
+			changeChar(gf, "gf", false);
 			gf.visible = false;
 		} else {
 			changeChar(gf, stageBuild.gfVersion, false);

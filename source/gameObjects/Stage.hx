@@ -174,7 +174,7 @@ class Stage extends FlxGroup
 				
 				var curtains = new FlxSprite(-600, -400).loadGraphic(Paths.image("backgrounds/stage/stagecurtains"));
 				curtains.scrollFactor.set(1.4,1.4);
-				add(curtains);
+				foreground.add(curtains);
 		}
 	}
 	
