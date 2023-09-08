@@ -18,6 +18,7 @@ class GameOverSubState extends MusicBeatSubState
 {
 	public var bf:Character;
 	public var bfFollow:FlxObject;
+	var canCamFollow:Bool = false;
 
 	public function new(bf:Character)
 	{
@@ -38,7 +39,8 @@ class GameOverSubState extends MusicBeatSubState
 
 		new FlxTimer().start(0.4, function(tmr:FlxTimer)
 		{
-			FlxG.camera.follow(bfFollow, LOCKON, FlxG.elapsed * 1);
+			//FlxG.camera.follow(bfFollow, LOCKON, FlxG.elapsed * 1);
+			canCamFollow = true;
 		});
 		
 		// death sound
@@ -58,6 +60,9 @@ class GameOverSubState extends MusicBeatSubState
 
 			CoolUtil.playMusic("death/deathMusic");
 		}
+		
+		if(canCamFollow)
+			CoolUtil.dumbCamPosLerp(FlxG.camera, bfFollow, elapsed * 2);
 
 		if(!ended)
 		{

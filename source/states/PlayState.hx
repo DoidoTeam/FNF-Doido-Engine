@@ -189,7 +189,7 @@ class PlayState extends MusicBeatState
 		
 		for(char in characters)
 		{
-			if(char.curChar == gf.curChar && char != gf)
+			if(char.curChar == gf.curChar && char != gf && gf.visible)
 			{
 				changeChar(char, gf.curChar);
 				char.setPosition(gf.x, gf.y);
@@ -291,7 +291,7 @@ class PlayState extends MusicBeatState
 		// setting up the camera following
 		//followCamera(dad);
 		followCamSection(SONG.notes[0]);
-		FlxG.camera.follow(camFollow, LOCKON, 1);
+		//FlxG.camera.follow(camFollow, LOCKON, 1); // broken on lower/higher fps than 120
 		FlxG.camera.focusOn(camFollow.getPosition());
 
 		var unspawnNotesAll:Array<Note> = ChartLoader.getChart(SONG);
@@ -309,8 +309,11 @@ class PlayState extends MusicBeatState
 			var thisChar = thisStrumline.character;*/
 
 			var noteAssetMod:String = assetModifier;
-
-			//noteAssetMod = ["base", "doido", "pixel"][FlxG.random.int(0, 2)];
+			
+			// the funny
+			/*noteAssetMod = ["base", "pixel"][FlxG.random.int(0, 1)];
+			if(note.isHold && note.parentNote != null)
+				noteAssetMod = note.parentNote.assetModifier;*/
 
 			note.reloadNote(note.songTime, note.noteData, note.noteType, noteAssetMod);
 
@@ -815,10 +818,11 @@ class PlayState extends MusicBeatState
 		super.update(elapsed);
 		if(!paused)
 		{
-			var formatSpd:Float = cameraSpeed * 3 * elapsed;
-			if(formatSpd > 1) formatSpd = 1;
+			var followLerp:Float = cameraSpeed * 5 * elapsed;
+			if(followLerp > 1) followLerp = 1;
 			
-			camGame.followLerp = formatSpd;
+			CoolUtil.dumbCamPosLerp(camGame, camFollow, followLerp);
+			/*camGame.followLerp = followLerp;*/
 		}
 
 		if(Controls.justPressed("PAUSE"))
@@ -1231,10 +1235,20 @@ class PlayState extends MusicBeatState
 		hudBuild.beatHit(curBeat);
 		
 		// hey!!
-		if(SONG.song == 'bopeebo' && curBeat % 8 == 7 && curBeat > 0)
+		switch(SONG.song)
 		{
-			boyfriend.holdTimer = 0;
-			boyfriend.playAnim("hey");
+			case "tutorial":
+				if([30, 46].contains(curBeat))
+				{
+					dad.holdTimer = 0;
+					dad.playAnim('cheer', true);
+				}
+			case 'bopeebo':
+				if(curBeat % 8 == 7 && curBeat > 0)
+				{
+					boyfriend.holdTimer = 0;
+					boyfriend.playAnim("hey");
+				}
 		}
 		
 		/*if(curBeat >= 8)
@@ -1272,10 +1286,6 @@ class PlayState extends MusicBeatState
 		super.stepHit();
 		stageBuild.stepHit(curStep);
 		syncSong();
-		
-		if(SONG.song == 'escape-from-california'
-		&& dad.curChar == 'senpai' && curStep == 56)
-			changeChar(dad, 'senpai-angry', false);
 	}
 
 	public function syncSong(?forced:Bool = false):Void
@@ -1362,7 +1372,6 @@ class PlayState extends MusicBeatState
 		
 		paused = true;
 		activateTimers(false);
-		camGame.followLerp = 0;
 		openSubState(new PauseSubState());
 	}
 	
@@ -1426,7 +1435,7 @@ class PlayState extends MusicBeatState
 	public function changeStage(newStage:String = "stage")
 	{
 		stageBuild.reloadStage(newStage);
-
+		
 		// gfpos
 		if(stageBuild.gfVersion == "") {
 			changeChar(gf, "gf", false);
@@ -1463,8 +1472,13 @@ class PlayState extends MusicBeatState
 	{
 		CoolUtil.playMusic();
 		if(isStoryMode)
+		{
+			isStoryMode = false;
 			Main.switchState(new StoryMenuState());
+		}
 		else
+		{
 			Main.switchState(new FreeplayState());
+		}
 	}
 }

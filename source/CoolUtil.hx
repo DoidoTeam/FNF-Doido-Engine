@@ -2,6 +2,7 @@ package;
 
 import flixel.FlxG;
 import flixel.util.FlxSort;
+import flixel.math.FlxMath;
 import gameObjects.hud.note.Note;
 
 using StringTools;
@@ -84,6 +85,13 @@ class CoolUtil
 			result.push(i);
 		}
 		return result;
+	}
+	
+	// custom camera follow because default lerp is broken :(
+	public static function dumbCamPosLerp(cam:flixel.FlxCamera, target:flixel.FlxObject, lerp:Float = 1)
+	{
+		cam.scroll.x = FlxMath.lerp(cam.scroll.x, target.x - FlxG.width / 2, lerp);
+		cam.scroll.y = FlxMath.lerp(cam.scroll.y, target.y - FlxG.height/ 2, lerp);
 	}
 	
 	// NOTE STUFF
