@@ -1316,16 +1316,15 @@ class PlayState extends MusicBeatState
 				}
 			}
 		}
-
-		checkEndSong();
-	}
-	
-	// checks if the song is allowed to end
-	public function checkEndSong():Void
-	{
+		
+		if(!inst.playing && Conductor.songPos > 0 && !paused)
+			endSong();
+		
+		// checks if the song is allowed to end
 		if(Conductor.songPos >= songLength)
 			endSong();
 	}
+	
 	// ends it all
 	public function endSong()
 	{
