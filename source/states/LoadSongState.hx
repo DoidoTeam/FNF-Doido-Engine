@@ -57,11 +57,10 @@ class LoadSongState extends MusicBeatState
 			mutex.acquire();
 			Paths.preloadPlayStuff();
 			Rating.preload(assetModifier);
+			Paths.preloadGraphic('hud/base/healthBar');
 			var stageBuild = new Stage();
 			//behind.add(stageBuild);
 			stageBuild.reloadStageFromSong(SONG.song);
-			
-			Paths.preloadGraphic('hud/base/healthBar');
 			
 			trace('preloaded stage and hud');
 			
