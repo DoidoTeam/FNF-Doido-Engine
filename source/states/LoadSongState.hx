@@ -26,6 +26,9 @@ class LoadSongState extends MusicBeatState
 	//var behind:FlxGroup;
 	var bg:FlxSprite;
 	
+	var loadBar:FlxSprite;
+	var loadPercent:Float = 0;
+	
 	override function create()
 	{
 		super.create();
@@ -45,6 +48,11 @@ class LoadSongState extends MusicBeatState
 		bg.screenCenter();
 		add(bg);
 		
+		loadBar = new FlxSprite().makeGraphic(FlxG.width, 20, 0xFFFF16D2);
+		loadBar.y = FlxG.height - loadBar.height;
+		loadBar.scale.x = 0;
+		add(loadBar);
+		
 		var oldAnti:Bool = FlxSprite.defaultAntialiasing;
 		FlxSprite.defaultAntialiasing = false;
 		
@@ -63,8 +71,10 @@ class LoadSongState extends MusicBeatState
 			stageBuild.reloadStageFromSong(SONG.song);
 			
 			trace('preloaded stage and hud');
+			loadPercent = 0.2;
 			
-			for(i in [SONG.player1, SONG.player2, stageBuild.gfVersion])
+			var charList:Array<String> = [SONG.player1, SONG.player2, stageBuild.gfVersion];
+			for(i in charList)
 			{
 				var char = new Character();
 				char.isPlayer == (i == SONG.player1);
@@ -78,30 +88,36 @@ class LoadSongState extends MusicBeatState
 					var icon = new HealthIcon();
 					icon.setIcon(i, false);
 				}
+				loadPercent += (0.6 - 0.2) / charList.length;
 			}
 			
 			trace('preloaded characters');
+			loadPercent = 0.6;
 			
 			Paths.preloadSound('songs/${SONG.song}/Inst');
 			if(SONG.needsVoices)
 				Paths.preloadSound('songs/${SONG.song}/Voices');
 			
 			trace('preloaded music');
+			loadPercent = 0.75;
 			
 			var thisStrumline = new Strumline(0, null, false, false, true, assetModifier);
 			thisStrumline.ID = 0;
 			//behind.add(thisStrumline);
 			
-			var unsNoteAll:Array<Note> = ChartLoader.getChart(SONG);
-			for(note in unsNoteAll)
+			var noteList:Array<Note> = ChartLoader.getChart(SONG);
+			for(note in noteList)
 			{
 				note.reloadNote(note.songTime, note.noteData, note.noteType, assetModifier);
 				//behind.add(note);
 				
 				thisStrumline.addSplash(note);
+				
+				loadPercent += (0.9 - 0.75) / noteList.length;
 			}
 			
 			trace('preloaded notes');
+			loadPercent = 0.9;
 			
 			// add custom preloads here!!
 			switch(SONG.song)
@@ -110,6 +126,7 @@ class LoadSongState extends MusicBeatState
 					//trace('loaded lol');
 			}
 			
+			loadPercent = 1.0;
 			trace('finished loading');
 			threadActive = false;
 			FlxSprite.defaultAntialiasing = oldAnti;
@@ -122,9 +139,11 @@ class LoadSongState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if(!threadActive && !byeLol)
+		if(!threadActive && !byeLol && loadBar.scale.x >= 0.98)
 		{
 			byeLol = true;
+			loadBar.scale.x = 1.0;
+			loadBar.updateHitbox();
 			Main.skipClearMemory = true;
 			Main.switchState(new PlayState());
 		}
@@ -138,5 +157,8 @@ class LoadSongState extends MusicBeatState
 		var bgCalc = FlxMath.lerp(bg.scale.x, 0.75, elapsed * 6);
 		bg.scale.set(bgCalc, bgCalc);
 		bg.updateHitbox();
+		
+		loadBar.scale.x = FlxMath.lerp(loadBar.scale.x, loadPercent, elapsed * 6);
+		loadBar.updateHitbox();
 	}
 }
