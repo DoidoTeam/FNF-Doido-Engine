@@ -96,8 +96,10 @@ class PlayState extends MusicBeatState
 		defaultCamZoom = 1.0;
 		extraCamZoom = 0.0;
 		forcedCamPos = null;
-		Timings.init();
 		paused = false;
+		
+		Timings.init();
+		SplashNote.resetStatics();
 		
 		var pixelSongs:Array<String> = [
 			'collision',
@@ -117,7 +119,6 @@ class PlayState extends MusicBeatState
 	{
 		super.create();
 		CoolUtil.playMusic();
-		SplashNote.resetStatics();
 		resetStatics();
 		//if(SONG == null)
 		//	SONG = SongData.loadFromJson("ugh");
