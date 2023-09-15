@@ -123,11 +123,12 @@ class FreeplayState extends MusicBeatState
 				
 				PlayState.playList = [];
 				PlayState.SONG = SongData.loadFromJson(songList[curSelected][0], diff);
-				CoolUtil.playMusic();
+				//CoolUtil.playMusic();
 				
 				PlayState.songDiff = diff;
 				
-				Main.switchState(new PlayState());
+				//Main.switchState(new PlayState());
+				Main.switchState(new LoadSongState());
 			}
 			catch(e)
 			{

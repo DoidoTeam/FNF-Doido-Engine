@@ -30,7 +30,6 @@ import shaders.*;
 import states.editors.*;
 import states.menu.*;
 import subStates.*;
-import sys.FileSystem;
 
 using StringTools;
 
@@ -90,25 +89,15 @@ class PlayState extends MusicBeatState
 	// paused
 	public static var paused:Bool = false;
 
-	function resetStatics()
+	public static function resetStatics()
 	{
 		health = 1;
 		cameraSpeed = 1.0;
 		defaultCamZoom = 1.0;
 		extraCamZoom = 0.0;
 		forcedCamPos = null;
-		assetModifier = "base";
 		Timings.init();
 		paused = false;
-	}
-
-	override public function create()
-	{
-		super.create();
-		CoolUtil.playMusic();
-		resetStatics();
-		if(SONG == null)
-			SONG = SongData.loadFromJson("ugh");
 		
 		var pixelSongs:Array<String> = [
 			'collision',
@@ -117,13 +106,25 @@ class PlayState extends MusicBeatState
 			'thorns',
 		];
 		
+		assetModifier = "base";
+		
+		if(SONG == null) return;
 		if(pixelSongs.contains(SONG.song))
 			assetModifier = "pixel";
+	}
+
+	override public function create()
+	{
+		super.create();
+		CoolUtil.playMusic();
+		SplashNote.resetStatics();
+		resetStatics();
+		//if(SONG == null)
+		//	SONG = SongData.loadFromJson("ugh");
 		
 		// preloading stuff
-		Paths.preloadPlayStuff();
-		Rating.preload(assetModifier);
-		SplashNote.resetStatics();
+		/*Paths.preloadPlayStuff();
+		Rating.preload(assetModifier);*/
 		
 		// adjusting the conductor
 		Conductor.setBPM(SONG.bpm);
@@ -656,6 +657,9 @@ class PlayState extends MusicBeatState
 		{
 			popUpRating(note, strumline, false);
 		}
+		
+		//if(['default', 'none'].contains(note.noteType))
+		//	trace('noteType: ${note.noteType}');
 
 		if(!note.isHold)
 		{
@@ -1355,7 +1359,8 @@ class PlayState extends MusicBeatState
 			playList.remove(playList[0]);
 			
 			//trace(playList);
-			Main.switchState(new PlayState());
+			//Main.switchState(new PlayState());
+			Main.switchState(new LoadSongState());
 		}
 	}
 

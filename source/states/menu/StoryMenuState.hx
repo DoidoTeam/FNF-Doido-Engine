@@ -193,7 +193,8 @@ class StoryMenuState extends MusicBeatState
 					PlayState.playList.remove(daWeek.songList[0]);
 					
 					CoolUtil.playMusic();
-					Main.switchState(new PlayState());
+					//Main.switchState(new PlayState());
+					Main.switchState(new LoadSongState());
 				});
 			}
 			

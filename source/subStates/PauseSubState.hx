@@ -123,7 +123,7 @@ class PauseSubState extends MusicBeatSubState
 					Main.switchState();
 
 				case "options":
-					Main.switchState(new states.menu.OptionsState(new PlayState()));
+					Main.switchState(new states.menu.OptionsState(new LoadSongState()));
 
 				case "exit to menu":
 					//Main.switchState(new MenuState());

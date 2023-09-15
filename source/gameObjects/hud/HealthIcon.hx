@@ -10,7 +10,7 @@ class HealthIcon extends FlxSprite
 	public function new()
 	{
 		super();
-		setIcon("face");
+		//setIcon("face");
 	}
 
 	public var isPlayer:Bool = false;

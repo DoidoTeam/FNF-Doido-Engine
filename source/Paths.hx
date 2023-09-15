@@ -65,13 +65,15 @@ class Paths
 	public static function clearMemory()
 	{	
 		// sprite handler
-		var clearCount:Int = 0;
+		//var clearCount:Int = 0;
+		var clearCount:Array<String> = [];
 		for(key => graphic in renderedGraphics)
 		{
 			if(dumpExclusions.contains(key + '.png')) continue;
 
-			trace('cleared $key');
-			clearCount++;
+			//trace('cleared $key');
+			//clearCount++;
+			clearCount.push(key);
 			
 			if (openfl.Assets.cache.hasBitmapData(key))
 				openfl.Assets.cache.removeBitmapData(key);
@@ -81,12 +83,13 @@ class Paths
 			FlxG.bitmap.remove(graphic);
 			renderedGraphics.remove(key);
 		}
-		trace('cleared $clearCount assets');
+		trace('cleared $clearCount');
+		trace('cleared ${clearCount.length} assets');
 		
 		// sound clearing
 		for (key => sound in renderedSounds)
 		{
-			if(dumpExclusions.contains(key + '.ogg')) return;
+			if(dumpExclusions.contains(key + '.ogg')) continue;
 			
 			Assets.cache.clear(key);
 			renderedSounds.remove(key);
@@ -167,16 +170,19 @@ class Paths
 	// so it doesnt lag whenever it gets called out
 	public static function preloadPlayStuff():Void
 	{
+		var assetModifier = states.PlayState.assetModifier;
 		var preGraphics:Array<String> = [
-			"hud/base/ready",
+			/*"hud/base/ready",
 			"hud/base/set",
-			"hud/base/go",
+			"hud/base/go",*/
+			
+			//images/hud/$spritePath/$countName.png
 		];
 		var preSounds:Array<String> = [
-			"sounds/countdown/intro3",
+			/*"sounds/countdown/intro3",
 			"sounds/countdown/intro2",
 			"sounds/countdown/intro1",
-			"sounds/countdown/introGo",
+			"sounds/countdown/introGo",*/
 
 			"sounds/miss/missnote1",
 			"sounds/miss/missnote2",
@@ -186,6 +192,28 @@ class Paths
 			"music/death/deathMusic",
 			"music/death/deathMusicEnd",
 		];
+		
+		for(i in 0...4)
+		{
+			var soundName:String = ["3", "2", "1", "Go"][i];
+				
+			var soundPath:String = assetModifier;
+			if(!fileExists('sounds/countdown/$soundPath/intro$soundName.ogg'))
+				soundPath = 'base';
+			
+			preSounds.push('sounds/countdown/$soundPath/intro$soundName');
+			
+			if(i >= 1)
+			{
+				var countName:String = ["ready", "set", "go"][i - 1];
+				
+				var spritePath:String = assetModifier;
+				if(!Paths.fileExists('images/hud/$spritePath/$countName.png'))
+					spritePath = 'base';
+				
+				preGraphics.push('hud/$spritePath/$countName');
+			}
+		}
 
 		for(i in preGraphics)
 			preloadGraphic(i);
