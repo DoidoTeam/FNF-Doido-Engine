@@ -61,6 +61,8 @@ class LoadSongState extends MusicBeatState
 			//behind.add(stageBuild);
 			stageBuild.reloadStageFromSong(SONG.song);
 			
+			Paths.preloadGraphic('hud/base/healthBar');
+			
 			trace('preloaded stage and hud');
 			
 			for(i in [SONG.player1, SONG.player2, stageBuild.gfVersion])
