@@ -1331,8 +1331,12 @@ class PlayState extends MusicBeatState
 	}
 	
 	// ends it all
+	var endedSong:Bool = false;
 	public function endSong()
 	{
+		if(endedSong) return;
+		endedSong = true;
+		
 		Highscore.addScore(SONG.song.toLowerCase() + '-' + songDiff, {
 			score: 		Timings.score,
 			accuracy: 	Timings.accuracy,
