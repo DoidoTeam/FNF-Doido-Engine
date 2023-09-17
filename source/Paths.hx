@@ -9,6 +9,7 @@ import flixel.system.FlxSound;
 import lime.utils.Assets;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
+import states.PlayState;
 import sys.FileSystem;
 import sys.io.File;
 
@@ -170,13 +171,10 @@ class Paths
 	// so it doesnt lag whenever it gets called out
 	public static function preloadPlayStuff():Void
 	{
-		var assetModifier = states.PlayState.assetModifier;
 		var preGraphics:Array<String> = [
-			/*"hud/base/ready",
-			"hud/base/set",
-			"hud/base/go",*/
-			
-			//images/hud/$spritePath/$countName.png
+			//"hud/base/ready",
+			//"hud/base/set",
+			//"hud/base/go",
 		];
 		var preSounds:Array<String> = [
 			/*"sounds/countdown/intro3",
@@ -197,7 +195,7 @@ class Paths
 		{
 			var soundName:String = ["3", "2", "1", "Go"][i];
 				
-			var soundPath:String = assetModifier;
+			var soundPath:String = PlayState.countdownModifier;
 			if(!fileExists('sounds/countdown/$soundPath/intro$soundName.ogg'))
 				soundPath = 'base';
 			
@@ -207,7 +205,7 @@ class Paths
 			{
 				var countName:String = ["ready", "set", "go"][i - 1];
 				
-				var spritePath:String = assetModifier;
+				var spritePath:String = PlayState.countdownModifier;
 				if(!Paths.fileExists('images/hud/$spritePath/$countName.png'))
 					spritePath = 'base';
 				

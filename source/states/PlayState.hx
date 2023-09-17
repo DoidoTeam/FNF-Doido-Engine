@@ -52,9 +52,11 @@ class PlayState extends MusicBeatState
 	public static var weekScore:Int = 0;
 
 	// extra stuff
-	public static var assetModifier:String = "base";
 	public static var health:Float = 1;
 	public static var blueballed:Int = 0;
+	public static var assetModifier:String = "base";
+	
+	public static var countdownModifier:String = "base";
 	// score, misses, accuracy and other stuff
 	// are on the Timings.hx class!!
 	
@@ -110,10 +112,15 @@ class PlayState extends MusicBeatState
 		];
 		
 		assetModifier = "base";
+		countdownModifier = "base";
 		
 		if(SONG == null) return;
 		if(pixelSongs.contains(SONG.song))
+		{
 			assetModifier = "pixel";
+			if(SONG.song != 'collision')
+				countdownModifier = "pixel";
+		}
 	}
 	
 	public static function resetSongStatics()
@@ -505,7 +512,7 @@ class PlayState extends MusicBeatState
 			{
 				var soundName:String = ["3", "2", "1", "Go"][daCount];
 				
-				var soundPath:String = assetModifier;
+				var soundPath:String = countdownModifier;
 				if(!Paths.fileExists('sounds/countdown/$soundPath/intro$soundName.ogg'))
 					soundPath = 'base';
 				
@@ -515,7 +522,7 @@ class PlayState extends MusicBeatState
 				{
 					var countName:String = ["ready", "set", "go"][daCount - 1];
 					
-					var spritePath:String = assetModifier;
+					var spritePath:String = countdownModifier;
 					if(!Paths.fileExists('images/hud/$spritePath/$countName.png'))
 						spritePath = 'base';
 
