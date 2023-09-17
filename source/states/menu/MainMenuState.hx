@@ -27,7 +27,8 @@ class MainMenuState extends MusicBeatState
 	var bgMag:FlxSprite;
 	var bgPosY:Float = 0;
 	
-	var flickTime:Float = 1;
+	var flickMag:Float = 1;
+	var flickBtn:Float = 1;
 	
 	override function create()
 	{
@@ -106,8 +107,8 @@ class MainMenuState extends MusicBeatState
 			optionShit.push('options');
 			Main.skipStuff();
 			Main.switchState();
-		}
-		itemSin += elapsed * Math.PI;
+		}*/
+		/*itemSin += elapsed * Math.PI;
 		for(item in grpOptions.members)
 		{
 			item.x = (FlxG.width / 2) + (Math.sin(itemSin + item.ID) * FlxG.width / 4);
@@ -163,11 +164,20 @@ class MainMenuState extends MusicBeatState
 		}
 		else
 		{
-			flickTime += elapsed;
-			if(flickTime >= 0.15)
+			flickMag += elapsed;
+			if(flickMag >= 0.15)
 			{
-				flickTime = 0;
+				flickMag = 0;
 				bgMag.visible = !bgMag.visible;
+			}
+			
+			flickBtn += elapsed;
+			if(flickBtn >= 0.15 / 2)
+			{
+				flickBtn = 0;
+				for(item in grpOptions.members)
+					if(item.ID == curSelected)
+						item.visible = !item.visible;
 			}
 		}
 		

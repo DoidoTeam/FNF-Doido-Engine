@@ -148,12 +148,14 @@ class TitleState extends MusicBeatState
 				case 12:
 					addText([]);
 				
-				case 13:
+				//case 13:
 					addText(['Friday']);
-				case 14:
+				case 13:
 					addText(['Night'], false);
-				case 15:
+				case 14:
 					addText(['Funkin'], false);
+				case 15:
+					addText(['Doido Engine'], false);
 
 				case 16:
 					skipIntro();

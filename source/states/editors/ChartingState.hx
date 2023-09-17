@@ -31,6 +31,7 @@ import gameObjects.*;
 import gameObjects.hud.note.*;
 import gameObjects.hud.HealthIcon;
 import states.PlayState;
+import states.LoadSongState;
 import subStates.editors.*;
 import haxe.Json;
 import lime.utils.Assets;
@@ -917,7 +918,8 @@ class ChartingState extends MusicBeatState
 				FlxG.mouse.visible = false;
 				ChartAutoSaveSubState.addSave(SONG, songDiff);
 				PlayState.SONG = SONG;
-				Main.switchState(new PlayState());
+				//Main.switchState(new PlayState());
+				Main.switchState(new LoadSongState());
 			}
 
 			if(FlxG.keys.justPressed.ESCAPE)
