@@ -16,11 +16,9 @@ class Highscore
 	{
 		var oldScore:ScoreData = getScore(song);
 
-		if(newScore.accuracy >= oldScore.accuracy)
-		{
+		if(newScore.score >= oldScore.score)
 			highscoreMap.set(song, newScore);
-		}
-
+		
 		save();
 	}
 

@@ -619,7 +619,7 @@ class PlayState extends MusicBeatState
 			{
 				music.play();
 			}
-			syncSong(true);
+			syncSong();
 		}
 	}
 
@@ -1323,14 +1323,17 @@ class PlayState extends MusicBeatState
 		syncSong();
 	}
 
-	public function syncSong(?forced:Bool = false):Void
+	public function syncSong():Void
 	{
 		if(!startedSong) return;
+		
+		if(!inst.playing && Conductor.songPos > 0 && !paused)
+			endSong();
 		
 		if(inst.playing)
 		{
 			// syncs the conductor
-			if(Math.abs(Conductor.songPos - inst.time) >= 40 || forced)
+			if(Math.abs(Conductor.songPos - inst.time) >= 40 && Conductor.songPos - inst.time <= 5000)
 			{
 				trace('synced song ${Conductor.songPos} to ${inst.time}');
 				Conductor.songPos = inst.time;
@@ -1351,9 +1354,6 @@ class PlayState extends MusicBeatState
 				}
 			}
 		}
-		
-		if(!inst.playing && Conductor.songPos > 0 && !paused)
-			endSong();
 		
 		// checks if the song is allowed to end
 		if(Conductor.songPos >= songLength)
