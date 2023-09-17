@@ -54,9 +54,10 @@ class PlayState extends MusicBeatState
 	// extra stuff
 	public static var assetModifier:String = "base";
 	public static var health:Float = 1;
+	public static var blueballed:Int = 0;
 	// score, misses, accuracy and other stuff
 	// are on the Timings.hx class!!
-
+	
 	// objects
 	public var stageBuild:Stage;
 
@@ -113,6 +114,11 @@ class PlayState extends MusicBeatState
 		if(SONG == null) return;
 		if(pixelSongs.contains(SONG.song))
 			assetModifier = "pixel";
+	}
+	
+	public static function resetSongStatics()
+	{
+		blueballed = 0;
 	}
 
 	override public function create()
@@ -698,22 +704,22 @@ class PlayState extends MusicBeatState
 			onlyOnce = true;
 		else
 		{
-			if(note.parentNote.gotHit)
+			if(note.isHoldEnd && note.holdHitLength > 0)
 				onlyOnce = true;
 		}
-
+		
 		if(onlyOnce)
 		{
 			vocals.volume = 0;
-
+			
 			FlxG.sound.play(Paths.sound('miss/missnote' + FlxG.random.int(1, 3)), 0.55);
-
+			
 			if(thisChar != null && note.noteType != "no animation")
 			{
 				thisChar.playAnim(thisChar.missAnims[note.noteData], true);
 				thisChar.holdTimer = 0;
 			}
-
+			
 			// when the player misses notes
 			if(strumline.isPlayer)
 			{
@@ -724,8 +730,9 @@ class PlayState extends MusicBeatState
 	function onNoteHold(note:Note, strumline:Strumline)
 	{
 		// runs until you hold it enough
-		if(note.holdHitLength > note.holdLength) return;
-		
+		//if(note.holdHitLength > note.holdLength || note.missed) return;
+		if(note.gotHit) return;
+				
 		var thisStrum = strumline.strumGroup.members[note.noteData];
 		var thisChar = strumline.character;
 		
@@ -775,7 +782,11 @@ class PlayState extends MusicBeatState
 			if(Timings.combo < 0)
 				Timings.combo = 0;
 			Timings.combo++;
-
+			
+			// regains your health only if you hold it entirely
+			if(note.isHold)
+				health += 0.05 * (note.holdLength / note.noteCrochet) / 2;
+			
 			if(rating == "shit")
 			{
 				//note.onMiss();
@@ -821,15 +832,11 @@ class PlayState extends MusicBeatState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if(!paused)
-		{
-			var followLerp:Float = cameraSpeed * 5 * elapsed;
-			if(followLerp > 1) followLerp = 1;
-			
-			CoolUtil.dumbCamPosLerp(camGame, camFollow, followLerp);
-			/*camGame.followLerp = followLerp;*/
-		}
-
+		var followLerp:Float = cameraSpeed * 5 * elapsed;
+		if(followLerp > 1) followLerp = 1;
+		
+		CoolUtil.dumbCamPosLerp(camGame, camFollow, followLerp);
+		
 		if(Controls.justPressed("PAUSE"))
 		{
 			pauseSong();
@@ -1113,7 +1120,7 @@ class PlayState extends MusicBeatState
 						{
 							for(note in possibleHitNotes)
 							{
-								if(note.songTime < Conductor.songPos && note.mustMiss)
+								if(note.mustMiss && note.songTime < Conductor.songPos - Timings.timingsMap.get("sick")[0])
 									continue;
 								
 								if(note.songTime < canHitNote.songTime)
@@ -1156,6 +1163,23 @@ class PlayState extends MusicBeatState
 			}
 		}
 		
+		for(char in characters)
+		{
+			if(char.holdTimer != Math.NEGATIVE_INFINITY)
+			{
+				if(char.holdTimer < char.holdLength)
+					char.holdTimer += elapsed;
+				else
+				{
+					if(char.isPlayer && playerSinging)
+						continue;
+					
+					char.holdTimer = Math.NEGATIVE_INFINITY;
+					char.dance();
+				}
+			}
+		}
+		
 		if(startedCountdown)
 		{
 			var lastSteps:Int = 0;
@@ -1177,9 +1201,7 @@ class PlayState extends MusicBeatState
 			camFollow.setPosition(forcedCamPos.x, forcedCamPos.y);
 
 		if(health <= 0)
-		{
 			startGameOver();
-		}
 		
 		function lerpCamZoom(daCam:FlxCamera, target:Float = 1.0, speed:Int = 6)
 			daCam.zoom = FlxMath.lerp(daCam.zoom, target, elapsed * speed);
@@ -1275,7 +1297,7 @@ class PlayState extends MusicBeatState
 		{
 			if(curBeat % 2 == 0 || char.quickDancer)
 			{
-				var canIdle = (char.holdTimer >= char.holdLength);
+				var canIdle = (char.holdTimer == Math.NEGATIVE_INFINITY);
 				
 				if(char.isPlayer && playerSinging)
 					canIdle = false;
@@ -1336,6 +1358,7 @@ class PlayState extends MusicBeatState
 	{
 		if(endedSong) return;
 		endedSong = true;
+		resetSongStatics();
 		
 		Highscore.addScore(SONG.song.toLowerCase() + '-' + songDiff, {
 			score: 		Timings.score,
@@ -1391,6 +1414,7 @@ class PlayState extends MusicBeatState
 		if(isDead || !startedCountdown) return;
 		
 		isDead = true;
+		blueballed++;
 		activateTimers(false);
 		persistentDraw = false;
 		openSubState(new GameOverSubState(boyfriend));
@@ -1480,6 +1504,7 @@ class PlayState extends MusicBeatState
 	public static function sendToMenu()
 	{
 		CoolUtil.playMusic();
+		resetSongStatics();
 		if(isStoryMode)
 		{
 			isStoryMode = false;

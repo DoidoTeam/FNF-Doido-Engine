@@ -26,6 +26,8 @@ class MusicBeatState extends FlxUIState
 
 		// go back to default automatically i dont want to do it
 		Main.skipStuff(false);
+		curStep = _curStep = Conductor.calcStateStep();
+		curBeat = Math.floor(curStep / 4);
 	}
 
 	private var _curStep = 0; // actual curStep
@@ -67,7 +69,7 @@ class MusicBeatState extends FlxUIState
 				if(Std.isOfType(item, FlxGroup))
 					loopGroup(cast item);
 	
-				if (item._stepHit != null)
+				if(item._stepHit != null)
 					item._stepHit(curStep);
 			}
 		}
@@ -86,6 +88,8 @@ class MusicBeatSubState extends FlxSubState
 	override function create()
 	{
 		super.create();
+		curStep = _curStep = Conductor.calcStateStep();
+		curBeat = Math.floor(curStep / 4);
 	}
 
 	private var _curStep = 0; // actual curStep

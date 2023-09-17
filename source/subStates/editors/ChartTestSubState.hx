@@ -315,7 +315,7 @@ class ChartTestSubState extends MusicBeatSubState
 			onlyOnce = true;
 		else
 		{
-			if(note.parentNote.gotHit)
+			if(note.isHoldEnd && note.holdHitLength > 0)
 				onlyOnce = true;
 		}
 
@@ -333,7 +333,7 @@ class ChartTestSubState extends MusicBeatSubState
 	function onNoteHold(note:Note, strumline:Strumline)
 	{
 		// runs until you hold it enough
-		if(note.holdHitLength > note.holdLength) return;
+		if(note.gotHit) return;
 		
 		var thisStrum = strumline.strumGroup.members[note.noteData];
 		
@@ -683,7 +683,7 @@ class ChartTestSubState extends MusicBeatSubState
 						{
 							for(note in possibleHitNotes)
 							{
-								if(note.songTime < Conductor.songPos && note.mustMiss)
+								if(note.mustMiss && note.songTime < Conductor.songPos - Timings.timingsMap.get("sick")[0])
 									continue;
 
 								if(note.songTime < canHitNote.songTime)

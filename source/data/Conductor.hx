@@ -11,9 +11,9 @@ typedef BPMChangeEvent =
 }
 class Conductor
 {
-	public static var bpm:Float = 0;
-	public static var crochet:Float = 0;
-	public static var stepCrochet:Float = 0;
+	public static var bpm:Float = 100;
+	public static var crochet:Float = calcBeat(bpm);
+	public static var stepCrochet:Float = calcStep(bpm);
 
 	public static var songPos:Float = 0;
 

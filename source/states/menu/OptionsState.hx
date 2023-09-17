@@ -88,7 +88,7 @@ class OptionsState extends MusicBeatState
 		super();
 		if(newBackTarget == null)
 		{
-			newBackTarget = new states.MenuState();
+			newBackTarget = new MainMenuState();
 			if(backTarget == null)
 				backTarget = newBackTarget;
 		}

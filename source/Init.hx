@@ -18,6 +18,6 @@ class Init extends MusicBeatState
 		FlxG.mouse.visible = false;
 		FlxGraphic.defaultPersist = true;
 		
-		Main.switchState(new MenuState());
+		Main.switchState(new TitleState());
 	}
 }

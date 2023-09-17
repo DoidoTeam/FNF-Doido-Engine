@@ -1,6 +1,7 @@
 package states;
 
 import flixel.FlxG;
+import flixel.FlxBasic;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
@@ -23,19 +24,25 @@ class LoadSongState extends MusicBeatState
 	var threadActive:Bool = true;
 	var mutex:Mutex;
 	
-	//var behind:FlxGroup;
+	var behind:FlxGroup;
 	var bg:FlxSprite;
 	
 	var loadBar:FlxSprite;
 	var loadPercent:Float = 0;
+	
+	function addBehind(item:FlxBasic)
+	{
+		behind.add(item);
+		behind.remove(item);
+	}
 	
 	override function create()
 	{
 		super.create();
 		mutex = new Mutex();
 		
-		//behind = new FlxGroup();
-		//add(behind);
+		behind = new FlxGroup();
+		add(behind);
 		
 		var color = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFFCAFF4D);
 		color.screenCenter();
@@ -67,7 +74,7 @@ class LoadSongState extends MusicBeatState
 			Rating.preload(assetModifier);
 			Paths.preloadGraphic('hud/base/healthBar');
 			var stageBuild = new Stage();
-			//behind.add(stageBuild);
+			addBehind(stageBuild);
 			stageBuild.reloadStageFromSong(SONG.song);
 			
 			trace('preloaded stage and hud');
@@ -77,9 +84,9 @@ class LoadSongState extends MusicBeatState
 			for(i in charList)
 			{
 				var char = new Character();
-				char.isPlayer == (i == SONG.player1);
+				char.isPlayer = (i == SONG.player1);
 				char.reloadChar(i);
-				//behind.add(char);
+				addBehind(char);
 				
 				//trace('preloaded $i');
 				
@@ -87,6 +94,7 @@ class LoadSongState extends MusicBeatState
 				{
 					var icon = new HealthIcon();
 					icon.setIcon(i, false);
+					addBehind(icon);
 				}
 				loadPercent += (0.6 - 0.2) / charList.length;
 			}
@@ -103,13 +111,13 @@ class LoadSongState extends MusicBeatState
 			
 			var thisStrumline = new Strumline(0, null, false, false, true, assetModifier);
 			thisStrumline.ID = 0;
-			//behind.add(thisStrumline);
+			addBehind(thisStrumline);
 			
 			var noteList:Array<Note> = ChartLoader.getChart(SONG);
 			for(note in noteList)
 			{
 				note.reloadNote(note.songTime, note.noteData, note.noteType, assetModifier);
-				//behind.add(note);
+				addBehind(note);
 				
 				thisStrumline.addSplash(note);
 				

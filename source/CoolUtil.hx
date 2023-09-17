@@ -108,11 +108,11 @@ class CoolUtil
 
 	// music management stuff
 	public static var curMusic:String = "none";
-	public static function playMusic(?key:String, ?vol:Float = 1)
+	public static function playMusic(?key:String, ?force:Bool = false, ?vol:Float = 1)
 	{
 		if (Paths.dumpExclusions.contains('music/' + curMusic + '.ogg'))
 			Paths.dumpExclusions.remove  ('music/' + curMusic + '.ogg');
-
+		
 		if(key == null)
 		{
 			curMusic = "none";
@@ -122,7 +122,7 @@ class CoolUtil
 		{
 			Paths.dumpExclusions.push('music/' + key + '.ogg');
 
-			if(curMusic != key)
+			if(curMusic != key || force)
 			{
 				curMusic = key;
 				FlxG.sound.playMusic(Paths.music(key), vol);

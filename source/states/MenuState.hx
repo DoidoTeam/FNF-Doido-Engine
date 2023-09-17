@@ -27,7 +27,7 @@ class MenuState extends MusicBeatState
 		CoolUtil.playMusic("freakyMenu");
 
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("In the Song Selection", null);
+		DiscordClient.changePresence("Main Menu", null);
 
 		var bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(80,80,80));
 		bg.screenCenter();
@@ -57,6 +57,9 @@ class MenuState extends MusicBeatState
 			changeSelection(-1);
 		if(Controls.justPressed("UI_DOWN"))
 			changeSelection(1);
+		
+		if(Controls.justPressed("BACK"))
+			Main.switchState(new TitleState());
 
 		if(Controls.justPressed("ACCEPT"))
 		{

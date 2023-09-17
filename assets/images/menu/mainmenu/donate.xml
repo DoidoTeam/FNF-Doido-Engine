@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="donate.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="donate basic0000" x="3" y="3" width="444" height="117"/>
+	<SubTexture name="donate basic0001" x="3" y="3" width="444" height="117"/>
+	<SubTexture name="donate basic0002" x="3" y="3" width="444" height="117"/>
+	<SubTexture name="donate basic0003" x="450" y="3" width="444" height="117"/>
+	<SubTexture name="donate basic0004" x="450" y="3" width="444" height="117"/>
+	<SubTexture name="donate basic0005" x="450" y="3" width="444" height="117"/>
+	<SubTexture name="donate basic0006" x="3" y="123" width="444" height="117"/>
+	<SubTexture name="donate basic0007" x="3" y="123" width="444" height="117"/>
+	<SubTexture name="donate basic0008" x="3" y="123" width="444" height="117"/>
+	<SubTexture name="donate white0000" x="3" y="243" width="590" height="157" frameX="0" frameY="-2" frameWidth="590" frameHeight="159"/>
+	<SubTexture name="donate white0001" x="3" y="403" width="587" height="154" frameX="-1" frameY="-5" frameWidth="590" frameHeight="159"/>
+	<SubTexture name="donate white0002" x="3" y="560" width="585" height="155" frameX="-3" frameY="0" frameWidth="590" frameHeight="159"/>
+</TextureAtlas>

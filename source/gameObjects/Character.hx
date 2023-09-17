@@ -17,7 +17,7 @@ class Character extends FlxSprite
 	public var curChar:String = "bf";
 	public var isPlayer:Bool = false;
 
-	public var holdTimer:Float = 0;
+	public var holdTimer:Float = Math.NEGATIVE_INFINITY;
 	public var holdLength:Float = 1;
 
 	public var idleAnims:Array<String> = [];
@@ -276,11 +276,6 @@ class Character extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
-		if(holdTimer < holdLength)
-		{
-			holdTimer += elapsed;
-		}
 	}
 
 	// animation handler

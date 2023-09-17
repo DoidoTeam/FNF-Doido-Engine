@@ -58,6 +58,7 @@ class PauseSubState extends MusicBeatSubState
 		var textArray:Array<String> = [
 			PlayState.SONG.song,
 			PlayState.songDiff,
+			'BLUEBALLED: ' + PlayState.blueballed,
 		];
 		for(i in 0...textArray.length)
 		{
@@ -70,7 +71,7 @@ class PauseSubState extends MusicBeatSubState
 			
 			text.alpha = 0.00001;
 			text.y -= 20;
-			FlxTween.tween(text, {y: text.y + 20, alpha: 1}, 0.4, {ease: FlxEase.quadOut, startDelay: 0.2 + 0.1 * i});
+			FlxTween.tween(text, {y: text.y + 20, alpha: 1}, 0.4, {ease: FlxEase.quadOut, startDelay: 0.2 + 0.18 * i});
 		}
 
 		pauseSong = new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song.toLowerCase()), true, false);
