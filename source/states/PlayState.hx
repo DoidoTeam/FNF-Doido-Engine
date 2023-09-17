@@ -118,7 +118,7 @@ class PlayState extends MusicBeatState
 		if(pixelSongs.contains(SONG.song))
 		{
 			assetModifier = "pixel";
-			if(SONG.song != 'collision')
+			if(!['collision'].contains(SONG.song))
 				countdownModifier = "pixel";
 		}
 	}
@@ -737,9 +737,8 @@ class PlayState extends MusicBeatState
 	function onNoteHold(note:Note, strumline:Strumline)
 	{
 		// runs until you hold it enough
-		//if(note.holdHitLength > note.holdLength || note.missed) return;
-		if(note.gotHit) return;
-				
+		if(note.holdHitLength > note.holdLength) return;
+		
 		var thisStrum = strumline.strumGroup.members[note.noteData];
 		var thisChar = strumline.character;
 		
@@ -749,7 +748,9 @@ class PlayState extends MusicBeatState
 		// DIE!!!
 		if(note.mustMiss)
 			health -= 0.005;
-
+		
+		if(note.gotHit) return;
+		
 		if(note.noteType != "no animation")
 		{
 			thisChar.playAnim(thisChar.singAnims[note.noteData], true);

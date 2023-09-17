@@ -173,23 +173,16 @@ class Paths
 	{
 		var preGraphics:Array<String> = [
 			//"hud/base/ready",
-			//"hud/base/set",
-			//"hud/base/go",
 		];
 		var preSounds:Array<String> = [
-			/*"sounds/countdown/intro3",
-			"sounds/countdown/intro2",
-			"sounds/countdown/intro1",
-			"sounds/countdown/introGo",*/
-
-			"sounds/miss/missnote1",
-			"sounds/miss/missnote2",
-			"sounds/miss/missnote3",
-
+			//"sounds/countdown/intro3",
+			
 			"music/death/deathSound",
 			"music/death/deathMusic",
 			"music/death/deathMusicEnd",
 		];
+		for(i in 1...4)
+			preSounds.push('sounds/miss/missnote${i}');
 		
 		for(i in 0...4)
 		{

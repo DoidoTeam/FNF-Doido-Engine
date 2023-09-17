@@ -333,7 +333,7 @@ class ChartTestSubState extends MusicBeatSubState
 	function onNoteHold(note:Note, strumline:Strumline)
 	{
 		// runs until you hold it enough
-		if(note.gotHit) return;
+		if(note.holdHitLength > note.holdLength) return;
 		
 		var thisStrum = strumline.strumGroup.members[note.noteData];
 		
