@@ -109,9 +109,7 @@ class SongData
 				{
 					if(songNotes 	!= doubleNotes
 					&& songNotes[0] == doubleNotes[0]
-					&& songNotes[1] == doubleNotes[1]
-					//&& songNotes[2] == doubleNotes[2]
-					&& songNotes[3] == doubleNotes[3])
+					&& songNotes[1] == doubleNotes[1])
 					{
 						section.sectionNotes.remove(doubleNotes);
 						removed++;
