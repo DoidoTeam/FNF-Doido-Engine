@@ -79,16 +79,16 @@ class SongData
 		// the game auto-lowercases it now
 		daSong.song = daSong.song.toLowerCase();
 		if(daSong.song.contains(' '))
-			daSong.song.replace(' ', '-');
+			daSong.song = daSong.song.replace(' ', '-');
 		
 		// formatting it
-		daSong = formatSwagSong(daSong);
+		daSong = formatSong(daSong);
 		
 		return daSong;
 	}
 	
 	// 
-	inline public static function formatSwagSong(SONG:SwagSong):SwagSong
+	inline public static function formatSong(SONG:SwagSong):SwagSong
 	{
 		// cleaning multiple notes at the same place
 		var removed:Int = 0;
