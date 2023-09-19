@@ -15,6 +15,9 @@ class ChartLoader
 		var removed:Int = 0;
 		for(section in SONG.notes)
 		{
+			if(!Std.isOfType(section.lengthInSteps, Int))
+				section.lengthInSteps = 16;
+			
 			for(songNotes in section.sectionNotes)
 			{
 				for(doubleNotes in section.sectionNotes)
