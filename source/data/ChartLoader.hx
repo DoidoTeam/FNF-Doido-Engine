@@ -31,7 +31,8 @@ class ChartLoader
 				}
 			}
 		}
-		trace('removed $removed notes');
+		if(removed > 0)
+			trace('removed $removed notes');
 		
 		// loading for real
 		var unspawnNotes:Array<Note> = [];
