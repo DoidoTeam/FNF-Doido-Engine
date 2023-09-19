@@ -10,7 +10,7 @@ class Note extends FlxSprite
 	public function new()
 	{
 		super();
-		reloadNote(0, 0, "default");
+		//reloadNote(0, 0, "default");
 	}
 
 	public var noteSize:Float = 1.0;

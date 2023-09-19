@@ -9,7 +9,7 @@ class StrumNote extends FlxSprite
 	public function new()
 	{
 		super();
-		reloadStrum(0, "default");
+		//reloadStrum(0, "default");
 	}
 
 	public var strumData:Int = 0;

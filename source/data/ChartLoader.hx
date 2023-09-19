@@ -11,33 +11,6 @@ class ChartLoader
 {
 	public static function getChart(SONG:SwagSong):Array<Note>
 	{
-		// cleaning multiple notes at the same place
-		var removed:Int = 0;
-		for(section in SONG.notes)
-		{
-			if(!Std.isOfType(section.lengthInSteps, Int))
-				section.lengthInSteps = 16;
-			
-			for(songNotes in section.sectionNotes)
-			{
-				for(doubleNotes in section.sectionNotes)
-				{
-					if(songNotes 	!= doubleNotes
-					&& songNotes[0] == doubleNotes[0]
-					&& songNotes[1] == doubleNotes[1]
-					&& songNotes[2] == doubleNotes[2]
-					&& songNotes[3] == doubleNotes[3])
-					{
-						section.sectionNotes.remove(doubleNotes);
-						removed++;
-					}
-				}
-			}
-		}
-		if(removed > 0)
-			trace('removed $removed notes');
-		
-		// loading for real
 		var unspawnNotes:Array<Note> = [];
 		var daSection:Int = 0;
 		

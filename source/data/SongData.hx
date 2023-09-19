@@ -29,6 +29,9 @@ typedef SwagSection =
 	var bpm:Float;
 	var changeBPM:Bool;
 	//var altAnim:Bool;
+	
+	// psych suport
+	var ?sectionBeats:Float;
 }
 
 class SongData
@@ -78,6 +81,47 @@ class SongData
 		if(daSong.song.contains(' '))
 			daSong.song.replace(' ', '-');
 		
+		// formatting it
+		daSong = formatSwagSong(daSong);
+		
 		return daSong;
+	}
+	
+	// 
+	inline public static function formatSwagSong(SONG:SwagSong):SwagSong
+	{
+		// cleaning multiple notes at the same place
+		var removed:Int = 0;
+		for(section in SONG.notes)
+		{
+			if(!Std.isOfType(section.lengthInSteps, Int))
+			{
+				var steps:Int = 16;
+				if(section.sectionBeats != null)
+					steps = Math.floor(section.sectionBeats * 4);
+				
+				section.lengthInSteps = steps;
+			}
+			
+			for(songNotes in section.sectionNotes)
+			{
+				for(doubleNotes in section.sectionNotes)
+				{
+					if(songNotes 	!= doubleNotes
+					&& songNotes[0] == doubleNotes[0]
+					&& songNotes[1] == doubleNotes[1]
+					&& songNotes[2] == doubleNotes[2]
+					&& songNotes[3] == doubleNotes[3])
+					{
+						section.sectionNotes.remove(doubleNotes);
+						removed++;
+					}
+				}
+			}
+		}
+		if(removed > 0)
+			trace('removed $removed duplicated notes');
+		
+		return SONG;
 	}
 }
