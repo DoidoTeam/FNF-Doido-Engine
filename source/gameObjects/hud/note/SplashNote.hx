@@ -40,18 +40,20 @@ class SplashNote extends FlxSprite
 
 		switch(note.assetModifier)
 		{
+			case 'doido':
+				frames = Paths.getSparrowAtlas('notes/doido/splashes');
+				animation.addByPrefix('splash', '$direction splash', 24, false);
+				scale.set(0.95,0.95);
+				updateHitbox();
+				
 			default:
-				switch(note.noteType)
-				{
-					default:
-						frames = Paths.getSparrowAtlas("notes/base/splashes");
-
-						animation.addByPrefix("splash1", '$direction splash 1', 24, false);
-						animation.addByPrefix("splash2", '$direction splash 2', 24, false);
-
-						scale.set(0.7,0.7);
-						updateHitbox();
-				}
+				frames = Paths.getSparrowAtlas("notes/base/splashes");
+				
+				animation.addByPrefix("splash1", '$direction splash 1', 24, false);
+				animation.addByPrefix("splash2", '$direction splash 2', 24, false);
+				
+				scale.set(0.7,0.7);
+				updateHitbox();
 		}
 
 		playAnim();

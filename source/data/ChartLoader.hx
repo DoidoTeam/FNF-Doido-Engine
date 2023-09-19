@@ -11,8 +11,30 @@ class ChartLoader
 {
 	public static function getChart(SONG:SwagSong):Array<Note>
 	{
+		// cleaning multiple notes at the same place
+		var removed:Int = 0;
+		for(section in SONG.notes)
+		{
+			for(songNotes in section.sectionNotes)
+			{
+				for(doubleNotes in section.sectionNotes)
+				{
+					if(songNotes 	!= doubleNotes
+					&& songNotes[0] == doubleNotes[0]
+					&& songNotes[1] == doubleNotes[1]
+					&& songNotes[2] == doubleNotes[2]
+					&& songNotes[3] == doubleNotes[3])
+					{
+						section.sectionNotes.remove(doubleNotes);
+						removed++;
+					}
+				}
+			}
+		}
+		trace('removed $removed notes');
+		
+		// loading for real
 		var unspawnNotes:Array<Note> = [];
-
 		var daSection:Int = 0;
 		
 		// bpm change stuff for sustain notes
@@ -36,22 +58,22 @@ class ChartLoader
 				// very stupid but I'm lazy
 				if(songNotes.length > 2)
 					daNoteType = songNotes[3];
-
+				
 				// psych event notes come on
 				if(songNotes[1] < 0) continue;
 				
 				// create the new note
 				var swagNote:Note = new Note();
 				swagNote.reloadNote(daStrumTime, daNoteData, daNoteType);
-
+				
 				unspawnNotes.push(swagNote);
-
+				
 				var isPlayer = (songNotes[1] >= 4);
 				if(section.mustHitSection)
 					isPlayer = (songNotes[1] <  4);
-
+				
 				swagNote.strumlineID = isPlayer ? 1 : 0;
-
+				
 				var susLength:Float = songNotes[2];
 				if(susLength > 0)
 				{
@@ -69,14 +91,14 @@ class ChartLoader
 						var holdNote:Note = new Note();
 						holdNote.isHold = true;
 						holdNote.reloadNote(daStrumTime, daNoteData, daNoteType);
-
+						
 						holdNote.parentNote = daParent;
 						holdNote.strumlineID = swagNote.strumlineID;
 						
 						// uhhh
 						holdNote.holdLength = susLength;
 						holdNote.noteCrochet = noteCrochet;
-
+						
 						unspawnNotes.push(holdNote);
 						
 						//holdNote.ID = j + 1;
@@ -104,26 +126,9 @@ class ChartLoader
 			}
 			daSection++;
 		}
-
-		/*for(note in unspawnNotes)
-		{
-			for(doubleNote in unspawnNotes)
-			{
-				if(doubleNote.songTime == note.songTime
-				&& doubleNote.noteData == note.noteData
-				&& !doubleNote.isHold && !note.isHold
-				&& doubleNote != note)
-					unspawnNotes.remove(doubleNote);
-			}
-		}*/
-
-		unspawnNotes.sort(CoolUtil.sortByShit);
-
-		return unspawnNotes;
-	}
-
-	public static function getChartForEditor()
-	{
 		
+		unspawnNotes.sort(CoolUtil.sortByShit);
+		
+		return unspawnNotes;
 	}
 }

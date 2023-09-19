@@ -85,10 +85,23 @@ class Note extends FlxSprite
 				}
 				else
 					color = 0xFF000000;
+				
+			case "EX Note":
+				var fold:String = 'base';
+				if(assetModifier == 'doido')
+					fold = 'doido';
+				
+				noteSize = ((fold == 'doido') ? 0.95 : 0.7);
+				mustMiss = true;
+				frames = Paths.getSparrowAtlas('notes/$fold/hurt_notes');
+				var typeName:String = (isHold ? (isHoldEnd ? "hold end" : "hold0") : direction);
+				
+				animation.addByPrefix('hurt', 'hurt $typeName', 0, false);
+				animation.play('hurt');
 		}
 
-		if(isHold)
-			antialiasing = false;
+		//if(isHold)
+		//	antialiasing = false;
 
 		scale.set(noteSize, noteSize);
 		updateHitbox();

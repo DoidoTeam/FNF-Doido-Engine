@@ -121,6 +121,7 @@ class PlayState extends MusicBeatState
 			if(!['collision'].contains(SONG.song))
 				countdownModifier = "pixel";
 		}
+		assetModifier = "doido";
 	}
 	
 	public static function resetSongStatics()
@@ -182,7 +183,7 @@ class PlayState extends MusicBeatState
 		*	so it doesnt reload the icons
 		*/
 		gf = new Character();
-		// check changeStage to change gf
+		// CHECK CHANGESTAGE TO CHANGE GF
 		//changeChar(gf, "gf", false);
 		
 		dad = new Character();
@@ -225,6 +226,38 @@ class PlayState extends MusicBeatState
 		strumlines = new FlxTypedGroup();
 		strumlines.cameras = [camStrum];
 		add(strumlines);
+		
+		if(SONG.song == 'expurgation')
+		{
+			var tricky = new Character();
+			tricky.isPlayer = true;
+			tricky.reloadChar(SONG.player2);
+			tricky.cameras = [camHUD];
+			add(tricky);
+			tricky.setPosition(FlxG.width, FlxG.height);
+			tricky._update = function(elapsed:Float)
+			{
+				tricky.x = hudBuild.iconBf.x + hudBuild.iconBf.width - 80;
+				if(curStep >= 344 && curStep < 380 && health > 0.05)
+					health -= 0.61 * elapsed;
+			}
+			tricky._stepHit = function(curStep:Int)
+			{
+				switch(curStep)
+				{
+					case 328: // guy gets up
+						tricky.angle = -120;
+						tricky.y = FlxG.height + 40;
+						FlxTween.tween(tricky, {y: FlxG.height - tricky.height * 0.8, angle: 0}, Conductor.crochet * 2 / 1000, {ease: FlxEase.cubeInOut});
+					case 344: // pulls life
+						tricky.playAnim('singRIGHT', true);
+					case 380: // goes back
+						tricky.playAnim('idle', true);
+					case 388:
+						FlxTween.tween(tricky, {y: FlxG.height + 40, angle: -90}, Conductor.crochet * 2 / 1000, {ease: FlxEase.cubeInOut});
+				}
+			}
+		}
 		
 		//strumline.scrollSpeed = 4.0; // 2.8
 		var strumPos:Array<Float> = [FlxG.width / 2, FlxG.width / 4];
@@ -672,7 +705,7 @@ class PlayState extends MusicBeatState
 			popUpRating(note, strumline, false);
 		}
 		
-		//if(['default', 'none'].contains(note.noteType))
+		//if(!['default', 'none'].contains(note.noteType))
 		//	trace('noteType: ${note.noteType}');
 
 		if(!note.isHold)
@@ -719,18 +752,26 @@ class PlayState extends MusicBeatState
 		{
 			vocals.volume = 0;
 			
+			// when the player misses notes
+			if(strumline.isPlayer)
+			{
+				switch(note.noteType)
+				{
+					case "EX Note":
+						health = 0;
+						startGameOver();
+						return;
+				}
+				
+				popUpRating(note, strumline, true);
+			}
+			
 			FlxG.sound.play(Paths.sound('miss/missnote' + FlxG.random.int(1, 3)), 0.55);
 			
 			if(thisChar != null && note.noteType != "no animation")
 			{
 				thisChar.playAnim(thisChar.missAnims[note.noteData], true);
 				thisChar.holdTimer = 0;
-			}
-			
-			// when the player misses notes
-			if(strumline.isPlayer)
-			{
-				popUpRating(note, strumline, true);
 			}
 		}
 	}
@@ -1116,8 +1157,18 @@ class PlayState extends MusicBeatState
 						{
 							var noteDiff:Float = (note.songTime - Conductor.songPos);
 							
-							if(noteDiff <= Timings.minTiming && !note.missed && !note.gotHit && note.noteData == i)
+							var minTiming:Float = Timings.minTiming;
+							if(note.mustMiss)
+								minTiming = Timings.timingsMap.get("good")[0];
+							
+							if(noteDiff <= minTiming && !note.missed && !note.gotHit && note.noteData == i)
 							{
+								if(note.mustMiss
+								&& Conductor.songPos >= note.songTime + Timings.timingsMap.get("sick")[0])
+								{
+									continue;
+								}
+								
 								possibleHitNotes.push(note);
 								canHitNote = note;
 							}
@@ -1128,18 +1179,14 @@ class PlayState extends MusicBeatState
 						{
 							for(note in possibleHitNotes)
 							{
-								if(note.mustMiss && note.songTime < Conductor.songPos - Timings.timingsMap.get("sick")[0])
-									continue;
-								
 								if(note.songTime < canHitNote.songTime)
 									canHitNote = note;
 							}
 
 							checkNoteHit(canHitNote, strumline);
 						}
-						else
+						else // you ghost tapped lol
 						{
-							// you ghost tapped lol
 							if(!SaveData.data.get("Ghost Tapping") && startedCountdown)
 							{
 								vocals.volume = 0;

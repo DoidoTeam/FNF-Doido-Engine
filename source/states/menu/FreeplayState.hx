@@ -64,6 +64,7 @@ class FreeplayState extends MusicBeatState
 		//addSong("hecker", 		"hecker");
 		//addSong("ugh",			"tankman");
 		//addSong("disruption", 	"3d-bambi");
+		addSong("expurgation", "tricky");
 		addSong("exploitation", "true-expunged");
 		addSong("collision", 	"gemamugen");
 		addSong("lunar-odyssey","luano-day");

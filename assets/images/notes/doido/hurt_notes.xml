@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="hurt_notes.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="hurt down0000" x="3" y="3" width="120" height="120"/>
+	<SubTexture name="hurt hold0000" x="126" y="3" width="36" height="54"/>
+	<SubTexture name="hurt hold end0000" x="165" y="3" width="36" height="45"/>
+	<SubTexture name="hurt left0000" x="204" y="3" width="120" height="120"/>
+	<SubTexture name="hurt right0000" x="327" y="3" width="120" height="120"/>
+	<SubTexture name="hurt up0000" x="450" y="3" width="120" height="120"/>
+</TextureAtlas>

@@ -670,9 +670,19 @@ class ChartTestSubState extends MusicBeatSubState
 						for(note in strumline.noteGroup)
 						{
 							var noteDiff:Float = (note.songTime - Conductor.songPos);
-
-							if(noteDiff <= Timings.minTiming && !note.missed && !note.gotHit && note.noteData == i)
+							
+							var minTiming:Float = Timings.minTiming;
+							if(note.mustMiss)
+								minTiming = Timings.timingsMap.get("good")[0];
+							
+							if(noteDiff <= minTiming && !note.missed && !note.gotHit && note.noteData == i)
 							{
+								if(note.mustMiss
+								&& Conductor.songPos >= note.songTime + Timings.timingsMap.get("sick")[0])
+								{
+									continue;
+								}
+								
 								possibleHitNotes.push(note);
 								canHitNote = note;
 							}
@@ -683,9 +693,6 @@ class ChartTestSubState extends MusicBeatSubState
 						{
 							for(note in possibleHitNotes)
 							{
-								if(note.mustMiss && note.songTime < Conductor.songPos - Timings.timingsMap.get("sick")[0])
-									continue;
-
 								if(note.songTime < canHitNote.songTime)
 									canHitNote = note;
 							}
