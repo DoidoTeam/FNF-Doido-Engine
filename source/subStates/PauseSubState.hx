@@ -20,8 +20,9 @@ class PauseSubState extends MusicBeatSubState
 
 	var curSelected:Int = 0;
 	
-	var textsGrp:FlxTypedGroup<FlxText>;
 	var optionsGrp:FlxTypedGroup<AlphabetMenu>;
+	var textsGrp:FlxTypedGroup<FlxText>;
+	var bottomTxt:FlxText;
 
 	var pauseSong:FlxSound;
 
@@ -73,6 +74,10 @@ class PauseSubState extends MusicBeatSubState
 			text.y -= 20;
 			FlxTween.tween(text, {y: text.y + 20, alpha: 1}, 0.4, {ease: FlxEase.quadOut, startDelay: 0.2 + 0.18 * i});
 		}
+		
+		bottomTxt = new FlxText(0,0,0,"");
+		bottomTxt.setFormat(Main.gFont, 36, 0xFFFFFFFF, RIGHT);
+		add(bottomTxt);
 
 		pauseSong = new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song.toLowerCase()), true, false);
 		if(Conductor.songPos > 0)
@@ -122,6 +127,10 @@ class PauseSubState extends MusicBeatSubState
 				case "restart song":
 					Main.skipStuff();
 					Main.switchState();
+				
+				case "botplay":
+					FlxG.sound.play(Paths.sound("menu/cancelMenu"));
+					PlayState.botplay = !PlayState.botplay;
 
 				case "options":
 					Main.switchState(new states.menu.OptionsState(new LoadSongState()));
@@ -131,6 +140,13 @@ class PauseSubState extends MusicBeatSubState
 					PlayState.sendToMenu();
 			}
 		}
+		
+		bottomTxt.text = "";
+		if(PlayState.botplay)
+			bottomTxt.text += "BOTPLAY";
+		
+		bottomTxt.x = FlxG.width - bottomTxt.width - 10;
+		bottomTxt.y = FlxG.height- bottomTxt.height- 10;
 
 		// works the same as resume
 		if(Controls.justPressed("BACK"))

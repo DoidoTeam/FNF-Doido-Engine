@@ -72,10 +72,13 @@ class PlayState extends MusicBeatState
 	public var strumlines:FlxTypedGroup<Strumline>;
 	public var bfStrumline:Strumline;
 	public var dadStrumline:Strumline;
+	
+	public static var botplay:Bool = false;
+	public static var validScore:Bool = true;
 
 	// hud
 	public var hudBuild:HudClass;
-
+	
 	// cameras!!
 	public var camGame:FlxCamera;
 	public var camHUD:FlxCamera;
@@ -101,6 +104,8 @@ class PlayState extends MusicBeatState
 		forcedCamPos = null;
 		paused = false;
 		
+		validScore = true;
+		
 		Timings.init();
 		SplashNote.resetStatics();
 		
@@ -121,7 +126,8 @@ class PlayState extends MusicBeatState
 			if(!['collision'].contains(SONG.song))
 				countdownModifier = "pixel";
 		}
-		assetModifier = "doido";
+		if(FlxG.random.bool(0.01))
+			assetModifier = "doido";
 	}
 	
 	public static function resetSongStatics()
@@ -802,7 +808,7 @@ class PlayState extends MusicBeatState
 	public function popUpRating(note:Note, strumline:Strumline, miss:Bool = false)
 	{
 		var noteDiff:Float = Math.abs(note.songTime - Conductor.songPos);
-		if(note.isHold && !miss)
+		if((note.isHold && !miss) || strumline.botplay)
 			noteDiff = 0;
 
 		var rating:String = Timings.diffToRating(noteDiff);
@@ -887,12 +893,14 @@ class PlayState extends MusicBeatState
 		CoolUtil.dumbCamPosLerp(camGame, camFollow, followLerp);
 		
 		if(Controls.justPressed("PAUSE"))
-		{
 			pauseSong();
-		}
 
 		if(Controls.justPressed("RESET"))
 			startGameOver();
+		
+		// no turning back, you gotta restart now sorry
+		if(botplay && startedSong)
+			validScore = false;
 
 		if(FlxG.keys.justPressed.SEVEN)
 		{
@@ -955,6 +963,9 @@ class PlayState extends MusicBeatState
 		// strumline handler!!
 		for(strumline in strumlines.members)
 		{
+			if(strumline.isPlayer)
+				strumline.botplay = botplay;
+			
 			for(strum in strumline.strumGroup)
 			{
 				if(strumline.isPlayer && !strumline.botplay)
@@ -1415,17 +1426,20 @@ class PlayState extends MusicBeatState
 		endedSong = true;
 		resetSongStatics();
 		
-		Highscore.addScore(SONG.song.toLowerCase() + '-' + songDiff, {
-			score: 		Timings.score,
-			accuracy: 	Timings.accuracy,
-			misses: 	Timings.misses,
-		});
+		if(validScore)
+		{
+			Highscore.addScore(SONG.song.toLowerCase() + '-' + songDiff, {
+				score: 		Timings.score,
+				accuracy: 	Timings.accuracy,
+				misses: 	Timings.misses,
+			});
+		}
 		
 		weekScore += Timings.score;
 		
 		if(playList.length <= 0)
 		{
-			if(isStoryMode)
+			if(isStoryMode && validScore)
 			{
 				Highscore.addScore('week-$curWeek-$songDiff', {
 					score: 		weekScore,

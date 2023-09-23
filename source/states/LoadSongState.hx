@@ -55,9 +55,9 @@ class LoadSongState extends MusicBeatState
 		bg.screenCenter();
 		add(bg);
 		
-		loadBar = new FlxSprite().makeGraphic(FlxG.width, 20, 0xFFFF16D2);
-		loadBar.y = FlxG.height - loadBar.height;
-		loadBar.scale.x = 0;
+		loadBar = new FlxSprite().makeGraphic(FlxG.width - 16, 20 - 8, 0xFFFF16D2);
+		loadBar.y = FlxG.height - loadBar.height - 8;
+		changeBarSize(0);
 		add(loadBar);
 		
 		var oldAnti:Bool = FlxSprite.defaultAntialiasing;
@@ -150,8 +150,7 @@ class LoadSongState extends MusicBeatState
 		if(!threadActive && !byeLol && loadBar.scale.x >= 0.98)
 		{
 			byeLol = true;
-			loadBar.scale.x = 1.0;
-			loadBar.updateHitbox();
+			changeBarSize(1);
 			Main.skipClearMemory = true;
 			Main.switchState(new PlayState());
 		}
@@ -166,7 +165,13 @@ class LoadSongState extends MusicBeatState
 		bg.scale.set(bgCalc, bgCalc);
 		bg.updateHitbox();
 		
-		loadBar.scale.x = FlxMath.lerp(loadBar.scale.x, loadPercent, elapsed * 6);
+		changeBarSize(FlxMath.lerp(loadBar.scale.x, loadPercent, elapsed * 6));
+	}
+	
+	function changeBarSize(newSize:Float)
+	{
+		loadBar.scale.x = newSize;
 		loadBar.updateHitbox();
+		loadBar.screenCenter(X);
 	}
 }

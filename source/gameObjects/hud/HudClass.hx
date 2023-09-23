@@ -17,6 +17,10 @@ class HudClass extends FlxGroup
 {
 	public var infoTxt:FlxText;
 	public var timeTxt:FlxText;
+	
+	var botplaySin:Float = 0;
+	var botplayTxt:FlxText;
+	var badScoreTxt:FlxText;
 
 	// health bar
 	public var healthBarBG:FlxSprite;
@@ -70,6 +74,20 @@ class HudClass extends FlxGroup
 		timeTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 		timeTxt.visible = SaveData.data.get('Song Timer');
 		add(timeTxt);
+		
+		badScoreTxt = new FlxText(0,0,0,"SCORE WILL NOT BE SAVED");
+		badScoreTxt.setFormat(Main.gFont, 26, 0xFFFF0000, CENTER);
+		badScoreTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
+		badScoreTxt.screenCenter(X);
+		badScoreTxt.visible = false;
+		add(badScoreTxt);
+		
+		botplayTxt = new FlxText(0,0,0,"[BOTPLAY]");
+		botplayTxt.setFormat(Main.gFont, 40, 0xFFFFFFFF, CENTER);
+		botplayTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
+		botplayTxt.screenCenter();
+		botplayTxt.visible = false;
+		add(botplayTxt);
 
 		updateHitbox();
 		health = PlayState.health;
@@ -109,6 +127,8 @@ class HudClass extends FlxGroup
 		infoTxt.screenCenter(X);
 		infoTxt.y = healthBarBG.y + healthBarBG.height + 4;
 		
+		badScoreTxt.y = healthBarBG.y - badScoreTxt.height - 4;
+		
 		updateTimeTxt();
 		timeTxt.y = downscroll ? (FlxG.height - timeTxt.height - 8) : (8);
 	}
@@ -141,6 +161,15 @@ class HudClass extends FlxGroup
 			health = PlayState.health;
 		
 		healthBar.percent = (health * 50);
+		
+		botplayTxt.visible = PlayState.botplay;
+		badScoreTxt.visible = !PlayState.validScore;
+		
+		if(botplayTxt.visible)
+		{
+			botplaySin += elapsed * Math.PI;
+			botplayTxt.alpha = 0.5 + Math.sin(botplaySin) * 0.8;
+		}
 
 		updateIconPos();
 		updateTimeTxt();

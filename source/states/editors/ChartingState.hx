@@ -91,6 +91,7 @@ class ChartingState extends MusicBeatState
 		reloadAudio();
 		Controls.setSoundKeys(true);
 		FlxG.mouse.visible = true;
+		PlayState.resetStatics();
 
 		// setting up the cameras
 		var camGame = new FlxCamera();
