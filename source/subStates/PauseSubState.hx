@@ -121,7 +121,7 @@ class PauseSubState extends MusicBeatSubState
 				cast(item, FlxBasic).cameras = [lastCam];
 		}
 
-		if(!pauseSong.playing)
+		if(!pauseSong.playing && Conductor.songPos >= 0)
 			pauseSong.play(false, pauseSong.time);
 
 		if(Controls.justPressed("UI_UP"))
