@@ -8,7 +8,9 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepad;
+import flixel.input.gamepad.FlxGamepad.FlxGamepadModel;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
+import flixel.input.gamepad.id.PS4ID;
 import flixel.system.FlxSound;
 import data.Conductor;
 import data.GameData.MusicBeatSubState;
@@ -213,7 +215,7 @@ class ControlsSubState extends MusicBeatSubState
             }
         }
 
-        for(group in allGroups)
+        /*for(group in allGroups)
         for(bind in group.members)
         for(dGroup in allGroups)
         for(dBind in group.members)
@@ -223,7 +225,20 @@ class ControlsSubState extends MusicBeatSubState
             && bind.text != '---'
             && dBind.text != '---')
                 bind.color = dBind.color = 0xFFFF0000;
-        }
+        }*/
+
+        var allBinds:Array<FlxText> = [];
+        for(group in allGroups)
+            for(bind in group.members)
+                allBinds.push(bind);
+
+        for(bind in allBinds)
+        for(dBind in allBinds)
+            if(bind.text == dBind.text
+            && dBind != bind
+            && bind.text != '---'
+            && dBind.text != '---')
+                bind.color = dBind.color = 0xFFFF0000;
     }
 
     final formatNum:Array<String> = ['ZERO','ONE','TWO','THREE','FOUR','FIVE','SIX','SEVEN','EIGHT','NINE'];
@@ -444,6 +459,15 @@ class ControlsSubState extends MusicBeatSubState
                 if(key == FlxPad.LEFT_STICK_CLICK
                 || key == FlxPad.RIGHT_STICK_CLICK)
                     key = FlxPad.NONE;
+                
+                if(curGamepad.detectedModel == PS4)
+                {
+                    var rawKey = curGamepad.firstJustPressedRawID();
+                    if(rawKey == PS4ID.L2)
+                        key = FlxPad.LEFT_TRIGGER;
+                    if(rawKey == PS4ID.R2)
+                        key = FlxPad.RIGHT_TRIGGER;
+                }
 
                 checkAnalogs();
                 var digitalAnalogs:Array<FlxPad> = [

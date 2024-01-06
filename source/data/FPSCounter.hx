@@ -1,6 +1,7 @@
 package data;
 
 import flixel.FlxG;
+import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import haxe.Timer;
 //import openfl.display.FPS;
 import openfl.events.Event;
@@ -34,7 +35,7 @@ class FPSCounter extends TextField
 		width = 300;
 		height = 70;
 	}
-	
+
 	private function onEnter(_:Event)
 	{
 		if(!visible) return;

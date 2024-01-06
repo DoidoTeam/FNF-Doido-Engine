@@ -43,11 +43,11 @@ class Controls
 		}
 
 		// gamepads
-		if(FlxG.gamepads.firstActive != null)
+		if(FlxG.gamepads.lastActive != null)
 		for(i in 0...allControls.get(bind)[1].length)
 		{
 			var key:FlxPad = allControls.get(bind)[1][i];
-			if(FlxG.gamepads.firstActive.checkStatus(key, inputState)
+			if(FlxG.gamepads.lastActive.checkStatus(key, inputState)
 			&& key != FlxPad.NONE)
 				return true;
 		}
