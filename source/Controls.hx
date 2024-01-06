@@ -6,6 +6,9 @@ import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;
 
+/*enum Keybind {
+
+}*/
 class Controls
 {
 	public static function justPressed(bind:String):Bool

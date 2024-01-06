@@ -4,21 +4,28 @@ import flixel.math.FlxMath;
 
 class Timings
 {
-	public static var timingsMap:Map<String, Array<Float>> = [
+	/*public static var timingsMap:Map<String, Array<Float>> = [
 		"sick"		=> [45, 	1],
 		"good"		=> [90, 	0.75],
 		"bad"		=> [135, 	0.25],
 		"shit"		=> [158, 	-1.0],
 		"miss"		=> [180, 	-1.75],
+	];*/
+	public static var timingsArray:Array<Array<Dynamic>> = [
+		["sick",	45,		1],
+		["good",	90,		0.75],
+		["bad",		135,	0.25],
+		["shit",	160,	-1.0],
+		["miss",	180,	-1.75],
 	];
-
-	public static var minTiming:Float = timingsMap.get("miss")[0];
+	
+	public static var minTiming:Float = getTimings("miss")[1];
 
 	public static var score:Int = 0;
 	public static var misses:Int = 0;
 	public static var combo:Int = 0;
 	public static var accuracy:Float = 0;
-
+	
 	public static var notesHit:Int = 0;
 	public static var notesJudge:Float = 0;
 
@@ -40,28 +47,38 @@ class Timings
 	}
 
 	public static function diffToRating(noteDiff:Float):String
-		return diffFormat(noteDiff)[0];
+		return noteDiffToList(noteDiff)[0];
 
 	public static function diffToJudge(noteDiff:Float):Float
-		return diffFormat(noteDiff)[1];
-
-	public static function diffFormat(noteDiff:Float):Array<Dynamic>
-	{
-		noteDiff = Math.abs(noteDiff);
-
-		var daRating:String = "miss";
-		var daJudge:Float = timingsMap.get("miss")[1];
-
-		for(key => data in timingsMap)
+		return noteDiffToList(noteDiff)[2];
+	
+	public static function noteDiffToList(noteDiff:Float):Array<Dynamic>
+	{		
+		var daList:Array<Dynamic> = timingsArray[timingsArray.length - 1];
+		
+		for(i in timingsArray)
 		{
-			if(noteDiff < data[0] && daJudge < data[1])
+			if(Math.abs(noteDiff) <= i[1])
 			{
-				daJudge = data[1];
-				daRating = key;
+				daList = i;
+				break;
 			}
 		}
-
-		return [daRating, daJudge];
+		
+		return daList;
+	}
+	
+	public static function getTimings(rating:String = "sick"):Array<Dynamic>
+	{
+		var daList:Array<Dynamic> = timingsArray[0];
+		
+		for(i in timingsArray)
+		{
+			if(i[0] == rating)
+				daList = i;
+		}
+		
+		return daList;
 	}
 
 	public static function updateAccuracy()
@@ -76,25 +93,29 @@ class Timings
 	public static function getRank():String
 	{
 		var result:String = "F";
-
-		function calc(daRank:String, maxAcc:Float, minAcc:Float):String
+		function calc(daRank:String, maxAcc:Float, minAcc:Float)
 		{
-			var daR:String = result;
 			if(accuracy > minAcc && accuracy <= maxAcc)
-			{
-				daR = daRank;
-			}
-			return daR;
+				result = daRank;
 		}
-
-		result = calc("S", 100, 95);
-		result = calc("A", 95, 	80);
-		result = calc("B", 80, 	75);
-		result = calc("C", 75, 	65);
-		result = calc("D", 65, 	60);
+		
+		// main ranks
+		calc("S", 100,	95);
+		calc("A", 95, 	80);
+		calc("B", 80, 	75);
+		calc("C", 75, 	65);
+		calc("D", 65, 	60);
+		
+		// pluses for your rank
+		var extraPlus:Array<Bool> = [
+			(misses == 0),
+			(accuracy == 100.0),
+		];
+		for(i in extraPlus)
+			if(i) result += '+';
 		
 		// you cant give a result without notes :/
-		if(notesHit == 0)
+		if(notesHit <= 0)
 			result = "N/A";
 
 		return result;

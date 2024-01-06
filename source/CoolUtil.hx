@@ -1,7 +1,9 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.util.FlxSort;
+import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import gameObjects.hud.note.Note;
 
@@ -95,12 +97,20 @@ class CoolUtil
 	}
 	
 	// NOTE STUFF
-	public static function getDirection(i:Int)
+	inline public static function getDirection(i:Int)
 		return ["left", "down", "up", "right"][i];
 	
-	public static function noteWidth()
-	{
+	inline public static function noteWidth()
 		return (160 * 0.7); // 112
+	
+	public static function setNotePos(note:FlxSprite, target:FlxSprite, angle:Float, offsetX:Float, offsetY:Float)
+	{
+		note.x = target.x
+			+ (Math.cos(FlxAngle.asRadians(angle)) * offsetX)
+			+ (Math.sin(FlxAngle.asRadians(angle)) * offsetY);
+		note.y = target.y
+			+ (Math.cos(FlxAngle.asRadians(angle)) * offsetY)
+			+ (Math.sin(FlxAngle.asRadians(angle)) * offsetX);
 	}
 	
 	public static function sortByShit(Obj1:Note, Obj2:Note):Int
@@ -108,7 +118,7 @@ class CoolUtil
 
 	// music management stuff
 	public static var curMusic:String = "none";
-	public static function playMusic(?key:String, ?force:Bool = false, ?vol:Float = 1)
+	public static function playMusic(?key:String, ?forceRestart:Bool = false, ?vol:Float = 0.5)
 	{
 		if (Paths.dumpExclusions.contains('music/' + curMusic + '.ogg'))
 			Paths.dumpExclusions.remove  ('music/' + curMusic + '.ogg');
@@ -122,7 +132,7 @@ class CoolUtil
 		{
 			Paths.dumpExclusions.push('music/' + key + '.ogg');
 
-			if(curMusic != key || force)
+			if(curMusic != key || forceRestart)
 			{
 				curMusic = key;
 				FlxG.sound.playMusic(Paths.music(key), vol);

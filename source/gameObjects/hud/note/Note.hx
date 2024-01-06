@@ -28,6 +28,7 @@ class Note extends FlxSprite
 
 		var direction:String = CoolUtil.getDirection(noteData);
 		antialiasing = FlxSprite.defaultAntialiasing;
+		isPixelSprite = false;
 		setAlpha();
 
 		switch(assetModifier)
@@ -47,6 +48,7 @@ class Note extends FlxSprite
 					animation.add(direction, [noteData + (isHoldEnd ? 4 : 0)], 0, false);
 				}
 				antialiasing = false;
+				isPixelSprite = true;
 				animation.play(direction);
 
 			default:
@@ -114,6 +116,8 @@ class Note extends FlxSprite
 	// you can use this to fix 
 	public var noteOffset:FlxPoint = new FlxPoint(0,0);
 	
+	public var noteAngle:Float = 0;
+	
 	public var songTime:Float = 0;
 	public var noteData:Int = 0;
 	public var noteType:String = "default";
@@ -130,6 +134,8 @@ class Note extends FlxSprite
 	public var isHoldEnd:Bool = false;
 	public var holdLength:Float = 0;
 	public var holdHitLength:Float = 0;
+	
+	public var children:Array<Note> = [];
 	public var parentNote:Note = null;
 
 	// instead of mustPress, the strumline is determined by their strumlineID's
@@ -177,7 +183,7 @@ class Note extends FlxSprite
 		gotHit = false;
 		gotHeld = false;
 		holdHitLength = 0;
-		spawned = false;
+		//spawned = false;
 		
 		clipRect = null;
 		setAlpha();

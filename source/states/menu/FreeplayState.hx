@@ -1,5 +1,6 @@
 package states.menu;
 
+import data.Discord.DiscordClient;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxObject;
@@ -15,6 +16,7 @@ import data.SongData;
 import gameObjects.menu.AlphabetMenu;
 import gameObjects.hud.HealthIcon;
 import states.*;
+import subStates.DeleteScoreSubState;
 
 using StringTools;
 
@@ -53,24 +55,31 @@ class FreeplayState extends MusicBeatState
 	{
 		super.create();
 		CoolUtil.playMusic("freakyMenu");
+		DiscordClient.changePresence("Freeplay - Choosin' a track", null);
+
 		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
 		bg.scale.set(1.2,1.2); bg.updateHitbox();
 		bg.screenCenter();
 		add(bg);
 		
+		// base fnf
 		addWeek(["tutorial"], ["gf"]);
 		addWeek(["bopeebo", "fresh", "dadbattle"], ["dad"]);
 		addWeek(["senpai", "roses", "thorns"], ["senpai","senpai","spirit"]);
-		//addSong("hecker", 		"hecker");
-		//addSong("ugh",			"tankman");
-		//addSong("disruption", 	"3d-bambi");
+		
+		// other guys
+		addSong("defeat", "black-impostor");
 		addSong("madness", "tricky");
 		addSong("expurgation", "tricky");
 		addSong("exploitation", "true-expunged");
-		addSong("collision", 	"gemamugen");
+		addSong("collision", 	"gemamugen"); // CU PINTO BOSTA
 		addSong("lunar-odyssey","luano-day");
 		addSong("escape-from-california","moldygh");
 
+		// BEEP-POWER
+		addSong("beep-power", "dad");
+		addSong("ferocious", "dad");
+		
 		grpItems = new FlxGroup();
 		add(grpItems);
 
@@ -99,6 +108,21 @@ class FreeplayState extends MusicBeatState
 		scoreCounter = new ScoreCounter();
 		add(scoreCounter);
 
+		var resetTxt = new FlxText(0, 0, 0, "PRESS RESET TO DELETE SONG SCORE");
+		resetTxt.setFormat(Main.gFont, 28, 0xFFFFFFFF, RIGHT);
+		var resetBg = new FlxSprite().makeGraphic(
+			Math.floor(FlxG.width * 1.5),
+			Math.floor(resetTxt.height+ 8),
+			0xFF000000
+		);
+		resetBg.alpha = 0.4;
+		resetBg.screenCenter(X);
+		resetBg.y = FlxG.height- resetBg.height;
+		resetTxt.screenCenter(X);
+		resetTxt.y = resetBg.y + 4;
+		add(resetBg);
+		add(resetTxt);
+
 		changeSelection();
 	}
 
@@ -113,6 +137,15 @@ class FreeplayState extends MusicBeatState
 			changeDiff(-1);
 		if(Controls.justPressed("UI_RIGHT"))
 			changeDiff(1);
+
+		if(Controls.justPressed("RESET"))
+			openSubState(new DeleteScoreSubState(songList[curSelected][0], CoolUtil.getDiffs()[curDiff]));
+
+		if(DeleteScoreSubState.deletedScore)
+		{
+			DeleteScoreSubState.deletedScore = false;
+			updateScoreCount();
+		}
 
 		if(Controls.justPressed("ACCEPT"))
 		{
@@ -137,7 +170,7 @@ class FreeplayState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('menu/cancelMenu'));
 			}
 		}
-
+		
 		if(Controls.justPressed("BACK"))
 		{
 			FlxG.sound.play(Paths.sound('menu/cancelMenu'));
@@ -254,7 +287,7 @@ class ScoreCounter extends FlxGroup
 		bg.scale.y = ((text.height + diffTxt.height + 8) / 32);
 		bg.updateHitbox();
 
-		bg.y = 0;
+		//bg.y = 0;
 		bg.x = FlxG.width - bg.width;
 
 		text.x = FlxG.width - text.width - 4;

@@ -133,7 +133,8 @@ class TitleState extends MusicBeatState
 					addText([]);
 					
 				case 5:
-					addText(['In association', 'with']);
+					//addText(['In association', 'with']);
+					addText(['Not associated', 'with']);
 				case 7:
 					addText(['newgrounds'], false);
 					ngSpr.visible = true;

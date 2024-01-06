@@ -63,14 +63,19 @@ class ChartLoader
 					if (holdLoop <= 0)
 						holdLoop = 1;
 					
-					for(j in 0...holdLoop)
+					var holdID:Int = 0;
+					for(j in 0...(holdLoop + 1))
 					{
+						var isHoldEnd = (j == holdLoop);
+						
 						var holdNote:Note = new Note();
 						holdNote.isHold = true;
+						holdNote.isHoldEnd = isHoldEnd;
 						holdNote.reloadNote(daStrumTime, daNoteData, daNoteType);
 						
 						holdNote.parentNote = daParent;
 						holdNote.strumlineID = swagNote.strumlineID;
+						holdNote.ID = holdID;
 						
 						// uhhh
 						holdNote.holdLength = susLength;
@@ -86,19 +91,9 @@ class ChartLoader
 						);*/
 						
 						daParent = holdNote;
+						swagNote.children.push(holdNote);
+						holdID++;
 					}
-					
-					var holdNoteEnd:Note = new Note();
-					holdNoteEnd.isHold = holdNoteEnd.isHoldEnd = true;
-					holdNoteEnd.reloadNote(daStrumTime, daNoteData, daNoteType);
-					
-					holdNoteEnd.parentNote = daParent;
-					holdNoteEnd.strumlineID = daParent.strumlineID;
-					
-					holdNoteEnd.holdLength = susLength;
-					holdNoteEnd.noteCrochet = noteCrochet;
-					
-					unspawnNotes.push(holdNoteEnd);
 				}
 			}
 			daSection++;

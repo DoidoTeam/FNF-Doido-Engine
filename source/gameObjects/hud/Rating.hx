@@ -40,9 +40,9 @@ class Rating extends FlxGroup
 		{
 			item.acceleration.y = FlxG.random.int(200, 300);
 			item.velocity.y 	= -FlxG.random.int(140, 160);
-			item.velocity.x 	= FlxG.random.float(-5, 5);
+			item.velocity.x 	= FlxG.random.int(-5, 5);
 			
-			deathTween(item, (Conductor.crochet / 1000) + FlxG.random.float(0, 0.3));
+			deathTween(item, (Conductor.crochet / 1000) + FlxG.random.int(0, 3) * 0.3);
 		}
 	}
 	
@@ -117,12 +117,16 @@ class RatingFNF extends FlxSprite
 		animation.add(rating, [ratingNum], 0, false);
 		animation.play(rating);
 		
+		antialiasing = FlxSprite.defaultAntialiasing;
+		isPixelSprite = false;
+		
 		switch(assetModifier)
 		{
 			default:
 				scale.set(0.7,0.7);
 			case "pixel":
 				antialiasing = false;
+				isPixelSprite = true;
 				scale.set(5,5);
 		}
 		updateHitbox();
@@ -157,6 +161,9 @@ class NumberFNF extends FlxSpriteGroup
 			
 			num.ID = count;
 			count++;
+
+			num.antialiasing = FlxSprite.defaultAntialiasing;
+			num.isPixelSprite = false;
 			
 			switch(assetModifier)
 			{
@@ -164,6 +171,7 @@ class NumberFNF extends FlxSpriteGroup
 					num.scale.set(0.5,0.5);
 				case "pixel":
 					num.antialiasing = false;
+					num.isPixelSprite = true;
 					num.scale.set(5,5);
 			}
 			num.updateHitbox();

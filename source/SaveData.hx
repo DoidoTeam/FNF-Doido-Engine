@@ -52,6 +52,11 @@ class SaveData
 			"Self explanatory",
 			[30, 360]
 		],
+		"FPS Counter" => [
+			true,
+			CHECKMARK,
+			"Whether you want a counter showing your framerate and memory usage counter in the corner of the game",
+		],
 		
 		"Split Holds" => [
 			false,
@@ -79,7 +84,9 @@ class SaveData
 		// this one doesnt actually appear at the regular options menu
 		"Song Offset" => [
 			0,
-			[-500, 500]
+			SELECTOR,
+			"no one is going to see this anyway whatever",
+			[-500, 500],
 		],
 	];
 	
@@ -122,6 +129,9 @@ class SaveData
 	public static function update()
 	{
 		Main.changeFramerate(data.get("Framerate Cap"));
+		
+		if(Main.fpsCount != null)
+			Main.fpsCount.visible = data.get("FPS Counter");
 
 		FlxSprite.defaultAntialiasing = data.get("Antialiasing");
 	}

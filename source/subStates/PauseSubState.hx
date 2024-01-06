@@ -1,5 +1,6 @@
 package subStates;
 
+import data.Discord.DiscordClient;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
@@ -16,8 +17,14 @@ import states.*;
 
 class PauseSubState extends MusicBeatSubState
 {
-	var optionShit:Array<String> = ["resume", "restart song", "botplay", "options", "exit to menu"];
-
+	var optionShit:Array<String> = [
+		"resume",
+		"restart song",
+		"botplay",
+		"options",
+		"exit to menu",
+	];
+	
 	var curSelected:Int = 0;
 	
 	var optionsGrp:FlxTypedGroup<AlphabetMenu>;
@@ -34,6 +41,11 @@ class PauseSubState extends MusicBeatSubState
 
 		banana.alpha = 0;
 		FlxTween.tween(banana, {alpha: 0.4}, 0.1);
+
+		if(!PlayState.startedSong)
+		{
+			optionShit.remove("options");
+		}
 
 		optionsGrp = new FlxTypedGroup<AlphabetMenu>();
 		add(optionsGrp);
@@ -85,7 +97,7 @@ class PauseSubState extends MusicBeatSubState
 			pauseSong.play(Conductor.songPos);
 			pauseSong.pitch = 0.9;
 			pauseSong.volume = 0;
-			FlxTween.tween(pauseSong, {volume: 0.45}, 3, {startDelay: 1});
+			FlxTween.tween(pauseSong, {volume: 0.6}, 3, {startDelay: 1});
 		}
 		FlxG.sound.list.add(pauseSong);
 
@@ -101,12 +113,16 @@ class PauseSubState extends MusicBeatSubState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		DiscordClient.changePresence("Paused - Restin' a bit", null);
 		var lastCam = FlxG.cameras.list[FlxG.cameras.list.length - 1];
 		for(item in members)
 		{
 			if(Std.isOfType(item, FlxBasic))
 				cast(item, FlxBasic).cameras = [lastCam];
 		}
+
+		if(!pauseSong.playing)
+			pauseSong.play(false, pauseSong.time);
 
 		if(Controls.justPressed("UI_UP"))
 			changeSelection(-1);
@@ -119,24 +135,28 @@ class PauseSubState extends MusicBeatSubState
 			{
 				default:
 					FlxG.sound.play(Paths.sound("menu/cancelMenu"));
-			
+				
 				case "resume":
 					PlayState.paused = false;
 					close();
 
 				case "restart song":
 					Main.skipStuff();
-					Main.switchState();
+					Main.resetState();
 				
 				case "botplay":
 					FlxG.sound.play(Paths.sound("menu/cancelMenu"));
 					PlayState.botplay = !PlayState.botplay;
 
 				case "options":
-					Main.switchState(new states.menu.OptionsState(new LoadSongState()));
+					//Main.switchState(new states.menu.OptionsState(new LoadSongState()));
+					persistentDraw = false;
+					pauseSong.pause();
+					this.openSubState(new OptionsSubState(PlayState.instance));
 
 				case "exit to menu":
 					//Main.switchState(new MenuState());
+					persistentDraw = true;
 					PlayState.sendToMenu();
 			}
 		}

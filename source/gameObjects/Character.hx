@@ -21,8 +21,6 @@ class Character extends FlxSprite
 	public var holdLength:Float = 1;
 
 	public var idleAnims:Array<String> = [];
-	public var singAnims:Array<String> = [];
-	public var missAnims:Array<String> = [];
 
 	public var quickDancer:Bool = false;
 	public var specialAnim:Bool = false;
@@ -42,13 +40,13 @@ class Character extends FlxSprite
 
 		holdLength = 1;
 		idleAnims = ["idle"];
-		addSingPrefix(); // none
 
 		quickDancer = false;
 
-		flipX = false;
+		flipX = flipY = false;
 		scale.set(1,1);
 		antialiasing = FlxSprite.defaultAntialiasing;
+		isPixelSprite = false;
 		deathChar = "bf";
 
 		var storedPos:Array<Float> = [x, y];
@@ -63,7 +61,7 @@ class Character extends FlxSprite
 		{
 			case "gemamugen":
 				frames = Paths.getSparrowAtlas("characters/gemamugen/gemamugen");
-
+				
 				animation.addByPrefix('idle', 		'idle', 24, true);
 				animation.addByPrefix('idle-alt',	'chacharealsmooth', 24, true);
 				animation.addByPrefix('singLEFT', 	'left', 24, false);
@@ -91,6 +89,7 @@ class Character extends FlxSprite
 				}
 				
 				antialiasing = false;
+				isPixelSprite = true;
 				scale.set(6,6);
 				
 			case "spirit":
@@ -103,6 +102,7 @@ class Character extends FlxSprite
 				animation.addByPrefix('singRIGHT', 	"right_", 		24, false);
 				
 				antialiasing = false;
+				isPixelSprite = true;
 				scale.set(6,6);
 
 			case "bf-pixel":
@@ -120,6 +120,7 @@ class Character extends FlxSprite
 
 				flipX = true;
 				antialiasing = false;
+				isPixelSprite = true;
 				scale.set(6,6);
 
 				deathChar = "bf-pixel-dead";
@@ -139,6 +140,7 @@ class Character extends FlxSprite
 				flipX = true;
 				scale.set(6,6);
 				antialiasing = false;
+				isPixelSprite = true;
 				
 			case "gf-pixel":
 				frames = Paths.getSparrowAtlas("characters/gf-pixel/gfPixel");
@@ -150,6 +152,7 @@ class Character extends FlxSprite
 				
 				scale.set(6,6);
 				antialiasing = false;
+				isPixelSprite = true;
 				quickDancer = true;
 				flipX = isPlayer;
 				
@@ -241,19 +244,6 @@ class Character extends FlxSprite
 		setPosition(storedPos[0], storedPos[1]);
 
 		return this;
-	}
-
-	public function addSingPrefix(prefix:String = "")
-	{
-		singAnims = ["singLEFT", "singDOWN", "singUP", "singRIGHT"];
-
-		for(i in 0...singAnims.length)
-		{
-			missAnims[i] = singAnims[i] + "miss";
-
-			singAnims[i] += prefix;
-			missAnims[i] += prefix;
-		}
 	}
 
 	private var curDance:Int = 0;

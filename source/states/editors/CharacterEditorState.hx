@@ -21,7 +21,7 @@ import gameObjects.hud.Rating;
 import data.CharacterData;
 import data.GameData.MusicBeatState;
 import openfl.net.FileReference;
-import states.PlayState;
+import states.*;
 import sys.io.File;
 
 class CharacterEditorState extends MusicBeatState
@@ -372,7 +372,7 @@ class CharacterEditorState extends MusicBeatState
 		if(FlxG.keys.justPressed.ESCAPE)
 		{
 			FlxG.mouse.visible = false;
-			Main.switchState(new PlayState());
+			Main.switchState(new LoadSongState());
 		}
 			
 		if(FlxG.mouse.wheel != 0)

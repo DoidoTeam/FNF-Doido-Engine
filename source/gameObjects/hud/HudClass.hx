@@ -7,7 +7,6 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import flixel.ui.FlxBar;
 import flixel.util.FlxColor;
 import data.Conductor;
 import data.Timings;
@@ -23,47 +22,20 @@ class HudClass extends FlxGroup
 	var badScoreTxt:FlxText;
 
 	// health bar
-	public var healthBarBG:FlxSprite;
-	public var healthBar:FlxBar;
+	public var healthBar:HealthBar;
 	var smoothBar:Bool = true;
-
-	// icon stuff
-	public var iconBf:HealthIcon;
-	public var iconDad:HealthIcon;
-
-	public var invertedIcons:Bool = false;
+	
 	public var health:Float = 1;
 
 	public function new()
 	{
 		super();
-		healthBarBG = new FlxSprite().loadGraphic(Paths.image("hud/base/healthBar"));
-		add(healthBarBG);
-
-		healthBar = new FlxBar(
-			0, 0,
-			RIGHT_TO_LEFT,
-			Math.floor(healthBarBG.width) - 8,
-			Math.floor(healthBarBG.height) - 8
-		);
-		healthBar.createFilledBar(0xFFFF0000, 0xFF00FF00);
-		healthBar.updateBar();
+		smoothBar = SaveData.data.get('Smooth Healthbar');
+		
+		healthBar = new HealthBar();
+		changeIcon(0, healthBar.icons[0].curIcon);
 		add(healthBar);
 		
-		smoothBar = SaveData.data.get('Smooth Healthbar');
-
-		iconDad = new HealthIcon();
-		iconDad.setIcon(PlayState.SONG.player2, false);
-		iconDad.ID = 0;
-		add(iconDad);
-
-		iconBf = new HealthIcon();
-		iconBf.setIcon(PlayState.SONG.player1, true);
-		iconBf.ID = 1;
-		add(iconBf);
-
-		changeIcon(0, iconDad.curIcon);
-
 		infoTxt = new FlxText(0, 0, 0, "hi there! i am using whatsapp");
 		infoTxt.setFormat(Main.gFont, 20, 0xFFFFFFFF, CENTER);
 		infoTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
@@ -117,17 +89,15 @@ class HudClass extends FlxGroup
 
 	public function updateHitbox(downscroll:Bool = false)
 	{
-		healthBarBG.screenCenter(X);
-		healthBarBG.y = (downscroll ? 50 : FlxG.height - healthBarBG.height - 50);
-
-		healthBar.setPosition(healthBarBG.x + 4, healthBarBG.y + 4);
-		updateIconPos();
-
+		healthBar.bg.x = (FlxG.width / 2) - (healthBar.bg.width / 2);
+		healthBar.bg.y = (downscroll ? 50 : FlxG.height - healthBar.bg.height - 50);
+		healthBar.updatePos();
+		
 		updateText();
 		infoTxt.screenCenter(X);
-		infoTxt.y = healthBarBG.y + healthBarBG.height + 4;
+		infoTxt.y = healthBar.bg.y + healthBar.bg.height + 4;
 		
-		badScoreTxt.y = healthBarBG.y - badScoreTxt.height - 4;
+		badScoreTxt.y = healthBar.bg.y - badScoreTxt.height - 4;
 		
 		updateTimeTxt();
 		timeTxt.y = downscroll ? (FlxG.height - timeTxt.height - 8) : (8);
@@ -139,11 +109,13 @@ class HudClass extends FlxGroup
 		var allItems:Array<FlxSprite> = [
 			infoTxt,
 			timeTxt,
-			healthBar,
-			healthBarBG,
-			iconBf,
-			iconDad,
+			healthBar.bg,
+			healthBar.sideL,
+			healthBar.sideR,
 		];
+		for(icon in healthBar.icons)
+			allItems.push(icon);
+		
 		for(item in allItems)
 		{
 			if(tweenTime <= 0)
@@ -171,78 +143,24 @@ class HudClass extends FlxGroup
 			botplayTxt.alpha = 0.5 + Math.sin(botplaySin) * 0.8;
 		}
 
-		updateIconPos();
+		healthBar.updateIconPos();
 		updateTimeTxt();
-	}
-
-	public function updateIconPos()
-	{
-		var formatHealth = (2 - health);
-		if(invertedIcons)
-			formatHealth = health;
-
-		var barX:Float = (healthBarBG.x + (healthBarBG.width * (formatHealth) / 2));
-		var barY:Float = (healthBarBG.y + healthBarBG.height / 2);
-
-		for(icon in [iconDad, iconBf])
-		{
-			icon.scale.set(
-				FlxMath.lerp(icon.scale.x, 1, FlxG.elapsed * 6),
-				FlxMath.lerp(icon.scale.y, 1, FlxG.elapsed * 6)
-			);
-			icon.updateHitbox();
-
-			icon.y = barY - icon.height / 2 - 12;
-			icon.x = barX;
-
-			var leftIcon = iconDad;
-			if(invertedIcons)
-				leftIcon = iconBf;
-
-			if(icon == leftIcon)
-				icon.x -= icon.width - 24;
-			else
-				icon.x -= 24;
-
-			if(!icon.isPlayer)
-				icon.setAnim(2 - health);
-			else
-				icon.setAnim(health);
-
-			if(!invertedIcons)
-				icon.flipX = icon.isPlayer;
-			else
-				icon.flipX = !icon.isPlayer;
-		}
-
-		healthBar.flipX = invertedIcons;
 	}
 
 	public function changeIcon(iconID:Int = 0, newIcon:String = "face")
 	{
-		for(icon in [iconDad, iconBf])
-		{
-			if(icon.ID == iconID)
-				icon.setIcon(newIcon, icon.isPlayer);
-		}
-		updateIconPos();
-
-		healthBar.createFilledBar(
-			HealthIcon.getColor(iconDad.curIcon),
-			HealthIcon.getColor(iconBf.curIcon)
-		);
-		healthBar.updateBar();
+		healthBar.changeIcon(iconID, newIcon);
 	}
 
 	public function beatHit(curBeat:Int = 0)
 	{
 		if(curBeat % 2 == 0)
 		{
-			for(icon in [iconDad, iconBf])
+			for(icon in healthBar.icons)
 			{
 				icon.scale.set(1.3,1.3);
 				icon.updateHitbox();
-				updateIconPos();
+				healthBar.updateIconPos();
 			}
 		}
 	}

@@ -10,7 +10,6 @@ class HealthIcon extends FlxSprite
 	public function new()
 	{
 		super();
-		//setIcon("face");
 	}
 
 	public var isPlayer:Bool = false;
@@ -40,6 +39,7 @@ class HealthIcon extends FlxSprite
 		this.isPlayer = isPlayer;
 		flipX = isPlayer;
 
+		antialiasing = FlxSprite.defaultAntialiasing;
 		return this;
 	}
 

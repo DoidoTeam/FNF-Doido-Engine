@@ -79,7 +79,7 @@ class ChartingState extends MusicBeatState
 
 	var isTyping:Bool = false;
 	var playing:Bool = false;
-	var songList:Array<FlxSound> = [];
+	public static var songList:Array<FlxSound> = [];
 
 	static var playHitSounds:Array<Bool> = [true, true];
 	var hitsound:FlxSound;
@@ -206,6 +206,9 @@ class ChartingState extends MusicBeatState
 
 	var copySectTxt:FlxText;
 	var typingShit:Array<FlxUIInputText> = [];
+	
+	var snapDropDown:FlxUIDropDownMenu;
+	var stepperZoom:FlxUINumericStepper;
 
 	function addUIStuff()
 	{
@@ -252,13 +255,13 @@ class ChartingState extends MusicBeatState
 
 		var reloadJson = new FlxButton(200, 70, "Reload JSON", function() {
 			var daSong:String = SONG.song.toLowerCase();
-			if(FileSystem.exists(Paths.getPath('songs/$daSong/$daSong.json')))
+			try
 			{
 				SONG = SongData.loadFromJson(daSong, songDiff);
 				curSection = 0;
 				Main.switchState();
 			}
-			else
+			catch(e)
 			{
 				var nop = new FlxText(0,0,0,"JSON NOT FOUND",18);
 				add(nop);
@@ -284,7 +287,7 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.name = 'song_speed';	
 
 		var characters = CoolUtil.charList();
-
+		
 		var player1DropDown = new FlxUIDropDownMenu(140, 115, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 		{
 			SONG.player1 = characters[Std.parseInt(character)];
@@ -306,6 +309,29 @@ class ChartingState extends MusicBeatState
 		var playTicksDad = new FlxUICheckBox(10, 250, null, null, 'Dad Hitsounds', 100);
 		playTicksDad.name = "dad_hitsounds";
 		playTicksDad.checked = playHitSounds[0];
+		
+		var stepperVolInst = new FlxUINumericStepper(110, 190, 0.1, 1, 0, 1.0, 1);
+		stepperVolInst.value = Conductor.bpm;
+		stepperVolInst.name = 'vol_inst';
+		
+		var stepperVolVoices = new FlxUINumericStepper(110, 210, 1, 1, 0, 1.0, 1);
+		stepperVolVoices.value = Conductor.bpm;
+		stepperVolVoices.name = 'vol_voices';
+		
+		var muteInst:FlxUICheckBox = null;
+		muteInst = new FlxUICheckBox(10, 190, null, null, 'Mute Inst', 100, function() {
+			songList[0].volume = 0;
+			if(!muteInst.checked)
+				songList[0].volume = stepperVolInst.value;
+		});
+		var muteVoices:FlxUICheckBox = null;
+		muteVoices = new FlxUICheckBox(10, 210, null, null, 'Mute Voices', 100, function() {
+			if(songList.length <= 1) return;
+			
+			songList[1].volume = 0;
+			if(!muteVoices.checked)
+				songList[1].volume = stepperVolVoices.value;
+		});
 
 		var clearSongButton = new FlxButton(200, 250, "Clear Song", function() {
 			SONG.notes = [];
@@ -329,6 +355,12 @@ class ChartingState extends MusicBeatState
 		tabSong.add(stepperSpeed);
 		tabSong.add(playTicksBf);
 		tabSong.add(playTicksDad);
+		tabSong.add(stepperVolInst);
+		tabSong.add(stepperVolVoices);
+		tabSong.add(muteInst);
+		tabSong.add(muteVoices);
+		
+		
 		tabSong.add(clearSongButton);
 
 		tabSong.add(new FlxText(player1DropDown.x, player1DropDown.y - 15, 0, 'Boyfriend:'));
@@ -486,13 +518,12 @@ class ChartingState extends MusicBeatState
 		var tabGrid = new FlxUI(null, UI_left);
 		tabGrid.name = "Grid";
 		UI_left.addGroup(tabGrid);
-
-		var stepperZoom = new FlxUINumericStepper(10, 20, 1, 1, 1, 4, 0);
+		
+		stepperZoom = new FlxUINumericStepper(10, 20, 1, 1, 1, 4, 0);
 		stepperZoom.name = 'grid_zoom';
 		stepperZoom.value = GRID_ZOOM;
-
-		var allSnaps:Array<Int> = [0, 4, 8, 12, 16, 20, 24, 32, 48, 64, 96, 192];
-		var formatSnaps:Array<String> = [];
+		
+		formatSnaps = [];
 		for(i in 0...allSnaps.length)
 		{
 			if(i == 0)
@@ -500,25 +531,40 @@ class ChartingState extends MusicBeatState
 			else
 				formatSnaps.push('${allSnaps[i]}th');
 		}
-
-		var snapDropDown = new FlxUIDropDownMenu(10, 50, FlxUIDropDownMenu.makeStrIdLabelArray(formatSnaps, true), function(daType:String)
+		
+		snapDropDown = new FlxUIDropDownMenu(10, 50, FlxUIDropDownMenu.makeStrIdLabelArray(formatSnaps, true), function(daType:String)
 		{
-			var snapText = formatSnaps[Std.parseInt(daType)];
-			snapText = snapText.replace("th", "");
-
-			GRID_SNAP = 0;
-			if(snapText != "none")
-				GRID_SNAP = Std.parseInt(snapText);
-
-			trace('curSnap: ' + GRID_SNAP);
+			updateSnapLabel(Std.parseInt(daType));
 		});
 		snapDropDown.name = "dropdown_snap";
-		snapDropDown.selectedLabel = formatSnaps[allSnaps.indexOf(GRID_SNAP)];
+		updateSnapLabel(curSnapNum);
 
 		tabGrid.add(new FlxText(10, stepperZoom.y - 15, 0, "Grid Zoom:"));
 		tabGrid.add(stepperZoom);
 		tabGrid.add(new FlxText(10, snapDropDown.y - 15, 0, "Grid Snapping:"));
 		tabGrid.add(snapDropDown);
+	}
+	
+	final allSnaps:Array<Int> = [0, 4, 8, 12, 16, 20, 24, 32, 48, 64, 96, 192];
+	var formatSnaps:Array<String> = [];
+	static var curSnapNum:Int = 4; // 16
+	
+	function updateSnapLabel(snapNum:Int = 0)
+	{
+		curSnapNum = snapNum;
+		
+		curSnapNum = FlxMath.wrap(curSnapNum, 0, formatSnaps.length - 1);
+		
+		var snapText = formatSnaps[curSnapNum];
+		snapText = snapText.replace("th", "");
+
+		GRID_SNAP = 0;
+		if(snapText != "none")
+			GRID_SNAP = Std.parseInt(snapText);
+		
+		snapDropDown.selectedLabel = formatSnaps[allSnaps.indexOf(GRID_SNAP)];
+		reloadSection(curSection, false);
+		//trace('curSnap: ' + GRID_SNAP);
 	}
 
 	// set up your stuff down here
@@ -581,6 +627,13 @@ class ChartingState extends MusicBeatState
 						case 'grid_zoom':
 							GRID_ZOOM = (stepper.value);
 							reloadSection(curSection, false);
+							
+						case 'vol_inst':
+							songList[0].volume = stepper.value;
+						case 'vol_voices':
+							if(songList.length <= 1) return;
+							
+							songList[1].volume = stepper.value;
 					}
 				}
 		}
@@ -665,11 +718,12 @@ class ChartingState extends MusicBeatState
 	}
 
 	// basically goes for the shortest audio
-	var songLength:Float = 0;
+	public static var songLength:Float = 0;
 
 	function reloadAudio()
 	{
 		songList = [];
+		songLength = 0;
 		function addMusic(music:FlxSound):Void
 		{
 			FlxG.sound.list.add(music);
@@ -903,6 +957,8 @@ class ChartingState extends MusicBeatState
 			if(item.hasFocus)
 				isTyping = true;
 		
+		Controls.setSoundKeys(isTyping);
+		
 		// autosaves every 5 minutes
 		autosavetimer += elapsed;
 		if(autosavetimer >= 60 * 5)
@@ -914,6 +970,27 @@ class ChartingState extends MusicBeatState
 
 		if(!isTyping)
 		{
+			if(FlxG.keys.justPressed.LEFT)
+				updateSnapLabel(curSnapNum - 1);
+			if(FlxG.keys.justPressed.RIGHT)
+				updateSnapLabel(curSnapNum + 1);
+			
+			var whad:Array<Bool> = [
+				FlxG.keys.justPressed.Z,
+				FlxG.keys.justPressed.X,
+			];
+			if(whad.contains(true))
+			{
+				if(whad[0]) GRID_ZOOM--;
+				if(whad[1]) GRID_ZOOM++;
+				
+				if(GRID_ZOOM < 1) GRID_ZOOM = 1;
+				if(GRID_ZOOM > 4) GRID_ZOOM = 4;
+				stepperZoom.value = GRID_ZOOM;
+				
+				reloadSection(curSection, false);
+			}
+			
 			if(FlxG.keys.justPressed.ENTER)
 			{
 				FlxG.mouse.visible = false;
@@ -922,9 +999,10 @@ class ChartingState extends MusicBeatState
 				//Main.switchState(new PlayState());
 				Main.switchState(new LoadSongState());
 			}
-
+			
 			if(FlxG.keys.justPressed.ESCAPE)
 			{
+				persistentDraw = false;
 				ChartTestSubState.startConductor = conductorOffset;
 				openSubState(new ChartTestSubState());
 			}
@@ -938,6 +1016,8 @@ class ChartingState extends MusicBeatState
 
 			if(FlxG.keys.pressed.W || FlxG.keys.pressed.S)
 			{
+				if(playing) playing = false;
+				
 				Conductor.songPos += 1000 * elapsed * (FlxG.keys.pressed.W ? -1 : 1) / GRID_ZOOM;
 			}
 		}
@@ -955,15 +1035,15 @@ class ChartingState extends MusicBeatState
 				Conductor.songPos += -FlxG.mouse.wheel * 5000 * elapsed / GRID_ZOOM;
 			}
 		}
-
+		
 		if(FlxG.mouse.overlaps(mainGrid))
 		{
 			var realSnap:Float = (GRID_SNAP / 16);
 
 			var sizeTimed:Float = (GRID_SIZE / realSnap) * GRID_ZOOM;
 
-			selectSquare.x = Math.floor(FlxG.mouse.x / GRID_SIZE) * GRID_SIZE;
-			selectSquare.y = Math.floor(FlxG.mouse.y / sizeTimed) * sizeTimed;
+			selectSquare.x = mainGrid.x + Math.floor((FlxG.mouse.x - mainGrid.x) / GRID_SIZE) * GRID_SIZE;
+			selectSquare.y = mainGrid.y + Math.floor((FlxG.mouse.y - mainGrid.y) / sizeTimed) * sizeTimed;
 			selectSquare.visible = true;
 
 			if(GRID_SNAP == 0)

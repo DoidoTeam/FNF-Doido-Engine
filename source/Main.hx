@@ -19,7 +19,7 @@ using StringTools;
 
 class Main extends Sprite
 {
-	public static var fpsVar:FPSCounter;
+	public static var fpsCount:FPSCounter;
 
 	public function new()
 	{
@@ -38,11 +38,12 @@ class Main extends Sprite
 		addChild(new FlxGame(0, 0, Init, 120, 120, true));
 
 		#if desktop
-		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
-		addChild(fpsVar);
+		fpsCount = new FPSCounter(10, 3);
+		addChild(fpsCount);
 		#end
 	}
-
+	
+	public static var activeState:FlxState;
 	public static var gFont:String = Paths.font("vcr.ttf");
 	
 	public static var skipClearMemory:Bool = false; // dont
@@ -59,12 +60,16 @@ class Main extends Sprite
 		};
 
 		if(skipTrans)
-		{
 			return trans.finishCallback();
-		}
 		
-		FlxG.state.openSubState(trans);
+		//FlxG.state.openSubState(trans);
+		if(activeState != null)
+			activeState.openSubState(trans);
 	}
+	
+	// you could just do Main.switchState() but whatever
+	public static function resetState():Void
+		return switchState();
 
 	// so you dont have to type it every time
 	public static function skipStuff(?ohreally:Bool = true):Void

@@ -13,10 +13,7 @@ class Strumline extends FlxGroup
 	public var allNotes:FlxTypedGroup<Note>;
 
 	public var splashGroup:FlxTypedGroup<SplashNote>;
-
-	// everybody gets one
-	public var unspawnNotes:Array<Note> = [];
-
+	
 	public var x:Float = 0;
 	public var downscroll:Bool = false;
 	public var scrollSpeed:Float = 2.8;
@@ -31,22 +28,17 @@ class Strumline extends FlxGroup
 		super();
 		this.x = x;
 		this.downscroll = downscroll;
-		this.isPlayer = isPlayer;
-		this.botplay = botplay;
-		this.character = character;
-
-		strumGroup = new FlxTypedGroup<StrumNote>();
-		noteGroup = new FlxTypedGroup<Note>();
-		holdGroup = new FlxTypedGroup<Note>();
+		this.isPlayer 	= isPlayer;
+		this.botplay 	= botplay;
+		this.character 	= character;
+		
 		allNotes = new FlxTypedGroup<Note>();
-
-		splashGroup = new FlxTypedGroup<SplashNote>();
-
-		add(strumGroup);
-		add(splashGroup);
-		add(holdGroup);
-		add(noteGroup);
-
+		
+		add(holdGroup 	= new FlxTypedGroup<Note>());
+		add(strumGroup 	= new FlxTypedGroup<StrumNote>());
+		add(splashGroup = new FlxTypedGroup<SplashNote>());
+		add(noteGroup 	= new FlxTypedGroup<Note>());
+		
 		for(i in 0...4)
 		{
 			var strum = new StrumNote();
@@ -115,8 +107,8 @@ class Strumline extends FlxGroup
 			{
 				//trace("played");
 				var thisStrum = strumGroup.members[splash.noteData];
-				splash.x = thisStrum.x + thisStrum.width / 2 - splash.width / 2;
-				splash.y = thisStrum.y + thisStrum.height/ 2 - splash.height/ 2;
+				splash.x = thisStrum.x/* + thisStrum.width / 2*/ - splash.width / 2;
+				splash.y = thisStrum.y/* + thisStrum.height/ 2*/ - splash.height/ 2;
 
 				splash.playAnim();
 			}
@@ -129,22 +121,15 @@ class Strumline extends FlxGroup
 	*/
 	public function updateHitbox()
 	{
-		for(strum in strumGroup.members)
+		for(strum in strumGroup)
 		{
-			// 25
-			strum.y = (!downscroll ? 40 : FlxG.height - strum.height - 40);
+			strum.y = (!downscroll ? 100 : FlxG.height - 100);
 			
 			strum.x = x;
 			strum.x += CoolUtil.noteWidth() * strum.strumData;
-		}
-
-		var lastStrum = strumGroup.members[strumGroup.members.length - 1];
-		var lineSize:Float = lastStrum.x + lastStrum.width - strumGroup.members[0].x;
-
-		for(strum in strumGroup.members)
-		{
-			strum.x -= lineSize / 2;
-
+			
+			strum.x -= (CoolUtil.noteWidth() * (strumGroup.members.length - 1)) / 2;
+			
 			strum.initialPos.set(strum.x, strum.y);
 		}
 	}

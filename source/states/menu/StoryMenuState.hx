@@ -1,5 +1,7 @@
 package states.menu;
 
+import data.Discord.DiscordClient;
+import subStates.DeleteScoreSubState;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -59,6 +61,7 @@ class StoryMenuState extends MusicBeatState
 		super.create();
 		preloadAssets();
 		CoolUtil.playMusic("freakyMenu");
+		DiscordClient.changePresence("Story Mode - Choosin' a week", null);
 		addWeek(
 			"tutorial",
 			"funky beginnings",
@@ -207,6 +210,12 @@ class StoryMenuState extends MusicBeatState
 			if(Controls.justPressed("UI_RIGHT"))
 				changeDiff(1);
 			
+			if(Controls.justPressed("RESET"))
+			{
+				var displayName:String = weekList[curWeek].fileName;
+				openSubState(new DeleteScoreSubState('week-' + displayName, curDiff, displayName));
+			}
+			
 			var animL:String = "idle";
 			if(Controls.pressed("UI_LEFT"))
 				animL = "push";
@@ -219,6 +228,12 @@ class StoryMenuState extends MusicBeatState
 			diffSelector.arrowR.animation.play(animR);
 		}
 		updateWeekPos(elapsed * 12);
+
+		if(DeleteScoreSubState.deletedScore)
+		{
+			DeleteScoreSubState.deletedScore = false;
+			changeWeek();
+		}
 		
 		scoreCount[1] = FlxMath.lerp(scoreCount[1], scoreCount[0], elapsed * 16);
 		if(Math.abs(scoreCount[1] - scoreCount[0]) <= 0.4)

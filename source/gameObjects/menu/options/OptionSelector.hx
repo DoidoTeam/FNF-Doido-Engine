@@ -7,79 +7,85 @@ import flixel.math.FlxMath;
 
 class OptionSelector extends FlxTypedGroup<FlxSprite>
 {
-	public var label:String = "";
-	public var value:Dynamic;
-	public var bounds:Array<Dynamic>;
+    public var arrowL:FlxSprite;
+    public var text:Alphabet;
+    public var arrowR:FlxSprite;
 
-	public var xTo:Float = 0;
+    public var holdTimer:Float = 0;
 
-	public var arrowL:FlxSprite;
-	public var text:Alphabet;
-	public var arrowR:FlxSprite;
+    public var label:String = '';
+    public var value:Dynamic;
+    public var options:Array<Dynamic> = [];
 
-	public function new(label:String, value:Dynamic, bounds:Array<Dynamic>)
-	{
-		super();
-		this.label = label;
-		this.value = value;
-		this.bounds = bounds;
+    public function new(label:String, ?isSaveData:Bool = true)
+    {
+        super();
+        this.label = label;
+        if(isSaveData)
+        {
+            this.value = SaveData.data.get(label);
+            this.options = SaveData.displaySettings.get(label)[3];
+        }
+        else
+            this.value = label;
 
-		arrowL = new FlxSprite();
-		arrowL.frames = Paths.getSparrowAtlas("menu/menuArrows");
-		arrowL.animation.addByPrefix("idle", "arrow left", 0, false);
-		arrowL.animation.addByPrefix("push", "arrow push left", 0, false);
-		arrowL.scale.set(0.6,0.6); arrowL.updateHitbox();
-		arrowL.animation.play("idle");
+        arrowL = getArrow('left');
+        arrowR = getArrow('right');
 
-		arrowR = new FlxSprite();
-		arrowR.frames = Paths.getSparrowAtlas("menu/menuArrows");
-		arrowR.animation.addByPrefix("idle", "arrow right", 0, false);
-		arrowR.animation.addByPrefix("push", "arrow push right", 0, false);
-		arrowR.scale.set(0.6,0.6); arrowR.updateHitbox();
-		arrowR.animation.play("idle");
+        text = new Alphabet(0, 0, value, true);
+        text.scale.set(0.75,0.75);
+        text.updateHitbox();
 
-		// value display
-		text = new Alphabet(0, 0, Std.string(value), true);
-		text.scale.set(0.7,0.7);
-		text.updateHitbox();
+        add(arrowL);
+        add(text);
+        add(arrowR);
+        setX(0);
+    }
 
-		add(arrowL);
-		add(text);
-		add(arrowR);
+    private function getArrow(direc:String = 'left'):FlxSprite
+    {
+        var arrow = new FlxSprite();
+        arrow.frames = Paths.getSparrowAtlas("menu/menuArrows");
+		arrow.animation.addByPrefix("idle", 'arrow $direc', 0, false);
+		arrow.animation.addByPrefix("push", 'arrow push $direc', 0, false);
+		arrow.scale.set(0.6,0.6); arrow.updateHitbox();
+		arrow.animation.play("idle");
+        return arrow;
+    }
 
-		updateValue();
-	}
+    public function changeSelection(change:Int = 0):Void
+    {
+        if(Std.isOfType(options[0], Int))
+        {
+            value += change;
+            value = FlxMath.wrap(value, options[0], options[1]);
+        }
+        else
+        {
+            var curSelected = options.indexOf(value);
+            curSelected += change;
+            curSelected = FlxMath.wrap(curSelected, 0, options.length - 1);
+            value = options[curSelected];
+        }
+        var oldWidth = getWidth();
+        text.text = Std.string(value);
+        text.updateHitbox();
+        setX(arrowL.x);
+        setX(arrowL.x + oldWidth - getWidth());
+    }
 
-	public function updateValue(change:Int = 0)
-	{
-		if(Std.isOfType(bounds[0], String))
-		{
-			var curSelected = bounds.indexOf(value) + change;
-			curSelected = FlxMath.wrap(curSelected, 0, bounds.length - 1);
-			value = bounds[curSelected];
-		}
-		else
-		{
-			value += change;
-			if(value < bounds[0]) value = bounds[1];
-			if(value > bounds[1]) value = bounds[0];
-		}
+    public function setX(x:Float):Void
+    {
+        arrowL.x = x;
+        text.x = arrowL.x + arrowL.width;
+        arrowR.x = text.x + text.width;
+    }
+    public function setY(y:Float):Void
+    {
+        for(item in [arrowL, text, arrowR])
+            item.y = y - (item.height / 2);
+    }
 
-		text.text = Std.string(value);
-
-		arrowR.x = xTo - arrowR.width;
-		text.x   = arrowR.x - text.width - 4;
-		arrowL.x = text.x - arrowL.width - 4;
-
-		SaveData.data.set(label, value);
-		SaveData.save();
-	}
-
-	public function setY(item:FlxSprite)
-	{
-		for(i in [arrowL, arrowR])
-			i.y = item.y + item.height / 2 - i.height / 2;
-
-		text.y = item.y;
-	}
+    public function getWidth():Float
+        return (arrowR.x + arrowR.width - arrowL.x);
 }

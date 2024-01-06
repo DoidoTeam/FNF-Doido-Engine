@@ -7,14 +7,17 @@ import flixel.FlxSubState;
 import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIState;
 import flixel.group.FlxGroup;
-import data.Conductor.BPMChangeEvent;
+//import data.Conductor.BPMChangeEvent;
 
 class MusicBeatState extends FlxUIState
 {
 	override function create()
 	{
 		super.create();
-		trace('switched to ${Type.getClassName(Type.getClass(FlxG.state))}');
+		Main.activeState = this;
+		trace('switched to ${Type.getClassName(Type.getClass(this))}');
+		persistentDraw = true;
+		persistentUpdate = false;
 		
 		Controls.setSoundKeys();
 
@@ -85,11 +88,23 @@ class MusicBeatState extends FlxUIState
 
 class MusicBeatSubState extends FlxSubState
 {
+	var subParent:FlxState;
+
 	override function create()
 	{
 		super.create();
+		subParent = Main.activeState;
+		Main.activeState = this;
+		persistentDraw = true;
+		persistentUpdate = false;
 		curStep = _curStep = Conductor.calcStateStep();
 		curBeat = Math.floor(curStep / 4);
+	}
+	
+	override function close()
+	{
+		Main.activeState = subParent;
+		super.close();
 	}
 
 	private var _curStep = 0; // actual curStep

@@ -18,6 +18,9 @@ class Init extends MusicBeatState
 		FlxG.mouse.visible = false;
 		FlxGraphic.defaultPersist = true;
 		
+		for(i in 0...Paths.dumpExclusions.length)
+			Paths.preloadGraphic(Paths.dumpExclusions[i].replace('.png', ''));
+		
 		Main.switchState(new TitleState());
 	}
 }

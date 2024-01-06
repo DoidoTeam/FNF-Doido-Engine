@@ -1,5 +1,6 @@
 package states.menu;
 
+import subStates.OptionsSubState;
 import data.Discord.DiscordClient;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -11,8 +12,6 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import data.GameData.MusicBeatState;
 import data.SongData;
-import gameObjects.menu.Alphabet;
-import gameObjects.menu.Alphabet.AlphabetAlign;
 
 using StringTools;
 
@@ -38,7 +37,7 @@ class MainMenuState extends MusicBeatState
 		#if !desktop
 			optionShit.remove('donate');
 		#end
-
+		
 		DiscordClient.changePresence("Main Menu", null);
 		//persistentUpdate = true;
 
@@ -53,7 +52,7 @@ class MainMenuState extends MusicBeatState
 		bgMag.updateHitbox();
 		bgMag.visible = false;
 		add(bgMag);
-
+		
 		grpOptions = new FlxTypedGroup<FlxSprite>();
 		add(grpOptions);
 		
@@ -63,6 +62,8 @@ class MainMenuState extends MusicBeatState
 			for(i in 0...(optionShit.length - 4))
 				optionSize -= 0.05;
 		}
+		
+		//trace('optionSize: ' + optionSize);
 		
 		for(i in 0...optionShit.length)
 		{
@@ -76,15 +77,33 @@ class MainMenuState extends MusicBeatState
 			item.scale.set(optionSize, optionSize);
 			item.updateHitbox();
 			
+			var itemSize:Float = (90 * optionSize);
+			
+			var minY:Float = 70 + itemSize;
+			var maxY:Float = FlxG.height - itemSize - 70;
+			
+			if(optionShit.length < 4)
+			for(i in 0...(4 - optionShit.length))
+			{
+				minY += itemSize;
+				maxY -= itemSize;
+			}
+			
 			item.x = FlxG.width / 2;
 			item.y = FlxMath.lerp(
-				10 + (90 * optionSize),
-				FlxG.height - (90 * optionSize) - 10,
-				i / (optionShit.length - 1)
+				minY, // gets min Y
+				maxY, // gets max Y
+				i / (optionShit.length - 1) // sorts it according to its ID
 			);
 			
 			item.ID = i;
 		}
+		
+		var splashTxt = new FlxText(4, 0, 0, 'Doido Engine 3.0\n' + 'Friday Night Funkin\' Rewrite');
+		splashTxt.setFormat(Main.gFont, 18, 0xFFFFFFFF, LEFT);
+		splashTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
+		splashTxt.y = FlxG.height - splashTxt.height - 4;
+		add(splashTxt);
 
 		changeSelection();
 		bg.y = bgPosY;
@@ -96,6 +115,11 @@ class MainMenuState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		if(FlxG.keys.justPressed.R)
+		{
+			Main.skipStuff();
+			Main.resetState();
+		}
 		/*if(FlxG.keys.justPressed.J)
 		{
 			optionShit.remove('options');
@@ -181,7 +205,7 @@ class MainMenuState extends MusicBeatState
 			}
 		}
 		
-		bg.y = FlxMath.lerp(bg.y, bgPosY, elapsed * 8);
+		bg.y = FlxMath.lerp(bg.y, bgPosY, elapsed * 6);
 		bgMag.setPosition(bg.x, bg.y);
 	}
 

@@ -30,9 +30,7 @@ class Paths
 	public static function getSound(key:String):Sound
 	{
 		if(!renderedSounds.exists(key))
-		{
 			renderedSounds.set(key, Sound.fromFile(getPath('$key.ogg')));
-		}
 		
 		return renderedSounds.get(key);
 	}
@@ -56,24 +54,23 @@ class Paths
 		trace('$key doesnt exist, fuck');
 		return null;
 	}
-
+	
 	/* 	add .png at the end for images
 	*	add .ogg at the end for sounds
 	*/
 	public static var dumpExclusions:Array<String> = [
 		"menu/alphabet/default.png",
+		"menu/checkmark.png",
+		"menu/menuArrows.png",
 	];
 	public static function clearMemory()
 	{	
-		// sprite handler
-		//var clearCount:Int = 0;
+		// sprite caching
 		var clearCount:Array<String> = [];
 		for(key => graphic in renderedGraphics)
 		{
 			if(dumpExclusions.contains(key + '.png')) continue;
 
-			//trace('cleared $key');
-			//clearCount++;
 			clearCount.push(key);
 			
 			if (openfl.Assets.cache.hasBitmapData(key))
@@ -138,12 +135,11 @@ class Paths
 		
 	public static function readDir(dir:String, ?type:String, ?removeType:Bool = true):Array<String>
 	{
-		var rawList:Array<String> = [];
 		var theList:Array<String> = [];
 		
 		try
 		{
-			rawList = FileSystem.readDirectory(getPath(dir));
+			var rawList = FileSystem.readDirectory(getPath(dir));
 			for(i in 0...rawList.length)
 			{
 				if(type != null)
