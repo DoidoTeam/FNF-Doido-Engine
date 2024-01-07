@@ -16,6 +16,7 @@ import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+import flixel.ui.FlxButton;
 import flixel.util.FlxTimer;
 import data.*;
 import data.SongData.SwagSong;
@@ -41,8 +42,10 @@ class ChartTestSubState extends MusicBeatSubState
 	
 	public static var startConductor:Float = 0;
 	
+	var bg:FlxSprite;
 	var backGroup:FlxGroup;
 	var infoTxt:FlxText;
+	var botplayTxt:FlxText;
 	
 	// strumlines
 	var strumlines:FlxTypedGroup<Strumline>;
@@ -75,6 +78,8 @@ class ChartTestSubState extends MusicBeatSubState
 		close();
 	}
 
+	var modGrp:ModGroup;
+
 	override function create()
 	{
 		super.create();
@@ -93,13 +98,13 @@ class ChartTestSubState extends MusicBeatSubState
 		
 		add(backGroup = new FlxGroup());
 		
-		var bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
 		bg.screenCenter();
-		bg.color = 0xFF555555;
+		bg.color = 0xFF494949;
 		backGroup.add(bg);
 		
-		bg.scale.set(4,4);
-		FlxTween.tween(bg.scale, {x: 1, y: 1}, 0.8, {ease: FlxEase.cubeOut});
+		//bg.scale.set(1.08,1.08);
+		//FlxTween.tween(bg.scale, {x: 1, y: 1}, 0.5, {ease: FlxEase.cubeOut});
 		
 		//hudBuild.cameras = [camHUD];
 		//add(hudBuild);
@@ -157,6 +162,40 @@ class ChartTestSubState extends MusicBeatSubState
 		infoTxt.setFormat(Main.gFont, 28, 0xFFFFFFFF, CENTER);
 		infoTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
 		updateInfo();
+
+		add(botplayTxt = new FlxText(0, 0, 0, "[BOTPLAY]"));
+		botplayTxt.setFormat(Main.gFont, 32, 0xFFFFFFFF, CENTER);
+		botplayTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
+		botplayTxt.antialiasing = false;
+		botplayTxt.screenCenter();
+		botplayTxt.visible = false;
+
+		var botplaySin:Float = 0;
+		botplayTxt._update = function(elapsed:Float)
+		{
+			if(botplayTxt.visible)
+			{
+				botplaySin += elapsed * Math.PI;
+				botplayTxt.alpha = 0.5 + Math.sin(botplaySin) * 1.0;
+			}
+		}
+
+		modGrp = new ModGroup(
+			function() {
+				downscroll = !downscroll;
+				for(strumline in strumlines)
+				{
+					strumline.downscroll = downscroll;
+					strumline.updateHitbox();
+					updateInfo();
+				}
+			},
+			function() {
+				botplay = !botplay;
+				botplayTxt.visible = botplay;
+			}
+		);
+		add(modGrp);
 		
 		// Updating Discord Rich Presence and making notes invisible before the countdown
 		DiscordClient.changePresence("Testing: " + SONG.song.toUpperCase().replace("-", " "), null);
@@ -251,7 +290,7 @@ class ChartTestSubState extends MusicBeatSubState
 		var thisStrum = strumline.strumGroup.members[note.noteData];
 		
 		//vocals.volume = 1;
-		thisStrum.playAnim("confirm");
+		thisStrum.playAnim("confirm", true);
 		
 		if(note.gotHit) return;
 	}
@@ -313,9 +352,15 @@ class ChartTestSubState extends MusicBeatSubState
 	{
 		super.update(elapsed);
 		if(FlxG.keys.justPressed.ESCAPE)
-		{
 			exit();
-		}
+
+		bg.scale.set(
+			FlxMath.lerp(bg.scale.x, 1.0, elapsed * 8),
+			FlxMath.lerp(bg.scale.y, 1.0, elapsed * 8)
+		);
+
+		if(FlxG.keys.justPressed.TAB)
+			modGrp.isActive = !modGrp.isActive;
 		
 		//if(startedCountdown)
 		Conductor.songPos += elapsed * 1000;
@@ -615,6 +660,9 @@ class ChartTestSubState extends MusicBeatSubState
 			if(curStep >= change.stepTime && Conductor.bpm != change.bpm)
 				Conductor.setBPM(change.bpm);
 		}
+
+		if(curBeat % 2 == 0)
+			bg.scale.set(1.045,1.045);
 	}
 
 	override function stepHit()
@@ -638,5 +686,60 @@ class ChartTestSubState extends MusicBeatSubState
 		
 		if(Conductor.songPos >= ChartingState.songLength)
 			exit();
+	}
+}
+
+class ModGroup extends FlxGroup
+{
+	public var bg:FlxSprite;
+	public var labelTxt:FlxText;
+
+	public var btnDownscroll:FlxButton;
+	public var btnBotplay:FlxButton;
+
+	public var isActive:Bool = false;
+
+	public function new(downscrollClick:Void->Void, botplayClick:Void->Void)
+	{
+		super();
+		bg = new FlxSprite(0, 400).makeGraphic(155, 80, 0xFF000000);
+		bg.antialiasing = false;
+		bg.alpha = 0.7;
+		add(bg);
+
+		labelTxt = new FlxText(0, 0, 0, "TAB");
+		labelTxt.setFormat(Main.gFont, 28, 0xFFFFFFFF, CENTER);
+		labelTxt.y = bg.y + bg.height / 2 - labelTxt.height / 2;
+		labelTxt.antialiasing = false;
+		add(labelTxt);
+
+		btnDownscroll = new FlxButton(0, 0, "Downscroll", downscrollClick);
+		btnDownscroll.ID = -1;
+		btnBotplay = new FlxButton(0, 0, "Botplay", botplayClick);
+		btnBotplay.ID = 0;
+		add(btnDownscroll);
+		add(btnBotplay);
+
+		for(btn in [btnDownscroll, btnBotplay])
+			btn.y = bg.y + bg.height / 2 + btn.height * btn.ID;
+
+		updatePos(1);
+	}
+
+	public function updatePos(lerpTime:Float = 1)
+	{
+		bg.x = FlxMath.lerp(bg.x, FlxG.width - (isActive ? bg.width - 8 : 40), lerpTime);
+		
+		btnDownscroll.x = btnBotplay.x = bg.x + 50;
+
+		labelTxt.angle = 0;
+		labelTxt.x = bg.x - 6; // 8
+		labelTxt.angle = -90;
+	}
+
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+		updatePos(elapsed * 8);
 	}
 }

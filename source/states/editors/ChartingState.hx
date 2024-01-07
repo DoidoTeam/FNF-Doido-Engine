@@ -50,9 +50,9 @@ class ChartingState extends MusicBeatState
 
 	public static var curSection:Int = 0;
 
-	public static var GRID_SIZE:Int = 40;
+	public static var GRID_SIZE:Int = 40; // 40
 	public static var GRID_SNAP:Int = 16;
-	public static var GRID_ZOOM:Float = 1;
+	public var GRID_ZOOM:Float = 1;
 
 	var UI_box:FlxUITabMenu;
 
@@ -65,6 +65,8 @@ class ChartingState extends MusicBeatState
 
 	var selectSquare:FlxSprite;
 	var curSelectedNote:Array<Dynamic> = null;
+
+	var playerHighlight:FlxSprite;
 
 	var mainGrid:FlxSprite;
 	var sectionGrids:FlxTypedGroup<ChartGrid>;
@@ -109,7 +111,7 @@ class ChartingState extends MusicBeatState
 		var bg = new FlxSprite().loadGraphic(Paths.image("menu/backgrounds/menuDesat"));
 		bg.screenCenter();
 		bg.scrollFactor.set();
-		bg.alpha = 0.4;
+		bg.alpha = 0.15;
 		add(bg);
 
 		sectionGrids = new FlxTypedGroup<ChartGrid>();
@@ -132,6 +134,10 @@ class ChartingState extends MusicBeatState
 				mainGrid = grid.grid;
 		}
 		//reloadGrids();
+		playerHighlight = new FlxSprite().makeGraphic(GRID_SIZE * 4, GRID_SIZE, 0xFF20229F);
+		playerHighlight.antialiasing = false;
+		playerHighlight.alpha = 0.4;
+		add(playerHighlight);
 
 		iconBf = new HealthIcon();
 		iconDad = new HealthIcon();
@@ -519,7 +525,7 @@ class ChartingState extends MusicBeatState
 		tabGrid.name = "Grid";
 		UI_left.addGroup(tabGrid);
 		
-		stepperZoom = new FlxUINumericStepper(10, 20, 1, 1, 1, 4, 0);
+		stepperZoom = new FlxUINumericStepper(10, 20, 1, 1, 0, 4, 0);
 		stepperZoom.name = 'grid_zoom';
 		stepperZoom.value = GRID_ZOOM;
 		
@@ -543,6 +549,14 @@ class ChartingState extends MusicBeatState
 		tabGrid.add(stepperZoom);
 		tabGrid.add(new FlxText(10, snapDropDown.y - 15, 0, "Grid Snapping:"));
 		tabGrid.add(snapDropDown);
+	}
+	
+	function formatGridZoom(toStepper:Bool = false):Float
+	{
+		if(toStepper)
+			return (GRID_ZOOM < 0.9) ? 0 : GRID_ZOOM;
+		else
+			return (stepperZoom.value == 0) ? 0.5 : stepperZoom.value;
 	}
 	
 	final allSnaps:Array<Int> = [0, 4, 8, 12, 16, 20, 24, 32, 48, 64, 96, 192];
@@ -625,7 +639,7 @@ class ChartingState extends MusicBeatState
 						case 'section_copy':
 							copySectTxt.text = 'Section: ' + (curSection - Math.floor(stepper.value));
 						case 'grid_zoom':
-							GRID_ZOOM = (stepper.value);
+							GRID_ZOOM = formatGridZoom(false);//(stepper.value);
 							reloadSection(curSection, false);
 							
 						case 'vol_inst':
@@ -828,7 +842,7 @@ class ChartingState extends MusicBeatState
 					if(curSection != daSec)
 					{
 						swagNote.ID = 0;
-						swagNote.alpha = 0.4;
+						swagNote.alpha = 0.2; // 0.4
 						//swagNote.y += (GRID_SIZE * 16) * (daSec - curSection);
 					}
 
@@ -851,7 +865,7 @@ class ChartingState extends MusicBeatState
 						holdNote.x = swagNote.x + (GRID_SIZE / 2) - (holdNote.width / 2);
 
 						if(curSection != daSec)
-							holdNote.alpha = 0.4;
+							holdNote.alpha = 0.2; // 0.4
 					}
 					// adding it on top of everything
 					renderedNotes.add(swagNote);
@@ -898,6 +912,10 @@ class ChartingState extends MusicBeatState
 		}
 		updateInfoTxt();
 		setHitNotes();
+
+		playerHighlight.x = mainGrid.x + (getSection(curSection).mustHitSection ? 0 : GRID_SIZE * 4);
+		playerHighlight.scale.y = (getSection(curSection).lengthInSteps) * GRID_ZOOM;
+		playerHighlight.updateHitbox();
 
 		// updating hud when you change sections
 		for(group in UI_box.members)
@@ -948,6 +966,7 @@ class ChartingState extends MusicBeatState
 	// even if you leave the state the 
 	// value will still count the 5 minutes
 	static var autosavetimer:Float = 0;
+	var globalMult:Int = 1;
 
 	override function update(elapsed:Float)
 	{
@@ -974,6 +993,10 @@ class ChartingState extends MusicBeatState
 				updateSnapLabel(curSnapNum - 1);
 			if(FlxG.keys.justPressed.RIGHT)
 				updateSnapLabel(curSnapNum + 1);
+
+			globalMult = 1;
+			if(FlxG.keys.pressed.SHIFT)
+				globalMult = 4;
 			
 			var whad:Array<Bool> = [
 				FlxG.keys.justPressed.Z,
@@ -983,10 +1006,12 @@ class ChartingState extends MusicBeatState
 			{
 				if(whad[0]) GRID_ZOOM--;
 				if(whad[1]) GRID_ZOOM++;
+
+				GRID_ZOOM = Math.floor(GRID_ZOOM);
 				
-				if(GRID_ZOOM < 1) GRID_ZOOM = 1;
+				if(GRID_ZOOM < 0.5) GRID_ZOOM = 0.5;
 				if(GRID_ZOOM > 4) GRID_ZOOM = 4;
-				stepperZoom.value = GRID_ZOOM;
+				stepperZoom.value = formatGridZoom(true);
 				
 				reloadSection(curSection, false);
 			}
@@ -1018,12 +1043,12 @@ class ChartingState extends MusicBeatState
 			{
 				if(playing) playing = false;
 				
-				Conductor.songPos += 1000 * elapsed * (FlxG.keys.pressed.W ? -1 : 1) / GRID_ZOOM;
+				Conductor.songPos += 1000 * elapsed * (FlxG.keys.pressed.W ? -1 : 1) * globalMult / GRID_ZOOM;
 			}
 		}
 		if(FlxG.mouse.wheel != 0)
 		{
-			if(FlxG.keys.pressed.SHIFT)
+			if(FlxG.keys.pressed.CONTROL)
 			{
 				if(FlxG.mouse.wheel > 0)
 					reloadSection(curSection - 1);
@@ -1032,7 +1057,7 @@ class ChartingState extends MusicBeatState
 			}
 			else
 			{
-				Conductor.songPos += -FlxG.mouse.wheel * 5000 * elapsed / GRID_ZOOM;
+				Conductor.songPos += -FlxG.mouse.wheel * 5000 * globalMult * elapsed / GRID_ZOOM;
 			}
 		}
 		
@@ -1265,7 +1290,7 @@ class ChartGrid extends FlxGroup
 
 		var stupidHeight:Int = Math.floor(GRID_SIZE * sectionLength * zoom);
 
-		grid = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, stupidHeight);
+		grid = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, stupidHeight, true, 0xFF646464, 0xFF353535);
 		add(grid);
 
 		grid.x = (FlxG.width / 2) - (grid.width / 2);
@@ -1279,12 +1304,16 @@ class ChartGrid extends FlxGroup
 		// if not the current section
 		if(i != 1)
 			grid.alpha = 0.4;
+
+		var beatLineCount:Int = 4;
+		if(zoom < 1.0)
+			beatLineCount = 2;
 		
-		for(b in 0...Math.floor(sectionLength * zoom / 4))
+		for(b in 0...Math.floor(sectionLength * zoom / beatLineCount))
 		{
 			var beatLine = new FlxSprite().makeGraphic(GRID_SIZE * 8, 2, 0xFFFF0000);
 			beatLine.x = grid.x;
-			beatLine.y = grid.y + (GRID_SIZE * 4 * b);
+			beatLine.y = grid.y + (GRID_SIZE * beatLineCount * b);
 			add(beatLine);
 			
 			beatLine.alpha = 0.9;
