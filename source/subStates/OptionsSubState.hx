@@ -211,7 +211,7 @@ class OptionsSubState extends MusicBeatSubState
 
             if(Std.isOfType(curAttach, OptionSelector))
             {
-                var holdMax:Float = 0.5;
+                var holdMax:Float = 0.4;
                 var selec:OptionSelector = cast curAttach;
                 if(Controls.justPressed("UI_LEFT") || Controls.justPressed("UI_RIGHT") || selec.holdTimer >= holdMax)
                 {
@@ -225,7 +225,7 @@ class OptionsSubState extends MusicBeatSubState
                     }
 
                     if(selec.holdTimer >= holdMax)
-                        selec.holdTimer = holdMax - 0.02;
+                        selec.holdTimer = holdMax - 0.005; // 0.02
                     else
                         FlxG.sound.play(Paths.sound('menu/scrollMenu'));
                 }

@@ -33,13 +33,20 @@ class HealthIcon extends FlxSprite
 
 		loadGraphic(iconGraphic, true, Math.floor(iconGraphic.width / maxFrames), iconGraphic.height);
 
+		antialiasing = FlxSprite.defaultAntialiasing;
+		isPixelSprite = false;
+		if(curIcon.contains('pixel'))
+		{
+			antialiasing = false;
+			isPixelSprite = true;
+		}
+
 		animation.add("icon", [for(i in 0...maxFrames) i], 0, false);
 		animation.play("icon");
 
 		this.isPlayer = isPlayer;
 		flipX = isPlayer;
 
-		antialiasing = FlxSprite.defaultAntialiasing;
 		return this;
 	}
 

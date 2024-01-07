@@ -180,7 +180,6 @@ class ControlsSubState extends MusicBeatSubState
     }
 
     var allBinds:Array<String> = Controls.changeableControls;
-    //["LEFT", "DOWN", "UP", "RIGHT", "RESET"];
 
     function spawnBinds()
     {
@@ -215,18 +214,6 @@ class ControlsSubState extends MusicBeatSubState
             }
         }
 
-        /*for(group in allGroups)
-        for(bind in group.members)
-        for(dGroup in allGroups)
-        for(dBind in group.members)
-        {
-            if(bind.text == dBind.text
-            && dBind != bind
-            && bind.text != '---'
-            && dBind.text != '---')
-                bind.color = dBind.color = 0xFFFF0000;
-        }*/
-
         var allBinds:Array<FlxText> = [];
         for(group in allGroups)
             for(bind in group.members)
@@ -242,6 +229,30 @@ class ControlsSubState extends MusicBeatSubState
     }
 
     final formatNum:Array<String> = ['ZERO','ONE','TWO','THREE','FOUR','FIVE','SIX','SEVEN','EIGHT','NINE'];
+    final ps4Binds:Map<String, String> = [
+        "LB" => "L1",
+        "LT" => "L2",
+        "RB" => "R1",
+        "RT" => "R2",
+        "A"  => "CROSS",
+        "B"  => "CIRCLE",
+        "X"  => "SQUARE",
+        "Y"  => "TRIANGLE",
+        "START" => "OPTIONS",
+        "SELECT" => "SHARE",
+    ];
+    final nSwitchBinds:Map<String, String> = [
+        "LB" => "L",
+        "LT" => "ZL",
+        "RB" => "R",
+        "RT" => "ZR",
+        "A"  => "B",
+        "B"  => "A",
+        "X"  => "Y",
+        "Y"  => "X",
+        "START" => "PLUS",
+        "SELECT" => "MINUS",
+    ];
 
     function formatKey(rawKey:Null<String>):String
     {
@@ -283,14 +294,28 @@ class ControlsSubState extends MusicBeatSubState
                     }
                 }
 
-                //if(fKey.contains(""))
-                // LEFT_STICK_DIGITAL_DOWN
                 if(fKey.contains("STICK"))
                 {
                     fKey = fKey.replace("LEFT_STICK",  "L-STICK");
                     fKey = fKey.replace("RIGHT_STICK", "R-STICK");
                     fKey = fKey.replace("_DIGITAL", "");
                     fKey = fKey.replace("_", "\n");
+                }
+
+                if(curGamepad != null)
+                {
+                    var convertMap:Int = 0;
+                    if([PS4, PSVITA].contains(curGamepad.detectedModel))
+                        convertMap = 1;
+                    if([SWITCH_PRO].contains(curGamepad.detectedModel))
+                        convertMap = 2;
+                    
+                    if(convertMap > 0)
+                    {
+                        for(bind => newBind in ((convertMap == 1) ? ps4Binds : nSwitchBinds))
+                            if(fKey == bind)
+                                fKey = newBind;
+                    }
                 }
             }
         }
@@ -359,7 +384,7 @@ class ControlsSubState extends MusicBeatSubState
                     note.songTime += songBeat * 4;
                     playTick(note.noteData == 0);
                 }
-                if (note.songTime > FlxG.sound.music.length)
+                if (note.songTime > FlxG.sound.music.length && FlxG.sound.music.time <= 1000)
                     note.songTime = songBeat * note.noteData;
             }
 
@@ -375,7 +400,7 @@ class ControlsSubState extends MusicBeatSubState
                 }
 
                 if(selec.holdTimer >= holdMax)
-                    selec.holdTimer = holdMax - 0.02;
+                    selec.holdTimer = holdMax - 0.005;
                 else
                     FlxG.sound.play(Paths.sound('menu/scrollMenu'));
             }

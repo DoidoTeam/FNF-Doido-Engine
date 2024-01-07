@@ -107,6 +107,7 @@ class PauseSubState extends MusicBeatSubState
 	override function close()
 	{
 		pauseSong.stop();
+		PlayState.instance.updateOption('Song Offset');
 		super.close();
 	}
 

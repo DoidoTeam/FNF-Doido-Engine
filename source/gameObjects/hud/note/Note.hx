@@ -19,7 +19,7 @@ class Note extends FlxSprite
 	public function reloadNote(songTime:Float, noteData:Int, ?noteType:String = "default", ?assetModifier:String = "base"):Note
 	{
 		var storedPos:Array<Float> = [x, y];
-		this.songTime = songTime;
+		this.songTime = initialSongTime = songTime;
 		this.noteData = noteData;
 		this.noteType = noteType;
 		this.assetModifier = assetModifier;
@@ -118,9 +118,13 @@ class Note extends FlxSprite
 	
 	public var noteAngle:Float = 0;
 	
+	public var initialSongTime:Float = 0;
 	public var songTime:Float = 0;
 	public var noteData:Int = 0;
 	public var noteType:String = "default";
+
+	public function setSongOffset():Void
+		songTime = initialSongTime - SaveData.data.get('Song Offset');
 
 	// in case you want to avoid notes this will do
 	public var mustMiss:Bool = false;

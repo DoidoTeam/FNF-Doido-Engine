@@ -90,7 +90,7 @@ class HudClass extends FlxGroup
 	public function updateHitbox(downscroll:Bool = false)
 	{
 		healthBar.bg.x = (FlxG.width / 2) - (healthBar.bg.width / 2);
-		healthBar.bg.y = (downscroll ? 50 : FlxG.height - healthBar.bg.height - 50);
+		healthBar.bg.y = (downscroll ? 70 : FlxG.height - healthBar.bg.height - 50);
 		healthBar.updatePos();
 		
 		updateText();

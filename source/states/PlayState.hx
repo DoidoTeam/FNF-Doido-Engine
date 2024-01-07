@@ -352,6 +352,7 @@ class PlayState extends MusicBeatState
 				noteAssetMod = note.parentNote.assetModifier;*/
 			
 			note.reloadNote(note.songTime, note.noteData, note.noteType, noteAssetMod);
+			note.setSongOffset();
 			
 			// oop
 			
@@ -725,7 +726,7 @@ class PlayState extends MusicBeatState
 		var thisChar = strumline.character;
 		
 		vocals.volume = 1;
-		thisStrum.playAnim("confirm");
+		thisStrum.playAnim("confirm", true);
 		
 		// DIE!!!
 		if(note.mustMiss)
@@ -1596,6 +1597,10 @@ class PlayState extends MusicBeatState
 
 		switch(option)
 		{
+			case 'Song Offset':
+				for(note in unspawnNotes)
+					note.setSongOffset();
+
 			case 'Antialiasing':
 				function loopGroup(group:FlxGroup):Void
 				{
