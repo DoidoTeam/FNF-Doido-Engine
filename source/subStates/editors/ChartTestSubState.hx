@@ -56,8 +56,8 @@ class ChartTestSubState extends MusicBeatSubState
 	var unspawnNotes:Array<Note> = [];
 	
 	var assetModifier:String = '';
-	var botplay:Bool = false;
-	var downscroll:Bool = false;
+	static var botplay:Bool = false;
+	public static var downscroll:Bool = false;
 
 	public static function resetStatics()
 	{
@@ -114,7 +114,6 @@ class ChartTestSubState extends MusicBeatSubState
 		
 		//strumline.scrollSpeed = 4.0; // 2.8
 		var strumPos:Array<Float> = [FlxG.width / 2, FlxG.width / 4];
-		downscroll = SaveData.data.get("Downscroll");
 		
 		dadStrumline = new Strumline(strumPos[0] - strumPos[1], null, downscroll, false, true, assetModifier);
 		dadStrumline.ID = 0;
@@ -168,7 +167,7 @@ class ChartTestSubState extends MusicBeatSubState
 		botplayTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
 		botplayTxt.antialiasing = false;
 		botplayTxt.screenCenter();
-		botplayTxt.visible = false;
+		botplayTxt.visible = botplay;
 
 		var botplaySin:Float = 0;
 		botplayTxt._update = function(elapsed:Float)

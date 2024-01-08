@@ -94,6 +94,7 @@ class ChartingState extends MusicBeatState
 		Controls.setSoundKeys(true);
 		FlxG.mouse.visible = true;
 		PlayState.resetStatics();
+		ChartTestSubState.downscroll = SaveData.data.get('Downscroll');
 
 		// setting up the cameras
 		var camGame = new FlxCamera();
@@ -211,7 +212,6 @@ class ChartingState extends MusicBeatState
 	}
 
 	var copySectTxt:FlxText;
-	var typingShit:Array<FlxUIInputText> = [];
 	
 	var snapDropDown:FlxUIDropDownMenu;
 	var stepperZoom:FlxUINumericStepper;
@@ -229,7 +229,6 @@ class ChartingState extends MusicBeatState
 
 		var songNameInput = new FlxUIInputText(10, 20, 180, SONG.song, 8);
 		songNameInput.name = "song_name";
-		typingShit.push(songNameInput);
 
 		var check_voices = new FlxUICheckBox(10, 40, null, null, "Has voices", 48);
 		check_voices.checked = SONG.needsVoices;
@@ -237,7 +236,6 @@ class ChartingState extends MusicBeatState
 		
 		var songDiffInput = new FlxUIInputText(10+70, 50, 180-70, songDiff, 8);
 		songDiffInput.name = "song_diff";
-		typingShit.push(songDiffInput);
 
 		var saveButton = new FlxButton(200, 10, "Save", function() {
 			var json = {"song": SONG};
@@ -361,6 +359,8 @@ class ChartingState extends MusicBeatState
 		tabSong.add(stepperSpeed);
 		tabSong.add(playTicksBf);
 		tabSong.add(playTicksDad);
+		tabSong.add(new FlxText(stepperVolInst.x   + stepperVolInst.width,   stepperVolInst.y,   0, ' :Inst Volume'));
+		tabSong.add(new FlxText(stepperVolVoices.x + stepperVolVoices.width, stepperVolVoices.y, 0, ' :Voices Volume'));
 		tabSong.add(stepperVolInst);
 		tabSong.add(stepperVolVoices);
 		tabSong.add(muteInst);
@@ -488,17 +488,29 @@ class ChartingState extends MusicBeatState
 		noteTypeDropDown.name = "dropdown_noteType";
 		noteTypeDropDown.selectedLabel = curNoteType;
 		
+		var convertSide:String = 'ALL';
 		var convertOptions:Array<String> = ['ALL', 'DAD NOTES', 'BF NOTES'];
 		var convertDropDown = new FlxUIDropDownMenu(noteTypeDropDown.x, 100,
 		FlxUIDropDownMenu.makeStrIdLabelArray(convertOptions, true), function(value:String)
 		{
-			//convertSide = convertOptions[Std.parseInt(value)];
+			convertSide = convertOptions[Std.parseInt(value)];
 		});
-		//convertDropDown.selectedLabel = convertSide;
+		convertDropDown.selectedLabel = convertSide;
 		
 		var convertButton:FlxButton = new FlxButton(10 + noteTypeDropDown.width + 10, convertDropDown.y, "Convert Notes", function()
 		{
-			//convertSectionType();
+			for(note in getSection(curSection).sectionNotes)
+			{
+				var isPlayer = (note[1] >= 4);
+				if(getSection(curSection).mustHitSection)
+					isPlayer = (note[1] <  4);
+
+				if(isPlayer && convertSide == 'DAD NOTES') continue;
+				if(!isPlayer && convertSide == 'BF NOTES') continue;
+
+				note[3] = noteTypeDropDown.selectedLabel;
+			}
+			reloadSection(curSection, false);
 		});
 		
 		tabNote.add(new FlxText(stepperSusLength.x, stepperSusLength.y - 15, 0, 'Note Length:'));
@@ -820,7 +832,6 @@ class ChartingState extends MusicBeatState
 					swagNote.x = mainGrid.x + (GRID_SIZE * swagNote.noteData);
 
 					var isPlayer = (songNotes[1] >= 4);
-					//if(section.mustHitSection)
 					if(getSection(curSection).mustHitSection)
 						isPlayer = (songNotes[1] <  4);
 
@@ -971,10 +982,24 @@ class ChartingState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		isTyping = false;
-		for(item in typingShit)
-			if(item.hasFocus)
-				isTyping = true;
+		if(FlxG.mouse.justPressed)
+		{
+			isTyping = false;
+			for(group in UI_box.members)
+			if(group is FlxUI)
+			{
+				var daGroup:FlxUI = cast group;
+				for(item in daGroup.members)
+				{
+					if(FlxG.mouse.overlaps(item))
+					{
+						isTyping = true;
+						if(Std.isOfType(item, FlxUIDropDownMenu))
+							isTyping = false;
+					}
+				}
+			}
+		}
 		
 		Controls.setSoundKeys(isTyping);
 		
