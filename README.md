@@ -10,4 +10,7 @@
 
 ## EXTRAS
 ### [BeastlyNikoo](https://twitter.com/Mudoku__) - Logo Artist
-### [Anna The Fennec (GoldenFoxy)](https://twitter.com/goldenfoxy2604) - 
+### [Anna The Fennec (GoldenFoxy)](https://twitter.com/goldenfoxy2604) - Design help
+
+## Special Thanks
+#### BeastlyAnako, BeastlyChip, BeastlyYoshi, Bepixel, Evandro, JulianoBeta, NxtVithor, Pi3tr0, Raphalitos, SillySprite, Yoisabo, ZieroSama
