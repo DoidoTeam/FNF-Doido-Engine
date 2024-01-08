@@ -11,4 +11,4 @@
 ### [Anna The Fennec (GoldenFoxy)](https://twitter.com/goldenfoxy2604) - Design help
 
 ## Special Thanks
-#### [BeastlyAnako], [BeastlyChip], [BeastlyYoshi], [Bepixel], [Evandro], [JulianoBeta], NxtVithor, Pi3tr0, Raphalitos, SillySprite, Yoisabo, ZieroSama
+#### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip](https://www.youtube.com/@beastlychip_), [Bepixel](https://twitter.com/BepixelOfficial), [CrowPlexus](https://twitter.com/crowplexus), [Evandro](https://twitter.com/Evandroo__), [JulianoBeta](https://www.youtube.com/@JulianoBetotoso), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama](https://twitter.com/sama_ziero)
