@@ -202,7 +202,7 @@ class ChartTestSubState extends MusicBeatSubState
 	
 	function updateInfo()
 	{
-		infoTxt.text = 'Accuracy: ${Timings.accuracy}%\n';
+		infoTxt.text = 'Accuracy: ${Timings.accuracy}%' + ' -- Step: ${curStep}\n';
 		infoTxt.text +='Hits: ${Timings.notesHit - Timings.misses} -- Misses: ${Timings.misses}';
 		
 		infoTxt.screenCenter(X);
@@ -667,6 +667,7 @@ class ChartTestSubState extends MusicBeatSubState
 	override function stepHit()
 	{
 		super.stepHit();
+		updateInfo();
 		syncSong();
 	}
 

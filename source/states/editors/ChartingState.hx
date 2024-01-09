@@ -65,6 +65,7 @@ class ChartingState extends MusicBeatState
 
 	var selectSquare:FlxSprite;
 	var curSelectedNote:Array<Dynamic> = null;
+	var curNoteSprite:Note;
 
 	var playerHighlight:FlxSprite;
 
@@ -857,6 +858,9 @@ class ChartingState extends MusicBeatState
 						//swagNote.y += (GRID_SIZE * 16) * (daSec - curSection);
 					}
 
+					if(songNotes == curSelectedNote)
+						curNoteSprite = swagNote;
+
 					// if its long then
 					var noteSustain:Float = songNotes[2];
 					if(noteSustain > 0)
@@ -974,6 +978,7 @@ class ChartingState extends MusicBeatState
 		}
 	}
 	
+	var curNoteSin:Float = 0;
 	// even if you leave the state the 
 	// value will still count the 5 minutes
 	static var autosavetimer:Float = 0;
@@ -1010,6 +1015,12 @@ class ChartingState extends MusicBeatState
 			trace('autosaved');
 			autosavetimer = 0;
 			ChartAutoSaveSubState.addSave(SONG, songDiff);
+		}
+
+		if(curNoteSprite != null)
+		{
+			curNoteSin += elapsed * 8;
+			curNoteSprite.alpha = 0.8 + Math.sin(curNoteSin) * 0.4;
 		}
 
 		if(!isTyping)
