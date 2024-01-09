@@ -20,9 +20,9 @@ flixel-addons 3.0.2
 flixel-ui 2.5.0
 discord_rpc https://github.com/Aidan63/linc_discord-rpc
 ```
-if you're dumb (like me) follow these steps\n
-if a library has a number in front of it then you put haxelib install behind it
-if it has a link in front of it then put haxelib git behind it
+if you're dumb (like me) follow these steps
+1. if a library has a number in front of it then you put haxelib install behind it
+2. if it has a link in front of it then put haxelib git behind it
 #### example:
 ```
 haxelib install flixel 5.2.2
