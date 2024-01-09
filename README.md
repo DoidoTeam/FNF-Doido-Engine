@@ -10,7 +10,7 @@
 this engine is basically the base friday night funkin' engine but rewritten entirelly from scratch in my way of codin'
 still uses haxeflixel btw
 
-### haxe version is 4.2.5
+### Haxe version is 4.2.5
 uhhh you gonna need the libraries too hold on
 ### LIBRARIES
 ```
@@ -28,7 +28,7 @@ if you're dumb (like me) follow these steps
 haxelib install flixel 5.2.2
 haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
 ```
-you should be good to compile the engine now (probably)
+#### you should be good to compile the engine now (probably)
 there are a few extra things to compile but those are at [FNF's Source Code](https://github.com/FunkinCrew/Funkin) so im not gonna teach ya ``>:]``
 
 <p align="center">
