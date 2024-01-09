@@ -1,9 +1,39 @@
 # DOIDO ENGINE
+<p align="center">
 <img src="https://media.discordapp.net/attachments/949418511946620969/1194073799361040535/look_at_it.png?ex=65af06e2&is=659c91e2&hm=06154ca4b17a414f3760568a38e98dd8cade11245531a11a6528b6efc4cd4410&=&format=webp&quality=lossless&width=548&height=380">
+</p>
 
 ## the best friday night at freddys engine
 
+### YOU CAN ONLY COMPILE TO WINDOWS FOR NOW
+
+#### this engine is basically the base friday night funkin' engine but rewritten entirelly from scratch in my way of codin'
+
+#### still uses haxeflixel btw
+
+#### haxe version is 4.2.5
+#### uhhh you gonna need the libraries too hold on
+```
+lime 8.0.1
+flixel 5.2.2
+flixel-addons 3.0.2
+flixel-ui 2.5.0
+discord_rpc https://github.com/Aidan63/linc_discord-rpc
+```
+#### if you're dumb (like me) follow these steps
+#### if a library has a number in front of it then you put haxelib install behind it
+#### if it has a link in front of it then put haxelib git behind it
+#### example:
+```
+haxelib install flixel 5.2.2
+haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
+```
+#### you should be good to compile the engine now (probably)
+#### there are a few extra things to compile but those are at [FNF's Source Code](https://github.com/FunkinCrew/Funkin) so im not gonna teach ya ``>:]``
+
+<p align="center">
 <img src="https://media.discordapp.net/attachments/949418511946620969/1194052391880892446/GITHUB_MTC.png?ex=65aef2f2&is=659c7df2&hm=8422e580b7ef27b19ea5c6a7d19ed3742c02ff264115b69763eea46ec09c87e9&=&format=webp&quality=lossless&width=827&height=179">
+</p>
 
 ### [DiogoTV](https://twitter.com/DiogoTVV) - Owner and Main Coder
 ### [teles](https://youtube.com/@telesfnf) - Additional Coder
