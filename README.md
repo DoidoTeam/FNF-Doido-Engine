@@ -1,4 +1,5 @@
 # DOIDO ENGINE
+<img src="https://media.discordapp.net/attachments/949418511946620969/1194073799361040535/look_at_it.png?ex=65af06e2&is=659c91e2&hm=06154ca4b17a414f3760568a38e98dd8cade11245531a11a6528b6efc4cd4410&=&format=webp&quality=lossless&width=548&height=380">
 
 ## the best friday night at freddys engine
 
@@ -7,8 +8,8 @@
 ### [DiogoTV](https://twitter.com/DiogoTVV) - Owner and Main Coder
 ### [teles](https://youtube.com/@telesfnf) - Additional Coder
 
-### [BeastlyNikoo](https://twitter.com/Mudoku__) - Logo Artist
+### [BeastlyNikoo](https://twitter.com/Mudoku__) - (WIP) Logo Artist
 ### [Anna The Fennec (GoldenFoxy)](https://twitter.com/goldenfoxy2604) - Design help
 
 ## Special Thanks
-#### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip](https://www.youtube.com/@beastlychip_), [Bepixel](https://twitter.com/BepixelOfficial), [CrowPlexus](https://twitter.com/crowplexus), [Evandro](https://twitter.com/Evandroo__), [JulianoBeta](https://www.youtube.com/@JulianoBetotoso), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama](https://twitter.com/sama_ziero)
+### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip](https://www.youtube.com/@beastlychip_), [Bepixel](https://twitter.com/BepixelOfficial), [CrowPlexus](https://twitter.com/crowplexus), [Evandro](https://twitter.com/Evandroo__), [JulianoBeta](https://www.youtube.com/@JulianoBetotoso), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama](https://twitter.com/sama_ziero)
