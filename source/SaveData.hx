@@ -98,7 +98,7 @@ class SaveData
 			["OSU", "OFF"]
 		],
 		'Hitsound Volume' => [
-			100,
+			10,
 			SELECTOR,
 			"Only works when Hitsounds is enabled",
 			[0, 10]
