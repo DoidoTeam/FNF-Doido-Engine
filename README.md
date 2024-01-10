@@ -17,6 +17,7 @@ lime 8.0.1
 flixel 5.2.2
 flixel-addons 3.0.2
 flixel-ui 2.5.0
+hxvlc 1.1.0
 discord_rpc https://github.com/Aidan63/linc_discord-rpc
 ```
 if you're dumb (like me) follow these steps
