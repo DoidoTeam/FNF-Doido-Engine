@@ -7,8 +7,7 @@
 
 ### YOU CAN ONLY COMPILE TO WINDOWS FOR NOW
 
-this engine is basically the base friday night funkin' engine but rewritten entirelly from scratch in my way of codin'
-still uses haxeflixel btw
+this engine is basically the base friday night funkin' engine but rewritten entirelly from scratch in my way of codin', still uses haxeflixel btw
 
 ### [Haxe version is 4.2.5](https://haxe.org/download/version/4.2.5/)
 uhhh you gonna need the libraries too hold on
