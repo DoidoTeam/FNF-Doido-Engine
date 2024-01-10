@@ -4,19 +4,18 @@ import flixel.math.FlxMath;
 
 class Timings
 {
-	/*public static var timingsMap:Map<String, Array<Float>> = [
-		"sick"		=> [45, 	1],
-		"good"		=> [90, 	0.75],
-		"bad"		=> [135, 	0.25],
-		"shit"		=> [158, 	-1.0],
-		"miss"		=> [180, 	-1.75],
-	];*/
 	public static var timingsArray:Array<Array<Dynamic>> = [
 		["sick",	45,		1],
 		["good",	90,		0.75],
 		["bad",		135,	0.25],
 		["shit",	160,	-1.0],
 		["miss",	180,	-1.75],
+	];
+	public static var holdTimings:Array<Dynamic> = [
+		[0.85, timingsArray[0][1]], // sick
+		[0.60, timingsArray[1][1]], // good
+		[0.35, timingsArray[2][1]], // bad
+		[0.20, timingsArray[3][1]], // shit
 	];
 	
 	public static var minTiming:Float = getTimings("miss")[1];

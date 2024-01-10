@@ -162,7 +162,7 @@ class Note extends FlxSprite
 	{
 		var multAlpha:Float = 1;
 		if(isHold)
-			multAlpha = 0.7;
+			multAlpha = (gotHit ? 0.2 : 0.7);
 		if(missed)
 			multAlpha = 0.2;
 		

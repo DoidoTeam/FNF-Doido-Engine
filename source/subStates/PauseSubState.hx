@@ -9,9 +9,11 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
 import flixel.system.FlxSound;
 import data.Conductor;
 import data.GameData.MusicBeatSubState;
+import gameObjects.menu.Alphabet;
 import gameObjects.menu.AlphabetMenu;
 import states.*;
 
@@ -32,6 +34,8 @@ class PauseSubState extends MusicBeatSubState
 	var bottomTxt:FlxText;
 
 	var pauseSong:FlxSound;
+
+	var onCountdown:Bool = false;
 
 	public function new()
 	{
@@ -104,12 +108,23 @@ class PauseSubState extends MusicBeatSubState
 		changeSelection();
 	}
 
+	function closePause()
+	{
+		pauseSong.stop();
+		if(SaveData.data.get('Countdown on Unpause'))
+			startCountdown();
+		else
+			close();
+	}
 	override function close()
 	{
 		pauseSong.stop();
+		PlayState.paused = false;
 		PlayState.instance.updateOption('Song Offset');
 		super.close();
 	}
+
+	var inputDelay:Float = 0.05;
 
 	override function update(elapsed:Float)
 	{
@@ -122,46 +137,6 @@ class PauseSubState extends MusicBeatSubState
 				cast(item, FlxBasic).cameras = [lastCam];
 		}
 
-		if(!pauseSong.playing && Conductor.songPos >= 0)
-			pauseSong.play(false, pauseSong.time);
-
-		if(Controls.justPressed("UI_UP"))
-			changeSelection(-1);
-		if(Controls.justPressed("UI_DOWN"))
-			changeSelection(1);
-
-		if(Controls.justPressed("ACCEPT"))
-		{
-			switch(optionShit[curSelected])
-			{
-				default:
-					FlxG.sound.play(Paths.sound("menu/cancelMenu"));
-				
-				case "resume":
-					PlayState.paused = false;
-					close();
-
-				case "restart song":
-					Main.skipStuff();
-					Main.resetState();
-				
-				case "botplay":
-					FlxG.sound.play(Paths.sound("menu/cancelMenu"));
-					PlayState.botplay = !PlayState.botplay;
-
-				case "options":
-					//Main.switchState(new states.menu.OptionsState(new LoadSongState()));
-					persistentDraw = false;
-					pauseSong.pause();
-					this.openSubState(new OptionsSubState(PlayState.instance));
-
-				case "exit to menu":
-					//Main.switchState(new MenuState());
-					persistentDraw = true;
-					PlayState.sendToMenu();
-			}
-		}
-		
 		bottomTxt.text = "";
 		if(PlayState.botplay)
 			bottomTxt.text += "BOTPLAY";
@@ -169,12 +144,85 @@ class PauseSubState extends MusicBeatSubState
 		bottomTxt.x = FlxG.width - bottomTxt.width - 10;
 		bottomTxt.y = FlxG.height- bottomTxt.height- 10;
 
-		// works the same as resume
-		if(Controls.justPressed("BACK"))
+		if(inputDelay > 0)
 		{
-			PlayState.paused = false;
-			close();
+			inputDelay -= elapsed;
+			return;
 		}
+
+		if(!onCountdown)
+		{
+			if(!pauseSong.playing && Conductor.songPos >= 0)
+				pauseSong.play(false, pauseSong.time);
+
+			if(Controls.justPressed("UI_UP"))
+				changeSelection(-1);
+			if(Controls.justPressed("UI_DOWN"))
+				changeSelection(1);
+
+			if(Controls.justPressed("ACCEPT"))
+			{
+				switch(optionShit[curSelected])
+				{
+					default:
+						FlxG.sound.play(Paths.sound("menu/cancelMenu"));
+					
+					case "resume":
+						closePause();
+
+					case "restart song":
+						Main.skipStuff();
+						Main.resetState();
+					
+					case "botplay":
+						FlxG.sound.play(Paths.sound("menu/cancelMenu"));
+						PlayState.botplay = !PlayState.botplay;
+
+					case "options":
+						//Main.switchState(new states.menu.OptionsState(new LoadSongState()));
+						persistentDraw = false;
+						pauseSong.pause();
+						this.openSubState(new OptionsSubState(PlayState.instance));
+
+					case "exit to menu":
+						//Main.switchState(new MenuState());
+						persistentDraw = true;
+						PlayState.sendToMenu();
+				}
+			}
+
+			// works the same as resume
+			if(Controls.justPressed("BACK"))
+				closePause();
+		}
+		else
+		{
+			for(item in optionsGrp)
+				item.alpha = FlxMath.lerp(item.alpha, 0, elapsed * 12);
+		}
+	}
+
+	function startCountdown()
+	{
+		var labels:Array<String> = ["3", "2", "1", "GO"];
+		var countdownTxt = new Alphabet(FlxG.width / 2, FlxG.height / 2 - 70 / 2,"",true);
+		countdownTxt.align = CENTER;
+		countdownTxt.updateHitbox();
+		add(countdownTxt);
+
+		var loops:Int = 0;
+		onCountdown = true;
+		var countTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
+		{
+			if(loops == 4)
+				close();
+			else
+			{
+				countdownTxt.text = labels[loops];
+				FlxG.sound.play(Paths.sound('menu/scrollMenu'));
+			}
+			loops++;
+		}, 5);
 	}
 
 	function changeSelection(change:Int = 0)

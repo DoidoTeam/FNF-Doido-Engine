@@ -18,24 +18,23 @@ import states.menu.MainMenuState;
 class OptionsSubState extends MusicBeatSubState
 {
     var mainShit:Array<String> = [
+        "preferences",
         "gameplay",
         "appearance",
         "controls",
     ];
     var optionShit:Map<String, Array<String>> =
 	[
-		"main" => [
-			"gameplay",
-			"appearance",
-			"controls",
-		],
+        "preferences" => [
+            "Cutscenes",
+            "Countdown on Unpause",
+			"Framerate Cap",
+            "FPS Counter",
+        ],
 		"gameplay" => [
 			"Ghost Tapping",
 			"Downscroll",
 			"Middlescroll",
-			"Cutscenes",
-			"Framerate Cap",
-            "FPS Counter",
 		],
 		"appearance" => [
 			"Antialiasing",

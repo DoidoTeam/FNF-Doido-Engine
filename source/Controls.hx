@@ -125,7 +125,7 @@ class Controls
 		// ui buttons
 		'ACCEPT' => [
 			[FlxKey.SPACE, FlxKey.ENTER],
-			[FlxPad.A, FlxPad.X],
+			[FlxPad.A, FlxPad.X, FlxPad.START],
 		],
 		'BACK' => [
 			[FlxKey.BACKSPACE, FlxKey.ESCAPE],

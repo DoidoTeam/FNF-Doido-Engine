@@ -628,10 +628,12 @@ class PlayState extends MusicBeatState
 		note.missed = false;
 		if(!note.isHold)
 			note.visible = false;
-		
+		else
+			note.setAlpha();
+
 		if(note.mustMiss) return;
 
-		thisStrum.playAnim("confirm");
+		thisStrum.playAnim("confirm", true);
 
 		// when the player hits notes
 		vocals.volume = 1;
@@ -745,8 +747,19 @@ class PlayState extends MusicBeatState
 	{
 		// return;
 		var noteDiff:Float = Math.abs(note.songTime - Conductor.songPos);
-		if((note.isHold && !miss) || strumline.botplay)
+		if(strumline.botplay)
 			noteDiff = 0;
+
+		if(note.isHold && !miss)
+		{
+			noteDiff = Timings.minTiming;
+			var holdPercent:Float = (note.holdHitLength / note.holdLength);
+			for(timing in Timings.holdTimings)
+			{
+				if(holdPercent >= timing[0] && noteDiff > timing[1])
+					noteDiff = timing[1];
+			}
+		}
 
 		var rating:String = Timings.diffToRating(noteDiff);
 		var judge:Float = Timings.diffToJudge(noteDiff);
@@ -759,7 +772,15 @@ class PlayState extends MusicBeatState
 		var healthJudge:Float = 0.05 * judge;
 		if(judge < 0)
 			healthJudge *= 2;
-		
+
+		if(healthJudge < 0)
+		{
+			if(songDiff == "easy")
+				healthJudge *= 0.5;
+			if(songDiff == "normal")
+				healthJudge *= 0.8;
+		}
+
 		// handling stuff
 		health += healthJudge;
 		Timings.score += Math.floor(100 * judge);
@@ -781,7 +802,7 @@ class PlayState extends MusicBeatState
 			
 			// regains your health only if you hold it entirely
 			if(note.isHold)
-				health += 0.05 * (note.holdLength / note.noteCrochet) / 2;
+				health += 0.05 * (note.holdHitLength / note.holdLength);
 			
 			if(rating == "shit")
 			{
@@ -1029,6 +1050,7 @@ class PlayState extends MusicBeatState
 					continue;
 				}
 				
+				note.setAlpha();
 				note.updateHitbox();
 				note.offset.x += note.frameWidth * note.scale.x / 2;
 				if(note.isHold)
@@ -1150,19 +1172,26 @@ class PlayState extends MusicBeatState
 						
 						hold.clipRect = daRect;
 						
-						if(hold.isHoldEnd)
+						//if(hold.holdHitLength >= holdParent.holdLength - Conductor.stepCrochet)
+						var notPressed = (!pressed[hold.noteData] && !strumline.botplay && strumline.isPlayer);
+						var holdPercent:Float = (hold.holdHitLength / holdParent.holdLength);
+
+						if(hold.isHoldEnd && !notPressed)
 							onNoteHold(hold, strumline);
 						
-						if(hold.holdHitLength >= holdParent.holdLength - Conductor.stepCrochet)
+						if(notPressed || holdPercent >= 1.0)
 						{
-							if(hold.isHoldEnd && !hold.gotHit)
-								onNoteHit(hold, strumline);
-							hold.missed = false;
-							hold.gotHit = true;
-						}
-						else if(!pressed[hold.noteData] && !strumline.botplay && strumline.isPlayer)
-						{
-							onNoteMiss(hold, strumline);
+							if(holdPercent > 0.3)
+							{
+								if(hold.isHoldEnd && !hold.gotHit)
+									onNoteHit(hold, strumline);
+								hold.missed = false;
+								hold.gotHit = true;
+							}
+							else
+							{
+								onNoteMiss(hold, strumline);
+							}
 						}
 					}
 					

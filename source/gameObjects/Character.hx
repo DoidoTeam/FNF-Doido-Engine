@@ -18,7 +18,7 @@ class Character extends FlxSprite
 	public var isPlayer:Bool = false;
 
 	public var holdTimer:Float = Math.NEGATIVE_INFINITY;
-	public var holdLength:Float = 1;
+	public var holdLength:Float = 0.7;
 
 	public var idleAnims:Array<String> = [];
 
@@ -38,7 +38,7 @@ class Character extends FlxSprite
 	{
 		this.curChar = curChar;
 
-		holdLength = 1;
+		holdLength = 0.7;
 		idleAnims = ["idle"];
 
 		quickDancer = false;

@@ -7,6 +7,8 @@ import flixel.FlxObject;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUI;
+import flixel.addons.ui.FlxUIButton;
+import flixel.addons.ui.FlxUIGroup;
 import flixel.addons.ui.FlxUICheckBox;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.FlxUIInputText;
@@ -217,6 +219,21 @@ class ChartingState extends MusicBeatState
 	var snapDropDown:FlxUIDropDownMenu;
 	var stepperZoom:FlxUINumericStepper;
 
+	var typingShit:Array<FlxUIInputText> = [];
+	function addTypingShit(shit:Dynamic)
+	{
+		if(shit is FlxUIInputText)
+			typingShit.push(shit);
+
+		if(shit is FlxUINumericStepper)
+		{
+			var stepper:FlxUINumericStepper = cast shit;
+			@:privateAccess{
+				typingShit.push(cast(stepper.text_field));
+			}
+		}
+	}
+
 	function addUIStuff()
 	{
 		/*
@@ -230,6 +247,7 @@ class ChartingState extends MusicBeatState
 
 		var songNameInput = new FlxUIInputText(10, 20, 180, SONG.song, 8);
 		songNameInput.name = "song_name";
+		addTypingShit(songNameInput);
 
 		var check_voices = new FlxUICheckBox(10, 40, null, null, "Has voices", 48);
 		check_voices.checked = SONG.needsVoices;
@@ -237,6 +255,7 @@ class ChartingState extends MusicBeatState
 		
 		var songDiffInput = new FlxUIInputText(10+70, 50, 180-70, songDiff, 8);
 		songDiffInput.name = "song_diff";
+		addTypingShit(songDiffInput);
 
 		var saveButton = new FlxButton(200, 10, "Save", function() {
 			var json = {"song": SONG};
@@ -286,10 +305,12 @@ class ChartingState extends MusicBeatState
 		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 65+5, 1, 1, 1, 339, 0);
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
+		addTypingShit(stepperBPM);
 
 		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, 80+5, 0.1, 1, 0.1, 10, 1);
 		stepperSpeed.value = SONG.speed;
 		stepperSpeed.name = 'song_speed';	
+		addTypingShit(stepperSpeed);
 
 		var characters = CoolUtil.charList();
 		
@@ -315,13 +336,15 @@ class ChartingState extends MusicBeatState
 		playTicksDad.name = "dad_hitsounds";
 		playTicksDad.checked = playHitSounds[0];
 		
-		var stepperVolInst = new FlxUINumericStepper(110, 190, 0.1, 1, 0, 1.0, 1);
+		var stepperVolInst = new FlxUINumericStepper(110, 190, 0.1, 1, 0, 1.0, 2);
 		stepperVolInst.value = Conductor.bpm;
 		stepperVolInst.name = 'vol_inst';
+		addTypingShit(stepperVolInst);
 		
-		var stepperVolVoices = new FlxUINumericStepper(110, 210, 1, 1, 0, 1.0, 1);
+		var stepperVolVoices = new FlxUINumericStepper(110, 210, 1, 1, 0, 1.0, 2);
 		stepperVolVoices.value = Conductor.bpm;
 		stepperVolVoices.name = 'vol_voices';
+		addTypingShit(stepperVolVoices);
 		
 		var muteInst:FlxUICheckBox = null;
 		muteInst = new FlxUICheckBox(10, 190, null, null, 'Mute Inst', 100, function() {
@@ -387,6 +410,7 @@ class ChartingState extends MusicBeatState
 		var stepperLength = new FlxUINumericStepper(10, 10, 4, 16, 4, 48, 0);
 		stepperLength.value = getSection(curSection).lengthInSteps;
 		stepperLength.name = "section_length";
+		addTypingShit(stepperLength);
 
 		var check_mustHitSection = new FlxUICheckBox(10, 30, null, null, "Must hit section", 100);
 		check_mustHitSection.name = 'check_mustHit';
@@ -398,6 +422,7 @@ class ChartingState extends MusicBeatState
 		var stepperSectionBPM = new FlxUINumericStepper(10, 90, 1, Conductor.bpm, 0, 999, 0);
 		stepperSectionBPM.name = 'section_bpm';
 		stepperSectionBPM.value = Conductor.bpm;
+		addTypingShit(stepperSectionBPM);
 		//getSection(curSection).bpm = stepper.value;
 
 		copySectTxt = new FlxText(0,0,0,"");
@@ -436,6 +461,7 @@ class ChartingState extends MusicBeatState
 			}
 			reloadSection(curSection, false);
 		});
+		addTypingShit(stepperCopy);
 
 		copySectTxt.text = 'Section: ' + (curSection - 1);
 		copySectTxt.setPosition(stepperCopy.x + stepperCopy.width + 8, stepperCopy.y);
@@ -478,6 +504,7 @@ class ChartingState extends MusicBeatState
 		var stepperSusLength = new FlxUINumericStepper(10, 20, Conductor.stepCrochet / 2, 0, 0, songLength);
 		stepperSusLength.value = 0;
 		stepperSusLength.name = 'note_susLength';
+		addTypingShit(stepperSusLength);
 		if(curSelectedNote != null)
 			updateCurNote();
 		
@@ -541,6 +568,7 @@ class ChartingState extends MusicBeatState
 		stepperZoom = new FlxUINumericStepper(10, 20, 1, 1, 0, 4, 0);
 		stepperZoom.name = 'grid_zoom';
 		stepperZoom.value = GRID_ZOOM;
+		addTypingShit(stepperZoom);
 		
 		formatSnaps = [];
 		for(i in 0...allSnaps.length)
@@ -631,6 +659,10 @@ class ChartingState extends MusicBeatState
 				if(sender is FlxUINumericStepper)
 				{
 					var stepper:FlxUINumericStepper = cast sender;
+					/*@:privateAccess{
+						stepper.text_field.text = stepper.text_field.text.replace(' ', '');
+						stepper.value = Std.parseFloat(stepper.text_field.text);
+					}*/
 					switch(stepper.name)
 					{
 						case 'song_speed':
@@ -979,7 +1011,7 @@ class ChartingState extends MusicBeatState
 	}
 	
 	var curNoteSin:Float = 0;
-	// even if you leave the state the 
+	// even if you leave the state the
 	// value will still count the 5 minutes
 	static var autosavetimer:Float = 0;
 	var globalMult:Int = 1;
@@ -987,25 +1019,11 @@ class ChartingState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if(FlxG.mouse.justPressed)
-		{
-			isTyping = false;
-			for(group in UI_box.members)
-			if(group is FlxUI)
-			{
-				var daGroup:FlxUI = cast group;
-				for(item in daGroup.members)
-				{
-					if(FlxG.mouse.overlaps(item))
-					{
-						isTyping = true;
-						if(Std.isOfType(item, FlxUIDropDownMenu))
-							isTyping = false;
-					}
-				}
-			}
-		}
-		
+		isTyping = false;
+		for(i in typingShit)
+			if(i.hasFocus)
+				isTyping = true;
+	
 		Controls.setSoundKeys(isTyping);
 		
 		// autosaves every 5 minutes

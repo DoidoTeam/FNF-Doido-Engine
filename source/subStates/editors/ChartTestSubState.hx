@@ -232,7 +232,7 @@ class ChartTestSubState extends MusicBeatSubState
 		
 		if(note.mustMiss) return;
 
-		thisStrum.playAnim("confirm");
+		thisStrum.playAnim("confirm", true);
 
 		// when the player hits notes
 		//vocals.volume = 1;
@@ -298,8 +298,19 @@ class ChartTestSubState extends MusicBeatSubState
 	{
 		// return;
 		var noteDiff:Float = Math.abs(note.songTime - Conductor.songPos);
-		if((note.isHold && !miss) || strumline.botplay)
+		if(strumline.botplay)
 			noteDiff = 0;
+
+		if(note.isHold && !miss)
+		{
+			noteDiff = Timings.minTiming;
+			var holdPercent:Float = (note.holdHitLength / note.holdLength);
+			for(timing in Timings.holdTimings)
+			{
+				if(holdPercent >= timing[0] && noteDiff > timing[1])
+					noteDiff = timing[1];
+			}
+		}
 
 		var rating:String = Timings.diffToRating(noteDiff);
 		var judge:Float = Timings.diffToJudge(noteDiff);
@@ -572,19 +583,25 @@ class ChartTestSubState extends MusicBeatSubState
 						
 						hold.clipRect = daRect;
 						
-						if(hold.isHoldEnd)
+						var notPressed = (!pressed[hold.noteData] && !strumline.botplay && strumline.isPlayer);
+						var holdPercent:Float = (hold.holdHitLength / holdParent.holdLength);
+
+						if(hold.isHoldEnd && !notPressed)
 							onNoteHold(hold, strumline);
 						
-						if(hold.holdHitLength >= holdParent.holdLength - Conductor.stepCrochet)
+						if(notPressed || holdPercent >= 1.0)
 						{
-							if(hold.isHoldEnd && !hold.gotHit)
-								onNoteHit(hold, strumline);
-							hold.missed = false;
-							hold.gotHit = true;
-						}
-						else if(!pressed[hold.noteData] && !strumline.botplay && strumline.isPlayer)
-						{
-							onNoteMiss(hold, strumline);
+							if(holdPercent > 0.3)
+							{
+								if(hold.isHoldEnd && !hold.gotHit)
+									onNoteHit(hold, strumline);
+								hold.missed = false;
+								hold.gotHit = true;
+							}
+							else
+							{
+								onNoteMiss(hold, strumline);
+							}
 						}
 					}
 					

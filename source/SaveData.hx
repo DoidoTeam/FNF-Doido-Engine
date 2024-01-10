@@ -57,6 +57,11 @@ class SaveData
 			CHECKMARK,
 			"Whether you want a counter showing your framerate and memory usage counter in the corner of the game",
 		],
+		"Countdown on Unpause" => [
+			true,
+			CHECKMARK,
+			"Whether you want to have a countdown when unpausing the game",
+		],
 		
 		"Split Holds" => [
 			false,
