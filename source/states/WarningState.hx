@@ -12,15 +12,9 @@ class WarningState extends MusicBeatState
 	override public function create():Void 
 	{
 		super.create();
-
-        var color = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFF000000);
-		color.screenCenter();
-		add(color);
-
-		var tex:String = "Warning!\n\nThis mod features flashing lights that may\nbe harmful to those with photosensitivity.\nYou can disable them in the Options menu.\n\nPress ENTER to continue!";
+		var tex:String = "Warning!\n\nThis mod features flashing lights that may\nbe harmful to those with photosensitivity.\nYou can disable them in the Options menu.\n\nPress ACCEPT";
 		var popUpTxt = new FlxText(0,0,0,tex);
-		popUpTxt.setFormat(Main.gFont, 43, 0xFFFFFFFF, CENTER);
-		popUpTxt.setBorderStyle(OUTLINE, FlxColor.BLACK, 2.5);
+		popUpTxt.setFormat(Main.gFont, 36, 0xFFFFFFFF, CENTER);
 		popUpTxt.screenCenter();
 		add(popUpTxt);
 	}
@@ -29,10 +23,11 @@ class WarningState extends MusicBeatState
 	{
 		super.update(elapsed);
 
-		if (Controls.justPressed("ACCEPT")) {
+		if(Controls.justPressed("ACCEPT"))
+		{
             Main.switchState(new states.TitleState());
 
-            FlxG.save.data.firstBoot = true;
+            FlxG.save.data.beenWarned = true;
             FlxG.save.flush();
         }
 	}

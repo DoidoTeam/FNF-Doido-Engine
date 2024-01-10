@@ -124,6 +124,11 @@ class Paths
 
 		return Json.parse(rawJson);
 	}
+
+	public static function video(key:String):String
+	{
+		return getPath('videos/$key.mp4');
+	}
 	
 	// sparrow (.xml) sheets
 	public static function getSparrowAtlas(key:String)

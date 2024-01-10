@@ -258,7 +258,14 @@ class ChartingState extends MusicBeatState
 		addTypingShit(songDiffInput);
 
 		var saveButton = new FlxButton(200, 10, "Save", function() {
-			var json = {"song": SONG};
+			var formatSONG:SwagSong = SONG;
+			for(section in formatSONG.notes)
+				for(note in section.sectionNotes)
+					if(note.length > 2)
+						if(note[3] == 'none')
+							note.remove(3);
+
+			var json = {"song": formatSONG};
 
 			var data:String = Json.stringify(json, "\t");
 

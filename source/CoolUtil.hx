@@ -144,19 +144,21 @@ class CoolUtil
 		}
 	}
 
-	public static function flash(?camera:FlxCamera, ?duration:Float = 0.5, ?color:FlxColor) {
-
-		if(camera != null)
+	// ONLY USE FORCED IF REALLY NEEDED
+	public static function flash(?camera:FlxCamera, ?duration:Float = 0.5, ?color:FlxColor, ?forced:Bool = false)
+	{
+		if(camera == null)
 			camera = FlxG.camera;
-
-		if(SaveData.data.get("Flashing Lights") == "OFF") return;
-
-		var color2:FlxColor = color;
 		if(color == null)
-			color2 = 0xFFFFFFFF;
-		if(SaveData.data.get("Flashing Lights") == "REDUCED")
-			color2.alphaFloat = 0.4;
+			color = 0xFFFFFFFF;
+		
+		if(!forced)
+		{
+			if(SaveData.data.get("Flashing Lights") == "OFF") return;
 
-		camera.flash(color2, duration, null, true);
+			if(SaveData.data.get("Flashing Lights") == "REDUCED")
+				color.alphaFloat = 0.4;
+		}
+		camera.flash(color, duration, null, true);
 	}
 }

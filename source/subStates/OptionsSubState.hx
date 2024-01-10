@@ -30,13 +30,14 @@ class OptionsSubState extends MusicBeatSubState
             "Countdown on Unpause",
 			"Framerate Cap",
             "FPS Counter",
-            "Flashing Lights"
+            "Flashing Lights",
         ],
 		"gameplay" => [
 			"Ghost Tapping",
 			"Downscroll",
 			"Middlescroll",
-            "Hitsounds"
+            "Hitsounds",
+            "Hitsound Volume",
 		],
 		"appearance" => [
 			"Antialiasing",

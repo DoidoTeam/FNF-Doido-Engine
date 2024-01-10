@@ -88,14 +88,20 @@ class SaveData
 		'Flashing Lights' => [
 			"ON",
 			SELECTOR,
-			"Whether to show flashing lights and colors.",
+			"Whether to show flashing lights and colors",
 			["ON", "REDUCED", "OFF"]
 		],
 		'Hitsounds' => [
 			"OFF",
 			SELECTOR,
-			"Whether to play hitsounds whenever you hit a note.",
+			"Whether to play hitsounds whenever you hit a note",
 			["OSU", "OFF"]
+		],
+		'Hitsound Volume' => [
+			100,
+			SELECTOR,
+			"Only works when Hitsounds is enabled",
+			[0, 10]
 		],
 
 		// this one doesnt actually appear at the regular options menu

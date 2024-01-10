@@ -379,6 +379,9 @@ class PlayState extends MusicBeatState
 		{
 			switch(SONG.song)
 			{
+				case 'bopeebo':
+					startVideo('brazil');
+
 				case 'senpai'|'roses':
 					CoolUtil.playMusic('dialogue/lunchbox');
 					startDialogue(DialogueUtil.loadFromSong(SONG.song));
@@ -418,7 +421,7 @@ class PlayState extends MusicBeatState
 						
 						FlxG.sound.play(Paths.sound('dialogue/senpai/senpai_dies'), 1, false, null, true, function()
 						{
-							CoolUtil.flash(camHUD, 0.6, 0xFFff1b31);
+							CoolUtil.flash(camHUD, 0.6, 0xFFff1b31, true);
 							//camHUD.flash(0xFFff1b31, 0.6, null, true);
 							remove(red);
 							remove(spirit);
@@ -539,6 +542,55 @@ class PlayState extends MusicBeatState
 			add(dial);
 		});
 	}
+
+	public function startVideo(path:String = '')
+	{
+		var skipTxt = new FlxText(0,0,0,'PRESS ACCEPT AGAIN TO SKIP');
+		skipTxt.setFormat(Main.gFont, 36, 0xFFFFFFFF, RIGHT);
+		skipTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
+		skipTxt.x = FlxG.width - skipTxt.width - 24;
+		skipTxt.y = FlxG.height- skipTxt.height- 24;
+		skipTxt.cameras = [camHUD];
+		skipTxt.alpha = 0.0001;
+
+		camGame.alpha = 0.0;
+		var video = new DoidoVideoSprite();
+		video.bitmap.onEndReached.add(function() {
+			video.bitmap.dispose();
+			remove(video);
+			remove(skipTxt);
+			camGame.alpha = 1.0;
+			startCountdown();
+		});
+		video.load(Paths.video(path), 0);
+		video.cameras = [camHUD];
+
+		var skipTimer:Float = 0.0;
+
+		video._update = function(elapsed:Float)
+		{
+			if(Controls.justPressed("ACCEPT") && video.bitmap.isPlaying)
+			{
+				if(skipTimer >= 3.0)
+					video.bitmap.time = video.bitmap.length;
+				else
+					skipTimer = 4.0;
+			}
+			if(skipTimer > 0.0)
+				skipTimer -= elapsed;
+
+			skipTxt.alpha = (skipTimer / 3.0);
+		}
+
+		video.play();
+		video.pause();
+		new FlxTimer().start(0.1, function(tmr:FlxTimer):Void
+		{
+			video.resume();
+			add(video);
+			add(skipTxt);
+		});
+	}
 	
 	public function hasCutscene():Bool
 	{
@@ -641,6 +693,11 @@ class PlayState extends MusicBeatState
 		if(strumline.isPlayer)
 		{
 			popUpRating(note, strumline, false);
+			if(!note.isHold && SaveData.data.get("Hitsounds") != "OFF")
+				FlxG.sound.play(
+					Paths.sound('hitsounds/${SaveData.data.get("Hitsounds")}'),
+					SaveData.data.get("Hitsound Volume") / 10
+				);
 		}
 		
 		//if(!['default', 'none'].contains(note.noteType))
@@ -666,9 +723,6 @@ class PlayState extends MusicBeatState
 					thisChar.playAnim('hey');*/
 			}
 		}
-
-		if((strumline.isPlayer && !note.isHold && !note.isHoldEnd) && SaveData.data.get("Hitsounds") != "OFF")
-			FlxG.sound.play(Paths.sound('hitsounds/' + SaveData.data.get("Hitsounds")), 1);
 	}
 	function onNoteMiss(note:Note, strumline:Strumline)
 	{

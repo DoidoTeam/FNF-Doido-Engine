@@ -188,20 +188,26 @@ class MainMenuState extends MusicBeatState
 		}
 		else
 		{
-			flickMag += elapsed;
-			if(flickMag >= 0.15)
+			if(SaveData.data.get('Flashing Lights') != "OFF")
 			{
-				flickMag = 0;
-				bgMag.visible = !bgMag.visible;
-			}
-			
-			flickBtn += elapsed;
-			if(flickBtn >= 0.15 / 2)
-			{
-				flickBtn = 0;
-				for(item in grpOptions.members)
-					if(item.ID == curSelected)
-						item.visible = !item.visible;
+				if(SaveData.data.get('Flashing Lights') != "REDUCED")
+				{
+					flickMag += elapsed;
+					if(flickMag >= 0.15)
+					{
+						flickMag = 0;
+						bgMag.visible = !bgMag.visible;
+					}
+				}
+				
+				flickBtn += elapsed;
+				if(flickBtn >= 0.15 / 2)
+				{
+					flickBtn = 0;
+					for(item in grpOptions.members)
+						if(item.ID == curSelected)
+							item.visible = !item.visible;
+				}
 			}
 		}
 		
