@@ -106,7 +106,7 @@ class TitleState extends MusicBeatState
 					pressedEnter = true;
 					enterTxt.animation.play('pressed');
 					FlxG.sound.play(Paths.sound('menu/confirmMenu'));
-					FlxG.camera.flash(0xFFFFFFFF, 1.0, null, true);
+					CoolUtil.flash(FlxG.camera, 1, 0xFFFFFFFF);
 					new FlxTimer().start(2.0, function(tmr:FlxTimer)
 					{
 						Main.switchState(new MainMenuState());
@@ -177,7 +177,7 @@ class TitleState extends MusicBeatState
 		
 		addText([]);
 		ngSpr.visible = false;
-		FlxG.camera.flash(0xFFFFFFFF, Conductor.crochet * 4 / 1000, null, true);
+		CoolUtil.flash(FlxG.camera, Conductor.crochet * 4 / 1000, 0xFFFFFFFF);
 		remove(blackScreen);
 	}
 	

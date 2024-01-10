@@ -107,7 +107,7 @@ class ChartingState extends MusicBeatState
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD, false);
 
-		hitsound = new FlxSound().loadEmbedded(Paths.sound("hitsound"), false, false);
+		hitsound = new FlxSound().loadEmbedded(Paths.sound("hitsounds/OSU"), false, false);
 		hitsound.play();
 		hitsound.stop();
 		FlxG.sound.list.add(hitsound);

@@ -20,7 +20,10 @@ class Init extends MusicBeatState
 		
 		for(i in 0...Paths.dumpExclusions.length)
 			Paths.preloadGraphic(Paths.dumpExclusions[i].replace('.png', ''));
-		
-		Main.switchState(new TitleState());
+
+		if(!FlxG.save.data.firstBoot)
+			Main.switchState(new WarningState());
+		else
+			Main.switchState(new TitleState());
 	}
 }

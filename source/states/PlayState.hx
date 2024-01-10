@@ -418,7 +418,8 @@ class PlayState extends MusicBeatState
 						
 						FlxG.sound.play(Paths.sound('dialogue/senpai/senpai_dies'), 1, false, null, true, function()
 						{
-							camHUD.flash(0xFFff1b31, 0.6, null, true);
+							CoolUtil.flash(camHUD, 0.6, 0xFFff1b31);
+							//camHUD.flash(0xFFff1b31, 0.6, null, true);
 							remove(red);
 							remove(spirit);
 							
@@ -665,6 +666,9 @@ class PlayState extends MusicBeatState
 					thisChar.playAnim('hey');*/
 			}
 		}
+
+		if((strumline.isPlayer && !note.isHold && !note.isHoldEnd) && SaveData.data.get("Hitsounds") != "OFF")
+			FlxG.sound.play(Paths.sound('hitsounds/' + SaveData.data.get("Hitsounds")), 1);
 	}
 	function onNoteMiss(note:Note, strumline:Strumline)
 	{

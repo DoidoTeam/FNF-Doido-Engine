@@ -5,6 +5,8 @@ import flixel.FlxSprite;
 import flixel.util.FlxSort;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
+import flixel.util.FlxColor;
+import flixel.FlxCamera;
 import gameObjects.hud.note.Note;
 
 using StringTools;
@@ -140,5 +142,21 @@ class CoolUtil
 				FlxG.sound.music.play(true);
 			}
 		}
+	}
+
+	public static function flash(?camera:FlxCamera, ?duration:Float = 0.5, ?color:FlxColor) {
+
+		if(camera != null)
+			camera = FlxG.camera;
+
+		if(SaveData.data.get("Flashing Lights") == "OFF") return;
+
+		var color2:FlxColor = color;
+		if(color == null)
+			color2 = 0xFFFFFFFF;
+		if(SaveData.data.get("Flashing Lights") == "REDUCED")
+			color2.alphaFloat = 0.4;
+
+		camera.flash(color2, duration, null, true);
 	}
 }

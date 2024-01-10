@@ -85,6 +85,18 @@ class SaveData
 			"Decides if the song cutscenes should play",
 			["ON", "FREEPLAY OFF", "OFF"],
 		],
+		'Flashing Lights' => [
+			"ON",
+			SELECTOR,
+			"Whether to show flashing lights and colors.",
+			["ON", "REDUCED", "OFF"]
+		],
+		'Hitsounds' => [
+			"OFF",
+			SELECTOR,
+			"Whether to play hitsounds whenever you hit a note.",
+			["OSU", "OFF"]
+		],
 
 		// this one doesnt actually appear at the regular options menu
 		"Song Offset" => [
@@ -92,15 +104,15 @@ class SaveData
 			SELECTOR,
 			"no one is going to see this anyway whatever",
 			[-500, 500],
-		],
+		]
 	];
 	
 	public static var saveFile:FlxSave;
 	public static function init()
 	{
 		saveFile = new FlxSave();
-		saveFile.bind("settings",	"Doido-Engine-FNF"); // use these for settings
-		FlxG.save.bind("save-data", "Doido-Engine-FNF"); // these are for other stuff
+		saveFile.bind("settings",	"DiogoTV/DoidoEngine"); // use these for settings
+		FlxG.save.bind("save-data", "DiogoTV/DoidoEngine"); // these are for other stuff
 		load();
 
 		Controls.load();
