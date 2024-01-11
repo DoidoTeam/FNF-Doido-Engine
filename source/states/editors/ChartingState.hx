@@ -850,7 +850,7 @@ class ChartingState extends MusicBeatState
 			// changes the bpm from here onward
 			if(section.changeBPM && Conductor.bpm != section.bpm)
 				Conductor.setBPM(section.bpm);
-			
+
 			if(Math.abs(daSec - curSection) <= 1)
 			{
 				for(songNotes in section.sectionNotes)
@@ -1012,8 +1012,7 @@ class ChartingState extends MusicBeatState
 		for(note in renderedNotes.members)
 		{
 			note.gotHit = false;
-			if(note.songTime < Conductor.songPos - Conductor.stepCrochet
-			|| note.mustMiss)
+			if(note.songTime < Conductor.songPos - 10 || note.mustMiss)
 				note.gotHit = true;
 		}
 	}
