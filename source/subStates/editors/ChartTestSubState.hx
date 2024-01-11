@@ -1,6 +1,5 @@
 package subStates.editors;
 
-import data.Discord.DiscordClient;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
@@ -17,8 +16,11 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.ui.FlxButton;
+import flixel.addons.ui.FlxUICheckBox;
+import flixel.addons.ui.FlxUINumericStepper;
 import flixel.util.FlxTimer;
 import data.*;
+import data.Discord.DiscordClient;
 import data.SongData.SwagSong;
 import data.SongData.SwagSection;
 import data.chart.*;
@@ -58,6 +60,8 @@ class ChartTestSubState extends MusicBeatSubState
 	var assetModifier:String = '';
 	static var botplay:Bool = false;
 	public static var downscroll:Bool = false;
+	public static var hasHitsounds:Bool = false;
+	public static var volHitsounds:Float = 1.0;
 
 	public static function resetStatics()
 	{
@@ -239,6 +243,8 @@ class ChartTestSubState extends MusicBeatSubState
 		if(strumline.isPlayer)
 		{
 			popUpRating(note, strumline, false);
+			if(!note.isHold && hasHitsounds)
+				FlxG.sound.play(Paths.sound('hitsounds/OSU'), volHitsounds);
 		}
 		
 		//if(!['default', 'none'].contains(note.noteType))
@@ -371,6 +377,9 @@ class ChartTestSubState extends MusicBeatSubState
 
 		if(FlxG.keys.justPressed.TAB)
 			modGrp.isActive = !modGrp.isActive;
+
+		hasHitsounds = modGrp.playTicks.checked;
+		volHitsounds = modGrp.stepperTicks.value;
 		
 		//if(startedCountdown)
 		Conductor.songPos += elapsed * 1000;
@@ -713,13 +722,16 @@ class ModGroup extends FlxGroup
 
 	public var btnDownscroll:FlxButton;
 	public var btnBotplay:FlxButton;
+	public var playTicks:FlxUICheckBox;
+	public var stepperTicks:FlxUINumericStepper;
+	var items:Array<FlxObject> = [];
 
 	public var isActive:Bool = false;
 
 	public function new(downscrollClick:Void->Void, botplayClick:Void->Void)
 	{
 		super();
-		bg = new FlxSprite(0, 400).makeGraphic(155, 80, 0xFF000000);
+		bg = new FlxSprite(0, 400).makeGraphic(155, 70 + 20 + 10, 0xFF000000);
 		bg.antialiasing = false;
 		bg.alpha = 0.7;
 		add(bg);
@@ -730,15 +742,22 @@ class ModGroup extends FlxGroup
 		labelTxt.antialiasing = false;
 		add(labelTxt);
 
-		btnDownscroll = new FlxButton(0, 0, "Downscroll", downscrollClick);
-		btnDownscroll.ID = -1;
-		btnBotplay = new FlxButton(0, 0, "Botplay", botplayClick);
-		btnBotplay.ID = 0;
-		add(btnDownscroll);
-		add(btnBotplay);
+		btnDownscroll = new FlxButton(0, 10, "Downscroll", downscrollClick);
+		btnBotplay = new FlxButton(0, 30, "Botplay", botplayClick);
+		playTicks = new FlxUICheckBox(0, 50, null, null, 'Hitsounds', 100);
+		playTicks.checked = ChartTestSubState.hasHitsounds;
+		stepperTicks = new FlxUINumericStepper(0, 70, 0.1, 1, 0.0, 1.0, 1);
+		stepperTicks.value = ChartTestSubState.volHitsounds;
 
-		for(btn in [btnDownscroll, btnBotplay])
-			btn.y = bg.y + bg.height / 2 + btn.height * btn.ID;
+		items.push(btnDownscroll);
+		items.push(btnBotplay);
+		items.push(playTicks);
+		items.push(stepperTicks);
+		for(item in items)
+		{
+			add(item);
+			item.y += bg.y;
+		}
 
 		updatePos(1);
 	}
@@ -747,7 +766,8 @@ class ModGroup extends FlxGroup
 	{
 		bg.x = FlxMath.lerp(bg.x, FlxG.width - (isActive ? bg.width - 8 : 40), lerpTime);
 		
-		btnDownscroll.x = btnBotplay.x = bg.x + 50;
+		for(item in items)
+			item.x = bg.x + 50;
 
 		labelTxt.angle = 0;
 		labelTxt.x = bg.x - 6; // 8

@@ -31,6 +31,7 @@ class OptionsSubState extends MusicBeatSubState
 			"Framerate Cap",
             "FPS Counter",
             "Flashing Lights",
+            "Unfocus Freeze",
         ],
 		"gameplay" => [
 			"Ghost Tapping",

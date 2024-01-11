@@ -91,6 +91,11 @@ class SaveData
 			"Whether to show flashing lights and colors",
 			["ON", "REDUCED", "OFF"]
 		],
+		'Unfocus Freeze' => [
+			true,
+			CHECKMARK,
+			"Freezes the game when unfocusing the window",
+		],
 		'Hitsounds' => [
 			"OFF",
 			SELECTOR,
@@ -157,5 +162,7 @@ class SaveData
 			Main.fpsCount.visible = data.get("FPS Counter");
 
 		FlxSprite.defaultAntialiasing = data.get("Antialiasing");
+
+		FlxG.autoPause = data.get('Unfocus Freeze');
 	}
 }

@@ -572,7 +572,7 @@ class ChartingState extends MusicBeatState
 		tabGrid.name = "Grid";
 		UI_left.addGroup(tabGrid);
 		
-		stepperZoom = new FlxUINumericStepper(10, 20, 1, 1, 0, 4, 0);
+		stepperZoom = new FlxUINumericStepper(10, 20, 1, 1, -1, 4, 0);
 		stepperZoom.name = 'grid_zoom';
 		stepperZoom.value = GRID_ZOOM;
 		addTypingShit(stepperZoom);
@@ -601,10 +601,11 @@ class ChartingState extends MusicBeatState
 	
 	function formatGridZoom(toStepper:Bool = false):Float
 	{
+		var balls:Array<Float> = [0.5, 0.25];
 		if(toStepper)
-			return (GRID_ZOOM < 0.9) ? 0 : GRID_ZOOM;
+			return (GRID_ZOOM == 0.5) ? 0 : (GRID_ZOOM == 0.25) ? -1 : GRID_ZOOM;
 		else
-			return (stepperZoom.value == 0) ? 0.5 : stepperZoom.value;
+			return (stepperZoom.value <= 0) ? (balls[Math.floor(Math.abs(stepperZoom.value))]) : stepperZoom.value;
 	}
 	
 	final allSnaps:Array<Int> = [0, 4, 8, 12, 16, 20, 24, 32, 48, 64, 96, 192];
@@ -849,7 +850,7 @@ class ChartingState extends MusicBeatState
 			// changes the bpm from here onward
 			if(section.changeBPM && Conductor.bpm != section.bpm)
 				Conductor.setBPM(section.bpm);
-
+			
 			if(Math.abs(daSec - curSection) <= 1)
 			{
 				for(songNotes in section.sectionNotes)
@@ -1065,13 +1066,15 @@ class ChartingState extends MusicBeatState
 			];
 			if(whad.contains(true))
 			{
-				if(whad[0]) GRID_ZOOM--;
-				if(whad[1]) GRID_ZOOM++;
+				var zoomArr:Array<Float> = [0.25, 0.5, 1, 2, 3, 4];
+				var curNut:Int = zoomArr.indexOf(GRID_ZOOM);
+				if(whad[0]) curNut--;
+				if(whad[1]) curNut++;
 
-				GRID_ZOOM = Math.floor(GRID_ZOOM);
-				
-				if(GRID_ZOOM < 0.5) GRID_ZOOM = 0.5;
-				if(GRID_ZOOM > 4) GRID_ZOOM = 4;
+				if(curNut < 0) curNut = 0;
+				if(curNut >= zoomArr.length) curNut = zoomArr.length - 1;
+
+				GRID_ZOOM = zoomArr[curNut];
 				stepperZoom.value = formatGridZoom(true);
 				
 				reloadSection(curSection, false);
@@ -1124,7 +1127,8 @@ class ChartingState extends MusicBeatState
 		
 		if(FlxG.mouse.overlaps(mainGrid))
 		{
-			var realSnap:Float = (GRID_SNAP / 16);
+			var zoomSnap:Float = (GRID_SNAP * GRID_ZOOM);
+			var realSnap:Float = (zoomSnap / 16);
 
 			var sizeTimed:Float = (GRID_SIZE / realSnap) * GRID_ZOOM;
 
@@ -1368,7 +1372,7 @@ class ChartGrid extends FlxGroup
 
 		var beatLineCount:Int = 4;
 		if(zoom < 1.0)
-			beatLineCount = 2;
+			beatLineCount = (zoom == 0.5) ? 2 : 1;
 		
 		for(b in 0...Math.floor(sectionLength * zoom / beatLineCount))
 		{
