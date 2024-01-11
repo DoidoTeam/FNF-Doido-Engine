@@ -263,7 +263,7 @@ class ChartingState extends MusicBeatState
 				for(note in section.sectionNotes)
 					if(note.length > 2)
 						if(note[3] == 'none')
-							note.remove(3);
+							note[3] = '';
 
 			var json = {"song": formatSONG};
 

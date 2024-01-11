@@ -99,7 +99,7 @@ class MainMenuState extends MusicBeatState
 			item.ID = i;
 		}
 		
-		var splashTxt = new FlxText(4, 0, 0, 'Doido Engine 3.1\n' + 'Friday Night Funkin\' Rewrite');
+		var splashTxt = new FlxText(4, 0, 0, 'Doido Engine 3.1b\n' + 'Friday Night Funkin\' Rewrite');
 		splashTxt.setFormat(Main.gFont, 18, 0xFFFFFFFF, LEFT);
 		splashTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
 		splashTxt.y = FlxG.height - splashTxt.height - 4;
