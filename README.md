@@ -5,7 +5,7 @@
 
 ## a friday night at freddys engine
 
-### YOU CAN ONLY COMPILE TO WINDOWS FOR NOW
+### YOU CAN ONLY COMPILE TO WINDOWS AND LINUX FOR NOW
 
 this engine is basically the base friday night funkin' engine but rewritten entirelly from scratch in my way of codin', still uses haxeflixel btw
 
