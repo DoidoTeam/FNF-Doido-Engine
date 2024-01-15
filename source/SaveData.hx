@@ -35,6 +35,11 @@ class SaveData
 			CHECKMARK,
 			"Disabling it might increase the fps at the cost of smoother sprites"
 		],
+		"Single Rating" => [
+			false,
+			CHECKMARK,
+			"Makes only one rating appear at a time",
+		],
 		"Note Splashes" => [
 			"ON",
 			SELECTOR,

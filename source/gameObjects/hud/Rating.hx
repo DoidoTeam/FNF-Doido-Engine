@@ -15,6 +15,8 @@ class Rating extends FlxGroup
 {
 	var daRating:RatingFNF;
 	var daNum:NumberFNF;
+
+	var tweens:Array<FlxTween> = [];
 	
 	public function new(rating:String, combo:Int, assetModifier:String = "base")
 	{
@@ -31,17 +33,23 @@ class Rating extends FlxGroup
 		
 		setPos();
 		
-		daRating.acceleration.y = 550;
-		daRating.velocity.y 	= -FlxG.random.int(140, 175);
-		daRating.velocity.x 	= FlxG.random.int(-10, 10);
-		
+		var single:Bool = SaveData.data.get("Single Rating");
+
+		if(!single)
+		{
+			daRating.acceleration.y = 550;
+			daRating.velocity.y 	= -FlxG.random.int(140, 175);
+			daRating.velocity.x 	= FlxG.random.int(-10, 10);
+		}
 		deathTween(daRating, Conductor.crochet / 1000);
 		for(item in daNum)
 		{
-			item.acceleration.y = FlxG.random.int(200, 300);
-			item.velocity.y 	= -FlxG.random.int(140, 160);
-			item.velocity.x 	= FlxG.random.int(-5, 5);
-			
+			if(!single)
+			{
+				item.acceleration.y = FlxG.random.int(200, 300);
+				item.velocity.y 	= -FlxG.random.int(140, 160);
+				item.velocity.x 	= FlxG.random.int(-5, 5);
+			}
 			deathTween(item, (Conductor.crochet / 1000) + FlxG.random.int(0, 3) * 0.3);
 		}
 	}
@@ -68,13 +76,14 @@ class Rating extends FlxGroup
 	// KILLS the poor thing :[
 	public function deathTween(item:FlxSprite, delayTime:Float = 0)
 	{
-		FlxTween.tween(item, {alpha: 0}, Conductor.crochet / 1000, {
+		var daTween = FlxTween.tween(item, {alpha: 0}, Conductor.crochet / 1000, {
 			startDelay: delayTime,
 			onComplete: function(twn:FlxTween)
 			{
 				item.destroy();
 			}
 		});
+		tweens.push(daTween);
 	}
 	
 	public static function preload(assetModifier:String = "base"):Void
@@ -90,6 +99,19 @@ class Rating extends FlxGroup
 		
 		Paths.preloadGraphic('hud/$ratingMod/ratings');
 		Paths.preloadGraphic('hud/$numberMod/numbers');
+	}
+
+	override public function kill()
+	{
+		for(tween in tweens)
+			if(tween != null)
+				tween.cancel();
+
+		for(item in members)
+			if(item != null)
+				item.kill();
+
+		super.kill();
 	}
 }
 /*
@@ -128,6 +150,10 @@ class RatingFNF extends FlxSprite
 				antialiasing = false;
 				isPixelSprite = true;
 				scale.set(5,5);
+		}
+		if(SaveData.data.get('Ratings on HUD')) {
+			scale.x *= 0.7;
+			scale.y *= 0.7;
 		}
 		updateHitbox();
 	}
@@ -173,6 +199,10 @@ class NumberFNF extends FlxSpriteGroup
 					num.antialiasing = false;
 					num.isPixelSprite = true;
 					num.scale.set(5,5);
+			}
+			if(SaveData.data.get('Ratings on HUD')) {
+				num.scale.x *= 0.7;
+				num.scale.y *= 0.7;
 			}
 			num.updateHitbox();
 		}

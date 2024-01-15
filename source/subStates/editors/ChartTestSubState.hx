@@ -62,6 +62,7 @@ class ChartTestSubState extends MusicBeatSubState
 	public static var downscroll:Bool = false;
 	public static var hasHitsounds:Bool = false;
 	public static var volHitsounds:Float = 1.0;
+	public static var noteInfo:Bool = true;
 
 	public static function resetStatics()
 	{
@@ -102,9 +103,8 @@ class ChartTestSubState extends MusicBeatSubState
 		
 		add(backGroup = new FlxGroup());
 		
-		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/chartTestBg'));
 		bg.screenCenter();
-		bg.color = 0xFF494949;
 		backGroup.add(bg);
 		
 		//bg.scale.set(1.08,1.08);
@@ -196,6 +196,10 @@ class ChartTestSubState extends MusicBeatSubState
 			function() {
 				botplay = !botplay;
 				botplayTxt.visible = botplay;
+			},
+			function() {
+				noteInfo = !noteInfo;
+				updateInfo();
 			}
 		);
 		add(modGrp);
@@ -206,6 +210,9 @@ class ChartTestSubState extends MusicBeatSubState
 	
 	function updateInfo()
 	{
+		infoTxt.visible = noteInfo;
+		if(!noteInfo) return;
+
 		infoTxt.text = 'Accuracy: ${Timings.accuracy}%' + ' -- Step: ${curStep}\n';
 		infoTxt.text +='Hits: ${Timings.notesHit - Timings.misses} -- Misses: ${Timings.misses}';
 		
@@ -354,7 +361,7 @@ class ChartTestSubState extends MusicBeatSubState
 		
 		//hudBuild.updateText();
 		var daRating = new Rating(rating, Timings.combo, note.assetModifier);
-		daRating.setPos((FlxG.width / 2), FlxG.height / 2);
+		daRating.setPos(FlxG.width / 2, downscroll ? FlxG.height - 100 : 100);
 		backGroup.add(daRating);
 		
 		updateInfo();
@@ -720,18 +727,16 @@ class ModGroup extends FlxGroup
 	public var bg:FlxSprite;
 	public var labelTxt:FlxText;
 
-	public var btnDownscroll:FlxButton;
-	public var btnBotplay:FlxButton;
 	public var playTicks:FlxUICheckBox;
 	public var stepperTicks:FlxUINumericStepper;
 	var items:Array<FlxObject> = [];
 
 	public var isActive:Bool = false;
 
-	public function new(downscrollClick:Void->Void, botplayClick:Void->Void)
+	public function new(downscrollClick:Void->Void, botplayClick:Void->Void, noteInfoClick:Void->Void)
 	{
 		super();
-		bg = new FlxSprite(0, 400).makeGraphic(155, 70 + 20 + 10, 0xFF000000);
+		bg = new FlxSprite(0, 360).makeGraphic(155, 90 + 20 + 10, 0xFF000000);
 		bg.antialiasing = false;
 		bg.alpha = 0.7;
 		add(bg);
@@ -742,17 +747,19 @@ class ModGroup extends FlxGroup
 		labelTxt.antialiasing = false;
 		add(labelTxt);
 
-		btnDownscroll = new FlxButton(0, 10, "Downscroll", downscrollClick);
-		btnBotplay = new FlxButton(0, 30, "Botplay", botplayClick);
+		var btnDownscroll = new FlxButton(0, 10, "Downscroll", downscrollClick);
+		var btnBotplay = new FlxButton(0, 30, "Botplay", botplayClick);
 		playTicks = new FlxUICheckBox(0, 50, null, null, 'Hitsounds', 100);
 		playTicks.checked = ChartTestSubState.hasHitsounds;
 		stepperTicks = new FlxUINumericStepper(0, 70, 0.1, 1, 0.0, 1.0, 1);
 		stepperTicks.value = ChartTestSubState.volHitsounds;
+		var btnNoteInfo = new FlxButton(0, 90, "Note Info", noteInfoClick);
 
 		items.push(btnDownscroll);
 		items.push(btnBotplay);
 		items.push(playTicks);
 		items.push(stepperTicks);
+		items.push(btnNoteInfo);
 		for(item in items)
 		{
 			add(item);

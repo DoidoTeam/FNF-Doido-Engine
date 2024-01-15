@@ -14,6 +14,7 @@ import states.PlayState;
 
 class HudClass extends FlxGroup
 {
+	public var ratingGrp:FlxGroup;
 	public var infoTxt:FlxText;
 	public var timeTxt:FlxText;
 	
@@ -31,6 +32,9 @@ class HudClass extends FlxGroup
 	{
 		super();
 		smoothBar = SaveData.data.get('Smooth Healthbar');
+
+		ratingGrp = new FlxGroup();
+		add(ratingGrp);
 		
 		healthBar = new HealthBar();
 		changeIcon(0, healthBar.icons[0].curIcon);

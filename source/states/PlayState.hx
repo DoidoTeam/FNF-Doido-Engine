@@ -748,6 +748,8 @@ class PlayState extends MusicBeatState
 			thisChar.holdTimer = 0;
 		}
 	}
+
+	var prevRating:Rating = null;
 	
 	public function popUpRating(note:Note, strumline:Strumline, miss:Bool = false)
 	{
@@ -821,10 +823,18 @@ class PlayState extends MusicBeatState
 		hudBuild.updateText();
 		
 		var daRating = new Rating(rating, Timings.combo, note.assetModifier);
+
+		if(SaveData.data.get("Single Rating"))
+		{
+			if(prevRating != null)
+				prevRating.kill();
+			
+			prevRating = daRating;
+		}
 		
 		if(SaveData.data.get("Ratings on HUD"))
 		{
-			hudBuild.add(daRating);
+			hudBuild.ratingGrp.add(daRating);
 			
 			for(item in daRating.members)
 				item.cameras = [camHUD];
@@ -833,7 +843,7 @@ class PlayState extends MusicBeatState
 			if(SaveData.data.get("Middlescroll"))
 				daX -= FlxG.width / 4;
 
-			daRating.setPos(daX, FlxG.height / 2);
+			daRating.setPos(daX, SaveData.data.get('Downscroll') ? FlxG.height - 100 : 100);
 		}
 		else
 		{

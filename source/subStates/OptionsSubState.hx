@@ -42,6 +42,7 @@ class OptionsSubState extends MusicBeatSubState
 		],
 		"appearance" => [
 			"Antialiasing",
+            "Single Rating",
 			"Note Splashes",
 			"Ratings on HUD",
 			"Song Timer",
