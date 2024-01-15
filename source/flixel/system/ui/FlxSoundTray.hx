@@ -150,11 +150,13 @@ class FlxSoundTray extends Sprite
 		active = true;
 		var globalVolume:Int = Math.round(FlxG.sound.volume * 10);
 
-		if (FlxG.sound.muted)
-		{
-			globalVolume = 0;
-		}
+		SaveData.saveFile.data.volume = FlxG.sound.volume;
+		SaveData.saveFile.data.muted  = FlxG.sound.muted;
+		SaveData.saveFile.flush();
 
+		if (FlxG.sound.muted)
+			globalVolume = 0;
+		
 		for (i in 0..._bars.length)
 		{
 			if (i < globalVolume)

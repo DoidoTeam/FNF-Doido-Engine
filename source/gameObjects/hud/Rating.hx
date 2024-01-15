@@ -41,6 +41,12 @@ class Rating extends FlxGroup
 			daRating.velocity.y 	= -FlxG.random.int(140, 175);
 			daRating.velocity.x 	= FlxG.random.int(-10, 10);
 		}
+		else
+		{
+			daRating.scale.x += 0.07;
+			daRating.scale.y += 0.07;
+			tweens.push(FlxTween.tween(daRating.scale, {x: daRating.scale.x - 0.07, y: daRating.scale.y - 0.07}, 0.1));
+		}
 		deathTween(daRating, Conductor.crochet / 1000);
 		for(item in daNum)
 		{

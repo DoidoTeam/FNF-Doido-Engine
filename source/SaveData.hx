@@ -140,6 +140,11 @@ class SaveData
 	
 	public static function load()
 	{
+		if(saveFile.data.volume != null)
+			FlxG.sound.volume = saveFile.data.volume;
+		if(saveFile.data.muted != null)
+			FlxG.sound.muted  = saveFile.data.muted;
+
 		if(saveFile.data.settings == null || Lambda.count(displaySettings) != Lambda.count(saveFile.data.settings))
 		{
 			for(key => values in displaySettings)
