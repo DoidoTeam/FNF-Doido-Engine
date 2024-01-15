@@ -64,6 +64,8 @@ class ChartTestSubState extends MusicBeatSubState
 	public static var volHitsounds:Float = 1.0;
 	public static var noteInfo:Bool = true;
 
+	var playing:Bool = true;
+
 	public static function resetStatics()
 	{
 		Timings.init();
@@ -307,6 +309,8 @@ class ChartTestSubState extends MusicBeatSubState
 		if(note.gotHit) return;
 	}
 	
+	var prevRating:Rating = null;
+
 	public function popUpRating(note:Note, strumline:Strumline, miss:Bool = false)
 	{
 		// return;
@@ -361,6 +365,13 @@ class ChartTestSubState extends MusicBeatSubState
 		
 		//hudBuild.updateText();
 		var daRating = new Rating(rating, Timings.combo, note.assetModifier);
+		if(SaveData.data.get("Single Rating"))
+		{
+			if(prevRating != null)
+				prevRating.kill();
+			
+			prevRating = daRating;
+		}
 		daRating.setPos(FlxG.width / 2, downscroll ? FlxG.height - 100 : 100);
 		backGroup.add(daRating);
 		
@@ -389,7 +400,16 @@ class ChartTestSubState extends MusicBeatSubState
 		volHitsounds = modGrp.stepperTicks.value;
 		
 		//if(startedCountdown)
-		Conductor.songPos += elapsed * 1000;
+		if(playing)
+			Conductor.songPos += elapsed * 1000;
+
+		if(Controls.justPressed("PAUSE"))
+		{
+			playing = !playing;
+			if(!playing)
+				for(music in musicList)
+					music.pause();
+		}
 
 		pressed = [
 			Controls.pressed("LEFT"),
@@ -706,14 +726,20 @@ class ChartTestSubState extends MusicBeatSubState
 
 	public function syncSong():Void
 	{
-		for(music in musicList)
+		if(playing)
 		{
-			if(Conductor.songPos < 0) break;
-			
-			if(Math.abs(music.time - Conductor.songPos) >= 40)
+			for(music in musicList)
 			{
-				music.play();
-				music.time = Conductor.songPos;
+				if(Conductor.songPos < 0)
+					break;
+				else if(!music.playing)
+					music.play();
+
+				if(Math.abs(music.time - Conductor.songPos) >= 40)
+				{
+					music.play();
+					music.time = Conductor.songPos;
+				}
 			}
 		}
 		
