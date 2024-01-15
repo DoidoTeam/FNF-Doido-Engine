@@ -1,8 +1,9 @@
-<p align="center">
 # DOIDO ENGINE
+<p align="center">
 <img src="https://media.discordapp.net/attachments/949418511946620969/1194073799361040535/look_at_it.png?ex=65af06e2&is=659c91e2&hm=06154ca4b17a414f3760568a38e98dd8cade11245531a11a6528b6efc4cd4410&=&format=webp&quality=lossless&width=548&height=380">
-## a friday night at freddys engine
 </p>
+
+## a friday night at freddys engine
 
 ### YOU CAN ONLY COMPILE TO WINDOWS AND LINUX FOR NOW
 
