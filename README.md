@@ -1,6 +1,6 @@
 # DOIDO ENGINE
 <p align="center">
-<img src="https://media.discordapp.net/attachments/949418511946620969/1194073799361040535/look_at_it.png?ex=65af06e2&is=659c91e2&hm=06154ca4b17a414f3760568a38e98dd8cade11245531a11a6528b6efc4cd4410&=&format=webp&quality=lossless&width=548&height=380">
+<img src="https://www.newgrounds.com/dump/draw/27ed38c719b9761af970cac60f441e21">
 </p>
 
 ## a friday night at freddys engine
@@ -31,7 +31,7 @@ haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
 there are a few extra things to compile but those are at [FNF's Source Code](https://github.com/FunkinCrew/Funkin) so im not gonna teach ya ``>:]``
 
 <p align="center">
-<img src="https://media.discordapp.net/attachments/949418511946620969/1194052391880892446/GITHUB_MTC.png?ex=65aef2f2&is=659c7df2&hm=8422e580b7ef27b19ea5c6a7d19ed3742c02ff264115b69763eea46ec09c87e9&=&format=webp&quality=lossless&width=827&height=179">
+<img src="https://www.newgrounds.com/dump/draw/5657fbf528979526e5e7da27e30cd2a7">
 </p>
 
 ### [DiogoTV](https://twitter.com/DiogoTVV) - Owner and Main Coder
