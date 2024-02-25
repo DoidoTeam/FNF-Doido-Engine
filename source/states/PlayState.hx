@@ -13,7 +13,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
@@ -200,7 +200,7 @@ class PlayState extends MusicBeatState
 		/*
 		*	if you want to change characters
 		*	use changeChar(charVar, "new char");
-		*	remember to put false for non-singers (like gf)
+		*	remember to put false after "new char" for non-singers (like gf)
 		*	so it doesnt reload the icons
 		*/
 		gf = new Character();
@@ -740,11 +740,13 @@ class PlayState extends MusicBeatState
 		if(note.mustMiss)
 			health -= 0.005;
 		
-		if(note.gotHit) return;
+		if(note.gotHit || thisChar == null) return;
 		
 		if(note.noteType != "no animation")
 		{
-			thisChar.playAnim(singAnims[note.noteData], true);
+			if(thisChar.animation.curAnim.curFrame == thisChar.holdLoop)
+				thisChar.playAnim(singAnims[note.noteData], true);
+			
 			thisChar.holdTimer = 0;
 		}
 	}

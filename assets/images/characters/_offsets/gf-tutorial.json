@@ -5,54 +5,59 @@
 	],
 	"animOffsets": [
 		[
-			"idle",
-			0,
-			0
+			"scared",
+			-2,
+			-8
 		],
 		[
-			"idle-loop",
+			"danceRight",
 			0,
 			0
 		],
 		[
 			"singDOWN",
 			0,
-			-30
+			-11
+		],
+		[
+			"danceLeft",
+			0,
+			0
+		],
+		[
+			"singUP",
+			0,
+			13
+		],
+		[
+			"hairBlow",
+			45,
+			1
+		],
+		[
+			"cheer",
+			0,
+			9
 		],
 		[
 			"singRIGHT",
 			0,
-			27
+			-11
 		],
 		[
-			"singUP",
-			-6,
-			50
+			"hairFall",
+			0,
+			0
 		],
 		[
 			"singLEFT",
-			-10,
-			10
-		],
-		[
-			"singDOWN-loop",
 			0,
-			-30
+			-10
 		],
 		[
-			"singRIGHT-loop",
-			0,
-			27
-		],
-		[
-			"singUP-loop",
-			-6,
-			50
-		],
-		[
-			"singLEFT-loop",
-			-10,
-			10
+			"sad",
+			-2,
+			-12
 		]
 	],
 	"ratingsOffset": [
@@ -60,7 +65,7 @@
 		0
 	],
 	"cameraOffset": [
-		0,
-		-80
+		-230,
+		-100
 	]
 }

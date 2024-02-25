@@ -11,7 +11,7 @@ import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.FlxGamepad.FlxGamepadModel;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.gamepad.id.PS4ID;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import data.Conductor;
 import data.GameData.MusicBeatSubState;
 import gameObjects.hud.HealthIcon;

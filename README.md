@@ -9,13 +9,13 @@
 
 this engine is basically the base friday night funkin' engine but rewritten entirelly from scratch in my way of codin', still uses haxeflixel btw
 
-### [Haxe version is 4.2.5](https://haxe.org/download/version/4.2.5/)
+### [Haxe version is 4.3.3](https://haxe.org/download/version/4.3.3/)
 uhhh you gonna need the libraries too hold on
 ### LIBRARIES
 ```
-lime 8.0.1
-flixel 5.2.2
-flixel-addons 3.0.2
+lime 8.1.1
+flixel 5.6.0
+flixel-addons 3.2.1
 flixel-ui 2.5.0
 discord_rpc https://github.com/Aidan63/linc_discord-rpc
 ```
@@ -24,7 +24,7 @@ if you're dumb (like me) follow these steps
 2. if it has a link in front of it then put haxelib git behind it
 #### example:
 ```
-haxelib install flixel 5.2.2
+haxelib install flixel 5.6.0
 haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
 ```
 #### you should be good to compile the engine now (probably)

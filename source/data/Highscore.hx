@@ -32,16 +32,16 @@ class Highscore
 	
 	public static function save()
 	{
-		SaveData.saveFile.data.highscoreMap = highscoreMap;
+		FlxG.save.data.highscoreMap = highscoreMap;
 		SaveData.save();
 	}
 
 	public static function load()
 	{
-		if(SaveData.saveFile.data.highscoreMap == null)
-			SaveData.saveFile.data.highscoreMap = highscoreMap;
+		if(FlxG.save.data.highscoreMap == null)
+			FlxG.save.data.highscoreMap = highscoreMap;
 
-		highscoreMap = SaveData.saveFile.data.highscoreMap;
+		highscoreMap = FlxG.save.data.highscoreMap;
 
 		save();
 	}

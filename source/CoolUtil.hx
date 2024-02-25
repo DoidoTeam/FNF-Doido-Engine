@@ -32,6 +32,7 @@ class CoolUtil
 		return [
 			"dad",
 			"gf",
+			"gf-tutorial",
 			"bf",
 			"bf-pixel",
 			"bf-pixel-dead",

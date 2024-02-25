@@ -139,14 +139,14 @@ class Controls
 
 	public static function load()
 	{
-		if(SaveData.saveFile.data.allControls == null
-		|| Lambda.count(allControls) != Lambda.count(SaveData.saveFile.data.allControls))
+		if(SaveData.saveControls.data.allControls == null
+		|| Lambda.count(allControls) != Lambda.count(SaveData.saveControls.data.allControls))
 		{
-			SaveData.saveFile.data.allControls = allControls;
+			SaveData.saveControls.data.allControls = allControls;
 		}
 		
-		// allControls = SaveData.saveFile.data.allControls;
-		var impControls:Map<String, Array<Dynamic>> = SaveData.saveFile.data.allControls;
+		// allControls = SaveData.saveControls.data.allControls;
+		var impControls:Map<String, Array<Dynamic>> = SaveData.saveControls.data.allControls;
 		for(label => key in impControls)
 		{
 			if(changeableControls.contains(label))
@@ -158,7 +158,7 @@ class Controls
 
 	public static function save()
 	{
-		SaveData.saveFile.data.allControls = allControls;
+		SaveData.saveControls.data.allControls = allControls;
 		SaveData.save();
 	}
 }

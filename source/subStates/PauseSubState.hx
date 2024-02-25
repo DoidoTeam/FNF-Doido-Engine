@@ -10,7 +10,7 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import data.Conductor;
 import data.GameData.MusicBeatSubState;
 import gameObjects.menu.Alphabet;

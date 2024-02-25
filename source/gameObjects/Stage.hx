@@ -58,7 +58,7 @@ class Stage extends FlxGroup
 		dadPos.set(100,700);
 		bfPos.set(850, 700);
 		gfVersion = "gf";
-		// settings gf to "" makes her invisible
+		// setting gf to "" makes her invisible
 		
 		PlayState.defaultCamZoom = 1.0;
 		
@@ -81,6 +81,9 @@ class Stage extends FlxGroup
 				curtains.scrollFactor.set(1.4,1.4);
 				foreground.add(curtains);
 
+				if(['tutorial'].contains(PlayState.SONG.song))
+					gfVersion = 'gf-tutorial';
+				
 			case "mugen":
 				PlayState.defaultCamZoom = 0.7;
 				gfVersion = "";

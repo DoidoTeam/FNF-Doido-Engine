@@ -52,13 +52,13 @@ class SaveData
 			"Makes the ratings stick on the HUD"
 		],
 		"Framerate Cap"	=> [
-			120,
+			60, // 120
 			SELECTOR,
 			"Self explanatory",
 			[30, 360]
 		],
 		"FPS Counter" => [
-			true,
+			false,
 			CHECKMARK,
 			"Whether you want a counter showing your framerate and memory usage counter in the corner of the game",
 		],
@@ -123,44 +123,43 @@ class SaveData
 		]
 	];
 	
-	public static var saveFile:FlxSave;
+	public static var saveSettings:FlxSave = new FlxSave();
+	public static var saveControls:FlxSave = new FlxSave();
 	public static function init()
 	{
-		saveFile = new FlxSave();
-		saveFile.bind("settings",	"DiogoTV/DoidoEngine"); // use these for settings
-		FlxG.save.bind("save-data", "DiogoTV/DoidoEngine"); // these are for other stuff
+		saveSettings.bind("settings",	Main.savePath); // use these for settings
+		saveControls.bind("controls", 	Main.savePath); // controls :D
+		FlxG.save.bind("save-data", 	Main.savePath); // these are for other stuff
+		
 		load();
-
 		Controls.load();
 		Highscore.load();
-		
-		// uhhh
-		subStates.editors.ChartAutoSaveSubState.load();
+		subStates.editors.ChartAutoSaveSubState.load(); // uhhh
 	}
 	
 	public static function load()
 	{
-		if(saveFile.data.volume != null)
-			FlxG.sound.volume = saveFile.data.volume;
-		if(saveFile.data.muted != null)
-			FlxG.sound.muted  = saveFile.data.muted;
+		if(saveSettings.data.volume != null)
+			FlxG.sound.volume = saveSettings.data.volume;
+		if(saveSettings.data.muted != null)
+			FlxG.sound.muted  = saveSettings.data.muted;
 
-		if(saveFile.data.settings == null || Lambda.count(displaySettings) != Lambda.count(saveFile.data.settings))
+		if(saveSettings.data.settings == null || Lambda.count(displaySettings) != Lambda.count(saveSettings.data.settings))
 		{
 			for(key => values in displaySettings)
 				data[key] = values[0];
 			
-			saveFile.data.settings = data;
+			saveSettings.data.settings = data;
 		}
 		
-		data = saveFile.data.settings;
+		data = saveSettings.data.settings;
 		save();
 	}
 	
 	public static function save()
 	{
-		saveFile.data.settings = data;
-		saveFile.flush();
+		saveSettings.data.settings = data;
+		saveSettings.flush();
 		update();
 	}
 

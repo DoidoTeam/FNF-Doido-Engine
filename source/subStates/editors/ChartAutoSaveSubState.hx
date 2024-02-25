@@ -27,7 +27,7 @@ class ChartAutoSaveSubState extends MusicBeatSubState
 	public static function load()
 	{
 		saveFile = new FlxSave();
-		saveFile.bind("autosave", "DiogoTV/DoidoEngine");
+		saveFile.bind("autosave", Main.savePath);
 		
 		if (saveFile.data.autoSaveArray == null)
 			saveFile.data.autoSaveArray = autoSaveArray;

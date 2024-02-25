@@ -1,7 +1,7 @@
 package gameObjects;
 
-import haxe.Json;
-import flixel.FlxG;
+//import haxe.Json;
+//import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import data.CharacterData.DoidoOffsets;
@@ -19,6 +19,7 @@ class Character extends FlxSprite
 
 	public var holdTimer:Float = Math.NEGATIVE_INFINITY;
 	public var holdLength:Float = 0.7;
+	public var holdLoop:Int = 4;
 
 	public var idleAnims:Array<String> = [];
 
@@ -38,6 +39,7 @@ class Character extends FlxSprite
 	{
 		this.curChar = curChar;
 
+		holdLoop = 4;
 		holdLength = 0.7;
 		idleAnims = ["idle"];
 
@@ -178,21 +180,23 @@ class Character extends FlxSprite
 
 				flipX = true;
 
-			case "gf":
+			case "gf" | "gf-tutorial":
 				// GIRLFRIEND CODE
-				frames = Paths.getSparrowAtlas('characters/gf/GF_assets');
-				animation.addByPrefix('cheer', 		'GF Cheer', 24, false);
-				animation.addByPrefix('singLEFT', 	'GF left note', 24, false);
-				animation.addByPrefix('singRIGHT', 	'GF Right Note', 24, false);
-				animation.addByPrefix('singUP', 	'GF Up Note', 24, false);
-				animation.addByPrefix('singDOWN', 	'GF Down Note', 24, false);
-				
+				frames = Paths.getSparrowAtlas('characters/gf/GF_assets' + ((curChar == "gf-tutorial") ? "_singer" : ""));
+				animation.addByPrefix('cheer', 'GF Cheer', 24, false);
+				if(curChar == 'gf-tutorial')
+				{
+					animation.addByPrefix('singLEFT', 	'GF left note', 24, false);
+					animation.addByPrefix('singRIGHT', 	'GF Right Note', 24, false);
+					animation.addByPrefix('singUP', 	'GF Up Note', 24, false);
+					animation.addByPrefix('singDOWN', 	'GF Down Note', 24, false);
+				}
 				animation.addByIndices('sad', 		'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, false);
 				animation.addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 				animation.addByIndices('danceRight','GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-				animation.addByIndices('hairBlow', 	"GF Dancing Beat Hair blowing", [0, 1, 2, 3], "", 24);
-				animation.addByIndices('hairFall', 	"GF Dancing Beat Hair Landing", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "", 24, false);
-				animation.addByPrefix('scared', 	'GF FEAR', 24);
+				//animation.addByIndices('hairBlow', 	"GF Dancing Beat Hair blowing", [0, 1, 2, 3], "", 24);
+				//animation.addByIndices('hairFall', 	"GF Dancing Beat Hair Landing", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "", 24, false);
+				animation.addByPrefix('scared', 'GF FEAR', 24);
 
 				idleAnims = ["danceLeft", "danceRight"];
 				quickDancer = true;
@@ -206,6 +210,11 @@ class Character extends FlxSprite
 				animation.addByPrefix('singRIGHT', 	'Dad Sing Note RIGHT', 	24, false);
 				animation.addByPrefix('singDOWN', 	'Dad Sing Note DOWN', 	24, false);
 				animation.addByPrefix('singLEFT', 	'Dad Sing Note LEFT', 	24, false);
+
+				animation.addByIndices('idle-loop', 	'Dad idle dance',  [11,12,13,14], "", 24, true);
+				animation.addByIndices('singUP-loop', 	'Dad Sing Note UP',    [3,4,5,6], "", 24, true);
+				animation.addByIndices('singRIGHT-loop','Dad Sing Note RIGHT', [3,4,5,6], "", 24, true);
+				animation.addByIndices('singLEFT-loop', 'Dad Sing Note LEFT',  [3,4,5,6], "", 24, true);
 
 			default:
 				return reloadChar(isPlayer ? "bf" : "dad");
@@ -266,6 +275,9 @@ class Character extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		if(animation.getByName(animation.curAnim.name + '-loop') != null)
+			if(animation.curAnim.finished)
+				playAnim(animation.curAnim.name + '-loop');
 	}
 
 	// animation handler
