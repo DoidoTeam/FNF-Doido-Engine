@@ -10,7 +10,7 @@ typedef Library = {
 	ref:String, url:String
 }
 
-class Main {
+class Setup {
 	public static function main():Void {
 		// Create a folder to prevent messing with hmm libraries
 		if (!FileSystem.exists(".haxelib"))

@@ -21,8 +21,6 @@ jobs:
           haxelib install hxcpp > /dev/null --quiet
           haxe -cp ./ -D analyzer-optimize -main Setup --interp
         shell: cmd
-      - name: Create Version Tag
-        run: echo "${{github.run_id}}" > VERSION
       - name: Compile
         run: haxelib run lime build windows
       - name: Publish Artifact
