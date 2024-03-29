@@ -37,7 +37,7 @@
 
 	<!-- _____________________________ Custom Defines ___________________________ -->
 
-	<define name="DISCORD_RPC" if="desktop" unless="web || neko" />
+	<define name="DISCORD_RPC" if="no" unless="web || neko" />
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
