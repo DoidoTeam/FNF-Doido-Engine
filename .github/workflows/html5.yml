@@ -20,8 +20,7 @@ jobs:
         shell: cmd
       - name: Compile
         run: haxelib run lime build html5
-      - name: Commit changes
-              uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@v5
               with:
                 commit_message: {{github.run_id}}
                 branch: html5-builds
