@@ -6,7 +6,7 @@
 ## a friday night at freddys engine
 
 ### YOU CAN ONLY COMPILE TO WINDOWS, LINUX AND HTML5 FOR NOW
-# note on html5: this is still a huge wip but you can test it out and if you find any bugs please report them
+### note on html5: this is still a huge wip but you can test it out and if you find any bugs please report them
 this engine is basically the base friday night funkin' engine but rewritten entirelly from scratch in my way of codin', still uses haxeflixel btw
 
 
