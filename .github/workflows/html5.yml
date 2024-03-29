@@ -21,10 +21,10 @@ jobs:
       - name: Compile
         run: haxelib run lime build html5
       - uses: stefanzweifel/git-auto-commit-action@v5
-              with:
-                commit_message: {{github.run_id}}
-                branch: html5-builds
-                commit_options: '--no-verify --signoff'
-                commit_author: Author <actions@github.com>
-                status_options: '--untracked-files=no'
-                skip_dirty_check: true
+        with:
+          commit_message: {{github.run_id}}
+          branch: html5-builds
+          commit_options: '--no-verify --signoff'
+          commit_author: Author <actions@github.com>
+          status_options: '--untracked-files=no'
+          skip_dirty_check: true
