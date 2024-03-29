@@ -6,9 +6,9 @@
 ## a friday night at freddys engine
 
 ### YOU CAN ONLY COMPILE TO WINDOWS, LINUX AND HTML5 FOR NOW
-
+#note on html5: this is still a huge wip but you can test it out and if you find any bugs please report them
 this engine is basically the base friday night funkin' engine but rewritten entirelly from scratch in my way of codin', still uses haxeflixel btw
-note on html5: this is still a huge wip but you can test it out and if you find any bugs please report them
+
 
 ### [Haxe version is 4.3.3](https://haxe.org/download/version/4.3.3/)
 uhhh you gonna need the libraries too hold on
