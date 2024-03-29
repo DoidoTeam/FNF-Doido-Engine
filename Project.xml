@@ -37,14 +37,14 @@
 
 	<!-- _____________________________ Custom Defines ___________________________ -->
 
-	<define name="DISCORD_RPC" if="no" unless="web || neko" />
+	<define name="DISCORD_RPC" if="desktop" unless="web || neko" />
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
 	<haxelib name="flixel-ui" />
-	<haxelib name="discord_rpc" if="DISCORD_RPC"/>
+	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC"/>
 
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->

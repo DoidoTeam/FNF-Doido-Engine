@@ -101,6 +101,11 @@ class SaveData
 			CHECKMARK,
 			"Freezes the game when unfocusing the window",
 		],
+		'Discord RPC' => [
+			true,
+			CHECKMARK,
+			"Whether to use Discord's game activity.",
+		],
 		'Hitsounds' => [
 			"OFF",
 			SELECTOR,

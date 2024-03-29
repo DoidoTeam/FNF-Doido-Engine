@@ -12,6 +12,7 @@ class Init extends MusicBeatState
 	{
 		super.create();
 		SaveData.init();
+		data.Discord.DiscordClient.prepare();
 				
 		FlxG.fixedTimestep = false;
 		FlxG.mouse.useSystemCursor = true;

@@ -26,11 +26,11 @@
         "version": "2.5.0"
       },
       {
-        "name": "discord_rpc",
+        "name": "hxdiscord_rpc",
         "type": "git",
         "dir": null,
-        "ref": "master",
-        "url": "https://github.com/Aidan63/linc_discord-rpc"
+        "ref": "main",
+        "url": "https://github.com/MAJigsaw77/hxdiscord_rpc"
       }
     ]
   }

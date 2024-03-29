@@ -19,7 +19,7 @@ openfl 9.3.0
 flixel 5.6.0
 flixel-addons 3.2.1
 flixel-ui 2.5.0
-discord_rpc https://github.com/Aidan63/linc_discord-rpc
+hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ```
 if you're dumb (like me) follow these steps
 1. if a library has a number in front of it then you put haxelib install behind it
@@ -27,7 +27,7 @@ if you're dumb (like me) follow these steps
 #### example:
 ```
 haxelib install flixel 5.6.0
-haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
+haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ```
 #### you should be good to compile the engine now (probably)
 there are a few extra things to compile but those are at [FNF's Source Code](https://github.com/FunkinCrew/Funkin) so im not gonna teach ya ``>:]``
