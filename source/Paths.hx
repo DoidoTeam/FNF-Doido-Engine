@@ -164,7 +164,7 @@ class Paths
 		#if !html5
 		try
 		{
-			var rawList = FileSystem.readDirectory(getPath(dir));
+			var rawList = sys.FileSystem.readDirectory(getPath(dir));
 			for(i in 0...rawList.length)
 			{
 				if(type != null)
