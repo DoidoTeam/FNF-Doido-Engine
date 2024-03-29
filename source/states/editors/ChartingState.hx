@@ -41,7 +41,7 @@ import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.media.Sound;
 import openfl.net.FileReference;
-import sys.FileSystem;
+
 
 using StringTools;
 
@@ -1085,7 +1085,7 @@ class ChartingState extends MusicBeatState
 				ChartAutoSaveSubState.addSave(SONG, songDiff);
 				PlayState.SONG = SONG;
 				//Main.switchState(new PlayState());
-				Main.switchState(new LoadSongState());
+				Main.loadPlayState();
 			}
 			
 			if(FlxG.keys.justPressed.ESCAPE)

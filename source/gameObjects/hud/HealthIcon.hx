@@ -3,7 +3,6 @@ package gameObjects.hud;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
-import sys.FileSystem;
 
 class HealthIcon extends FlxSprite
 {
@@ -19,7 +18,7 @@ class HealthIcon extends FlxSprite
 	public function setIcon(curIcon:String = "face", isPlayer:Bool = false):HealthIcon
 	{
 		this.curIcon = curIcon;
-		if(!FileSystem.exists('assets/images/icons/icon-${curIcon}.png'))
+		if(!Paths.fileExists('images/icons/icon-${curIcon}.png'))
 		{
 			if(curIcon.contains('-'))
 				return setIcon(CoolUtil.formatChar(curIcon), isPlayer);

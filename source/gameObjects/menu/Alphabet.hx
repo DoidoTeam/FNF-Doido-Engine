@@ -33,6 +33,7 @@ class Alphabet extends FlxSpriteGroup
 	public function set_text(v:String):String
 	{
 		text = v;
+		text = Std.string(text);
 		textArray = text.split("");
 		typeTxt();
 		return v;

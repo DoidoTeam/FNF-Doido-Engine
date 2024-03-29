@@ -1,8 +1,11 @@
 package data;
 
-import Sys.sleep;
 #if DISCORD_RPC
 import discord_rpc.DiscordRpc;
+#end
+
+#if !html5
+import Sys.sleep;
 #end
 
 using StringTools;

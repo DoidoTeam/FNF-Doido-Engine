@@ -28,10 +28,14 @@ class OptionsSubState extends MusicBeatSubState
         "preferences" => [
             "Cutscenes",
             "Countdown on Unpause",
+            #if !html5
 			"Framerate Cap",
             "FPS Counter",
+            #end
             "Flashing Lights",
+            #if !html5
             "Unfocus Freeze",
+            #end
         ],
 		"gameplay" => [
 			"Ghost Tapping",
@@ -41,7 +45,9 @@ class OptionsSubState extends MusicBeatSubState
             "Hitsound Volume",
 		],
 		"appearance" => [
+            #if !html5
 			"Antialiasing",
+            #end
             "Single Rating",
 			"Note Splashes",
 			"Ratings on HUD",
@@ -66,7 +72,7 @@ class OptionsSubState extends MusicBeatSubState
     // anything else already updates automatically
     var playState:PlayState = null;
     
-    var curCat:String = 'main';
+    var curCat:String = 'gameplay';
 
     var curSelected:Int = 0;
     var storedSelected:Map<String, Int> = [];
@@ -89,7 +95,10 @@ class OptionsSubState extends MusicBeatSubState
     {
         super();
         this.playState = playState;
+
+        #if !html5
         CoolUtil.playMusic('lilBitBack');
+        #end
         DiscordClient.changePresence("Options Menu - Tweakin' the settings", null);
 
         bg = new FlxSprite();

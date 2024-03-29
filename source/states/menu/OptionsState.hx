@@ -8,6 +8,7 @@ class OptionsState extends MusicBeatState
     override function create()
     {
         super.create();
+
         var options = new OptionsSubState();
         
         openSubState(options);

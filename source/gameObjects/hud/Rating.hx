@@ -7,7 +7,6 @@ import flixel.group.FlxSpriteGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import data.Conductor;
-import sys.FileSystem;
 
 using StringTools;
 
@@ -98,7 +97,7 @@ class Rating extends FlxGroup
 		var numberMod:String = assetModifier;
 		
 		function checkExist(filePath:String):Bool
-			return FileSystem.exists(Paths.getPath('images/hud/$assetModifier/$filePath.png'));
+			return Paths.fileExists('images/hud/$assetModifier/$filePath.png');
 		
 		if(!checkExist('ratings')) ratingMod = "base";
 		if(!checkExist('numbers')) numberMod = "base";
@@ -128,7 +127,7 @@ class RatingFNF extends FlxSprite
 	public function new(rating:String, assetModifier:String = "base")
 	{
 		super();
-		if(!FileSystem.exists(Paths.getPath('images/hud/$assetModifier/ratings.png')))
+		if(!Paths.fileExists('images/hud/$assetModifier/ratings.png'))
 			assetModifier = "base";
 		
 		var daGraph = Paths.image('hud/$assetModifier/ratings');
@@ -169,7 +168,7 @@ class NumberFNF extends FlxSpriteGroup
 	public function new(number:Int, assetModifier:String = "base")
 	{
 		super();
-		if(!FileSystem.exists(Paths.getPath('images/hud/$assetModifier/numbers.png')))
+		if(!Paths.fileExists('images/hud/$assetModifier/numbers.png'))
 			assetModifier = "base";
 		
 		var numArray:Array<String> = Std.string(number).split("");

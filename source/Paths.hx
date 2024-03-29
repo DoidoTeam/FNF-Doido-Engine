@@ -10,8 +10,6 @@ import lime.utils.Assets;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
 import states.PlayState;
-import sys.FileSystem;
-import sys.io.File;
 
 using StringTools;
 
@@ -25,26 +23,40 @@ class Paths
 		return 'assets/$key';
 	
 	public static function fileExists(filePath:String):Bool
-		return FileSystem.exists(getPath(filePath));
+		#if !html5
+		return sys.FileSystem.exists(getPath(filePath));
+		#else
+		return openfl.Assets.exists(getPath(filePath));
+		#end
 	
 	public static function getSound(key:String):Sound
 	{
-		if(!renderedSounds.exists(key))
+		if(!renderedSounds.exists(key)) {
+			#if desktop
 			renderedSounds.set(key, Sound.fromFile(getPath('$key.ogg')));
+			#else
+			renderedSounds.set(key, openfl.Assets.getSound(getPath('$key.ogg')));
+			#end
+		}
+
 		
 		return renderedSounds.get(key);
 	}
 	public static function getGraphic(key:String):FlxGraphic
 	{
 		var path = getPath('images/$key.png');
-		if(FileSystem.exists(path))
+		if(Paths.fileExists('images/$key.png'))
 		{
 			if(!renderedGraphics.exists(key))
 			{
+				#if desktop
 				var bitmap = BitmapData.fromFile(path);
+				#else
+				var bitmap = openfl.Assets.getBitmapData(path);
+				#end
 				
 				var newGraphic = FlxGraphic.fromBitmapData(bitmap, false, key, false);
-				trace('created new image $key');
+				//trace('created new image $key');
 				
 				renderedGraphics.set(key, newGraphic);
 			}
@@ -115,9 +127,16 @@ class Paths
 	public static function text(key:String):String
 		return Assets.getText(getPath('$key.txt')).trim();
 
+	public static function getContent(filePath:String):String
+		#if desktop
+		return sys.io.File.getContent(getPath(filePath));
+		#else
+		return openfl.Assets.getText(getPath(filePath));
+		#end
+
 	public static function json(key:String):Dynamic
 	{
-		var rawJson = File.getContent(getPath('$key.json')).trim();
+		var rawJson = getContent('$key.json').trim();
 
 		while(!rawJson.endsWith("}"))
 			rawJson = rawJson.substr(0, rawJson.length - 1);
@@ -142,6 +161,7 @@ class Paths
 	{
 		var theList:Array<String> = [];
 		
+		#if !html5
 		try
 		{
 			var rawList = FileSystem.readDirectory(getPath(dir));
@@ -163,6 +183,7 @@ class Paths
 					theList.push(rawList[i]);
 			}
 		} catch(e) {}
+		#end
 		
 		trace(theList);
 		return theList;

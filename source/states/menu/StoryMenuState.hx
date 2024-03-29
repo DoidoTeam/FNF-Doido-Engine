@@ -197,7 +197,7 @@ class StoryMenuState extends MusicBeatState
 					
 					//CoolUtil.playMusic();
 					//Main.switchState(new PlayState());
-					Main.switchState(new LoadSongState());
+					Main.loadPlayState();
 				});
 			}
 			

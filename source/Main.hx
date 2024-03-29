@@ -10,10 +10,13 @@ import lime.app.Application;
 import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
-import sys.FileSystem;
-import sys.io.File;
 import openfl.Lib;
 import data.Discord.DiscordClient;
+
+#if !html5
+import sys.FileSystem;
+import sys.io.File;
+#end
 
 using StringTools;
 
@@ -26,7 +29,10 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+
+		#if !html5
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
+		#end
 
 		#if DISCORD_RPC
 		if (!DiscordClient.isInitialized) {
@@ -96,6 +102,16 @@ class Main extends Sprite
 		}
 	}
 
+	public static function loadPlayState() {
+		#if html5
+		states.PlayState.resetStatics();
+		Main.switchState(new states.PlayState());
+		#else
+		Main.switchState(new states.LoadSongState());
+		#end
+	}
+	
+	#if !html5
 	function onCrash(e:UncaughtErrorEvent):Void
 	{
 		var errMsg:String = "";
@@ -133,4 +149,5 @@ class Main extends Sprite
 		DiscordClient.shutdown();
 		Sys.exit(1);
 	}
+	#end
 }

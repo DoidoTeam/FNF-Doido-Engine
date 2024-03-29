@@ -163,7 +163,7 @@ class FreeplayState extends MusicBeatState
 				PlayState.songDiff = diff;
 				
 				//Main.switchState(new PlayState());
-				Main.switchState(new LoadSongState());
+				Main.loadPlayState();
 			}
 			catch(e)
 			{

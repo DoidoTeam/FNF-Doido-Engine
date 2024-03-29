@@ -3,8 +3,6 @@ package data;
 import haxe.Json;
 import haxe.format.JsonParser;
 import lime.utils.Assets;
-import sys.FileSystem;
-import sys.io.File;
 
 using StringTools;
 
@@ -68,7 +66,7 @@ class SongData
 	{
 		var formatPath = jsonInput + '-' + diff;
 		
-		if(!FileSystem.exists(Paths.getPath('songs/$jsonInput/$formatPath.json')))
+		if(!Paths.fileExists('songs/$jsonInput/$formatPath.json'))
 			formatPath = '$jsonInput';
 			
 		trace('$jsonInput/$formatPath');

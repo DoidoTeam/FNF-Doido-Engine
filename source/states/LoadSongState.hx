@@ -12,6 +12,8 @@ import data.SongData.SwagSong;
 import gameObjects.*;
 import gameObjects.hud.*;
 import gameObjects.hud.note.*;
+
+#if !html5
 import sys.thread.Mutex;
 import sys.thread.Thread;
 
@@ -22,8 +24,9 @@ import sys.thread.Thread;
 class LoadSongState extends MusicBeatState
 {
 	var threadActive:Bool = true;
+
 	var mutex:Mutex;
-	
+
 	var behind:FlxGroup;
 	var bg:FlxSprite;
 	
@@ -39,7 +42,10 @@ class LoadSongState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+
+		#if !html5
 		mutex = new Mutex();
+		#end
 		
 		behind = new FlxGroup();
 		add(behind);
@@ -66,7 +72,7 @@ class LoadSongState extends MusicBeatState
 		PlayState.resetStatics();
 		var assetModifier = PlayState.assetModifier;
 		var SONG = PlayState.SONG;
-		
+
 		var preloadThread = Thread.create(function()
 		{
 			mutex.acquire();
@@ -147,6 +153,7 @@ class LoadSongState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
 		if(!threadActive && !byeLol && loadBar.scale.x >= 0.98)
 		{
 			byeLol = true;
@@ -164,6 +171,7 @@ class LoadSongState extends MusicBeatState
 		var bgCalc = FlxMath.lerp(bg.scale.x, 0.75, elapsed * 6);
 		bg.scale.set(bgCalc, bgCalc);
 		bg.updateHitbox();
+		bg.screenCenter();
 		
 		changeBarSize(FlxMath.lerp(loadBar.scale.x, loadPercent, elapsed * 6));
 	}
@@ -175,3 +183,4 @@ class LoadSongState extends MusicBeatState
 		loadBar.screenCenter(X);
 	}
 }
+#end
