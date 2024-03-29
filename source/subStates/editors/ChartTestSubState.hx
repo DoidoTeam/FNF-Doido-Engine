@@ -20,7 +20,9 @@ import flixel.addons.ui.FlxUICheckBox;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.util.FlxTimer;
 import data.*;
+#if DISCORD_RPC
 import data.Discord.DiscordClient;
+#end
 import data.SongData.SwagSong;
 import data.SongData.SwagSection;
 import data.chart.*;
@@ -207,7 +209,9 @@ class ChartTestSubState extends MusicBeatSubState
 		add(modGrp);
 		
 		// Updating Discord Rich Presence and making notes invisible before the countdown
+		#if DISCORD_RPC
 		DiscordClient.changePresence("Testing: " + SONG.song.toUpperCase().replace("-", " "), null);
+		#end
 	}
 	
 	function updateInfo()

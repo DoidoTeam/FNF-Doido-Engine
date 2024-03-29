@@ -1,7 +1,9 @@
 package states.menu;
 
 import subStates.OptionsSubState;
+#if DISCORD_RPC
 import data.Discord.DiscordClient;
+#end
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -38,7 +40,9 @@ class MainMenuState extends MusicBeatState
 			optionShit.remove('donate');
 		#end
 		
+		#if DISCORD_RPC
 		DiscordClient.changePresence("Main Menu", null);
+		#end
 		//persistentUpdate = true;
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuBG'));

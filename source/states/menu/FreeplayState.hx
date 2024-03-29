@@ -1,6 +1,8 @@
 package states.menu;
 
+#if DISCORD_RPC
 import data.Discord.DiscordClient;
+#end
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxObject;
@@ -55,7 +57,10 @@ class FreeplayState extends MusicBeatState
 	{
 		super.create();
 		CoolUtil.playMusic("freakyMenu");
+
+		#if DISCORD_RPC
 		DiscordClient.changePresence("Freeplay - Choosin' a track", null);
+		#end
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
 		bg.scale.set(1.2,1.2); bg.updateHitbox();

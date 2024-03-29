@@ -11,7 +11,10 @@ import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
 import openfl.Lib;
+
+#if DISCORD_RPC
 import data.Discord.DiscordClient;
+#end
 
 #if !html5
 import sys.FileSystem;

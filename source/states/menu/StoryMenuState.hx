@@ -1,6 +1,8 @@
 package states.menu;
 
+#if DISCORD_RPC
 import data.Discord.DiscordClient;
+#end
 import subStates.DeleteScoreSubState;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -61,7 +63,11 @@ class StoryMenuState extends MusicBeatState
 		super.create();
 		preloadAssets();
 		CoolUtil.playMusic("freakyMenu");
+
+		#if DISCORD_RPC
 		DiscordClient.changePresence("Story Mode - Choosin' a week", null);
+		#end
+		
 		addWeek(
 			"tutorial",
 			"funky beginnings",

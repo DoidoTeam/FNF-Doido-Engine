@@ -3,7 +3,9 @@ package subStates;
 import flixel.text.FlxText;
 import flixel.addons.display.FlxSliceSprite;
 import SaveData.SettingType;
+#if DISCORD_RPC
 import data.Discord.DiscordClient;
+#end
 import flixel.FlxBasic;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -99,7 +101,9 @@ class OptionsSubState extends MusicBeatSubState
         #if !html5
         CoolUtil.playMusic('lilBitBack');
         #end
+        #if DISCORD_RPC
         DiscordClient.changePresence("Options Menu - Tweakin' the settings", null);
+        #end
 
         bg = new FlxSprite();
         if(playState == null)

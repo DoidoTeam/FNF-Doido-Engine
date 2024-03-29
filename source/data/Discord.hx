@@ -1,16 +1,21 @@
 package data;
 
-import Sys.sleep;
 import lime.app.Application;
+
+#if !html5
+import Sys.sleep;
 import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
+#end
 
 class DiscordClient
 {
 	public static var isInitialized:Bool = false;
 	private static final _defaultID:String = "1125409482101493823";
 	public static var clientID(default, set):String = _defaultID;
+	#if !html5
 	private static var presence:DiscordRichPresence = DiscordRichPresence.create();
+	#end
 
 	public static function check()
 	{
@@ -113,15 +118,17 @@ class DiscordClient
 		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
 
-	public static function updatePresence()
+	public static function updatePresence() {
 		#if DISCORD_RPC
 		Discord.UpdatePresence(cpp.RawConstPointer.addressOf(presence));
 		#end
+	}
 	
-	public static function resetClientID()
+	public static function resetClientID() {
 		#if DISCORD_RPC
 		clientID = _defaultID;
 		#end
+	}
 
 	private static function set_clientID(newID:String)
 	{
