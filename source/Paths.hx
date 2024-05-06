@@ -1,11 +1,11 @@
 package;
 
-import haxe.Json;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.sound.FlxSound;
+import haxe.Json;
 import lime.utils.Assets;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
@@ -198,7 +198,6 @@ class Paths
 		];
 		var preSounds:Array<String> = [
 			//"sounds/countdown/intro3",
-			
 			"music/death/deathSound",
 			"music/death/deathMusic",
 			"music/death/deathMusicEnd",
