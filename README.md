@@ -14,11 +14,11 @@ this engine is basically the base friday night funkin' engine but rewritten enti
 uhhh you gonna need the libraries too hold on
 ### LIBRARIES
 ```
-lime 8.1.1
-openfl 9.3.0
-flixel 5.6.0
-flixel-addons 3.2.1
-flixel-ui 2.5.0
+lime 8.1.2
+openfl 9.3.3
+flixel 5.8.0
+flixel-addons 3.2.2
+flixel-ui 2.6.1
 hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ```
 if you're dumb (like me) follow these steps
@@ -26,7 +26,7 @@ if you're dumb (like me) follow these steps
 2. if it has a link in front of it then put haxelib git behind it
 #### example:
 ```
-haxelib install flixel 5.6.0
+haxelib install flixel 5.8.0
 haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ```
 #### you should be good to compile the engine now (probably)
