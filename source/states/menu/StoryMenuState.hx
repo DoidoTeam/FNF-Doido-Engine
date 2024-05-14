@@ -197,13 +197,11 @@ class StoryMenuState extends MusicBeatState
 					PlayState.isStoryMode = true;
 					PlayState.weekScore = 0;
 					
-					PlayState.SONG = SongData.loadFromJson(daWeek.songList[0], curDiff);
 					PlayState.playList = daWeek.songList;
 					PlayState.playList.remove(daWeek.songList[0]);
+					PlayState.loadSong(daWeek.songList[0]);
 					
-					//CoolUtil.playMusic();
-					//Main.switchState(new PlayState());
-					Main.loadPlayState();
+					Main.switchState(new LoadSongState());
 				});
 			}
 			

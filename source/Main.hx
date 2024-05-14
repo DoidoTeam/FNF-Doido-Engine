@@ -33,7 +33,7 @@ class Main extends Sprite
 	{
 		super();
 
-		#if !html5
+		#if desktop
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 		#end
 
@@ -104,17 +104,8 @@ class Main extends Sprite
 			FlxG.updateFramerate = newFps;
 		}
 	}
-
-	public static function loadPlayState() {
-		#if html5
-		states.PlayState.resetStatics();
-		Main.switchState(new states.PlayState());
-		#else
-		Main.switchState(new states.LoadSongState());
-		#end
-	}
 	
-	#if !html5
+	#if desktop
 	function onCrash(e:UncaughtErrorEvent):Void
 	{
 		var errMsg:String = "";

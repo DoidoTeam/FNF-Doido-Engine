@@ -24,15 +24,12 @@ class HudClass extends FlxGroup
 
 	// health bar
 	public var healthBar:HealthBar;
-	var smoothBar:Bool = true;
 	
 	public var health:Float = 1;
 
 	public function new()
 	{
 		super();
-		smoothBar = SaveData.data.get('Smooth Healthbar');
-
 		ratingGrp = new FlxGroup();
 		add(ratingGrp);
 		
@@ -137,7 +134,7 @@ class HudClass extends FlxGroup
 	{
 		super.update(elapsed);
 		health = FlxMath.lerp(health, PlayState.health, elapsed * 8);
-		if(Math.abs(health - PlayState.health) <= 0.00001 || !smoothBar)
+		if(Math.abs(health - PlayState.health) <= 0.00001)
 			health = PlayState.health;
 		
 		healthBar.percent = (health * 50);

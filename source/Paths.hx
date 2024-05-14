@@ -23,23 +23,24 @@ class Paths
 		return 'assets/$key';
 	
 	public static function fileExists(filePath:String):Bool
-		#if !html5
-		return sys.FileSystem.exists(getPath(filePath));
-		#else
+		#if desktop
 		return openfl.Assets.exists(getPath(filePath));
+		#else
+		return sys.FileSystem.exists(getPath(filePath));
 		#end
 	
 	public static function getSound(key:String):Sound
 	{
-		if(!renderedSounds.exists(key)) {
-			#if desktop
-			renderedSounds.set(key, Sound.fromFile(getPath('$key.ogg')));
-			#else
-			renderedSounds.set(key, openfl.Assets.getSound(getPath('$key.ogg')));
-			#end
+		if(!renderedSounds.exists(key))
+		{
+			renderedSounds.set(key,
+				#if desktop
+				Sound.fromFile(getPath('$key.ogg'))
+				#else
+				openfl.Assets.getSound(getPath('$key.ogg'))
+				#end
+			);
 		}
-
-		
 		return renderedSounds.get(key);
 	}
 	public static function getGraphic(key:String):FlxGraphic
@@ -161,14 +162,12 @@ class Paths
 	{
 		var theList:Array<String> = [];
 		
-		#if !html5
-		try
-		{
+		try {
+			#if desktop
 			var rawList = sys.FileSystem.readDirectory(getPath(dir));
 			for(i in 0...rawList.length)
 			{
-				if(type != null)
-				{
+				if(type != null) {
 					// 
 					if(!rawList[i].endsWith(type))
 						rawList[i] = "";
@@ -182,8 +181,9 @@ class Paths
 				if(rawList[i] != "")
 					theList.push(rawList[i]);
 			}
+			#end
 		} catch(e) {}
-		#end
+		
 		
 		trace(theList);
 		return theList;

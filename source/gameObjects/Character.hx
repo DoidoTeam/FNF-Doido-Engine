@@ -24,7 +24,7 @@ class Character extends FlxSprite
 	public var idleAnims:Array<String> = [];
 
 	public var quickDancer:Bool = false;
-	public var specialAnim:Bool = false;
+	public var specialAnim:Int = 0;
 
 	// warning, only uses this
 	// if the current character doesnt have game over anims
@@ -157,6 +157,36 @@ class Character extends FlxSprite
 				isPixelSprite = true;
 				quickDancer = true;
 				flipX = isPlayer;
+			
+			case 'luano-day'|'luano-night':
+				frames = Paths.getSparrowAtlas('characters/luano/luano');
+
+				var pref:String = (curChar == 'luano-night') ? 'night ' : '';
+
+				animation.addByPrefix('idle', 		'${pref}idle', 24, false);
+				animation.addByPrefix('singLEFT', 	'${pref}left', 24, false);
+				animation.addByPrefix('singDOWN', 	'${pref}down', 24, false);
+				animation.addByPrefix('singUP', 	'${pref}up',   24, false);
+				animation.addByPrefix('singRIGHT', 	'${pref}right',24, false);
+				animation.addByPrefix('jump', 		'${pref}jump',24, false);
+
+				holdLoop = 0;
+			
+			case 'spooky'|'spooky-player':
+				frames = Paths.getSparrowAtlas('characters/spooky/SpookyKids');
+
+				animation.addByIndices('danceLeft',	'Idle', [0,2,4,8], 		"", 12, false);
+				animation.addByIndices('danceRight','Idle', [10,12,14,16], 	"", 12, false);
+				var leftRight:Array<String> = ['singLEFT','singRIGHT'];
+				if(curChar == 'spooky-player')
+					leftRight.reverse();
+				animation.addByPrefix('${leftRight[0]}','SingLEFT', 24, false);
+				animation.addByPrefix('singDOWN', 		'SingDOWN', 24, false);
+				animation.addByPrefix('singUP', 		'SingUP',   24, false);
+				animation.addByPrefix('${leftRight[1]}','SingRIGHT',24, false);
+				
+				idleAnims = ["danceLeft", "danceRight"];
+				quickDancer = true;
 				
 			case "bf":
 				frames = Paths.getSparrowAtlas("characters/bf/BOYFRIEND");
@@ -259,7 +289,7 @@ class Character extends FlxSprite
 
 	public function dance(forced:Bool = false)
 	{
-		if(specialAnim) return;
+		if(specialAnim > 0) return;
 
 		switch(curChar)
 		{
@@ -278,6 +308,12 @@ class Character extends FlxSprite
 		if(animation.getByName(animation.curAnim.name + '-loop') != null)
 			if(animation.curAnim.finished)
 				playAnim(animation.curAnim.name + '-loop');
+		
+		if(specialAnim == 2 && animation.curAnim.finished)
+		{
+			specialAnim = 0;
+			dance();
+		}
 	}
 
 	// animation handler
@@ -288,8 +324,10 @@ class Character extends FlxSprite
 
 	public function playAnim(animName:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0)
 	{
+		if(!animation.exists(animName)) return;
+		
 		animation.play(animName, forced, reversed, frame);
-
+		
 		try
 		{
 			var daOffset = animOffsets.get(animName);

@@ -13,9 +13,10 @@ import gameObjects.*;
 import gameObjects.hud.*;
 import gameObjects.hud.note.*;
 
-#if !html5
+#if PRELOAD_SONG
 import sys.thread.Mutex;
 import sys.thread.Thread;
+#end
 
 /*
 *	preloads all the stuff before going into playstate
@@ -25,7 +26,9 @@ class LoadSongState extends MusicBeatState
 {
 	var threadActive:Bool = true;
 
+	#if PRELOAD_SONG
 	var mutex:Mutex;
+	#end
 
 	var behind:FlxGroup;
 	var bg:FlxSprite;
@@ -42,11 +45,6 @@ class LoadSongState extends MusicBeatState
 	override function create()
 	{
 		super.create();
-
-		#if !html5
-		mutex = new Mutex();
-		#end
-		
 		behind = new FlxGroup();
 		add(behind);
 		
@@ -65,6 +63,12 @@ class LoadSongState extends MusicBeatState
 		loadBar.y = FlxG.height - loadBar.height - 8;
 		changeBarSize(0);
 		add(loadBar);
+
+		#if PRELOAD_SONG
+		mutex = new Mutex();
+		#else
+		var black = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFF000000);
+		#end
 		
 		var oldAnti:Bool = FlxSprite.defaultAntialiasing;
 		FlxSprite.defaultAntialiasing = false;
@@ -72,29 +76,58 @@ class LoadSongState extends MusicBeatState
 		PlayState.resetStatics();
 		var assetModifier = PlayState.assetModifier;
 		var SONG = PlayState.SONG;
+		var unspawnEvents = ChartLoader.getEvents(PlayState.EVENTS);
 
+		#if PRELOAD_SONG
 		var preloadThread = Thread.create(function()
 		{
 			mutex.acquire();
+		#end
 			Paths.preloadPlayStuff();
 			Rating.preload(assetModifier);
 			Paths.preloadGraphic('hud/base/healthBar');
-			var stageBuild = new Stage();
-			addBehind(stageBuild);
-			stageBuild.reloadStageFromSong(SONG.song);
 			
+			var stageBuild = new Stage();
+			stageBuild.reloadStageFromSong(SONG.song);
+			addBehind(stageBuild);
+
+			var playerChars:Array<String> = [SONG.player1];
+			var charList:Array<String> = [SONG.player1, SONG.player2, stageBuild.gfVersion];
+			for(daEvent in unspawnEvents)
+			{
+				switch(daEvent.eventName)
+				{
+					case 'Change Character':
+						charList.push(daEvent.value2);
+						switch(daEvent.value1)
+						{
+							case 'bf'|'boyfriend': playerChars.push(daEvent.value2);
+						}
+					case 'Change Stage':
+						stageBuild.reloadStage(daEvent.value1);
+						addBehind(stageBuild);
+						charList.push(stageBuild.gfVersion);
+				}
+			}
 			trace('preloaded stage and hud');
 			loadPercent = 0.2;
-			
-			var charList:Array<String> = [SONG.player1, SONG.player2, stageBuild.gfVersion];
 			for(i in charList)
 			{
 				var char = new Character();
-				char.isPlayer = (i == SONG.player1);
+				char.isPlayer = playerChars.contains(i);
 				char.reloadChar(i);
 				addBehind(char);
+
+				if(char.isPlayer
+				&& !charList.contains(char.deathChar))
+				{
+					var dead = new Character();
+					dead.isPlayer = true;
+					dead.reloadChar(char.deathChar);
+					addBehind(dead);
+				}
 				
-				//trace('preloaded $i');
+				//trace('preloaded char $i');
 				
 				if(i != stageBuild.gfVersion)
 				{
@@ -122,7 +155,7 @@ class LoadSongState extends MusicBeatState
 			var noteList:Array<Note> = ChartLoader.getChart(SONG);
 			for(note in noteList)
 			{
-				note.reloadNote(note.songTime, note.noteData, note.noteType, assetModifier);
+				note.updateData(note.songTime, note.noteData, note.noteType, assetModifier);
 				addBehind(note);
 				
 				thisStrumline.addSplash(note);
@@ -144,8 +177,10 @@ class LoadSongState extends MusicBeatState
 			trace('finished loading');
 			threadActive = false;
 			FlxSprite.defaultAntialiasing = oldAnti;
+		#if PRELOAD_SONG
 			mutex.release();
 		});
+		#end
 	}
 	
 	var byeLol:Bool = false;
@@ -183,4 +218,3 @@ class LoadSongState extends MusicBeatState
 		loadBar.screenCenter(X);
 	}
 }
-#end

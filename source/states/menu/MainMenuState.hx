@@ -1,6 +1,5 @@
 package states.menu;
 
-import subStates.OptionsSubState;
 #if DISCORD_RPC
 import data.Discord.DiscordClient;
 #end
@@ -56,6 +55,18 @@ class MainMenuState extends MusicBeatState
 		bgMag.updateHitbox();
 		bgMag.visible = false;
 		add(bgMag);
+		
+		if(FlxG.random.bool(0.001))
+		{
+			if(Paths.fileExists('images/herobrine.png'))
+			{
+				var herobrine = new FlxSprite(-300).loadGraphic(Paths.image('herobrine'));
+				herobrine.scale.set(4,4);
+				herobrine.updateHitbox();
+				herobrine.screenCenter(Y);
+				add(herobrine);
+			}
+		}
 		
 		grpOptions = new FlxTypedGroup<FlxSprite>();
 		add(grpOptions);

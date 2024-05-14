@@ -3,27 +3,27 @@
       {
         "name": "lime",
         "type": "haxelib",
-        "version": "8.1.1"
+        "version": "8.1.2"
       },
       {
         "name": "openfl",
         "type": "haxelib",
-        "version": "9.3.0"
+        "version": "9.3.3"
       },
       {
         "name": "flixel",
         "type": "haxelib",
-        "version": "5.6.0"
+        "version": "5.8.0"
       },
       {
         "name": "flixel-addons",
         "type": "haxelib",
-        "version": "3.2.1"
+        "version": "3.2.2"
       },
       {
         "name": "flixel-ui",
         "type": "haxelib",
-        "version": "2.5.0"
+        "version": "2.6.1"
       },
       {
         "name": "hxdiscord_rpc",

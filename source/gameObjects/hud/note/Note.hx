@@ -10,22 +10,25 @@ class Note extends FlxSprite
 	public function new()
 	{
 		super();
+		moves = false;
 		//reloadNote(0, 0, "default");
 	}
 
 	public var noteSize:Float = 1.0;
 	public var assetModifier:String = "base";
-	
-	public function reloadNote(songTime:Float, noteData:Int, ?noteType:String = "default", ?assetModifier:String = "base"):Note
+
+	public function updateData(songTime:Float, noteData:Int, ?noteType:String = "default", ?assetModifier:String = "base")
 	{
-		var storedPos:Array<Float> = [x, y];
 		this.songTime = initialSongTime = songTime;
 		this.noteData = noteData;
 		this.noteType = noteType;
 		this.assetModifier = assetModifier;
+	}
+	
+	public function reloadSprite():Note
+	{
 		noteSize = 1.0;
 		mustMiss = false;
-
 		var direction:String = CoolUtil.getDirection(noteData);
 		antialiasing = FlxSprite.defaultAntialiasing;
 		isPixelSprite = false;
@@ -108,8 +111,6 @@ class Note extends FlxSprite
 		scale.set(noteSize, noteSize);
 		updateHitbox();
 
-		moves = false;
-		setPosition(storedPos[0], storedPos[1]);
 		return this;
 	}
 
@@ -124,7 +125,10 @@ class Note extends FlxSprite
 	public var noteType:String = "default";
 
 	public function setSongOffset():Void
-		songTime = initialSongTime - SaveData.data.get('Song Offset');
+		songTime = initialSongTime - Conductor.musicOffset;
+
+	public function noteDiff():Float
+		return (songTime + Conductor.inputOffset - Conductor.songPos);
 
 	// in case you want to avoid notes this will do
 	public var mustMiss:Bool = false;
@@ -150,7 +154,6 @@ class Note extends FlxSprite
 	public var gotHeld:Bool = false;
 	
 	public var spawned:Bool = false;
-	//public var canDespawn:Bool = false;
 
 	override function update(elapsed:Float)
 	{

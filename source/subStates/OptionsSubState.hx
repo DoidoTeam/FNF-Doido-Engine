@@ -24,20 +24,20 @@ class OptionsSubState extends MusicBeatSubState
         "gameplay",
         "appearance",
         "controls",
+        "adjust offsets",
     ];
     var optionShit:Map<String, Array<String>> =
 	[
         "preferences" => [
-            "Cutscenes",
-            "Countdown on Unpause",
-            #if !html5
+            #if desktop
+            "Window Size",
 			"Framerate Cap",
             "FPS Counter",
-            #end
-            "Flashing Lights",
-            #if !html5
             "Unfocus Freeze",
             #end
+            "Cutscenes",
+            "Countdown on Unpause",
+            "Flashing Lights",
         ],
 		"gameplay" => [
 			"Ghost Tapping",
@@ -47,14 +47,13 @@ class OptionsSubState extends MusicBeatSubState
             "Hitsound Volume",
 		],
 		"appearance" => [
-            #if !html5
+            #if desktop
 			"Antialiasing",
             #end
             "Single Rating",
 			"Note Splashes",
 			"Ratings on HUD",
 			"Song Timer",
-			"Smooth Healthbar",
 			"Split Holds",
 		],
 	];
@@ -62,13 +61,11 @@ class OptionsSubState extends MusicBeatSubState
     var restartTimer:Float = 0;
     var forceRestartOptions:Array<String> = [ // options that you gotta restart the song for them to reload sorry
         "Ghost Tapping", // you can't cheat >:]
-        "Note Splashes",
     ];
     var reloadOptions:Array<String> = [ // options that need some manual reloading on playstate when changed
         "Downscroll",
         "Middlescroll",
         "Antialiasing",
-        "Note Splashes",
         "Song Timer",
     ];
     // anything else already updates automatically
@@ -88,15 +85,17 @@ class OptionsSubState extends MusicBeatSubState
 
     var bg:FlxSprite;
     var bgColors:Map<String, FlxColor> = [
-		"main" 		=> 0xFFcf68f7,
-		"gameplay"	=> 0xFF83e6aa,
-		"appearance"=> 0xFFf58ea9,
+		"main" 		    => 0xFFCF68F7,
+        "preferences"   => 0xFFFF4949,
+		"gameplay"	    => 0xFF83E6AA,
+		"appearance"    => 0xFFF36B8F,
 	];
     
     public function new(?playState:PlayState)
     {
         super();
         this.playState = playState;
+        this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
         #if !html5
         CoolUtil.playMusic('lilBitBack');
@@ -142,16 +141,6 @@ class OptionsSubState extends MusicBeatSubState
     override function update(elapsed:Float)
     {
         super.update(elapsed);
-        if(playState != null)
-        {
-            var lastCam = FlxG.cameras.list[FlxG.cameras.list.length - 1];
-            for(item in members)
-            {
-                if(Std.isOfType(item, FlxBasic))
-                    cast(item, FlxBasic).cameras = [lastCam];
-            }
-        }
-
         if(curCat != 'main')
             updateItemPos(elapsed * 8);
 
@@ -204,6 +193,9 @@ class OptionsSubState extends MusicBeatSubState
                         trace('FUCK YOU!!');*/
                         persistentDraw = false;
                         openSubState(new ControlsSubState());
+                    case "adjust offsets":
+                        persistentDraw = false;
+                        openSubState(new OffsetsSubState());
                     default:
                         FlxG.sound.play(Paths.sound('menu/scrollMenu'));
                         spawnItems(mainShit[curSelected]);
@@ -238,6 +230,8 @@ class OptionsSubState extends MusicBeatSubState
                         selec.changeSelection(selChange);
                         SaveData.data.set(selec.label, selec.value);
                         SaveData.save();
+                        if(selec.label == "Window Size")
+                            SaveData.updateWindowSize();
                         checkReload();
                     }
 

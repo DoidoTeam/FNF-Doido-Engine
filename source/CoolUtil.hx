@@ -1,5 +1,6 @@
 package;
 
+import flixel.tweens.FlxEase;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxSort;
@@ -37,6 +38,10 @@ class CoolUtil
 			"bf-pixel",
 			"bf-pixel-dead",
 			"gf-pixel",
+			"spooky",
+			"spooky-player",
+			"luano-day",
+			"luano-night",
 			"senpai",
 			"senpai-angry",
 			"spirit",
@@ -143,6 +148,63 @@ class CoolUtil
 				FlxG.sound.music.play(true);
 			}
 		}
+	}
+
+	public static function stringToEase(str:String = 'linear'):EaseFunction
+	{
+		// linear/quad/cube/quart/quint/sine/circ/expo
+		return switch(str.toLowerCase())
+		{
+			default: FlxEase.linear;
+			case 'quadin': FlxEase.quadIn;
+			case 'quadinout': FlxEase.quadInOut;
+			case 'quadout': FlxEase.quadOut;
+
+			case 'cubein': FlxEase.cubeIn;
+			case 'cubeinout': FlxEase.cubeInOut;
+			case 'cubeout': FlxEase.cubeOut;
+			
+			case 'quartin': FlxEase.quartIn;
+			case 'quartinout': FlxEase.quartInOut;
+			case 'quartout': FlxEase.quartOut;
+
+			case 'quintin': FlxEase.quintIn;
+			case 'quintinout': FlxEase.quintInOut;
+			case 'quintout': FlxEase.quintOut;
+
+			case 'sinein': FlxEase.sineIn;
+			case 'sineinout': FlxEase.sineInOut;
+			case 'sineout': FlxEase.sineOut;
+
+			case 'circin': FlxEase.circIn;
+			case 'circinout': FlxEase.circInOut;
+			case 'circout': FlxEase.circOut;
+
+			case 'expoin': FlxEase.expoIn;
+			case 'expoinout': FlxEase.expoInOut;
+			case 'expoout': FlxEase.expoOut;
+		}
+	}
+	public static function stringToColor(str:String):Int
+	{
+		if(str.startsWith('#'))
+			return Std.parseInt(str.replace('#', '0xFF'));
+		else
+			return switch(str.toLowerCase())
+			{
+				default: 		0xFFFFFFFF;
+				case 'black': 	0xFF000000;
+				case 'silver':  0xFFC0C0C0;
+				case 'gray': 	0xFF808080;
+				case 'red': 	0xFFFF0000;
+				case 'purple':  0xFF800080;
+				case 'pink': 	0xFFFF00FF;
+				case 'green': 	0xFF008000;
+				case 'lime': 	0xFF00FF00;
+				case 'yellow':  0xFFFFFF00;
+				case 'blue': 	0xFF0000FF;
+				case 'aqua': 	0xFF00FFFF;
+			}
 	}
 
 	// ONLY USE FORCED IF REALLY NEEDED

@@ -371,7 +371,7 @@ class CharacterEditorState extends MusicBeatState
 		if(FlxG.keys.justPressed.ESCAPE)
 		{
 			FlxG.mouse.visible = false;
-			Main.loadPlayState();
+			Main.switchState(new PlayState());
 		}
 			
 		if(FlxG.mouse.wheel != 0)
@@ -459,6 +459,8 @@ class CharacterEditorState extends MusicBeatState
 				
 			case "camera":
 				checkCamFollow.checked = true;
+				if(char.isPlayer)
+					x *= -1;
 				char.cameraOffset.x += x;
 				char.cameraOffset.y += y;
 		

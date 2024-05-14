@@ -21,8 +21,8 @@ class AlphabetMenu extends Alphabet
 	public var yTo:Float = 300;
 
 	public var focusY:Int = 0;
-	public var spaceX:Float = 50;
-	public var spaceY:Float = 200;
+	public var spaceX:Float = 50; // 50
+	public var spaceY:Float = 150; // 200
 
 	public var posUpdate:Bool = true;
 

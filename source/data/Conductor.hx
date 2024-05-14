@@ -17,6 +17,9 @@ class Conductor
 
 	public static var songPos:Float = 0;
 
+	public static var musicOffset:Float = 0;
+	public static var inputOffset:Float = 0;
+
 	public static function setBPM(bpm:Float = 100)
 	{
 		Conductor.bpm = bpm;

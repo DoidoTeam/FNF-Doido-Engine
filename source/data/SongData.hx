@@ -22,14 +22,18 @@ typedef SwagSection =
 {
 	var sectionNotes:Array<Dynamic>;
 	var lengthInSteps:Int;
-	//var typeOfSection:Int;
 	var mustHitSection:Bool;
 	var bpm:Float;
 	var changeBPM:Bool;
+	//var typeOfSection:Int;
 	//var altAnim:Bool;
 	
 	// psych suport
 	var ?sectionBeats:Float;
+}
+typedef EventSong = {
+	// [0] = section // [1] = strumTime // [2] events
+	var songEvents:Array<Dynamic>;
 }
 
 class SongData
@@ -60,16 +64,23 @@ class SongData
 			changeBPM: false,
 		};
 	}
+	inline public static function defaultSongEvents():EventSong
+		return {songEvents: []};
+	// [0] = section // [1] = strumTime // [2] = label // [3] = values
+	inline public static function defaultEventNote():Array<Dynamic>
+		return [0, 0, []];
+	inline public static function defaultEvent():Array<Dynamic>
+		return ["name", "value1", "value2", "value3"];
 
 	// stuff from fnf
 	inline public static function loadFromJson(jsonInput:String, ?diff:String = "normal"):SwagSong
 	{
-		var formatPath = jsonInput + '-' + diff;
+		var formatPath = '$jsonInput-$diff';
 		
 		if(!Paths.fileExists('songs/$jsonInput/$formatPath.json'))
 			formatPath = '$jsonInput';
 			
-		trace('$jsonInput/$formatPath');
+		trace('Chart Loaded: ' + '$jsonInput/$formatPath');
 		
 		var daSong:SwagSong = cast Paths.json('songs/$jsonInput/$formatPath').song;
 		
@@ -119,5 +130,25 @@ class SongData
 			trace('removed $removed duplicated notes');
 		
 		return SONG;
+	}
+
+	inline public static function loadEventsJson(jsonInput:String, diff:String = "normal"):EventSong
+	{
+		var formatPath = 'events-$diff';
+
+		function checkFile():Bool {
+			return Paths.fileExists('songs/$jsonInput/$formatPath.json');
+		}
+		if(!checkFile())
+			formatPath = 'events';
+		if(!checkFile()) {
+			trace('No Events Loaded');
+			return {songEvents: []};
+		}
+
+		trace('Events Loaded: ' + '$jsonInput/$formatPath');
+
+		var daEvents:EventSong = cast Paths.json('songs/$jsonInput/$formatPath');
+		return daEvents;
 	}
 }

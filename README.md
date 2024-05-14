@@ -41,9 +41,10 @@ there are a few extra things to compile but those are at [FNF's Source Code](htt
 
 ### [BeastlyNikoo](https://twitter.com/Mudoku__) - (WIP) Logo Artist
 ### [Anna The Fennec (GoldenFoxy)](https://twitter.com/goldenfoxy2604) - Design help
+### [JulianoBeta](https://www.youtube.com/@prodjuyko) - Composed the offset menu music
 
 ## Special Thanks
-### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip♧](https://www.youtube.com/@beastlychip_), [Bepixel](https://twitter.com/BepixelOfficial), [CrowPlexus](https://twitter.com/crowplexus), [Evandro](https://twitter.com/Evandroo__), [JulianoBeta](https://www.youtube.com/@JulianoBetotoso), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama](https://twitter.com/sama_ziero)
+### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip♧](https://www.youtube.com/@beastlychip_), [Bepixel](https://twitter.com/BepixelOfficial), [CrowPlexus](https://twitter.com/crowplexus), [Evandro](https://twitter.com/Evandroo__), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama](https://twitter.com/sama_ziero)
 
 ## Songs used to test the engine
 #### Base FNF' Songs - Kawai Sprite
@@ -54,4 +55,3 @@ there are a few extra things to compile but those are at [FNF's Source Code](htt
 #### [Collision](https://youtu.be/Q6x0ylzN7L0), [Lunar Odyssey](https://youtu.be/N0HzDRY38js) - BeastlyChip♧
 #### [Escape From California](https://youtu.be/X9MOPEqq-j8) - MoldyGH
 #### [Beep Power](https://youtu.be/NamGMx1xYL4) - Moodyyaser
-#### [Ferocious](https://youtu.be/jc_kW894k78) - Sky!

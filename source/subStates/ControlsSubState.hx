@@ -34,14 +34,6 @@ class ControlsSubState extends MusicBeatSubState
     var grpTxtTwo:FlxTypedGroup<FlxText>;
     var backspaceTxt:FlxText;
 
-    var changinOffset:Bool = false;
-    var offsetTxt:OptionSelector;
-    var songPos:Float = 0;
-
-    var songBpm:Float = 125; // lil' bit back bpm lmao
-    var songBeat:Float = 0;
-    var metronome:FlxSound;
-
     var curBind:Int = 0;
     var curLane:Int = 0;
     var changinBinds:Int = 0; // 0 = not changing // 1 = selecting lane // 2 = changing binds
@@ -50,7 +42,6 @@ class ControlsSubState extends MusicBeatSubState
     var optionShit:Array<String> = [
         'edit binds',
         'clear binds',
-        'adjust offset',
     ];
 
     var bindArrows:FlxTypedGroup<FlxText>;
@@ -60,30 +51,17 @@ class ControlsSubState extends MusicBeatSubState
     public function new()
     {
         super();
+        this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
         downMult = downscroll ? -1 : 1;
         var bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
-        bg.color = 0xFF222222;
+        bg.color = 0xFF380038;
         bg.screenCenter();
         add(bg);
 
-        songBeat = Conductor.calcBeat(songBpm);
         strumline = new Strumline(FlxG.width / 2, null, false, true, true, PlayState.assetModifier);
         strumline.downscroll = downscroll;
         strumline.updateHitbox();
         add(strumline);
-
-        for(i in 0...4)
-        {
-            var note = new Note();
-            note.reloadNote(songBeat * i, i, "base", PlayState.assetModifier);
-            strumline.addNote(note);
-        }
-
-        metronome = new FlxSound().loadEmbedded(Paths.sound('metronome'), false, false);
-        metronome.play();
-        metronome.stop();
-        FlxG.sound.list.add(metronome);
-        // playTick
 
         deadIcon = new HealthIcon();
         deadIcon.setIcon("bf", true);
@@ -108,25 +86,6 @@ class ControlsSubState extends MusicBeatSubState
         grpTxtOne.ID = 0;
         grpTxtTwo.ID = 1;
 
-        gamepadSelector = new OptionSelector('keyboard', false);
-        gamepadSelector.options = ['keyboard', 'gamepad'];
-        gamepadSelector.setY(downscroll ? 80 : FlxG.height - 80);
-        add(gamepadSelector);
-
-        offsetTxt = new OptionSelector('Song Offset');
-        offsetTxt.setY(downscroll ? 80 : FlxG.height - 80);
-        setOffsetPos();
-        offsetTxt.arrowL.alpha = 0.0;
-        offsetTxt.arrowR.alpha = 0.0;
-        add(offsetTxt);
-
-        var offsetLabel = new Alphabet(offsetTxt.arrowL.x + offsetTxt.getWidth() / 2, 0, "SONG OFFSET", true);
-        offsetLabel.align = CENTER;
-        offsetLabel.scale.set(0.75,0.75);
-        offsetLabel.updateHitbox();
-        offsetLabel.y = offsetTxt.arrowL.y + (downscroll ? offsetTxt.arrowL.height + 10 : -offsetLabel.height - 10);
-        add(offsetLabel);
-
         add(grpItems = new FlxTypedGroup<Alphabet>());
         for(i in 0...optionShit.length)
         {
@@ -142,6 +101,11 @@ class ControlsSubState extends MusicBeatSubState
             grpItems.add(item);
             item.ID = i;
         }
+        gamepadSelector = new OptionSelector('keyboard', false);
+        gamepadSelector.options = ['keyboard', 'gamepad'];
+        var gamepadPos = grpItems.members[downscroll ? grpItems.members.length - 1 : 0].y + (70 / 2);
+        gamepadSelector.setY(gamepadPos + (downscroll ? 60 : -70));
+        add(gamepadSelector);
         changeSelection();
         changeGamepad();
         spawnBinds();
@@ -165,18 +129,6 @@ class ControlsSubState extends MusicBeatSubState
         add(backspaceTxt);
         if(downscroll)
             backspaceTxt.y = FlxG.height - backspaceTxt.height - 10;
-    }
-
-    function setOffsetPos()
-    {
-        offsetTxt.setX(FlxG.width - 200 - offsetTxt.getWidth() / 2);
-    }
-
-    function playTick(fourth:Bool = false)
-    {
-        var daTime:Float = fourth ? 0 : 445; // 450
-        metronome.stop();
-        metronome.play(true, daTime, daTime + 100);
     }
 
     var allBinds:Array<String> = Controls.changeableControls;
@@ -345,76 +297,10 @@ class ControlsSubState extends MusicBeatSubState
     {
         super.update(elapsed);
         curGamepad = FlxG.gamepads.lastActive;
-        var lastCam = FlxG.cameras.list[FlxG.cameras.list.length - 1];
-        for(item in members)
-        {
-            if(Std.isOfType(item, FlxBasic))
-                cast(item, FlxBasic).cameras = [lastCam];
-        }
 
-        // offset shit
-        for(arrow in [offsetTxt.arrowL, offsetTxt.arrowR])
-            arrow.alpha = FlxMath.lerp(arrow.alpha, changinOffset ? 1.0 : 0.0, elapsed * 8);
-
-        for(note in strumline.allNotes.members)
-            note.visible = changinOffset;
         for(strum in strumline.strumGroup.members)
             if(strum.animation.curAnim.name == 'confirm' && strum.animation.curAnim.finished)
                 strum.playAnim('static');
-
-        if(changinOffset)
-        {
-            if(FlxG.sound.music != null)
-                songPos = FlxG.sound.music.time + Std.int(offsetTxt.value);
-            
-            for(note in strumline.allNotes.members)
-            {
-                note.updateHitbox();
-				note.offset.x += note.frameWidth * note.scale.x / 2;
-                note.offset.y += note.frameHeight* note.scale.y / 2;
-
-                var thisStrum = strumline.strumGroup.members[note.noteData];
-                var offsetX = note.noteOffset.x;
-				var offsetY = (note.songTime - songPos) * (strumline.scrollSpeed * 0.45);
-                CoolUtil.setNotePos(note, thisStrum, strumline.downscroll ? 180 : 0, offsetX, offsetY);
-
-                if (note.songTime < songPos)
-                {
-                    thisStrum.playAnim('confirm');
-                    note.songTime += songBeat * 4;
-                    playTick(note.noteData == 0);
-                }
-                if (note.songTime > FlxG.sound.music.length && FlxG.sound.music.time <= 1000)
-                    note.songTime = songBeat * note.noteData;
-            }
-
-            var holdMax:Float = 0.5;
-            var selec:OptionSelector = offsetTxt;
-            if(Controls.justPressed("UI_LEFT") || Controls.justPressed("UI_RIGHT") || selec.holdTimer >= holdMax)
-            {
-                var selChange:Int = -(Controls.pressed("UI_LEFT") ? 1 : 0) + (Controls.pressed("UI_RIGHT") ? 1 : 0);
-                if(selChange != 0)
-                {
-                    selec.changeSelection(selChange);
-                    setOffsetPos();
-                }
-
-                if(selec.holdTimer >= holdMax)
-                    selec.holdTimer = holdMax - 0.005;
-                else
-                    FlxG.sound.play(Paths.sound('menu/scrollMenu'));
-            }
-            
-            selec.arrowL.animation.play(Controls.pressed("UI_LEFT") ? "push" : "idle", true);
-            selec.arrowR.animation.play(Controls.pressed("UI_RIGHT")? "push" : "idle", true);
-            
-            if(Controls.pressed("UI_LEFT") || Controls.pressed("UI_RIGHT")
-            && selec.holdTimer <= holdMax
-            && Std.isOfType(selec.options[0], Int))
-                selec.holdTimer += elapsed;
-            if(Controls.released("UI_LEFT") || Controls.released("UI_RIGHT"))
-                selec.holdTimer = 0;
-        }
 
         backspaceTxt.visible = (changinBinds == 2);
         if(backspaceTxt.visible)
@@ -531,7 +417,7 @@ class ControlsSubState extends MusicBeatSubState
         }
 
         var gameAlpha:Float = 1.0;
-        if(changinBinds > 0 || changinOffset)
+        if(changinBinds > 0)
         {
             gameAlpha = 0.1;
             for(item in grpItems.members)
@@ -540,38 +426,19 @@ class ControlsSubState extends MusicBeatSubState
         for(item in gamepadSelector.members)
             item.alpha = gameAlpha;
 
-        if(changinOffset)
-        {
-            for(group in [grpTxtOne, grpTxtTwo])
-                for(text in group.members)
-                    text.alpha = 0.1;
-        }
-
         if(curGamepad != null)
             checkAnalogs();
 
         var curOpt:String = optionShit[curSelected];
         if(Controls.justPressed("BACK"))
         {
-            if(!changinOffset)
+            if(changinBinds == 0)
+                close();
+            if(changinBinds == 1)
             {
-                if(changinBinds == 0)
-                    close();
-                if(changinBinds == 1)
-                {
-                    changinBinds = 0;
-                    changeLane();
-                    changeSelection();
-                }
-            }
-            else
-            {
-                FlxG.sound.play(Paths.sound('menu/cancelMenu'));
-                changinOffset = false;
-                offsetTxt.changeSelection(Math.floor(SaveData.data.get(offsetTxt.label) - offsetTxt.value));
-                setOffsetPos();
-                changeSelection();
+                changinBinds = 0;
                 changeLane();
+                changeSelection();
             }
         }
         if(Controls.justPressed("ACCEPT"))
@@ -582,23 +449,13 @@ class ControlsSubState extends MusicBeatSubState
                 changinBinds++;
                 changeLane();
             }
-            if(changinOffset)
-            {
-                FlxG.sound.play(Paths.sound('menu/confirmMenu'));
-                SaveData.data.set(offsetTxt.label, offsetTxt.value);
-                SaveData.save();
-                changinOffset = false;
-                changeSelection();
-                changeLane();
-                return;
-            }
         }
         if(changinBinds == 1)
         {
             if(Controls.justPressed("UI_UP") || Controls.justPressed("UI_DOWN"))
                 changeLane(true);
         }
-        if(changinBinds > 0 || changinOffset)
+        if(changinBinds > 0)
             return;
 
         gamepadSelector.arrowL.animation.play(Controls.pressed("UI_LEFT") ? "push" : "idle");
@@ -620,9 +477,6 @@ class ControlsSubState extends MusicBeatSubState
                     }
                     Controls.save();
                     spawnBinds();
-
-                case 'adjust offset':
-                    changinOffset = true;
             }
         }
 
@@ -690,7 +544,7 @@ class ControlsSubState extends MusicBeatSubState
         }
         
         gamepadSelector.changeSelection(change ? 1 : 0);
-        gamepadSelector.setX(200 - gamepadSelector.getWidth() / 2);
+        gamepadSelector.setX((FlxG.width / 2) - gamepadSelector.getWidth() / 2);
     }
 
     function changeSelection(change:Int = 0)

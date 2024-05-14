@@ -1,5 +1,6 @@
 package gameObjects.hud.note;
 
+import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -16,10 +17,13 @@ class Strumline extends FlxGroup
 	
 	public var x:Float = 0;
 	public var downscroll:Bool = false;
+
 	public var scrollSpeed:Float = 2.8;
+	public var scrollTween:FlxTween;
 
 	public var isPlayer:Bool = false;
 	public var botplay:Bool = false;
+	public var customData:Bool = false;
 
 	public var character:Character;
 
@@ -74,12 +78,6 @@ class Strumline extends FlxGroup
 
 	public function addSplash(note:Note)
 	{
-		switch(SaveData.data.get("Note Splashes"))
-		{
-			case "PLAYER ONLY": if(!isPlayer) return;
-			case "OFF": return;
-		}
-
 		var pref:String = '-' + CoolUtil.getDirection(note.noteData) + '-' + note.strumlineID;
 
 		if(!SplashNote.existentModifiers.contains(note.assetModifier + pref)
@@ -97,8 +95,13 @@ class Strumline extends FlxGroup
 		}
 	}
 
-	public function playSplash(note:Note)
+	public function playSplash(note:Note, isPlayer:Bool = false)
 	{
+		switch(SaveData.data.get("Note Splashes"))
+		{
+			case "PLAYER ONLY": if(!isPlayer) return;
+			case "OFF": return;
+		}
 		for(splash in splashGroup.members)
 		{
 			if(splash.assetModifier == note.assetModifier
@@ -107,8 +110,8 @@ class Strumline extends FlxGroup
 			{
 				//trace("played");
 				var thisStrum = strumGroup.members[splash.noteData];
-				splash.x = thisStrum.x/* + thisStrum.width / 2*/ - splash.width / 2;
-				splash.y = thisStrum.y/* + thisStrum.height/ 2*/ - splash.height/ 2;
+				splash.x = thisStrum.x - splash.width / 2;
+				splash.y = thisStrum.y - splash.height/ 2;
 
 				splash.playAnim();
 			}
@@ -123,7 +126,7 @@ class Strumline extends FlxGroup
 	{
 		for(strum in strumGroup)
 		{
-			strum.y = (!downscroll ? 100 : FlxG.height - 100);
+			strum.y = (!downscroll ? 110 : FlxG.height - 110);
 			
 			strum.x = x;
 			strum.x += CoolUtil.noteWidth() * strum.strumData;

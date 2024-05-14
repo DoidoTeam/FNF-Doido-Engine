@@ -42,6 +42,7 @@ class PauseSubState extends MusicBeatSubState
 	public function new()
 	{
 		super();
+		this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 		var banana = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
 		add(banana);
 
@@ -134,12 +135,6 @@ class PauseSubState extends MusicBeatSubState
 		#if DISCORD_RPC
 		DiscordClient.changePresence("Paused - Restin' a bit", null);
 		#end
-		var lastCam = FlxG.cameras.list[FlxG.cameras.list.length - 1];
-		for(item in members)
-		{
-			if(Std.isOfType(item, FlxBasic))
-				cast(item, FlxBasic).cameras = [lastCam];
-		}
 
 		bottomTxt.text = "";
 		if(PlayState.botplay)

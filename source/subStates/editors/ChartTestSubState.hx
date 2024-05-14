@@ -158,7 +158,8 @@ class ChartTestSubState extends MusicBeatSubState
 			
 			var noteAssetMod:String = assetModifier;
 			
-			note.reloadNote(note.songTime, note.noteData, note.noteType, noteAssetMod);
+			note.updateData(note.songTime, note.noteData, note.noteType, noteAssetMod);
+			note.reloadSprite();
 			
 			// oop
 			unspawnNotes.push(note);
@@ -268,7 +269,7 @@ class ChartTestSubState extends MusicBeatSubState
 			var noteDiff:Float = Math.abs(note.songTime - Conductor.songPos);
 			if(noteDiff <= Timings.getTimings("sick")[1] || strumline.botplay)
 			{
-				strumline.playSplash(note);
+				strumline.playSplash(note, strumline.isPlayer);
 			}
 		}
 	}
@@ -698,7 +699,8 @@ class ChartTestSubState extends MusicBeatSubState
 								//vocals.volume = 0;
 
 								var note = new Note();
-								note.reloadNote(0, i, "none", assetModifier);
+								note.updateData(0, i, "none", assetModifier);
+								note.reloadSprite();
 								onNoteMiss(note, strumline);
 							}
 						}

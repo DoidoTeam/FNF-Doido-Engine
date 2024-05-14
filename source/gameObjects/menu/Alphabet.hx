@@ -54,7 +54,7 @@ class Alphabet extends FlxSpriteGroup
 		{
 			var daLetter:String = textArray[i];
 
-			if(daLetter == "\\")
+			if(daLetter == "\n") // \\
 			{
 				daRow++;
 				lastWidth = 0;

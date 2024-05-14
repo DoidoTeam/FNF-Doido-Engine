@@ -1,5 +1,7 @@
 package subStates.editors;
 
+import data.SongData;
+import data.SongData.EventSong;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxObject;
@@ -16,6 +18,7 @@ import states.editors.ChartingState;
 
 typedef AutoSaveData = {
 	var SONG:SwagSong;
+	var ?EVENTS:EventSong;
 	var diff:String;
 	var date:String;
 }
@@ -83,16 +86,15 @@ class ChartAutoSaveSubState extends MusicBeatSubState
 			close();
 	}
 	
-	public static function addSave(SONG:SwagSong, diff:String)
+	public static function addSave(SONG:SwagSong, EVENTS:EventSong, diff:String)
 	{
-		var newThingy = {
+		// adding it (max is 5 so watch out!!)
+		autoSaveArray.push({
 			SONG: SONG,
+			EVENTS: EVENTS,
 			diff: diff,
 			date: Date.now().toString(),
-		};
-		
-		// adding it (max is 5 so watch out!!)
-		autoSaveArray.push(newThingy);
+		});
 		if (autoSaveArray.length > 5)
 			autoSaveArray.remove(autoSaveArray[0]);
 		save();
@@ -154,6 +156,10 @@ class AutoSaveWindow extends FlxGroup
 				ChartingState.songDiff = data.diff;
 
 				ChartingState.SONG = data.SONG;
+				if(data.EVENTS != null)
+					ChartingState.EVENTS = data.EVENTS;
+				else
+					ChartingState.EVENTS = SongData.defaultSongEvents();
 				Main.switchState(new ChartingState());
 			}
 		}

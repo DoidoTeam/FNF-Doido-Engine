@@ -17,6 +17,8 @@ class OptionSelector extends FlxTypedGroup<FlxSprite>
     public var value:Dynamic;
     public var options:Array<Dynamic> = [];
 
+    public var wrapValue:Bool = true;
+
     public function new(label:String, ?isSaveData:Bool = true)
     {
         super();
@@ -58,13 +60,19 @@ class OptionSelector extends FlxTypedGroup<FlxSprite>
         if(Std.isOfType(options[0], Int))
         {
             value += change;
-            value = FlxMath.wrap(value, options[0], options[1]);
+            if(wrapValue)
+                value = FlxMath.wrap(value, options[0], options[1]);
+            else
+                value = Math.floor(FlxMath.bound(value, options[0], options[1]));
         }
         else
         {
             var curSelected = options.indexOf(value);
             curSelected += change;
-            curSelected = FlxMath.wrap(curSelected, 0, options.length - 1);
+            if(wrapValue)
+                curSelected = FlxMath.wrap(curSelected, 0, options.length - 1);
+            else
+                curSelected = Math.floor(FlxMath.bound(curSelected, 0, options.length - 1));
             value = options[curSelected];
         }
         var oldWidth = getWidth();

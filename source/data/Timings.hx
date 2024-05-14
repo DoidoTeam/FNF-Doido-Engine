@@ -97,22 +97,18 @@ class Timings
 			if(accuracy > minAcc && accuracy <= maxAcc)
 				result = daRank;
 		}
-		
 		// main ranks
-		calc("S", 100,	95);
-		calc("A", 95, 	80);
-		calc("B", 80, 	75);
-		calc("C", 75, 	65);
-		calc("D", 65, 	60);
-		
+		calc("D", 65, 60);
+		calc("C", 75, 65);
+		calc("B", 80, 75);
+		calc("A", 95, 80);
+		calc("S", 100,95);
 		// pluses for your rank
-		var extraPlus:Array<Bool> = [
-			(misses == 0),
-			(accuracy == 100.0),
-		];
-		for(i in extraPlus)
-			if(i) result += '+';
-		
+		if(misses == 0) {
+			result += "+";
+			if(accuracy == 100.0)
+				result = "P";
+		}
 		// you cant give a result without notes :/
 		if(notesHit <= 0)
 			result = "N/A";

@@ -1,9 +1,11 @@
 package;
 
+import data.Conductor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
+import openfl.system.Capabilities;
 import data.Highscore;
 
 enum SettingType
@@ -29,6 +31,12 @@ class SaveData
 			false,
 			CHECKMARK,
 			"Disables the opponent's notes and moves yours to the middle"
+		],
+		"Window Size" => [
+			"1280x720",
+			SELECTOR,
+			"Change the game's resolution if it doesn't fit your monitor",
+			["640x360","854x480","960x540","1024x576","1152x648","1280x720","1366x768","1600x900","1920x1080"],
 		],
 		"Antialiasing" => [
 			true,
@@ -72,11 +80,6 @@ class SaveData
 			false,
 			CHECKMARK,
 			"Cuts the end of each hold note like classic engines did"
-		],
-		"Smooth Healthbar" => [
-			true,
-			CHECKMARK,
-			"Makes the healthbar go up and down smoothly"
 		],
 		"Song Timer" => [
 			true,
@@ -124,8 +127,14 @@ class SaveData
 			0,
 			SELECTOR,
 			"no one is going to see this anyway whatever",
-			[-500, 500],
-		]
+			[-100, 100],
+		],
+		"Input Offset" => [
+			0,
+			SELECTOR,
+			"same xd",
+			[-100, 100],
+		],
 	];
 	
 	public static var saveSettings:FlxSave = new FlxSave();
@@ -140,6 +149,7 @@ class SaveData
 		Controls.load();
 		Highscore.load();
 		subStates.editors.ChartAutoSaveSubState.load(); // uhhh
+		updateWindowSize();
 	}
 	
 	public static function load()
@@ -178,5 +188,21 @@ class SaveData
 		FlxSprite.defaultAntialiasing = data.get("Antialiasing");
 
 		FlxG.autoPause = data.get('Unfocus Freeze');
+
+		Conductor.musicOffset = data.get('Song Offset');
+		Conductor.inputOffset = data.get('Input Offset');
+	}
+
+	public static function updateWindowSize()
+	{
+		if(FlxG.fullscreen) return;
+		var ws:Array<String> = data.get("Window Size").split("x");
+        var windowSize:Array<Int> = [Std.parseInt(ws[0]),Std.parseInt(ws[1])];
+        FlxG.stage.window.width = windowSize[0];
+        FlxG.stage.window.height= windowSize[1];
+		
+		// centering the window
+		FlxG.stage.window.x = Math.floor(Capabilities.screenResolutionX / 2 - windowSize[0] / 2);
+		FlxG.stage.window.y = Math.floor(Capabilities.screenResolutionY / 2 - (windowSize[1] + 16) / 2);
 	}
 }
