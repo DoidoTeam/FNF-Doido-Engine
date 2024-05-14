@@ -17,7 +17,8 @@ class Strumline extends FlxGroup
 	
 	public var x:Float = 0;
 	public var downscroll:Bool = false;
-
+	
+	public var pauseNotes:Bool = false;
 	public var scrollSpeed:Float = 2.8;
 	public var scrollTween:FlxTween;
 

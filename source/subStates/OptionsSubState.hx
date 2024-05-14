@@ -52,6 +52,7 @@ class OptionsSubState extends MusicBeatSubState
             #end
             "Single Rating",
 			"Note Splashes",
+            "Static Hold Anim",
 			"Ratings on HUD",
 			"Song Timer",
 			"Split Holds",

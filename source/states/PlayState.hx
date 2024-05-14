@@ -759,7 +759,8 @@ class PlayState extends MusicBeatState
 		
 		if(note.noteType != "no animation" && thisChar.specialAnim != 2)
 		{
-			if(thisChar.animation.curAnim.curFrame == thisChar.holdLoop)
+			if(thisChar.animation.curAnim.curFrame == thisChar.holdLoop
+			|| SaveData.data.get("Static Hold Anim"))
 			{
 				thisChar.specialAnim = 0;
 				thisChar.playAnim(singAnims[note.noteData], true);
@@ -1060,19 +1061,36 @@ class PlayState extends MusicBeatState
 					case 'Change Stage':
 						changeStage(daEvent.value1);
 					
+					case 'Freeze Notes':
+						var affected:Array<Strumline> = [dadStrumline, bfStrumline];
+						switch(daEvent.value2) {
+							case "dad": affected.remove(bfStrumline);
+							case "bf"|"boyfriend": affected.remove(dadStrumline);
+						}
+						for(strumline in affected)
+							strumline.pauseNotes = (daEvent.value1 == 'true');
+
 					case 'Change Note Speed':
 						for(strumline in strumlines)
 						{
 							if(strumline.scrollTween != null)
 								strumline.scrollTween.cancel();
-
-							strumline.scrollTween = FlxTween.tween(
-								strumline, {scrollSpeed: Std.parseFloat(daEvent.value1)},
-								Std.parseFloat(daEvent.value2) * Conductor.stepCrochet / 1000,
-								{
-									ease: CoolUtil.stringToEase(daEvent.value3),
-								}
-							);
+							var newSpeed:Float = Std.parseFloat(daEvent.value1);
+							var duration:Float = Std.parseFloat(daEvent.value2);
+							if(!Std.isOfType(newSpeed, Float)) newSpeed = 2;
+							if(!Std.isOfType(duration, Float)) duration = 4;
+							if(duration <= 0)
+								strumline.scrollSpeed = newSpeed;
+							else
+							{
+								strumline.scrollTween = FlxTween.tween(
+									strumline, {scrollSpeed: Std.parseFloat(daEvent.value1)},
+									Std.parseFloat(daEvent.value2) * Conductor.stepCrochet / 1000,
+									{
+										ease: CoolUtil.stringToEase(daEvent.value3),
+									}
+								);
+							}
 						}
 
 					case 'Change Cam Zoom':
@@ -1346,7 +1364,9 @@ class PlayState extends MusicBeatState
 					noteAngle += 180;
 				
 				note.angle = thisStrum.angle;
-				CoolUtil.setNotePos(note, thisStrum, noteAngle, offsetX, offsetY);
+				if(!strumline.pauseNotes) {
+					CoolUtil.setNotePos(note, thisStrum, noteAngle, offsetX, offsetY);
+				}
 				
 				// alings the hold notes
 				for(hold in note.children)

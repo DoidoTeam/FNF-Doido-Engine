@@ -54,6 +54,11 @@ class SaveData
 			"Whether a splash appear when you hit a note perfectly",
 			["ON", "PLAYER ONLY", "OFF"],
 		],
+		"Static Hold Anim" => [
+			true,
+			CHECKMARK,
+			"Whether the character stays static when playing a hold note."
+		],
 		"Ratings on HUD" => [
 			true,
 			CHECKMARK,
