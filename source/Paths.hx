@@ -24,9 +24,9 @@ class Paths
 	
 	public static function fileExists(filePath:String):Bool
 		#if desktop
-		return openfl.Assets.exists(getPath(filePath));
-		#else
 		return sys.FileSystem.exists(getPath(filePath));
+		#else
+		return openfl.Assets.exists(getPath(filePath));
 		#end
 	
 	public static function getSound(key:String):Sound
