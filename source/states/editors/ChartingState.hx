@@ -1406,9 +1406,10 @@ class ChartingState extends MusicBeatState
 			{
 				FlxG.mouse.visible = false;
 				ChartAutoSaveSubState.addSave(SONG, EVENTS, songDiff);
+				PlayState.songDiff = songDiff;
 				PlayState.SONG = SONG;
 				PlayState.EVENTS = EVENTS;
-				Main.switchState(new PlayState());
+				Main.switchState(new LoadSongState());
 			}
 			
 			if(FlxG.keys.justPressed.ESCAPE)
