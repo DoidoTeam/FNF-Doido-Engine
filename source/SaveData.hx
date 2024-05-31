@@ -36,7 +36,7 @@ class SaveData
 			"1280x720",
 			SELECTOR,
 			"Change the game's resolution if it doesn't fit your monitor",
-			["640x360","854x480","960x540","1024x576","1152x648","1280x720","1366x768","1600x900","1920x1080"],
+			["640x360","854x480","960x540","1024x576","1152x648","1280x720","1366x768","1600x900","1920x1080", "2560x1440", "3840x2160"],
 		],
 		"Antialiasing" => [
 			true,
