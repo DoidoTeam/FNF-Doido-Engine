@@ -1,6 +1,8 @@
 package flixel;
 
+#if(flixel > "5.6.2")
 import flixel.group.FlxContainer;
+#end
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxStringUtil;
 
@@ -75,11 +77,13 @@ class FlxBasic implements IFlxDestroyable
 	@:noCompletion
 	var _cameras:Array<FlxCamera>;
 	
+	#if(flixel > "5.6.2")
 	/**
 	 * The parent containing this basic, typically if you check this recursively you should reach the state
 	 * @since 5.7.0
 	 */
 	public var container(get, null):Null<FlxContainer>;
+	#end
 
 	public function new() {}
 
@@ -95,10 +99,12 @@ class FlxBasic implements IFlxDestroyable
 	 */
 	public function destroy():Void
 	{
+		#if(flixel > "5.6.2")
 		if (container != null)
 			container.remove(this);
 		
 		container = null;
+		#end
 		exists = false;
 		_cameras = null;
 	}
@@ -208,8 +214,10 @@ class FlxBasic implements IFlxDestroyable
 	{
 		return if (_cameras != null)
 				_cameras;
+			#if(flixel > "5.6.2")
 			else if (_cameras == null && container != null)
 				container.getCameras();
+			#end
 			else
 				@:privateAccess FlxCamera._defaultCameras;
 	}
@@ -235,7 +243,7 @@ class FlxBasic implements IFlxDestroyable
 	{
 		return _cameras = Value;
 	}
-	
+	#if(flixel > "5.6.2")
 	// Only needed for FlxSpriteContainer.SpriteContainer
 	// TODO: remove this when FlxSpriteContainer is removed
 	@:noCompletion
@@ -243,6 +251,7 @@ class FlxBasic implements IFlxDestroyable
 	{
 		return this.container;
 	}
+	#end
 }
 
 /**
