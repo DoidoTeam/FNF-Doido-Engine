@@ -52,6 +52,14 @@ class Main extends Sprite
 		fpsCount = new FPSCounter(10, 3);
 		addChild(fpsCount);
 		#end
+
+		FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, (e) ->
+		{
+			// Prevent flixel from listening to key inputs when switching fullscreen mode
+			// thanks @nebulazura, @crowplexus @diogotvv
+			if (e.keyCode == FlxKey.ENTER && e.altKey)
+				e.stopImmediatePropagation();
+		}, false, 100);
 	}
 	
 	public static var activeState:FlxState;
