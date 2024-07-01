@@ -32,7 +32,7 @@ class DeleteScoreSubState extends MusicBeatSubState
         if(displayName == null)
             displayName = song;
 
-        var title = new Alphabet(0, 150, 'DELETE SCORE OF\\${displayName.replace('-', ' ')}\\on ${diff} DIFFICULTY??', true);
+        var title = new Alphabet(0, 150, 'DELETE SCORE OF\n${displayName.replace('-', ' ')}\non ${diff} DIFFICULTY??', true);
         title.x = FlxG.width / 2;
         title.align = CENTER;
         title.updateHitbox();

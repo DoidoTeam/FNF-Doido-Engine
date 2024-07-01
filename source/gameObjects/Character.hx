@@ -309,7 +309,7 @@ class Character extends FlxSprite
 			if(animation.curAnim.finished)
 				playAnim(animation.curAnim.name + '-loop');
 		
-		if(specialAnim == 2 && animation.curAnim.finished)
+		if(specialAnim > 0 && animation.curAnim.finished)
 		{
 			specialAnim = 0;
 			dance();

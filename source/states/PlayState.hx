@@ -1661,7 +1661,7 @@ class PlayState extends MusicBeatState
 
 	public function pauseSong()
 	{
-		if(!startedCountdown || paused || isDead) return;
+		if(!startedCountdown || endedSong || paused || isDead) return;
 		
 		paused = true;
 		activateTimers(false);
