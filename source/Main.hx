@@ -11,6 +11,7 @@ import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
 import openfl.Lib;
+import flixel.input.keyboard.FlxKey;
 
 #if DISCORD_RPC
 import data.Discord.DiscordClient;
