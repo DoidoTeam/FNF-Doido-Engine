@@ -536,6 +536,7 @@ class CharacterEditorState extends MusicBeatState
 		
 		exportData.globalOffset = [char.globalOffset.x, char.globalOffset.y];
 		exportData.cameraOffset = [char.cameraOffset.x, char.cameraOffset.y];
+		exportData.ratingsOffset= [char.ratingsOffset.x,char.ratingsOffset.y];
 		
 		for(anim => offsets in char.animOffsets)
 			exportData.animOffsets.push([anim, offsets[0], offsets[1]]);

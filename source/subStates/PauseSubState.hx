@@ -209,9 +209,15 @@ class PauseSubState extends MusicBeatSubState
 		countdownTxt.updateHitbox();
 		add(countdownTxt);
 
+		var barTween:FlxTween;
+		var cntBar = new FlxSprite().makeGraphic(180, 8, 0xFFFFFFFF);
+		cntBar.screenCenter(X);
+		cntBar.visible = false;
+		add(cntBar);
+
 		var loops:Int = 0;
 		onCountdown = true;
-		var countTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
+		var countTimer = new FlxTimer().start(0.1, function(tmr:FlxTimer)
 		{
 			if(loops == 4)
 				close();
@@ -219,6 +225,16 @@ class PauseSubState extends MusicBeatSubState
 			{
 				countdownTxt.text = labels[loops];
 				FlxG.sound.play(Paths.sound('menu/scrollMenu'));
+
+				if(!cntBar.visible)
+				{
+					cntBar.visible = true;
+					cntBar.y = FlxG.height / 2 + 24;
+				}
+				cntBar.scale.x = 1.0;
+				if(barTween != null)
+					barTween.cancel();
+				barTween = FlxTween.tween(cntBar.scale, {x: 0.0}, 0.1);
 			}
 			loops++;
 		}, 5);

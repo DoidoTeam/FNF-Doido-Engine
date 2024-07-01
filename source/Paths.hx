@@ -45,6 +45,8 @@ class Paths
 	}
 	public static function getGraphic(key:String):FlxGraphic
 	{
+		if(key.endsWith('.png'))
+			key = key.substring(0, key.lastIndexOf('.png'));
 		var path = getPath('images/$key.png');
 		if(Paths.fileExists('images/$key.png'))
 		{
@@ -86,16 +88,30 @@ class Paths
 
 			clearCount.push(key);
 			
-			if (openfl.Assets.cache.hasBitmapData(key))
+			renderedGraphics.remove(key);
+			if(openfl.Assets.cache.hasBitmapData(key))
 				openfl.Assets.cache.removeBitmapData(key);
 			
+			FlxG.bitmap.remove(graphic);
 			graphic.dump();
 			graphic.destroy();
-			FlxG.bitmap.remove(graphic);
-			renderedGraphics.remove(key);
 		}
 		trace('cleared $clearCount');
 		trace('cleared ${clearCount.length} assets');
+
+		// uhhhh
+		@:privateAccess
+		for(key in FlxG.bitmap._cache.keys())
+		{
+			var obj = FlxG.bitmap._cache.get(key);
+			if(obj != null && !renderedGraphics.exists(key))
+			{
+				openfl.Assets.cache.removeBitmapData(key);
+				FlxG.bitmap._cache.remove(key);
+				obj.dump();
+				obj.destroy();
+			}
+		}
 		
 		// sound clearing
 		for (key => sound in renderedSounds)
