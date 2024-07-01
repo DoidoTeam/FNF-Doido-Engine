@@ -102,8 +102,8 @@ class OffsetsSubState extends MusicBeatSubState
         for(i in 0...2)
         {
             var daOption = grpOptions.members[i];
-            var selector = new OptionSelector(SaveData.data.get(mizera[i]), false);
-            selector.options = SaveData.displaySettings.get(mizera[i])[3];
+            var selector = new OptionSelector(mizera[i]);
+            //selector.options = SaveData.displaySettings.get(mizera[i])[3];
             selector.wrapValue = false;
             selector.setY(daOption.y + optionHeight / 2);
             selector.setX(daOption.x + 450);
