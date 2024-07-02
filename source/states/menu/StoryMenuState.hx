@@ -19,7 +19,7 @@ import data.Highscore;
 import data.SongData;
 import gameObjects.menu.Alphabet;
 
-typedef WeekData =
+/*typedef WeekData =
 {
 	var fileName:String;
 	var weekName:String;
@@ -27,20 +27,10 @@ typedef WeekData =
 	var dad:String;
 	var bf:String;
 	var gf:String;
-}
+}*/
 class StoryMenuState extends MusicBeatState
 {
-	var weekList:Array<WeekData> = [];
-	
-	public function addWeek(fileName:String, weekName:String, songList:Array<String>, dad:String="", bf:String="", gf:String="")
-	{
-		weekList.push({
-			fileName: fileName,
-			weekName: weekName,
-			songList: songList,
-			dad: dad, bf: bf, gf: gf,
-		});
-	}
+	var weekList:Array<FunkyWeek> = [];
 	
 	static var curWeek:Int = 0;
 	static var curDiff:String = "";
@@ -68,31 +58,20 @@ class StoryMenuState extends MusicBeatState
 		DiscordClient.changePresence("Story Mode - Choosin' a week", null);
 		#end
 		
-		addWeek(
-			"tutorial",
-			"funky beginnings",
-			["tutorial"],
-			"", "bf", "gf"
-		);
-		addWeek(
-			"week1",
-			"daddy dearest",
-			["bopeebo", "fresh", "dadbattle"],
-			"dad", "bf", "gf"
-		);
-		addWeek(
-			"week6",
-			"hating simulator (ft. moawling)",
-			["senpai", "roses", "thorns"],
-			"senpai", "bf", "gf"
-		);
+		for(i in 0...SongData.weeks.length)
+		{
+			var week = SongData.getWeek(i);
+			if(week.freeplayOnly) continue;
+			
+			weekList.push(week);
+		}
 		
 		grpWeeks = new FlxTypedGroup<FlxSprite>();
 		add(grpWeeks);
 		
 		for(i in 0...weekList.length)
 		{
-			var weekSpr = new FlxSprite().loadGraphic(Paths.image('menu/story/week/${weekList[i].fileName}'));
+			var weekSpr = new FlxSprite().loadGraphic(Paths.image('menu/story/week/${weekList[i].weekFile}'));
 			weekSpr.ID = i;
 			weekSpr.screenCenter(X);
 			grpWeeks.add(weekSpr);
@@ -192,14 +171,18 @@ class StoryMenuState extends MusicBeatState
 					//Main.switchState(new states.MenuState());
 					var daWeek = weekList[curWeek];
 					
-					PlayState.curWeek = daWeek.fileName;
+					PlayState.curWeek = daWeek.weekFile;
 					PlayState.songDiff = curDiff;
 					PlayState.isStoryMode = true;
 					PlayState.weekScore = 0;
+
+					var songList:Array<String> = [];
+					for(song in daWeek.songs)
+						songList.push(song[0]);
 					
-					PlayState.playList = daWeek.songList;
-					PlayState.playList.remove(daWeek.songList[0]);
-					PlayState.loadSong(daWeek.songList[0]);
+					PlayState.playList = songList;
+					PlayState.playList.remove(songList[0]);
+					PlayState.loadSong(songList[0]);
 					
 					Main.switchState(new LoadSongState());
 				});
@@ -216,7 +199,7 @@ class StoryMenuState extends MusicBeatState
 			
 			if(Controls.justPressed("RESET"))
 			{
-				var displayName:String = weekList[curWeek].fileName;
+				var displayName:String = weekList[curWeek].weekFile;
 				openSubState(new DeleteScoreSubState('week-' + displayName, curDiff, displayName));
 			}
 			
@@ -273,32 +256,15 @@ class StoryMenuState extends MusicBeatState
 		for(char in grpChars.members)
 		{
 			char.visible = true;
-			if(char.ID == 0)
-			{
-				if(daWeek.dad == "")
-					char.visible = false;
-				else if(daWeek.dad != char.curChar)
-					char.reloadChar(daWeek.dad, "dad");
-			}
-			if(char.ID == 1)
-			{
-				if(daWeek.bf == "")
-					char.visible = false;
-				else if(daWeek.bf != char.curChar)
-					char.reloadChar(daWeek.bf, "bf");
-			}
-			if(char.ID == 2)
-			{
-				if(daWeek.gf == "")
-					char.visible = false;
-				else if(daWeek.gf != char.curChar)
-					char.reloadChar(daWeek.gf, "gf");
-			}
+			if(daWeek.chars[char.ID] == "")
+				char.visible = false;
+			else if(daWeek.chars[char.ID] != char.curChar)
+				char.reloadChar(daWeek.chars[char.ID], ["dad","bf","gf"][char.ID]);
 		}
 		
 		trackTxt.text = "";
-		for(song in daWeek.songList)
-			trackTxt.text += song.toUpperCase() + '\n';
+		for(song in daWeek.songs)
+			trackTxt.text += song[0].toUpperCase() + '\n';
 		trackTxt.x = 200 - (trackTxt.width / 2);
 		
 		weekNameTxt.text = weekList[curWeek].weekName.toUpperCase();
@@ -313,11 +279,10 @@ class StoryMenuState extends MusicBeatState
 		diffInt += change;
 		diffInt = FlxMath.wrap(diffInt, 0, 2);
 		
-		curDiff = CoolUtil.getDiffs()[diffInt];
+		curDiff = ['easy', 'normal', 'hard'][diffInt];
 		
-		// scoreCount[0] += FlxG.random.int(0, 2546688);
 		// updates the score
-		scoreCount[0] = Highscore.getScore('week-' + weekList[curWeek].fileName + '-' + curDiff).score;
+		scoreCount[0] = Highscore.getScore('week-' + weekList[curWeek].weekFile + '-' + curDiff).score;
 		
 		diffSelector.changeDiff(curDiff);
 	}
@@ -327,7 +292,7 @@ class StoryMenuState extends MusicBeatState
 		function doShit(daFile:String)
 		{
 			var path:String = 'menu/story/$daFile/';
-			for(item in Paths.readDir('images/' + path,  ".png"))
+			for(item in Paths.readDir('images/' + path, ".png"))
 				Paths.preloadGraphic(path + item);
 		}
 		

@@ -98,9 +98,12 @@ class PauseSubState extends MusicBeatSubState
 		bottomTxt.setFormat(Main.gFont, 36, 0xFFFFFFFF, RIGHT);
 		add(bottomTxt);
 
-		pauseSong = new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song.toLowerCase()), true, false);
+		pauseSong = new FlxSound();
 		if(Conductor.songPos > 0)
 		{
+			@:privateAccess
+			pauseSong.loadEmbedded(PlayState.instance.inst._sound, true, false);
+			
 			pauseSong.play(Conductor.songPos);
 			pauseSong.pitch = 0.9;
 			pauseSong.volume = 0;
@@ -209,7 +212,7 @@ class PauseSubState extends MusicBeatSubState
 		countdownTxt.updateHitbox();
 		add(countdownTxt);
 
-		var barTween:FlxTween;
+		var barTween:FlxTween = null;
 		var cntBar = new FlxSprite().makeGraphic(180, 8, 0xFFFFFFFF);
 		cntBar.screenCenter(X);
 		cntBar.visible = false;
@@ -217,7 +220,7 @@ class PauseSubState extends MusicBeatSubState
 
 		var loops:Int = 0;
 		onCountdown = true;
-		var countTimer = new FlxTimer().start(0.1, function(tmr:FlxTimer)
+		var countTimer = new FlxTimer().start(0.5, function(tmr:FlxTimer)
 		{
 			if(loops == 4)
 				close();
@@ -229,12 +232,12 @@ class PauseSubState extends MusicBeatSubState
 				if(!cntBar.visible)
 				{
 					cntBar.visible = true;
-					cntBar.y = FlxG.height / 2 + 24;
+					cntBar.y = FlxG.height / 2 + 48;
 				}
 				cntBar.scale.x = 1.0;
 				if(barTween != null)
 					barTween.cancel();
-				barTween = FlxTween.tween(cntBar.scale, {x: 0.0}, 0.1);
+				barTween = FlxTween.tween(cntBar.scale, {x: 0.0}, 0.5);
 			}
 			loops++;
 		}, 5);

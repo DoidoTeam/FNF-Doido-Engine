@@ -309,13 +309,11 @@ class PlayState extends MusicBeatState
 		var daSong:String = SONG.song.toLowerCase();
 
 		inst = new FlxSound();
-		inst.loadEmbedded(Paths.inst(daSong), false, false);
+		inst.loadEmbedded(Paths.inst(daSong, songDiff), false, false);
 
 		vocals = new FlxSound();
 		if(SONG.needsVoices)
-		{
-			vocals.loadEmbedded(Paths.vocals(daSong), false, false);
-		}
+			vocals.loadEmbedded(Paths.vocals(daSong, songDiff), false, false);
 
 		songLength = inst.length;
 		function addMusic(music:FlxSound):Void

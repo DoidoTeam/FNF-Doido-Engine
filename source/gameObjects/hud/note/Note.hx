@@ -125,7 +125,7 @@ class Note extends FlxSprite
 	public var noteType:String = "default";
 
 	public function setSongOffset():Void
-		songTime = initialSongTime - Conductor.musicOffset;
+		songTime = initialSongTime + Conductor.musicOffset;
 
 	public function noteDiff():Float
 		return (songTime + Conductor.inputOffset - Conductor.songPos);

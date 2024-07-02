@@ -160,7 +160,7 @@ class OffsetsSubState extends MusicBeatSubState
 
         if(curSelected == 0)
         {
-            songPos += change;
+            songPos -= change;
             if(PlayState.instance != null)
                 PlayState.instance.updateOption('Song Offset');
         }

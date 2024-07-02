@@ -141,9 +141,10 @@ class LoadSongState extends MusicBeatState
 			trace('preloaded characters');
 			loadPercent = 0.6;
 			
-			Paths.preloadSound('songs/${SONG.song}/Inst');
+			var songDiff:String = PlayState.songDiff;
+			Paths.preloadSound(Paths.songPath('${SONG.song}/Inst', songDiff));
 			if(SONG.needsVoices)
-				Paths.preloadSound('songs/${SONG.song}/Voices');
+				Paths.preloadSound(Paths.songPath('${SONG.song}/Voices', songDiff));
 			
 			trace('preloaded music');
 			loadPercent = 0.75;

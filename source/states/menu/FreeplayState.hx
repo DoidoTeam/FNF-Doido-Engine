@@ -22,26 +22,24 @@ import subStates.DeleteScoreSubState;
 
 using StringTools;
 
+typedef FreeplaySong = {
+	var name:String;
+	var icon:String;
+	var diffs:Array<String>;
+	var color:FlxColor;
+}
 class FreeplayState extends MusicBeatState
 {
-	var songList:Array<Array<Dynamic>> = [];
+	var songList:Array<FreeplaySong> = [];
 	
-	function addWeek(songs:Array<String>, icons:Array<String>)
+	function addSong(name:String, icon:String, diffs:Array<String>)
 	{
-		for(i in 0...songs.length)
-		{
-			var icon:String	= (icons.length - 1 >= i) ? icons[i] : icons[0];
-			
-			addSong(songs[i], icon, null);
-		}
-	}
-	
-	function addSong(name:String, icon:String, ?color:FlxColor)
-	{
-		if(color == null)
-			color = HealthIcon.getColor(icon);
-	
-		songList.push([name, icon, color]);
+		songList.push({
+			name: name,
+			icon: icon,
+			diffs: diffs,
+			color: HealthIcon.getColor(icon),
+		});
 	}
 
 	static var curSelected:Int = 0;
@@ -67,34 +65,29 @@ class FreeplayState extends MusicBeatState
 		bg.screenCenter();
 		add(bg);
 		
-		// base fnf
-		addWeek(["tutorial"], ["gf"]);
-		addWeek(["bopeebo", "fresh", "dadbattle"], ["dad"]);
-		addWeek(["senpai", "roses", "thorns"], ["senpai","senpai","spirit"]);
-		
-		// other guys
-		addSong("defeat", "black-impostor");
-		addSong("madness", "tricky");
-		addSong("expurgation", "tricky");
-		addSong("exploitation", "true-expunged");
-		addSong("collision", 	"gemamugen"); // CU PINTO BOSTA
-		addSong("lunar-odyssey","luano-day");
-		addSong("escape-from-california","moldygh");
-		addSong("beep-power", "dad");
+		// adding songs
+		for(i in 0...SongData.weeks.length)
+		{
+			var week = SongData.getWeek(i);
+			if(week.storyModeOnly) continue;
+
+			for(song in week.songs)
+				addSong(song[0], song[1], week.diffs);
+		}
 
 		grpItems = new FlxGroup();
 		add(grpItems);
 
 		for(i in 0...songList.length)
 		{
-			var label:String = songList[i][0];
-			label = label.replace("-", " ");
+			var label:String = songList[i].name;
+			//label = label.replace("-", " ");
 
 			var item = new AlphabetMenu(0, 0, label, true);
 			grpItems.add(item);
 
 			var icon = new HealthIcon();
-			icon.setIcon(songList[i][1]);
+			icon.setIcon(songList[i].icon);
 			grpItems.add(icon);
 
 			item.icon = icon;
@@ -140,8 +133,10 @@ class FreeplayState extends MusicBeatState
 		if(Controls.justPressed("UI_RIGHT"))
 			changeDiff(1);
 
-		if(Controls.justPressed("RESET"))
-			openSubState(new DeleteScoreSubState(songList[curSelected][0], CoolUtil.getDiffs()[curDiff]));
+		if(Controls.justPressed("RESET")) {
+			var curSong = songList[curSelected];
+			openSubState(new DeleteScoreSubState(curSong.name, curSong.diffs[curDiff]));
+		}
 
 		if(DeleteScoreSubState.deletedScore)
 		{
@@ -153,9 +148,10 @@ class FreeplayState extends MusicBeatState
 		{
 			try
 			{
+				var curSong = songList[curSelected];
 				PlayState.playList = [];
-				PlayState.songDiff = CoolUtil.getDiffs()[curDiff];
-				PlayState.loadSong(songList[curSelected][0]);
+				PlayState.songDiff = curSong.diffs[curDiff];
+				PlayState.loadSong(curSong.name);
 				
 				Main.switchState(new LoadSongState());
 			}
@@ -186,7 +182,12 @@ class FreeplayState extends MusicBeatState
 	public function changeDiff(change:Int = 0)
 	{
 		curDiff += change;
-		curDiff = FlxMath.wrap(curDiff, 0, CoolUtil.getDiffs().length - 1);
+
+		var maxDiff:Int = songList[curSelected].diffs.length - 1;
+		if(change == 0)
+			curDiff = Math.floor(FlxMath.bound(curDiff, 0, maxDiff));
+		else
+			curDiff = FlxMath.wrap(curDiff, 0, maxDiff);
 		
 		updateScoreCount();
 	}
@@ -195,7 +196,8 @@ class FreeplayState extends MusicBeatState
 	{
 		curSelected += change;
 		curSelected = FlxMath.wrap(curSelected, 0, songList.length - 1);
-
+		changeDiff();
+		
 		for(rawItem in grpItems.members)
 		{
 			if(Std.isOfType(rawItem, AlphabetMenu))
@@ -210,7 +212,7 @@ class FreeplayState extends MusicBeatState
 		}
 		
 		if(bgTween != null) bgTween.cancel();
-		bgTween = FlxTween.color(bg, 0.4, bg.color, songList[curSelected][2]);
+		bgTween = FlxTween.color(bg, 0.4, bg.color, songList[curSelected].color);
 
 		if(change != 0)
 			FlxG.sound.play(Paths.sound("menu/scrollMenu"));
@@ -219,7 +221,10 @@ class FreeplayState extends MusicBeatState
 	}
 	
 	public function updateScoreCount()
-		scoreCounter.updateDisplay(songList[curSelected][0], CoolUtil.getDiffs()[curDiff]);
+	{
+		var curSong = songList[curSelected];
+		scoreCounter.updateDisplay(curSong.name, curSong.diffs[curDiff]);
+	}
 }
 /*
 *	instead of it being separate objects in FreeplayState

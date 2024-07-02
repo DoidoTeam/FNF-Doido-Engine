@@ -19,14 +19,6 @@ class CoolUtil
 	{
 		return char.substring(0, char.lastIndexOf('-'));
 	}
-	
-	public static function getDiffs(?week:String):Array<String>
-	{
-		return switch(week)
-		{
-			default: ["easy", "normal", "hard"];
-		}
-	}
 
 	public static function charList():Array<String>
 	{

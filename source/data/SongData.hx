@@ -35,15 +35,91 @@ typedef EventSong = {
 	// [0] = section // [1] = strumTime // [2] events
 	var songEvents:Array<Dynamic>;
 }
+typedef FunkyWeek = {
+	var songs:Array<Array<String>>;
+	var ?weekFile:String;
+	var ?weekName:String;
+	var ?chars:Array<String>;
+	var ?freeplayOnly:Bool;
+	var ?storyModeOnly:Bool;
+	var ?diffs:Array<String>;
+}
 
 class SongData
 {
+	public static var weeks:Array<FunkyWeek> = [
+		{
+			songs: [
+				['tutorial', 'gf'],
+			],
+			weekFile: 'tutorial',
+			weekName: 'funky beginnings',
+			chars: ['', 'bf', 'gf'],
+		},
+		{
+			songs: [
+				['bopeebo', 	'dad'],
+				['fresh', 		'dad'],
+				['dadbattle', 	'dad'],
+			],
+			weekFile: 'week1',
+			weekName: 'daddy dearest',
+			chars: ['dad', 'bf', 'gf'],
+			diffs: ['easy', 'normal', 'hard', 'erect', 'nightmare'],
+		},
+		{
+			songs: [
+				['senpai', 	'senpai'],
+				['roses', 	'senpai'],
+				['thorns', 	'spirit'],
+			],
+			weekFile: 'week6',
+			weekName: 'hating simulator (ft. moawling)',
+			chars: ['senpai', 'bf', 'gf'],
+			diffs: ['easy', 'normal', 'hard', 'erect', 'nightmare'],
+		},
+		{
+			songs: [
+				["blam", 			"pico"],
+				["-debug", 			"bf-pixel"],
+				["defeat", 			"black-impostor"],
+				["madness", 		"tricky"],
+				["expurgation", 	"tricky"],
+				["exploitation", 	"true-expunged"],
+				["collision", 		"gemamugen"], // CU PINTO BOSTA
+				["lunar-odyssey",	"luano-day"],
+				["beep-power", 		"dad"],
+				["escape-from-california",	"moldygh"],
+			],
+			freeplayOnly: true,
+		},
+	];
+	inline public static function getWeek(index:Int):FunkyWeek
+	{
+		var week = weeks[index];
+		if(week == null)
+			week = {songs: []};
+		if(week.weekFile == null)
+			week.weekFile = '$index';
+		if(week.weekName == null)
+			week.weekName = '';
+		if(week.chars == null)
+			week.chars = ['', '', ''];
+		if(week.freeplayOnly == null)
+			week.freeplayOnly = false;
+		if(week.storyModeOnly == null)
+			week.storyModeOnly = false;
+		if(week.diffs == null)
+			week.diffs = ['easy', 'normal', 'hard'];
+		return week;
+	}
+
 	// use these to whatever
 	inline public static function defaultSong():SwagSong
 	{
 		return
 		{
-			song: "test",
+			song: "-debug",
 			notes: [],
 			bpm: 100,
 			needsVoices: true,

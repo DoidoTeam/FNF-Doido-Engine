@@ -18,7 +18,7 @@ import openfl.text.TextFormat;
 class FPSCounter extends TextField
 {
 	private var times:Array<Float>;
-	private var memPeak:Float = 0;
+	//private var memPeak:Float = 0;
 
 	public function new(inX:Float = 10.0, inY:Float = 10.0) 
 	{
@@ -50,20 +50,19 @@ class FPSCounter extends TextField
 			fps = FlxG.updateFramerate;
 		
 		var mem:Float = Math.abs(Math.round(System.totalMemory / 1024 / 1024 * 100) / 100);
-		if(mem > memPeak)
-			memPeak = mem;
+		/*if(mem > memPeak)
+			memPeak = mem;*/
 		
 		if(fps < 30 || fps > 360
 		|| mem >= 2 * 1024)
-		{
 			textColor = 0xFF0000;
-		}
 		else
 			textColor = 0xFFFFFF;
 		
-		text = 'FPS: ${fps}\n'
+		/*text = 'FPS: ${fps}\n'
 		+ 'Memory: ${formatMemory(mem)}\n'
-		+ 'MaxMem: ${formatMemory(memPeak)}';
+		+ 'MaxMem: ${formatMemory(memPeak)}';*/
+		text = 'FPS: $fps\nRAM: ${formatMemory(mem)}';
 	}
 	
 	function formatMemory(memory:Float):String

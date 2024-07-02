@@ -59,7 +59,7 @@ class Paths
 				#end
 				
 				var newGraphic = FlxGraphic.fromBitmapData(bitmap, false, key, false);
-				//trace('created new image $key');
+				trace('created new image $key');
 				
 				renderedGraphics.set(key, newGraphic);
 			}
@@ -129,11 +129,20 @@ class Paths
 	public static function sound(key:String):Sound
 		return getSound('sounds/$key');
 
-	public static function inst(key:String):Sound
-		return getSound('songs/$key/Inst');
+	public static function songPath(key:String, diff:String):String
+	{
+		var song:String = 'songs/$key';
+		// erect
+		if(['erect', 'nightmare'].contains(diff))
+			song += '-erect';
+		
+		return song;
+	}
+	public static function inst(song:String, diff:String = ''):Sound
+		return getSound(songPath('$song/Inst', diff));
 
-	public static function vocals(key:String):Sound
-		return getSound('songs/$key/Voices');
+	public static function vocals(song:String, diff:String = ''):Sound
+		return getSound(songPath('$song/Voices', diff));
 	
 	public static function image(key:String):FlxGraphic
 		return getGraphic(key);

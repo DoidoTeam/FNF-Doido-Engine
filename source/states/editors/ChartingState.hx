@@ -430,7 +430,8 @@ class ChartingState extends MusicBeatState
 			reloadSection(0);
 		});
 		var clearSongButton = new FlxButton(200, 250, "Clear Song", function() {
-			SONG = SongData.defaultSong();
+			//SONG = SongData.defaultSong();
+			SONG.notes = [];
 			reloadSection(0);
 		});
 		dangerButton(clearEventsButton);
