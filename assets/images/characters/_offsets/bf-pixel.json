@@ -1,16 +1,16 @@
 {
 	"globalOffset": [
-		0,
+		-42,
 		0
 	],
 	"animOffsets": [
 		[
-			"singDOWN",
+			"singRIGHTmiss",
 			0,
 			0
 		],
 		[
-			"singRIGHTmiss",
+			"singDOWN",
 			0,
 			0
 		],
@@ -40,12 +40,12 @@
 			0
 		],
 		[
-			"singUPmiss",
+			"singLEFT",
 			0,
 			0
 		],
 		[
-			"singLEFT",
+			"singUPmiss",
 			0,
 			0
 		]

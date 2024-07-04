@@ -113,17 +113,13 @@ class LoadSongState extends MusicBeatState
 			loadPercent = 0.2;
 			for(i in charList)
 			{
-				var char = new Character();
-				char.isPlayer = playerChars.contains(i);
-				char.reloadChar(i);
+				var char = new Character(i, playerChars.contains(i));
 				addBehind(char);
 
 				if(char.isPlayer
 				&& !charList.contains(char.deathChar))
 				{
-					var dead = new Character();
-					dead.isPlayer = true;
-					dead.reloadChar(char.deathChar);
+					var dead = new Character(char.deathChar, true);
 					addBehind(dead);
 				}
 				

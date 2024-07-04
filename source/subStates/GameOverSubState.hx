@@ -1,5 +1,6 @@
 package subStates;
 
+import flixel.math.FlxPoint;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -11,57 +12,57 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import data.GameData.MusicBeatSubState;
-import gameObjects.Character;
+import gameObjects.CharGroup;
 import states.*;
 
 class GameOverSubState extends MusicBeatSubState
 {
-	public var bf:Character;
+	public var bf:CharGroup;
 	public var bfFollow:FlxObject;
-	var canCamFollow:Bool = false;
 
-	public function new(bf:Character)
+	public function new(bf:CharGroup)
 	{
 		super();
 		this.bf = bf;
+		bf.curChar = bf.char.deathChar;
 	}
+
+	public var loopTimer:FlxTimer;
 	
 	override function create()
 	{
 		super.create();
 		add(bf);
-		// the game loads the deathChar you set in Character.hx (default is "bf")
-		bf.reloadChar(bf.deathChar);
+		// the game loads the deathChar you set in Character.hx (default is "bf-dead")
+		bf.reload();
+		bf.char.playAnim("firstDeath", true);
 		
-		bf.playAnim("firstDeath");
-
-		bfFollow = new FlxObject(bf.x + bf.width / 2, bf.y + bf.height / 2);
-
 		new FlxTimer().start(0.4, function(tmr:FlxTimer)
 		{
-			//FlxG.camera.follow(bfFollow, LOCKON, FlxG.elapsed * 1);
-			canCamFollow = true;
+			bfFollow = new FlxObject(
+				bf.char.getMidpoint().x - 200 - bf.char.cameraOffset.x,
+				bf.char.getMidpoint().y - 20  + bf.char.cameraOffset.y
+			);
 		});
-		
+
 		// death sound
 		FlxG.sound.play(switch(PlayState.SONG.song)
 		{
 			default: Paths.music("death/deathSound");
+		});
+
+		// awaits 58 frames to begin music
+		loopTimer = new FlxTimer().start((1 / 24) * 58, function(tmr:FlxTimer)
+		{
+			bf.char.playAnim("deathLoop");
+			CoolUtil.playMusic("death/deathMusic");
 		});
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if(bf.animation.curAnim.name == "firstDeath"
-		&& bf.animation.curAnim.finished)
-		{
-			bf.playAnim("deathLoop");
-
-			CoolUtil.playMusic("death/deathMusic");
-		}
-		
-		if(canCamFollow)
+		if(bfFollow != null)
 			CoolUtil.dumbCamPosLerp(FlxG.camera, bfFollow, elapsed * 2);
 
 		if(!ended)
@@ -70,10 +71,8 @@ class GameOverSubState extends MusicBeatSubState
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 0.2, false, function()
 				{
-					//Main.switchState(new MenuState());
 					PlayState.sendToMenu();
 				}, true);
-				
 			}
 
 			if(Controls.justPressed("ACCEPT"))
@@ -86,7 +85,9 @@ class GameOverSubState extends MusicBeatSubState
 	public function endBullshit()
 	{
 		ended = true;
-		bf.playAnim("deathConfirm");
+		bf.char.playAnim("deathConfirm");
+		if(loopTimer != null)
+			loopTimer.cancel();
 
 		CoolUtil.playMusic();
 		FlxG.sound.play(Paths.music("death/deathMusicEnd"));
@@ -100,7 +101,6 @@ class GameOverSubState extends MusicBeatSubState
 				Main.skipClearMemory = true;
 				Main.resetState();
 			});
-
 		});
 	}
 }

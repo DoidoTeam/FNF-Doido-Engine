@@ -741,7 +741,7 @@ class ChartTestSubState extends MusicBeatSubState
 				else if(!music.playing)
 					music.play();
 
-				if(Math.abs(music.time - Conductor.songPos) >= 40)
+				if(Math.abs(music.time - Conductor.songPos) >= 20)
 				{
 					music.play();
 					music.time = Conductor.songPos;

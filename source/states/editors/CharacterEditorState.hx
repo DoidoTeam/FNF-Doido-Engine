@@ -6,6 +6,7 @@ import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.addons.display.FlxGridOverlay;
@@ -32,6 +33,7 @@ class CharacterEditorState extends MusicBeatState
 	}
 	var curChar:String = "";
 
+	var charGrp:FlxTypedGroup<Character> = new FlxTypedGroup<Character>();
 	var char:Character;
 	var ghost:Character;
 
@@ -47,7 +49,7 @@ class CharacterEditorState extends MusicBeatState
 	{
 		ghostAnimButtons.clear();
 	
-		var ghostAnims = ghost.animation.getNameList();
+		var ghostAnims = ghost.animList;
 		for(i in 0...ghostAnims.length)
 		{
 			var animButton = new FlxButton(100, 30 + (20 * i), ghostAnims[i], function() {
@@ -60,19 +62,32 @@ class CharacterEditorState extends MusicBeatState
 			animButton.cameras = [camHUD];
 		}
 	}
+
+	function reloadChar(dude:Character, newChar:String = "bf", isGhost:Bool = false):Character
+	{
+		if(dude != null)
+			charGrp.remove(dude);
+		dude = new Character(newChar, false, true);
+		charGrp.add(dude);
+		if(isGhost)
+			dude.alpha = 0.4;
+		return dude;
+	}
 	
 	function setCharPos(dude:Character)
 	{
 		dude.setPosition(FlxG.width * 0.8, FlxG.height * 1.5);
+		dude.x -= dude.width / 2;
 		dude.y -= dude.height;
 		
 		dude.x += dude.globalOffset.x;
 		dude.y += dude.globalOffset.y;
+		//dude.setPosition(0,0);
 	}
 	
 	function spawnRating()
 	{
-		var lol = new Rating("sick", 999);
+		var lol = new Rating("sick", FlxG.random.int(900, 999));
 		lol.setPos(char.x + char.ratingsOffset.x, char.y + char.ratingsOffset.y);
 		add(lol);
 	}
@@ -84,6 +99,7 @@ class CharacterEditorState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+		CoolUtil.playMusic('dialogue/lunchbox');
 		Controls.setSoundKeys(true);
 		FlxG.mouse.visible = true;
 		var grid = FlxGridOverlay.create(32, 32, FlxG.width * 2, FlxG.height * 2);
@@ -106,16 +122,25 @@ class CharacterEditorState extends MusicBeatState
 		//FlxG.camera.focusOn(camFollow.getPosition());
 		camMain.zoom = camZoom; // 0.7
 
-		char = new Character();
-		char.reloadChar(curChar);
-		setCharPos(char);
-		add(char);
+		add(charGrp);
 
-		ghost = new Character();
-		ghost.reloadChar(curChar);
+		char = reloadChar(char, curChar);
+		setCharPos(char);
+
+		ghost = reloadChar(ghost, curChar, true);
 		setCharPos(ghost);
-		ghost.alpha = 0.4;
-		add(ghost);
+
+		for(i in 0...2)
+		{
+			var sizes:Array<Int> = [32, 4];
+			if(i == 0)
+				sizes.reverse();
+			var floorSpr = new FlxSprite(FlxG.width * 0.8, FlxG.height * 1.5);
+			floorSpr.makeGraphic(sizes[0], sizes[1], 0xFFFF0000);
+			add(floorSpr);
+			floorSpr.x -= floorSpr.width / 2;
+			floorSpr.y -= floorSpr.height / 2;
+		}
 
 		exportTxt = new FlxText(0,0,0,"",24);
 		exportTxt.setFormat(Main.gFont, 18, 0xFFFFFFFF, RIGHT);
@@ -143,7 +168,7 @@ class CharacterEditorState extends MusicBeatState
 		ghostAnimButtons.cameras = [camHUD];
 		animTab.add(ghostAnimButtons);
 
-		var animList = char.animation.getNameList();
+		var animList = char.animList;
 		for(i in 0...animList.length)
 		{
 			var animButton = new FlxButton(10, 30 + (20 * i), animList[i], function() {
@@ -178,10 +203,13 @@ class CharacterEditorState extends MusicBeatState
 		charDropDown.selectedLabel = curChar;
 		charDropDown.cameras = [camHUD];
 
+		var checkFlipGhost = new FlxUICheckBox(140, 50, null, null, "Ghost FlipX", 100);
+		var checkShowGhost = new FlxUICheckBox(140, 75, null, null, "Show Ghost", 100);
 		var ghostDropDown = new FlxUIDropDownMenu(140, 25, FlxUIDropDownMenu.makeStrIdLabelArray(charList, true), function(character:String)
 		{
-			//Main.switchState(new CharacterEditorState(curChar, charList[Std.parseInt(character)]));
-			ghost.reloadChar(charList[Std.parseInt(character)]);
+			ghost = reloadChar(ghost, charList[Std.parseInt(character)], true);
+			checkFlipGhost.callback();
+			checkShowGhost.callback();
 			reloadGhostButtons();
 			setCharPos(ghost);
 		});
@@ -199,7 +227,6 @@ class CharacterEditorState extends MusicBeatState
 		checkFlipChar.callback = flipCheck;
 		checkFlipChar.cameras = [camHUD];
 
-		var checkFlipGhost = new FlxUICheckBox(140, 50, null, null, "Ghost FlipX", 100);
 		checkFlipGhost.checked = ghost.flipX;
 		checkFlipGhost.callback = function()
 		{
@@ -215,7 +242,6 @@ class CharacterEditorState extends MusicBeatState
 		};
 		checkIsPlayer.cameras = [camHUD];
 
-		var checkShowGhost = new FlxUICheckBox(140, 75, null, null, "Show Ghost", 100);
 		checkShowGhost.checked = ghost.visible;
 		checkShowGhost.callback = function()
 		{
@@ -338,15 +364,15 @@ class CharacterEditorState extends MusicBeatState
 						
 							case "animation":
 								if(input.name == 'inputX')
-									char.animOffsets.get(char.animation.curAnim.name)[0] = inputNum;
+									char.animOffsets.get(char.curAnimName)[0] = inputNum;
 								else
-									char.animOffsets.get(char.animation.curAnim.name)[1] = inputNum;
-								char.playAnim(char.animation.curAnim.name, true);
+									char.animOffsets.get(char.curAnimName)[1] = inputNum;
+								char.playAnim(char.curAnimName, true);
 								
-								if(char.animation.curAnim.name == ghost.animation.curAnim.name
+								if(char.curAnimName == ghost.curAnimName
 								&& char.curChar == ghost.curChar)
 								{
-									ghost.playAnim(char.animation.curAnim.name, true);
+									ghost.playAnim(char.curAnimName, true);
 									ghost.animOffsets = char.animOffsets;
 								}
 							
@@ -370,6 +396,7 @@ class CharacterEditorState extends MusicBeatState
 		super.update(elapsed);
 		if(FlxG.keys.justPressed.ESCAPE)
 		{
+			CoolUtil.playMusic();
 			FlxG.mouse.visible = false;
 			Main.switchState(new LoadSongState());
 		}
@@ -465,14 +492,14 @@ class CharacterEditorState extends MusicBeatState
 				char.cameraOffset.y += y;
 		
 			case "animation":
-				char.animOffsets.get(char.animation.curAnim.name)[0] += -x;
-				char.animOffsets.get(char.animation.curAnim.name)[1] += -y;
-				char.playAnim(char.animation.curAnim.name, true);
+				char.animOffsets.get(char.curAnimName)[0] += -x;
+				char.animOffsets.get(char.curAnimName)[1] += -y;
+				char.playAnim(char.curAnimName, true);
 				
-				if(char.animation.curAnim.name == ghost.animation.curAnim.name
+				if(char.curAnimName == ghost.curAnimName
 				&& char.curChar == ghost.curChar)
 				{
-					ghost.playAnim(char.animation.curAnim.name, true);
+					ghost.playAnim(char.curAnimName, true);
 					ghost.animOffsets = char.animOffsets;
 				}
 			case "ratings":
@@ -488,7 +515,7 @@ class CharacterEditorState extends MusicBeatState
 	function updateTxt()
 	{
 		exportTxt.text = "";
-		for(anim in char.animation.getNameList())
+		for(anim in char.animList)
 		{
 			if(!char.animOffsets.exists(anim))
 				char.addOffset(anim);
@@ -519,7 +546,8 @@ class CharacterEditorState extends MusicBeatState
 				changeInputY.text = Std.string(char.cameraOffset.y);
 		
 			case "animation":
-				var daAnim = char.animOffsets.get(char.animation.curAnim.name);
+				trace(char.curAnimName);
+				var daAnim = char.animOffsets.get(char.curAnimName);
 				
 				changeInputX.text = Std.string(daAnim[0]);
 				changeInputY.text = Std.string(daAnim[1]);
@@ -536,7 +564,7 @@ class CharacterEditorState extends MusicBeatState
 		
 		exportData.globalOffset = [char.globalOffset.x, char.globalOffset.y];
 		exportData.cameraOffset = [char.cameraOffset.x, char.cameraOffset.y];
-		exportData.ratingsOffset= [char.ratingsOffset.x,char.ratingsOffset.y];
+		exportData.ratingsOffset= [char.ratingsOffset.x, char.ratingsOffset.y];
 		
 		for(anim => offsets in char.animOffsets)
 			exportData.animOffsets.push([anim, offsets[0], offsets[1]]);

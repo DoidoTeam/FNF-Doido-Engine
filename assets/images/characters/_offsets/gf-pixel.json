@@ -1,7 +1,7 @@
 {
 	"globalOffset": [
-		0,
-		0
+		-180,
+		12
 	],
 	"animOffsets": [
 		[
@@ -10,7 +10,7 @@
 			0
 		],
 		[
-			"danceLeft",
+			"danceRight",
 			0,
 			0
 		]
@@ -20,7 +20,7 @@
 		0
 	],
 	"cameraOffset": [
-		0,
-		0
+		-200,
+		-80
 	]
 }

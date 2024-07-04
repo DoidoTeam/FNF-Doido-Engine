@@ -10,11 +10,6 @@
 			0
 		],
 		[
-			"deathLoop",
-			30,
-			1
-		],
-		[
 			"singRIGHTmiss",
 			-45,
 			21
@@ -33,16 +28,6 @@
 			"singUP",
 			-41,
 			32
-		],
-		[
-			"deathConfirm",
-			30,
-			65
-		],
-		[
-			"firstDeath",
-			30,
-			7
 		],
 		[
 			"hey",

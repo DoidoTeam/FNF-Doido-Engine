@@ -4,7 +4,7 @@ import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
-import gameObjects.Character;
+import gameObjects.CharGroup;
 
 class Strumline extends FlxGroup
 {
@@ -26,9 +26,9 @@ class Strumline extends FlxGroup
 	public var botplay:Bool = false;
 	public var customData:Bool = false;
 
-	public var character:Character;
+	public var character:CharGroup;
 
-	public function new(x:Float, ?character:Character, ?downscroll:Bool, ?isPlayer = false, ?botplay = true, ?assetModifier:String = "base")
+	public function new(x:Float, ?character:CharGroup, ?downscroll:Bool, ?isPlayer = false, ?botplay = true, ?assetModifier:String = "base")
 	{
 		super();
 		this.x = x;

@@ -1055,14 +1055,14 @@ class ChartingState extends MusicBeatState
 		var daSong:String = SONG.song.toLowerCase();
 
 		var inst = new FlxSound();
-		inst.loadEmbedded(Paths.inst(daSong), false, false);
+		inst.loadEmbedded(Paths.inst(daSong, songDiff), false, false);
 		songLength = inst.length;
 		addMusic(inst);
 
 		if(SONG.needsVoices)
 		{
 			var vocals = new FlxSound();
-			vocals.loadEmbedded(Paths.vocals(daSong), false, false);
+			vocals.loadEmbedded(Paths.vocals(daSong, songDiff), false, false);
 			addMusic(vocals);
 		}
 	}

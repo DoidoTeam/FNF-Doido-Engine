@@ -2,140 +2,134 @@ package gameObjects;
 
 //import haxe.Json;
 //import flixel.FlxG;
+import flxanimate.animate.FlxAnim;
+import flxanimate.FlxAnimate;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
-import data.CharacterData.DoidoOffsets;
+import data.CharacterData;
+import data.CharacterData.*;
 
 using StringTools;
 
-class Character extends FlxSprite
+class Character extends FlxAnimate
 {
-	public function new() {
-		super();
-	}
-
 	public var curChar:String = "bf";
 	public var isPlayer:Bool = false;
+	public var onEditor:Bool = false;
 
 	public var holdTimer:Float = Math.NEGATIVE_INFINITY;
 	public var holdLength:Float = 0.7;
 	public var holdLoop:Int = 4;
 
-	public var idleAnims:Array<String> = [];
+	public var idleAnims:Array<String> = ["idle"];
 
 	public var quickDancer:Bool = false;
 	public var specialAnim:Int = 0;
 
 	// warning, only uses this
 	// if the current character doesnt have game over anims
-	public var deathChar:String = "bf";
+	public var deathChar:String = "bf-dead";
 
 	public var globalOffset:FlxPoint = new FlxPoint();
 	public var cameraOffset:FlxPoint = new FlxPoint();
 	public var ratingsOffset:FlxPoint = new FlxPoint();
 	private var scaleOffset:FlxPoint = new FlxPoint();
 
-	public function reloadChar(curChar:String = "bf"):Character
+	public function new(curChar:String = "bf", isPlayer:Bool = false, onEditor:Bool = false)
 	{
+		super(0,0,false);
+		this.onEditor = onEditor;
+		this.isPlayer = isPlayer;
 		this.curChar = curChar;
-
-		holdLoop = 4;
-		holdLength = 0.7;
-		idleAnims = ["idle"];
-
-		quickDancer = false;
-
-		flipX = flipY = false;
-		scale.set(1,1);
+		
 		antialiasing = FlxSprite.defaultAntialiasing;
 		isPixelSprite = false;
-		deathChar = "bf";
-
-		var storedPos:Array<Float> = [x, y];
-		globalOffset.set();
-		cameraOffset.set();
-		ratingsOffset.set();
-
-		animOffsets = []; // reset it
-
+		
+		var doidoChar = CharacterData.defaultChar();
 		// what
 		switch(curChar)
 		{
 			case "gemamugen":
-				frames = Paths.getSparrowAtlas("characters/gemamugen/gemamugen");
-				
-				animation.addByPrefix('idle', 		'idle', 24, true);
-				animation.addByPrefix('idle-alt',	'chacharealsmooth', 24, true);
-				animation.addByPrefix('singLEFT', 	'left', 24, false);
-				animation.addByPrefix('singDOWN', 	'down', 24, false);
-				animation.addByPrefix('singUP', 	'up', 24, false);
-				animation.addByPrefix('singRIGHT', 	'right', 24, false);
+				doidoChar.spritesheet += 'gemamugen/gemamugen';
+				doidoChar.anims = [
+					["idle", 	 'idle', 24, true],
+					['idle-alt', 'chacharealsmooth', 24, true],
 
+					["singLEFT", 'left', 24, false],
+					["singDOWN", 'down', 24, false],
+					["singUP",   'up', 	 24, false],
+					["singRIGHT",'right',24, false],
+				];
 				scale.set(2,2);
 			
 			case "senpai" | "senpai-angry":
-				frames = Paths.getSparrowAtlas("characters/senpai/senpai");
-				
+				doidoChar.spritesheet = 'characters/senpai/senpai';
+
 				if(curChar == "senpai") {
-					animation.addByPrefix('idle', 		'Senpai Idle instance 1', 		24, false);
-					animation.addByPrefix('singLEFT', 	'SENPAI LEFT NOTE instance 1', 	24, false);
-					animation.addByPrefix('singDOWN', 	'SENPAI DOWN NOTE instance 1', 	24, false);
-					animation.addByPrefix('singUP', 	'SENPAI UP NOTE instance 1', 	24, false);
-					animation.addByPrefix('singRIGHT', 	'SENPAI RIGHT NOTE instance 1',	24, false);
+					doidoChar.anims = [
+						['idle', 		'Senpai Idle instance 1', 		24, false],
+						['singLEFT', 	'SENPAI LEFT NOTE instance 1', 	24, false],
+						['singDOWN', 	'SENPAI DOWN NOTE instance 1', 	24, false],
+						['singUP', 		'SENPAI UP NOTE instance 1', 	24, false],
+						['singRIGHT', 	'SENPAI RIGHT NOTE instance 1',	24, false],
+					];
 				} else {
-					animation.addByPrefix('idle', 		'Angry Senpai Idle instance 1', 		24, false);
-					animation.addByPrefix('singLEFT', 	'Angry Senpai LEFT NOTE instance 1', 	24, false);
-					animation.addByPrefix('singDOWN', 	'Angry Senpai DOWN NOTE instance 1', 	24, false);
-					animation.addByPrefix('singUP', 	'Angry Senpai UP NOTE instance 1', 		24, false);
-					animation.addByPrefix('singRIGHT', 	'Angry Senpai RIGHT NOTE instance 1',	24, false);
+					doidoChar.anims = [
+						['idle', 		'Angry Senpai Idle instance 1', 		24, false],
+						['singLEFT', 	'Angry Senpai LEFT NOTE instance 1', 	24, false],
+						['singDOWN', 	'Angry Senpai DOWN NOTE instance 1', 	24, false],
+						['singUP', 		'Angry Senpai UP NOTE instance 1', 		24, false],
+						['singRIGHT', 	'Angry Senpai RIGHT NOTE instance 1',	24, false],
+					];
 				}
-				
 				antialiasing = false;
 				isPixelSprite = true;
 				scale.set(6,6);
 				
 			case "spirit":
-				frames = Paths.getPackerAtlas("characters/senpai/spirit");
-				
-				animation.addByPrefix('idle', 		"idle spirit_", 24, true);
-				animation.addByPrefix('singLEFT', 	"left_", 		24, false);
-				animation.addByPrefix('singDOWN', 	"spirit down_", 24, false);
-				animation.addByPrefix('singUP', 	"up_", 			24, false);
-				animation.addByPrefix('singRIGHT', 	"right_", 		24, false);
+				doidoChar.spritesheet += 'senpai/spirit';
+				doidoChar.anims = [
+					['idle', 		"idle spirit_", 24, true],
+					['singLEFT', 	"left_", 		24, false],
+					['singDOWN', 	"spirit down_", 24, false],
+					['singUP', 		"up_", 			24, false],
+					['singRIGHT', 	"right_", 		24, false],
+				];
+
+				//frames = Paths.getPackerAtlas("characters/senpai/spirit");
 				
 				antialiasing = false;
 				isPixelSprite = true;
 				scale.set(6,6);
-
+				
 			case "bf-pixel":
-				frames = Paths.getSparrowAtlas("characters/bf-pixel/bfPixel");
-
-				animation.addByPrefix('idle', 			'BF IDLE', 		24, false);
-				animation.addByPrefix('singUP', 		'BF UP NOTE', 	24, false);
-				animation.addByPrefix('singLEFT', 		'BF LEFT NOTE', 24, false);
-				animation.addByPrefix('singRIGHT', 		'BF RIGHT NOTE',24, false);
-				animation.addByPrefix('singDOWN', 		'BF DOWN NOTE', 24, false);
-				animation.addByPrefix('singUPmiss', 	'BF UP MISS', 	24, false);
-				animation.addByPrefix('singLEFTmiss', 	'BF LEFT MISS', 24, false);
-				animation.addByPrefix('singRIGHTmiss', 	'BF RIGHT MISS',24, false);
-				animation.addByPrefix('singDOWNmiss', 	'BF DOWN MISS', 24, false);
+				deathChar = "bf-pixel-dead";
+				doidoChar.spritesheet += 'bf-pixel/bfPixel';
+				doidoChar.anims = [
+					['idle', 			'BF IDLE', 		24, false],
+					['singUP', 			'BF UP NOTE', 	24, false],
+					['singLEFT', 		'BF LEFT NOTE', 24, false],
+					['singRIGHT', 		'BF RIGHT NOTE',24, false],
+					['singDOWN', 		'BF DOWN NOTE', 24, false],
+					['singUPmiss', 		'BF UP MISS', 	24, false],
+					['singLEFTmiss', 	'BF LEFT MISS', 24, false],
+					['singRIGHTmiss', 	'BF RIGHT MISS',24, false],
+					['singDOWNmiss', 	'BF DOWN MISS', 24, false],
+				];
 
 				flipX = true;
 				antialiasing = false;
 				isPixelSprite = true;
 				scale.set(6,6);
 
-				deathChar = "bf-pixel-dead";
-				if(isPlayer)
-					Paths.preloadGraphic("characters/bf-pixel/bfPixelsDEAD");
-
 			case "bf-pixel-dead":
-				frames = Paths.getSparrowAtlas("characters/bf-pixel/bfPixelsDEAD");
-
-				animation.addByPrefix('firstDeath', 	"BF Dies pixel",24, false);
-				animation.addByPrefix('deathLoop', 		"Retry Loop", 	24, true);
-				animation.addByPrefix('deathConfirm', 	"RETRY CONFIRM",24, false);
-				animation.play('firstDeath');
+				deathChar = "bf-pixel-dead";
+				doidoChar.spritesheet += 'bf-pixel/bfPixelsDEAD';
+				doidoChar.anims = [
+					['firstDeath', 		"BF Dies pixel",24, false, CoolUtil.intArray(55)],
+					['deathLoop', 		"Retry Loop", 	24, true],
+					['deathConfirm', 	"RETRY CONFIRM",24, false],
+				];
 
 				idleAnims = ["firstDeath"];
 
@@ -145,11 +139,12 @@ class Character extends FlxSprite
 				isPixelSprite = true;
 				
 			case "gf-pixel":
-				frames = Paths.getSparrowAtlas("characters/gf-pixel/gfPixel");
-				
-				animation.addByIndices('danceLeft',  'GF IDLE', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-				animation.addByIndices('danceRight', 'GF IDLE', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-				
+				doidoChar.spritesheet += 'gf-pixel/gfPixel';
+				doidoChar.anims = [
+					['danceLeft', 	"GF IDLE", 24, false, [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]],
+					['danceRight', 	"GF IDLE", 24, false, [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]],
+				];
+
 				idleAnims = ["danceLeft", "danceRight"];
 				
 				scale.set(6,6);
@@ -159,96 +154,134 @@ class Character extends FlxSprite
 				flipX = isPlayer;
 			
 			case 'luano-day'|'luano-night':
-				frames = Paths.getSparrowAtlas('characters/luano/luano');
-
 				var pref:String = (curChar == 'luano-night') ? 'night ' : '';
-
-				animation.addByPrefix('idle', 		'${pref}idle', 24, false);
-				animation.addByPrefix('singLEFT', 	'${pref}left', 24, false);
-				animation.addByPrefix('singDOWN', 	'${pref}down', 24, false);
-				animation.addByPrefix('singUP', 	'${pref}up',   24, false);
-				animation.addByPrefix('singRIGHT', 	'${pref}right',24, false);
-				animation.addByPrefix('jump', 		'${pref}jump',24, false);
+				doidoChar.spritesheet += 'luano/luano';
+				doidoChar.anims = [
+					['idle', 		'${pref}idle', 24, false],
+					['singLEFT', 	'${pref}left', 24, false],
+					['singDOWN', 	'${pref}down', 24, false],
+					['singUP', 		'${pref}up',   24, false],
+					['singRIGHT', 	'${pref}right',24, false],
+					['jump', 		'${pref}jump', 24, false],
+				];
 
 				holdLoop = 0;
 			
 			case 'spooky'|'spooky-player':
-				frames = Paths.getSparrowAtlas('characters/spooky/SpookyKids');
-
-				animation.addByIndices('danceLeft',	'Idle', [0,2,4,8], 		"", 12, false);
-				animation.addByIndices('danceRight','Idle', [10,12,14,16], 	"", 12, false);
 				var leftRight:Array<String> = ['singLEFT','singRIGHT'];
 				if(curChar == 'spooky-player')
 					leftRight.reverse();
-				animation.addByPrefix('${leftRight[0]}','SingLEFT', 24, false);
-				animation.addByPrefix('singDOWN', 		'SingDOWN', 24, false);
-				animation.addByPrefix('singUP', 		'SingUP',   24, false);
-				animation.addByPrefix('${leftRight[1]}','SingRIGHT',24, false);
+
+				doidoChar.spritesheet += 'spooky/SpookyKids';
+				doidoChar.anims = [
+					['danceLeft',	'Idle', 12, false, [0,2,4,8]],
+					['danceRight',	'Idle', 12, false, [10,12,14,16]],
+
+					['${leftRight[0]}',	'SingLEFT', 24, false],
+					['singDOWN', 		'SingDOWN', 24, false],
+					['singUP', 			'SingUP',   24, false],
+					['${leftRight[1]}',	'SingRIGHT',24, false],
+				];
 				
 				idleAnims = ["danceLeft", "danceRight"];
 				quickDancer = true;
-				
-			case "bf":
-				frames = Paths.getSparrowAtlas("characters/bf/BOYFRIEND");
 
-				animation.addByPrefix('idle', 			'BF idle dance', 		24, false);
-				animation.addByPrefix('singUP', 		'BF NOTE UP0', 			24, false);
-				animation.addByPrefix('singLEFT', 		'BF NOTE LEFT0', 		24, false);
-				animation.addByPrefix('singRIGHT', 		'BF NOTE RIGHT0', 		24, false);
-				animation.addByPrefix('singDOWN', 		'BF NOTE DOWN0', 		24, false);
-				animation.addByPrefix('singUPmiss', 	'BF NOTE UP MISS', 		24, false);
-				animation.addByPrefix('singLEFTmiss', 	'BF NOTE LEFT MISS', 	24, false);
-				animation.addByPrefix('singRIGHTmiss', 	'BF NOTE RIGHT MISS', 	24, false);
-				animation.addByPrefix('singDOWNmiss', 	'BF NOTE DOWN MISS', 	24, false);
-				animation.addByPrefix('hey', 			'BF HEY', 				24, false);
-
-				animation.addByPrefix('firstDeath', 	"BF dies", 			24, false);
-				animation.addByPrefix('deathLoop', 		"BF Dead Loop", 	24, true);
-				animation.addByPrefix('deathConfirm', 	"BF Dead confirm", 	24, false);
-
-				animation.addByPrefix('scared', 'BF idle shaking', 24);
-
-				flipX = true;
-
-			case "gf" | "gf-tutorial":
-				// GIRLFRIEND CODE
-				frames = Paths.getSparrowAtlas('characters/gf/GF_assets' + ((curChar == "gf-tutorial") ? "_singer" : ""));
-				animation.addByPrefix('cheer', 'GF Cheer', 24, false);
-				if(curChar == 'gf-tutorial')
-				{
-					animation.addByPrefix('singLEFT', 	'GF left note', 24, false);
-					animation.addByPrefix('singRIGHT', 	'GF Right Note', 24, false);
-					animation.addByPrefix('singUP', 	'GF Up Note', 24, false);
-					animation.addByPrefix('singDOWN', 	'GF Down Note', 24, false);
-				}
-				animation.addByIndices('sad', 		'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, false);
-				animation.addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-				animation.addByIndices('danceRight','GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-				//animation.addByIndices('hairBlow', 	"GF Dancing Beat Hair blowing", [0, 1, 2, 3], "", 24);
-				//animation.addByIndices('hairFall', 	"GF Dancing Beat Hair Landing", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "", 24, false);
-				animation.addByPrefix('scared', 'GF FEAR', 24);
+			case "gf":
+				isAnimateAtlas = true;
+				doidoChar.spritesheet += 'gf/gf-spritemap';
+				doidoChar.anims = [
+					['sad',			'gf sad',			24, false, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+					['danceLeft',	'GF Dancing Beat',	24, false, [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]],
+					['danceRight',	'GF Dancing Beat',	24, false, [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]],
+					
+					['cheer', 		'GF Cheer', 	24, false],
+					['singLEFT', 	'GF left note', 24, false],
+					['singRIGHT', 	'GF Right Note',24, false],
+					['singUP', 		'GF Up Note', 	24, false],
+					['singDOWN', 	'GF Down Note', 24, false],
+				];
 
 				idleAnims = ["danceLeft", "danceRight"];
 				quickDancer = true;
 				flipX = isPlayer;
 
 			case "dad":
-				// DAD ANIMATION LOADING CODE
-				frames = Paths.getSparrowAtlas("characters/dad/DADDY_DEAREST");
-				animation.addByPrefix('idle', 		'Dad idle dance', 		24, false);
-				animation.addByPrefix('singUP', 	'Dad Sing Note UP', 	24, false);
-				animation.addByPrefix('singRIGHT', 	'Dad Sing Note RIGHT', 	24, false);
-				animation.addByPrefix('singDOWN', 	'Dad Sing Note DOWN', 	24, false);
-				animation.addByPrefix('singLEFT', 	'Dad Sing Note LEFT', 	24, false);
+				doidoChar.spritesheet += 'dad/DADDY_DEAREST';
+				doidoChar.anims = [
+					['idle', 		'Dad idle dance', 		24, false],
+					['singUP', 		'Dad Sing Note UP', 	24, false],
+					['singRIGHT', 	'Dad Sing Note RIGHT', 	24, false],
+					['singDOWN', 	'Dad Sing Note DOWN', 	24, false],
+					['singLEFT', 	'Dad Sing Note LEFT', 	24, false],
 
-				animation.addByIndices('idle-loop', 	'Dad idle dance',  [11,12,13,14], "", 24, true);
-				animation.addByIndices('singUP-loop', 	'Dad Sing Note UP',    [3,4,5,6], "", 24, true);
-				animation.addByIndices('singRIGHT-loop','Dad Sing Note RIGHT', [3,4,5,6], "", 24, true);
-				animation.addByIndices('singLEFT-loop', 'Dad Sing Note LEFT',  [3,4,5,6], "", 24, true);
+					['idle-loop', 		'Dad idle dance', 		24, true, [11,12,13,14]],
+					['singUP-loop', 	'Dad Sing Note UP', 	24, true, [3,4,5,6]],
+					['singRIGHT-loop',	'Dad Sing Note RIGHT', 	24, true, [3,4,5,6]],
+					['singLEFT-loop', 	'Dad Sing Note LEFT', 	24, true, [3,4,5,6]],
+				];
+			
+			default: // case "bf"
+				doidoChar.spritesheet += 'bf/BOYFRIEND';
+				doidoChar.anims = [
+					['idle', 			'BF idle dance', 		24, false],
+					['singUP', 			'BF NOTE UP0', 			24, false],
+					['singLEFT', 		'BF NOTE LEFT0', 		24, false],
+					['singRIGHT', 		'BF NOTE RIGHT0', 		24, false],
+					['singDOWN', 		'BF NOTE DOWN0', 		24, false],
+					['singUPmiss', 		'BF NOTE UP MISS', 		24, false],
+					['singLEFTmiss', 	'BF NOTE LEFT MISS', 	24, false],
+					['singRIGHTmiss', 	'BF NOTE RIGHT MISS', 	24, false],
+					['singDOWNmiss', 	'BF NOTE DOWN MISS', 	24, false],
+					['hey', 			'BF HEY', 				24, false],
+					['scared', 			'BF idle shaking', 		24, true],
+				];
+				
+				flipX = true;
+			
+			case "bf-dead":
+				doidoChar.spritesheet += 'bf/BOYFRIEND';
+				doidoChar.anims = [
+					['firstDeath', 		"BF dies", 			24, false],
+					['deathLoop', 		"BF Dead Loop", 	24, true],
+					['deathConfirm', 	"BF Dead confirm", 	24, false],
+				];
 
-			default:
-				return reloadChar(isPlayer ? "bf" : "dad");
+				idleAnims = ['firstDeath'];
+
+				flipX = true;
 		}
+
+		if(!isAnimateAtlas)
+		{
+			if(Paths.fileExists('images/${doidoChar.spritesheet}.txt'))
+				frames = Paths.getPackerAtlas(doidoChar.spritesheet);
+			else
+				frames = Paths.getSparrowAtlas(doidoChar.spritesheet);
+
+			for(i in 0...doidoChar.anims.length)
+			{
+				var anim:Array<Dynamic> = doidoChar.anims[i];
+				if(anim.length > 4)
+					animation.addByIndices(anim[0],  anim[1], anim[4], "", anim[2], anim[3]);
+				else
+					animation.addByPrefix(anim[0], anim[1], anim[2], anim[3]);
+			}
+		}
+		else
+		{
+			loadAtlas(Paths.getPath('images/${doidoChar.spritesheet}'));
+			showPivot = false;
+			for(i in 0...doidoChar.anims.length)
+			{
+				var dAnim:Array<Dynamic> = doidoChar.anims[i];
+				if(dAnim.length > 4)
+					anim.addBySymbolIndices(dAnim[0], dAnim[1], dAnim[4], dAnim[2], dAnim[3]);
+				else
+					anim.addBySymbol(dAnim[0], dAnim[1], dAnim[2], dAnim[3]);
+			}
+		}
+		for(i in 0...doidoChar.anims.length)
+			animList.push(doidoChar.anims[i][0]);
 		
 		// offset gettin'
 		switch(curChar)
@@ -279,11 +312,12 @@ class Character extends FlxSprite
 			flipX = !flipX;
 
 		dance();
-
-		setPosition(storedPos[0], storedPos[1]);
-
-		return this;
 	}
+
+	/*public function reloadChar(curChar:String = "bf"):Character
+	{
+		return this;
+	}*/
 
 	private var curDance:Int = 0;
 
@@ -302,21 +336,25 @@ class Character extends FlxSprite
 		}
 	}
 
-	override function update(elapsed:Float)
+	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if(animation.getByName(animation.curAnim.name + '-loop') != null)
-			if(animation.curAnim.finished)
-				playAnim(animation.curAnim.name + '-loop');
-		
-		if(specialAnim > 0 && animation.curAnim.finished)
+		if(!onEditor)
 		{
-			specialAnim = 0;
-			dance();
+			if(animExists(curAnimName + '-loop') && curAnimFinished())
+				playAnim(curAnimName + '-loop');
+	
+			if(specialAnim > 0 && specialAnim != 3 && curAnimFinished())
+			{
+				specialAnim = 0;
+				dance();
+			}
 		}
 	}
 
 	// animation handler
+	public var curAnimName:String = '';
+	public var animList:Array<String> = [];
 	public var animOffsets:Map<String, Array<Float>> = [];
 
 	public function addOffset(animName:String, offX:Float = 0, offY:Float = 0):Void
@@ -324,9 +362,13 @@ class Character extends FlxSprite
 
 	public function playAnim(animName:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0)
 	{
-		if(!animation.exists(animName)) return;
+		if(!animExists(animName)) return;
 		
-		animation.play(animName, forced, reversed, frame);
+		curAnimName = animName;
+		if(!isAnimateAtlas)
+			animation.play(animName, forced, reversed, frame);
+		else
+			anim.play(animName, forced, reversed, frame);
 		
 		try
 		{
@@ -339,5 +381,29 @@ class Character extends FlxSprite
 		// useful for pixel notes since their offsets are not 0, 0 by default
 		offset.x += scaleOffset.x;
 		offset.y += scaleOffset.y;
+	}
+
+	public function animExists(animName:String):Bool
+	{
+		if(!isAnimateAtlas)
+			return animation.getByName(animName) != null;
+		else
+			return anim.getByName(animName) != null;
+	}
+
+	public function curAnimFrame():Int
+	{
+		if(!isAnimateAtlas)
+			return animation.curAnim.curFrame;
+		else
+			return anim.curSymbol.curFrame;
+	}
+
+	public function curAnimFinished():Bool
+	{
+		if(!isAnimateAtlas)
+			return animation.curAnim.finished;
+		else
+			return anim.finished;
 	}
 }

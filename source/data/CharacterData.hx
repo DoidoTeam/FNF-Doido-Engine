@@ -6,10 +6,14 @@ typedef DoidoOffsets = {
 	var cameraOffset:Array<Float>;
 	var ratingsOffset:Array<Float>;
 }
+typedef DoidoCharacter = {
+	var spritesheet:String;
+	var anims:Array<Dynamic>;
+}
 
 class CharacterData
 {
-	public static function defaultOffsets():DoidoOffsets
+	inline public static function defaultOffsets():DoidoOffsets
 	{
 		return {
 			animOffsets: [
@@ -18,6 +22,13 @@ class CharacterData
 			globalOffset: [0,0],
 			cameraOffset: [0,0],
 			ratingsOffset:[0,0]
+		};
+	}
+	inline public static function defaultChar():DoidoCharacter
+	{
+		return {
+			spritesheet: 'characters/',
+			anims: [],
 		};
 	}
 }

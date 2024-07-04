@@ -54,10 +54,12 @@ class Stage extends FlxGroup
 		this.clear();
 		foreground.clear();
 		
-		gfPos.set(650, 550);
-		dadPos.set(100,700);
-		bfPos.set(850, 700);
-		gfVersion = "gf";
+		gfPos.set(660, 580);
+		/*dadPos.set(100,700);
+		bfPos.set(850, 700);*/
+		dadPos.set(380, 700);
+		bfPos.set(1100, 700);
+		gfVersion = getGfVersion(curStage);
 		// setting gf to "" makes her invisible
 		
 		PlayState.defaultCamZoom = 1.0;
@@ -80,13 +82,9 @@ class Stage extends FlxGroup
 				var curtains = new FlxSprite(-600, -400).loadGraphic(Paths.image("backgrounds/stage/stagecurtains"));
 				curtains.scrollFactor.set(1.4,1.4);
 				foreground.add(curtains);
-
-				if(['tutorial'].contains(PlayState.SONG.song))
-					gfVersion = 'gf-tutorial';
 				
 			case "mugen":
 				PlayState.defaultCamZoom = 0.7;
-				gfVersion = "";
 				//gfPos.y += 80;
 				dadPos.x -= 100;
 				
@@ -94,9 +92,9 @@ class Stage extends FlxGroup
 				add(bg);
 				
 			case "school":
-				gfVersion = "gf-pixel";
-				gfPos.x += 80;
-				gfPos.y += 70;
+				dadPos.x += 50;
+				gfPos.x += 270;
+				gfPos.y += 30;
 				
 				var bgSky = new FlxSprite().loadGraphic(Paths.image('backgrounds/school/weebSky'));
 				bgSky.scrollFactor.set(0.1, 0.1);
@@ -167,9 +165,9 @@ class Stage extends FlxGroup
 				}
 				
 			case "school-evil":
-				gfVersion = "gf-pixel";
-				gfPos.x += 80;
-				gfPos.y += 70;
+				dadPos.x += 50;
+				gfPos.x += 270;
+				gfPos.y += 30;
 				
 				var bg:FlxSprite = new FlxSprite(400, 100);
 				bg.frames = Paths.getSparrowAtlas('backgrounds/school/animatedEvilSchool');
@@ -179,6 +177,16 @@ class Stage extends FlxGroup
 				bg.antialiasing = false;
 				bg.scale.set(6,6);
 				add(bg);
+		}
+	}
+
+	public function getGfVersion(curStage:String)
+	{
+		return switch(curStage)
+		{
+			case "mugen": "";
+			case "school"|"school-evil": "gf-pixel";
+			default: "gf";
 		}
 	}
 	
