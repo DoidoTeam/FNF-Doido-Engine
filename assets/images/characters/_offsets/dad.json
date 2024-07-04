@@ -1,18 +1,13 @@
 {
 	"globalOffset": [
-		0,
+		48,
 		0
 	],
 	"animOffsets": [
 		[
-			"idle",
+			"singDOWN-loop",
 			0,
-			0
-		],
-		[
-			"idle-loop",
-			0,
-			0
+			-30
 		],
 		[
 			"singDOWN",
@@ -20,32 +15,7 @@
 			-30
 		],
 		[
-			"singRIGHT",
-			0,
-			27
-		],
-		[
 			"singUP",
-			-6,
-			50
-		],
-		[
-			"singLEFT",
-			-10,
-			10
-		],
-		[
-			"singDOWN-loop",
-			0,
-			-30
-		],
-		[
-			"singRIGHT-loop",
-			0,
-			27
-		],
-		[
-			"singUP-loop",
 			-6,
 			50
 		],
@@ -53,6 +23,36 @@
 			"singLEFT-loop",
 			-10,
 			10
+		],
+		[
+			"idle",
+			0,
+			0
+		],
+		[
+			"singRIGHT-loop",
+			0,
+			27
+		],
+		[
+			"idle-loop",
+			0,
+			0
+		],
+		[
+			"singRIGHT",
+			0,
+			27
+		],
+		[
+			"singLEFT",
+			-10,
+			10
+		],
+		[
+			"singUP-loop",
+			-6,
+			50
 		]
 	],
 	"ratingsOffset": [

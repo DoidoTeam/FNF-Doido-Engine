@@ -1,13 +1,13 @@
 {
 	"globalOffset": [
 		0,
-		-25
+		-5
 	],
 	"animOffsets": [
 		[
-			"singRIGHT",
-			-62,
-			-14
+			"danceRight",
+			0,
+			0
 		],
 		[
 			"singDOWN",
@@ -15,14 +15,14 @@
 			-142
 		],
 		[
-			"danceRight",
-			0,
-			0
+			"singRIGHT",
+			-62,
+			-14
 		],
 		[
-			"singLEFT",
-			98,
-			-10
+			"danceLeft",
+			0,
+			0
 		],
 		[
 			"singUP",
@@ -30,9 +30,9 @@
 			29
 		],
 		[
-			"danceLeft",
-			0,
-			0
+			"singLEFT",
+			98,
+			-10
 		]
 	],
 	"ratingsOffset": [

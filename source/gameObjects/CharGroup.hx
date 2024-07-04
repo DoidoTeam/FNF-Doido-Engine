@@ -14,6 +14,7 @@ class CharGroup extends FlxTypedGroup<Character>
         this.isPlayer = isPlayer;
         this.curChar = curChar;
         addChar(curChar);
+        reload();
     }
 
     public function addChar(charName:String)
@@ -27,7 +28,7 @@ class CharGroup extends FlxTypedGroup<Character>
                 addChar(char.deathChar);
         }
     }
-
+    
     public function setPos(x:Float = 0, y:Float = 0)
     {
         for(char in members)

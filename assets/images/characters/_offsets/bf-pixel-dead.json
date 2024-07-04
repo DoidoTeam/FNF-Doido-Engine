@@ -1,11 +1,16 @@
 {
 	"globalOffset": [
-		-9,
+		41,
 		66
 	],
 	"animOffsets": [
 		[
-			"singUP",
+			"deathConfirm",
+			0,
+			0
+		],
+		[
+			"deathLoop",
 			0,
 			0
 		],
@@ -15,12 +20,7 @@
 			2
 		],
 		[
-			"deathLoop",
-			0,
-			0
-		],
-		[
-			"deathConfirm",
+			"singUP",
 			0,
 			0
 		]

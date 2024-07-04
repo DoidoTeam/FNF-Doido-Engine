@@ -57,7 +57,7 @@ class Stage extends FlxGroup
 		gfPos.set(660, 580);
 		/*dadPos.set(100,700);
 		bfPos.set(850, 700);*/
-		dadPos.set(380, 700);
+		dadPos.set(260, 700);
 		bfPos.set(1100, 700);
 		gfVersion = getGfVersion(curStage);
 		// setting gf to "" makes her invisible
@@ -92,9 +92,10 @@ class Stage extends FlxGroup
 				add(bg);
 				
 			case "school":
+				bfPos.x -= 70;
 				dadPos.x += 50;
-				gfPos.x += 270;
-				gfPos.y += 30;
+				gfPos.x += 20;
+				gfPos.y += 50;
 				
 				var bgSky = new FlxSprite().loadGraphic(Paths.image('backgrounds/school/weebSky'));
 				bgSky.scrollFactor.set(0.1, 0.1);
@@ -165,9 +166,10 @@ class Stage extends FlxGroup
 				}
 				
 			case "school-evil":
+				bfPos.x -= 70;
 				dadPos.x += 50;
-				gfPos.x += 270;
-				gfPos.y += 30;
+				gfPos.x += 20;
+				gfPos.y += 50;
 				
 				var bg:FlxSprite = new FlxSprite(400, 100);
 				bg.frames = Paths.getSparrowAtlas('backgrounds/school/animatedEvilSchool');

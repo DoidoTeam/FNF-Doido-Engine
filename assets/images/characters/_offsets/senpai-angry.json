@@ -1,16 +1,11 @@
 {
 	"globalOffset": [
-		-120,
-		80
+		24,
+		90
 	],
 	"animOffsets": [
 		[
 			"idle",
-			1,
-			-1
-		],
-		[
-			"singRIGHT",
 			1,
 			-1
 		],
@@ -20,14 +15,19 @@
 			0
 		],
 		[
-			"singLEFT",
-			5,
-			0
+			"singRIGHT",
+			1,
+			-1
 		],
 		[
 			"singUP",
 			2,
 			5
+		],
+		[
+			"singLEFT",
+			5,
+			0
 		]
 	],
 	"ratingsOffset": [

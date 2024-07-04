@@ -1,6 +1,6 @@
 {
 	"globalOffset": [
-		-36,
+		-116,
 		-216
 	],
 	"animOffsets": [
@@ -10,17 +10,12 @@
 			-8
 		],
 		[
-			"danceRight",
-			0,
-			0
-		],
-		[
 			"singDOWN",
 			0,
 			0
 		],
 		[
-			"danceLeft",
+			"danceRight",
 			0,
 			0
 		],
@@ -30,9 +25,19 @@
 			0
 		],
 		[
+			"danceLeft",
+			0,
+			0
+		],
+		[
 			"hairBlow",
 			45,
 			1
+		],
+		[
+			"cheer",
+			0,
+			0
 		],
 		[
 			"singRIGHT",
@@ -45,19 +50,14 @@
 			0
 		],
 		[
-			"cheer",
-			0,
-			0
+			"sad",
+			-51,
+			315
 		],
 		[
 			"singLEFT",
 			0,
 			0
-		],
-		[
-			"sad",
-			-51,
-			315
 		]
 	],
 	"ratingsOffset": [
