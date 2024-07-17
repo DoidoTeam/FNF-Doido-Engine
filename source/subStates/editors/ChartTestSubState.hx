@@ -1,5 +1,6 @@
 package subStates.editors;
 
+import data.SongData.EventSong;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
@@ -42,14 +43,18 @@ class ChartTestSubState extends MusicBeatSubState
 {
 	// song stuff
 	var SONG:SwagSong;
+	var EVENTS:EventSong;
 	var musicList:Array<FlxSound> = [];
 	
 	public static var startConductor:Float = 0;
 	
 	var bg:FlxSprite;
+	var fakeFlash:FlxSprite;
 	var backGroup:FlxGroup;
 	var infoTxt:FlxText;
 	var botplayTxt:FlxText;
+
+	var flashTween:FlxTween;
 	
 	// strumlines
 	var strumlines:FlxTypedGroup<Strumline>;
@@ -58,6 +63,8 @@ class ChartTestSubState extends MusicBeatSubState
 	
 	var unspawnCount:Int = 0;
 	var unspawnNotes:Array<Note> = [];
+	var eventCount:Int = 0;
+	var unspawnEvents:Array<EventNote> = [];
 	
 	var assetModifier:String = '';
 	static var botplay:Bool = false;
@@ -71,7 +78,6 @@ class ChartTestSubState extends MusicBeatSubState
 	public static function resetStatics()
 	{
 		Timings.init();
-		SplashNote.resetStatics();
 	}
 	
 	public function exit():Void
@@ -94,6 +100,7 @@ class ChartTestSubState extends MusicBeatSubState
 		super.create();
 		resetStatics();
 		SONG = ChartingState.SONG;
+		EVENTS = ChartingState.EVENTS;
 		
 		assetModifier = PlayState.assetModifier;
 		
@@ -110,6 +117,11 @@ class ChartTestSubState extends MusicBeatSubState
 		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/chartTestBg'));
 		bg.screenCenter();
 		backGroup.add(bg);
+
+		fakeFlash = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2);
+		fakeFlash.alpha = 0.0001;
+		fakeFlash.screenCenter();
+		backGroup.add(fakeFlash);
 		
 		//bg.scale.set(1.08,1.08);
 		//FlxTween.tween(bg.scale, {x: 1, y: 1}, 0.5, {ease: FlxEase.cubeOut});
@@ -164,6 +176,17 @@ class ChartTestSubState extends MusicBeatSubState
 			// oop
 			unspawnNotes.push(note);
 			thisStrumline.addSplash(note);
+		}
+
+		unspawnEvents = ChartLoader.getEvents(EVENTS);
+		for(daEvent in unspawnEvents)
+		{
+			// skipping events
+			if(daEvent.songTime < startConductor - 2)
+			{
+				eventCount++;
+				onEventHit(daEvent, true);
+			}
 		}
 		
 		add(infoTxt = new FlxText(0, 0, 0, "hi there! i am using whatsapp"));
@@ -225,6 +248,64 @@ class ChartTestSubState extends MusicBeatSubState
 		
 		infoTxt.screenCenter(X);
 		infoTxt.y = (downscroll ? 15 : FlxG.height - infoTxt.height - 15);
+	}
+
+	public function onEventHit(daEvent:EventNote, preload:Bool = false)
+	{
+		//trace('event ${daEvent.eventName} // $preload');
+		switch(daEvent.eventName)
+		{
+			case 'Freeze Notes':
+				var affected:Array<Strumline> = [dadStrumline, bfStrumline];
+				switch(daEvent.value2) {
+					case "dad": affected.remove(bfStrumline);
+					case "bf"|"boyfriend": affected.remove(dadStrumline);
+				}
+				for(strumline in affected)
+					strumline.pauseNotes = (daEvent.value1 == 'true');
+				
+			case 'Change Note Speed':
+				for(strumline in strumlines)
+				{
+					if(strumline.scrollTween != null)
+						strumline.scrollTween.cancel();
+					var newSpeed:Float = Std.parseFloat(daEvent.value1);
+					var duration:Float = Std.parseFloat(daEvent.value2);
+					if(!Std.isOfType(newSpeed, Float)) newSpeed = 2;
+					if(!Std.isOfType(duration, Float)) duration = 4;
+
+					if(preload) duration = 0;
+
+					if(duration <= 0)
+						strumline.scrollSpeed = newSpeed;
+					else
+					{
+						strumline.scrollTween = FlxTween.tween(
+							strumline, {scrollSpeed: Std.parseFloat(daEvent.value1)},
+							Std.parseFloat(daEvent.value2) * Conductor.stepCrochet / 1000,
+							{
+								ease: CoolUtil.stringToEase(daEvent.value3),
+							}
+						);
+					}
+				}
+			
+			case 'Flash Screen':
+				if(!preload)
+				{
+					if(SaveData.data.get('Flashing Lights') != "OFF")
+					{
+						fakeFlash.color = CoolUtil.stringToColor(daEvent.value2);
+						fakeFlash.alpha = (SaveData.data.get('Flashing Lights') == "ON" ? 1.0 : 0.4);
+
+						if(flashTween != null)
+							flashTween.cancel();
+						flashTween = FlxTween.tween(fakeFlash, {alpha: 0.0001},
+							Conductor.stepCrochet / 1000 * Std.parseFloat(daEvent.value1)
+						);
+					}
+				}
+		}
 	}
 
 	// check if you actually hit it
@@ -414,26 +495,46 @@ class ChartTestSubState extends MusicBeatSubState
 			if(!playing)
 				for(music in musicList)
 					music.pause();
+
+			for(strumline in strumlines)
+			{
+				if(strumline.scrollTween != null)
+					strumline.scrollTween.active = playing;
+			}
+			if(flashTween != null)
+				flashTween.active = playing;
+		}
+		if(playing)
+		{
+			pressed = [
+				Controls.pressed("LEFT"),
+				Controls.pressed("DOWN"),
+				Controls.pressed("UP"),
+				Controls.pressed("RIGHT")
+			];
+			justPressed = [
+				Controls.justPressed("LEFT"),
+				Controls.justPressed("DOWN"),
+				Controls.justPressed("UP"),
+				Controls.justPressed("RIGHT")
+			];
+			released = [
+				Controls.released("LEFT"),
+				Controls.released("DOWN"),
+				Controls.released("UP"),
+				Controls.released("RIGHT")
+			];
 		}
 
-		pressed = [
-			Controls.pressed("LEFT"),
-			Controls.pressed("DOWN"),
-			Controls.pressed("UP"),
-			Controls.pressed("RIGHT")
-		];
-		justPressed = [
-			Controls.justPressed("LEFT"),
-			Controls.justPressed("DOWN"),
-			Controls.justPressed("UP"),
-			Controls.justPressed("RIGHT")
-		];
-		released = [
-			Controls.released("LEFT"),
-			Controls.released("DOWN"),
-			Controls.released("UP"),
-			Controls.released("RIGHT")
-		];
+		if(eventCount < unspawnEvents.length)
+		{
+			var daEvent = unspawnEvents[eventCount];
+			if(daEvent.songTime <= Conductor.songPos)
+			{
+				onEventHit(daEvent);
+				eventCount++;
+			}
+		}
 				
 		// adding notes to strumlines
 		if(unspawnCount < unspawnNotes.length)
@@ -487,6 +588,32 @@ class ChartTestSubState extends MusicBeatSubState
 						strum.playAnim("static");
 				}
 			}
+
+			for(hold in strumline.holdGroup)
+			{
+				if(hold.scrollSpeed != strumline.scrollSpeed)
+				{
+					hold.scrollSpeed = strumline.scrollSpeed;
+					
+					if(!hold.isHoldEnd)
+					{
+						var newHoldSize:Array<Float> = [
+							hold.frameWidth * hold.scale.x,
+							hold.noteCrochet * (strumline.scrollSpeed * 0.45) + 1
+						];
+						
+						if(SaveData.data.get("Split Holds"))
+							newHoldSize[1] -= 20;
+						
+						hold.setGraphicSize(
+							Math.floor(newHoldSize[0]),
+							Std.int(newHoldSize[1])
+						);
+					}
+					
+					hold.updateHitbox();
+				}
+			}
 			
 			for(note in strumline.allNotes)
 			{
@@ -531,7 +658,9 @@ class ChartTestSubState extends MusicBeatSubState
 					noteAngle += 180;
 				
 				note.angle = thisStrum.angle;
-				CoolUtil.setNotePos(note, thisStrum, noteAngle, offsetX, offsetY);
+				if(!strumline.pauseNotes) {
+					CoolUtil.setNotePos(note, thisStrum, noteAngle, offsetX, offsetY);
+				}
 				
 				// alings the hold notes
 				for(hold in note.children)
@@ -566,29 +695,6 @@ class ChartTestSubState extends MusicBeatSubState
 			
 			for(hold in strumline.holdGroup)
 			{
-				if(hold.scrollSpeed != strumline.scrollSpeed)
-				{
-					hold.scrollSpeed = strumline.scrollSpeed;
-					
-					if(!hold.isHoldEnd)
-					{
-						var newHoldSize:Array<Float> = [
-							hold.frameWidth * hold.scale.x,
-							hold.noteCrochet * (strumline.scrollSpeed * 0.45) + 1
-						];
-						
-						if(SaveData.data.get("Split Holds"))
-							newHoldSize[1] -= 20;
-						
-						hold.setGraphicSize(
-							Math.floor(newHoldSize[0]),
-							Std.int(newHoldSize[1])
-						);
-					}
-					
-					hold.updateHitbox();
-				}
-				
 				var holdParent = hold.parentNote;
 				if(holdParent != null)
 				{
@@ -614,15 +720,18 @@ class ChartTestSubState extends MusicBeatSubState
 							holdID -= 0.2;
 						
 						// calculating the clipping by how much you held the note
-						var minSize:Float = hold.holdHitLength - (hold.noteCrochet * holdID);
-						var maxSize:Float = hold.noteCrochet;
-						if(minSize > maxSize)
-							minSize = maxSize;
-						
-						if(minSize > 0)
-							daRect.y = (minSize / maxSize) * hold.frameHeight;
-						
-						hold.clipRect = daRect;
+						if(!strumline.pauseNotes)
+						{
+							var minSize:Float = hold.holdHitLength - (hold.noteCrochet * holdID);
+							var maxSize:Float = hold.noteCrochet;
+							if(minSize > maxSize)
+								minSize = maxSize;
+							
+							if(minSize > 0)
+								daRect.y = (minSize / maxSize) * hold.frameHeight;
+							
+							hold.clipRect = daRect;
+						}
 						
 						var notPressed = (!pressed[hold.noteData] && !strumline.botplay && strumline.isPlayer);
 						var holdPercent:Float = (hold.holdHitLength / holdParent.holdLength);

@@ -186,7 +186,7 @@ class Stage extends FlxGroup
 	{
 		return switch(curStage)
 		{
-			case "mugen": "";
+			case "mugen": "no-gf";
 			case "school"|"school-evil": "gf-pixel";
 			default: "gf";
 		}

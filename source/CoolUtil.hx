@@ -23,6 +23,7 @@ class CoolUtil
 	public static function charList():Array<String>
 	{
 		return [
+			"face",
 			"dad",
 			"gf",
 			"bf",
@@ -40,7 +41,7 @@ class CoolUtil
 			"gemamugen",
 		];
 	}
-
+	
 	public static function coolTextFile(key:String):Array<String>
 	{
 		var daList:Array<String> = Paths.text(key).split('\n');

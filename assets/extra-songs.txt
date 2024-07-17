@@ -1,0 +1,4 @@
+// add custom songs here :D
+// usage: song-name song-difficulties
+// example: bopeebo hard
+// example: dadbattle

@@ -77,22 +77,26 @@ class Strumline extends FlxGroup
 			noteGroup.remove(note);
 	}
 
+	// only one splash per note
+	public var spawnedSplashes:Array<String> = [];
 	public function addSplash(note:Note)
 	{
-		var pref:String = '-' + CoolUtil.getDirection(note.noteData) + '-' + note.strumlineID;
+		// left-base-none
+		var splashName:String
+		= CoolUtil.getDirection(note.noteData) + '-'
+		+ note.assetModifier + '-'
+		+ note.noteType;
 
-		if(!SplashNote.existentModifiers.contains(note.assetModifier + pref)
-		|| !SplashNote.existentTypes.contains(note.noteType + pref))
+		if(!spawnedSplashes.contains(splashName))
 		{
-			SplashNote.existentModifiers.push(note.assetModifier + pref);
-			SplashNote.existentTypes.push(note.noteType + pref);
-
+			spawnedSplashes.push(splashName);
+			
 			var splash = new SplashNote();
 			splash.reloadSplash(note);
 			splash.visible = false;
 			splashGroup.add(splash);
 			
-			//trace('added ${note.assetModifier + pref} ${note.noteType + pref}');
+			//trace('added ${note.strumlineID} $splashName lol');
 		}
 	}
 

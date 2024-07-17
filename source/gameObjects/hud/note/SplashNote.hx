@@ -11,21 +11,6 @@ class SplashNote extends FlxSprite
 		visible = false;
 	}
 
-	/*
-	**	these are used so each note gets their own splash
-	**	but if that splash already exists, then it spawns
-	**	the same splash, so there are not
-	** 	8204+ splashes created each song
-	*/
-	public static var existentModifiers:Array<String> = [];
-	public static var existentTypes:Array<String> = [];
-
-	public static function resetStatics()
-	{
-		existentModifiers = [];
-		existentTypes = [];
-	}
-
 	public var assetModifier:String = "";
 	public var noteType:String = "";
 	public var noteData:Int = 0;
@@ -37,7 +22,7 @@ class SplashNote extends FlxSprite
 		assetModifier = note.assetModifier;
 		noteType = note.noteType;
 		noteData = note.noteData;
-
+		
 		switch(note.assetModifier)
 		{
 			case 'doido':

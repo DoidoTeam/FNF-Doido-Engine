@@ -145,30 +145,13 @@ class LoadSongState extends MusicBeatState
 			trace('preloaded music');
 			loadPercent = 0.75;
 			
-			var thisStrumline = new Strumline(0, null, false, false, true, assetModifier);
-			thisStrumline.ID = 0;
-			addBehind(thisStrumline);
-			
-			var noteList:Array<Note> = ChartLoader.getChart(SONG);
-			for(note in noteList)
-			{
-				note.updateData(note.songTime, note.noteData, note.noteType, assetModifier);
-				addBehind(note);
-				
-				thisStrumline.addSplash(note);
-				
-				loadPercent += (0.9 - 0.75) / noteList.length;
-			}
-			
-			trace('preloaded notes');
-			loadPercent = 0.9;
-			
 			// add custom preloads here!!
 			switch(SONG.song)
 			{
 				default:
-					//trace('loaded lol');
+					trace('preloaded NOTHING extra lol');
 			}
+			loadPercent = 0.9;
 			
 			loadPercent = 1.0;
 			trace('finished loading');

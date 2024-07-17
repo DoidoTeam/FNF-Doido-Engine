@@ -6,6 +6,11 @@
         "version": "8.1.2"
       },
       {
+        "name": "flxanimate",
+        "type": "haxelib",
+        "version": "3.0.4"
+      },
+      {
         "name": "openfl",
         "type": "haxelib",
         "version": "9.3.3"

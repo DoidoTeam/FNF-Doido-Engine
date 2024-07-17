@@ -2,6 +2,8 @@ package gameObjects;
 
 //import haxe.Json;
 //import flixel.FlxG;
+import states.PlayState;
+import gameObjects.hud.note.Note;
 import flxanimate.animate.FlxAnim;
 import flxanimate.FlxAnimate;
 import flixel.FlxSprite;
@@ -96,8 +98,6 @@ class Character extends FlxAnimate
 					['singRIGHT', 	"right_", 		24, false],
 				];
 
-				//frames = Paths.getPackerAtlas("characters/senpai/spirit");
-				
 				antialiasing = false;
 				isPixelSprite = true;
 				scale.set(6,6);
@@ -204,6 +204,12 @@ class Character extends FlxAnimate
 				idleAnims = ["danceLeft", "danceRight"];
 				quickDancer = true;
 				flipX = isPlayer;
+			
+			case "no-gf":
+				doidoChar.spritesheet += 'gf/no-gf/no-gf';
+				doidoChar.anims = [
+					['idle', 'idle'],
+				];
 
 			case "dad":
 				doidoChar.spritesheet += 'dad/DADDY_DEAREST';
@@ -221,22 +227,46 @@ class Character extends FlxAnimate
 				];
 			
 			default: // case "bf"
-				doidoChar.spritesheet += 'bf/BOYFRIEND';
-				doidoChar.anims = [
-					['idle', 			'BF idle dance', 		24, false],
-					['singUP', 			'BF NOTE UP0', 			24, false],
-					['singLEFT', 		'BF NOTE LEFT0', 		24, false],
-					['singRIGHT', 		'BF NOTE RIGHT0', 		24, false],
-					['singDOWN', 		'BF NOTE DOWN0', 		24, false],
-					['singUPmiss', 		'BF NOTE UP MISS', 		24, false],
-					['singLEFTmiss', 	'BF NOTE LEFT MISS', 	24, false],
-					['singRIGHTmiss', 	'BF NOTE RIGHT MISS', 	24, false],
-					['singDOWNmiss', 	'BF NOTE DOWN MISS', 	24, false],
-					['hey', 			'BF HEY', 				24, false],
-					['scared', 			'BF idle shaking', 		24, true],
-				];
-				
-				flipX = true;
+				if(isPlayer || curChar == "bf")
+				{
+					curChar = 'bf';
+					doidoChar.spritesheet += 'bf/BOYFRIEND';
+					doidoChar.anims = [
+						['idle', 			'BF idle dance', 		24, false],
+						['singUP', 			'BF NOTE UP0', 			24, false],
+						['singLEFT', 		'BF NOTE LEFT0', 		24, false],
+						['singRIGHT', 		'BF NOTE RIGHT0', 		24, false],
+						['singDOWN', 		'BF NOTE DOWN0', 		24, false],
+						['singUPmiss', 		'BF NOTE UP MISS', 		24, false],
+						['singLEFTmiss', 	'BF NOTE LEFT MISS', 	24, false],
+						['singRIGHTmiss', 	'BF NOTE RIGHT MISS', 	24, false],
+						['singDOWNmiss', 	'BF NOTE DOWN MISS', 	24, false],
+						['hey', 			'BF HEY', 				24, false],
+						['scared', 			'BF idle shaking', 		24, true],
+					];
+					
+					flipX = true;
+				}
+				else // case 'face':
+				{
+					curChar = 'face';
+					isAnimateAtlas = true;
+					doidoChar.spritesheet += 'face';
+					doidoChar.anims = [
+						['idle', 			'idle-alive', 		24, false],
+						['idle-alt', 		'idle-dead', 		24, false],
+
+						['singLEFT', 		'left-alive', 		24, false],
+						['singDOWN', 		'down-alive', 		24, false],
+						['singUP', 			'up-alive', 		24, false],
+						['singRIGHT', 		'right-alive', 		24, false],
+						['singLEFT-alt', 	'left-dead', 		24, false],
+						['singDOWN-alt', 	'down-dead', 		24, false],
+						['singUP-alt', 		'up-dead', 		24, false],
+						['singRIGHT-alt', 	'right-dead', 		24, false],
+					];
+				}
+				this.curChar = curChar;
 			
 			case "bf-dead":
 				doidoChar.spritesheet += 'bf/BOYFRIEND';
@@ -280,8 +310,12 @@ class Character extends FlxAnimate
 					anim.addBySymbol(dAnim[0], dAnim[1], dAnim[2], dAnim[3]);
 			}
 		}
-		for(i in 0...doidoChar.anims.length)
-			animList.push(doidoChar.anims[i][0]);
+		for(i in 0...doidoChar.anims.length) {
+			var daAnim = doidoChar.anims[i][0];
+			if(animExists(daAnim))
+				animList.push(daAnim);
+		}
+			
 		
 		// offset gettin'
 		switch(curChar)
@@ -328,7 +362,10 @@ class Character extends FlxAnimate
 		switch(curChar)
 		{
 			default:
-				playAnim(idleAnims[curDance]);
+				var daIdle = idleAnims[curDance];
+				if(animExists(daIdle + getAnimPostFix()))
+					daIdle += getAnimPostFix();
+				playAnim(daIdle);
 				curDance++;
 
 				if (curDance >= idleAnims.length)
@@ -350,6 +387,36 @@ class Character extends FlxAnimate
 				dance();
 			}
 		}
+	}
+
+	public var singAnims:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
+	public function playNote(note:Note, miss:Bool = false)
+	{
+		var daAnim:String = singAnims[note.noteData];
+		if(animExists(daAnim + 'miss') && miss)
+			daAnim += 'miss';
+
+		if(animExists(daAnim + getAnimPostFix()))
+			daAnim += getAnimPostFix();
+
+		holdTimer = 0;
+		specialAnim = 0;
+		playAnim(daAnim, true);
+	}
+
+	public function getAnimPostFix():String
+	{
+		var postFix:String = '';
+		switch(curChar)
+		{
+			case 'face':
+				var daHealth = (PlayState.health / 2);
+				if(!isPlayer)
+					daHealth = 1 - (PlayState.health / 2);
+				if(daHealth <= 0.3)
+					postFix = '-alt';
+		}
+		return postFix;
 	}
 
 	// animation handler

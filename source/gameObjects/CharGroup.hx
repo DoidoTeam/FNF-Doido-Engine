@@ -8,8 +8,9 @@ class CharGroup extends FlxTypedGroup<Character>
     public var isPlayer:Bool = false;
     public var curChar:String = 'bf';
     public var char:Character;
-
-    public function new(isPlayer:Bool = false, curChar:String = "bf") {
+    
+    public function new(isPlayer:Bool = false, curChar:String = "bf")
+    {
         super();
         this.isPlayer = isPlayer;
         this.curChar = curChar;
@@ -45,14 +46,13 @@ class CharGroup extends FlxTypedGroup<Character>
         for(i in members)
         {
             if(i.curChar != curChar)
-            {
                 i.alpha = 0.0001;
-            }
             else
-            {
-                i.alpha = 1.0;
                 char = i;
-            }
         }
+        // avoids crashing ig
+        if(char == null)
+            char = members[0];
+        char.alpha = 1.0;
     }
 }

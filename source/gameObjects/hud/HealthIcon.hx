@@ -71,6 +71,8 @@ class HealthIcon extends FlxSprite
 		var colorMap:Map<String, FlxColor> = [
 			"face" 		=> 0xFFA1A1A1,
 			"bf" 		=> 0xFF31B0D1,
+			"bf-old"	=> 0xFFE9FF48,
+			"bf-cool"	=> 0xFF5FB6F1,
 			"gf"		=> 0xFFA5004D,
 			"dad"		=> 0xFFAF66CE,
 			"spooky"	=> 0xFFD57E00,

@@ -91,13 +91,13 @@ class Note extends FlxSprite
 				else
 					color = 0xFF000000;
 				
-			case "EX Note":
+			case "EX Note"|"hurt note":
 				var fold:String = 'base';
 				if(assetModifier == 'doido')
 					fold = 'doido';
 				
-				noteSize = ((fold == 'doido') ? 0.95 : 0.7);
 				mustMiss = true;
+				noteSize = ((fold == 'doido') ? 0.95 : 0.7);
 				frames = Paths.getSparrowAtlas('notes/$fold/hurt_notes');
 				var typeName:String = (isHold ? (isHoldEnd ? "hold end" : "hold0") : direction);
 				

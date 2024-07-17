@@ -87,6 +87,8 @@ class PlayState extends MusicBeatState
 	public static var validScore:Bool = true;
 	public var ghostTapping:Bool = true;
 
+	public var oldIconEasterEgg:Bool = true;
+
 	// hud
 	public var hudBuild:HudClass;
 	
@@ -127,8 +129,7 @@ class PlayState extends MusicBeatState
 		validScore = true;
 		
 		Timings.init();
-		SplashNote.resetStatics();
-		
+
 		var pixelSongs:Array<String> = [
 			'collision',
 			'senpai',
@@ -639,9 +640,7 @@ class PlayState extends MusicBeatState
 		else
 			onNoteMiss(note, strumline);
 	}
-	
-	var singAnims:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
-	
+		
 	// actual note functions
 	function onNoteHit(note:Note, strumline:Strumline)
 	{
@@ -687,9 +686,10 @@ class PlayState extends MusicBeatState
 		{
 			if(note.noteType != "no animation" && thisChar.specialAnim != 2)
 			{
-				thisChar.specialAnim = 0;
+				/*thisChar.specialAnim = 0;
 				thisChar.playAnim(singAnims[note.noteData], true);
-				thisChar.holdTimer = 0;
+				thisChar.holdTimer = 0;*/
+				thisChar.playNote(note);
 			}
 		}
 	}
@@ -721,9 +721,10 @@ class PlayState extends MusicBeatState
 			if(thisChar != null && note.noteType != "no animation"
 			&& thisChar.specialAnim != 2)
 			{
-				thisChar.specialAnim = 0;
+				/*thisChar.specialAnim = 0;
 				thisChar.playAnim(singAnims[note.noteData] + 'miss', true);
-				thisChar.holdTimer = 0;
+				thisChar.holdTimer = 0;*/
+				thisChar.playNote(note, true);
 			}
 			
 			// when the player misses notes
@@ -770,10 +771,10 @@ class PlayState extends MusicBeatState
 			if(thisChar.curAnimFrame() == thisChar.holdLoop
 			|| SaveData.data.get("Static Hold Anim"))
 			{
-				thisChar.specialAnim = 0;
-				thisChar.playAnim(singAnims[note.noteData], true);
+				/*thisChar.specialAnim = 0;
+				thisChar.playAnim(singAnims[note.noteData], true);*/
+				thisChar.playNote(note);
 			}
-			
 			thisChar.holdTimer = 0;
 		}
 	}
@@ -807,7 +808,7 @@ class PlayState extends MusicBeatState
 			noteDiff = Timings.getTimings("miss")[1];
 		}
 		
-		var healthJudge:Float = 0.05 * judge;
+		var healthJudge:Float = 0.02 * judge;
 		if(judge < 0)
 			healthJudge *= 2;
 
@@ -900,10 +901,10 @@ class PlayState extends MusicBeatState
 	var playerSinging:Bool = false;
 	
 	//var sidewayShit:Bool = false;
-	var hoverStrum:StrumNote = null;
+	/*var hoverStrum:StrumNote = null;
 	var holdStrum:StrumNote = null;
 	var isBroken:Array<Bool> = [false,false,false,false];
-	var fakeStrums:Array<FlxSprite> = [];
+	var fakeStrums:Array<FlxSprite> = [];*/
 
 	function strToChar(str:String):CharGroup
 	{
@@ -971,7 +972,32 @@ class PlayState extends MusicBeatState
 			if(FlxG.keys.pressed.CONTROL)
 				char = gf;
 			
-			Main.switchState(new CharacterEditorState(char.char.curChar));
+			Main.switchState(new CharacterEditorState(char.curChar));
+		}
+		if(oldIconEasterEgg)
+		{
+			if(FlxG.keys.justPressed.NINE && (FlxG.keys.pressed.SHIFT || FlxG.keys.pressed.CONTROL))
+			{
+				var changeBack:Bool = false;
+				var curIcon:String = hudBuild.healthBar.icons[1].curIcon;
+				if(FlxG.keys.pressed.SHIFT)
+				{
+					if(curIcon != 'bf-old')
+						curIcon = 'bf-old';
+					else
+						changeBack = true;
+				}
+				if(FlxG.keys.pressed.CONTROL)
+				{
+					if(curIcon != 'bf-cool')
+						curIcon = 'bf-cool';
+					else
+						changeBack = true;
+				}
+				if(changeBack)
+					curIcon = boyfriend.char.curChar;
+				hudBuild.changeIcon(1, curIcon);
+			}
 		}
 		
 		/*if(FlxG.keys.justPressed.SPACE)
@@ -1190,6 +1216,19 @@ class PlayState extends MusicBeatState
 					if(strum.animation.curAnim.name == "confirm"
 					&& strum.animation.curAnim.finished)
 						strum.playAnim("static");
+				}
+			}
+
+			for(strumline in strumlines)
+			{
+				if(SONG.song == "exploitation")
+				{
+					for(strum in strumline.strumGroup)
+						strum.angle += elapsed * (curStep % 16 <= 1 ? 128 : 8) * (strum.strumData % 2 == 0 ? 1 : -1);
+					for(note in strumline.allNotes)
+					{
+						note.noteAngle = Math.sin((Conductor.songPos - note.songTime) / 100) * 10 * (strumline.isPlayer ? 1 : -1);
+					}
 				}
 			}
 
@@ -1447,15 +1486,18 @@ class PlayState extends MusicBeatState
 								holdID -= 0.2;
 							
 							// calculating the clipping by how much you held the note
-							var minSize:Float = hold.holdHitLength - (hold.noteCrochet * holdID);
-							var maxSize:Float = hold.noteCrochet;
-							if(minSize > maxSize)
-								minSize = maxSize;
-							
-							if(minSize > 0)
-								daRect.y = (minSize / maxSize) * hold.frameHeight;
-							
-							hold.clipRect = daRect;
+							if(!strumline.pauseNotes)
+							{
+								var minSize:Float = hold.holdHitLength - (hold.noteCrochet * holdID);
+								var maxSize:Float = hold.noteCrochet;
+								if(minSize > maxSize)
+									minSize = maxSize;
+								
+								if(minSize > 0)
+									daRect.y = (minSize / maxSize) * hold.frameHeight;
+								
+								hold.clipRect = daRect;
+							}
 							
 							//if(hold.holdHitLength >= holdParent.holdLength - Conductor.stepCrochet)
 							var notPressed = (!pressed[hold.noteData] && !strumline.botplay && strumline.isPlayer);
@@ -1483,17 +1525,6 @@ class PlayState extends MusicBeatState
 						if(holdParent.missed && !hold.missed)
 							onNoteMiss(hold, strumline);
 					}
-				}
-			}
-
-			if(SONG.song == "exploitation")
-			{
-				for(note in strumline.allNotes)
-				{
-					//var noteSine:Float = (Conductor.songPos / 1000);
-					//hold.scale.x = 0.7 + Math.sin(noteSine) * 0.8;
-					//if(!note.gotHeld) // 5
-					note.noteAngle = Math.sin((Conductor.songPos - note.songTime) / 100) * 10 * (strumline.isPlayer ? 1 : -1);
 				}
 			}
 		}

@@ -1725,7 +1725,7 @@ class ChartGrid extends FlxGroup
 
 		//if(i == 1)
 		//	trace('sucessfully reloaded');
-
+		
 		clear();
 		var GRID_SIZE = ChartingState.GRID_SIZE;
 
@@ -1746,15 +1746,20 @@ class ChartGrid extends FlxGroup
 		if(i != 1)
 			grid.alpha = 0.4;
 
-		var beatLineCount:Int = 4;
+		var beatLineDiff:Int = 4;
 		if(zoom < 1.0)
-			beatLineCount = (zoom == 0.5) ? 2 : 1;
+			beatLineDiff = (zoom == 0.5) ? 2 : 1;
 		
-		for(b in 0...Math.floor(sectionLength * zoom / beatLineCount))
+		for(b in 0...Math.floor(sectionLength * zoom / beatLineDiff))
 		{
-			var beatLine = new FlxSprite().makeGraphic(GRID_SIZE * 9, 2, 0xFFFF0000);
+			var beatLine = new FlxSprite().makeGraphic(GRID_SIZE * 9, 2, 0xFFFFFFFF);
+			if(b == 0)
+				beatLine.color = 0xFFFF00FF;
+			else
+				beatLine.color = 0xFFFF0000;
+			
 			beatLine.x = grid.x;
-			beatLine.y = grid.y + (GRID_SIZE * beatLineCount * b);
+			beatLine.y = grid.y + (GRID_SIZE * beatLineDiff * b);
 			add(beatLine);
 			
 			beatLine.alpha = 0.9;
