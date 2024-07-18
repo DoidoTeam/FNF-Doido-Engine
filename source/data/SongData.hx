@@ -47,6 +47,7 @@ typedef FunkyWeek = {
 
 class SongData
 {
+	public static var defaultDiffs:Array<String> = ['easy', 'normal', 'hard'];
 	public static var weeks:Array<FunkyWeek> = [
 		{
 			songs: [
@@ -110,7 +111,7 @@ class SongData
 		if(week.storyModeOnly == null)
 			week.storyModeOnly = false;
 		if(week.diffs == null)
-			week.diffs = ['easy', 'normal', 'hard'];
+			week.diffs = defaultDiffs;
 		return week;
 	}
 

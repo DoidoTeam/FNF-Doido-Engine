@@ -279,7 +279,7 @@ class StoryMenuState extends MusicBeatState
 		diffInt += change;
 		diffInt = FlxMath.wrap(diffInt, 0, 2);
 		
-		curDiff = ['easy', 'normal', 'hard'][diffInt];
+		curDiff = SongData.defaultDiffs[diffInt];
 		
 		// updates the score
 		scoreCount[0] = Highscore.getScore('week-' + weekList[curWeek].weekFile + '-' + curDiff).score;
