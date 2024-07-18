@@ -118,13 +118,13 @@ class SaveData
 			"OFF",
 			SELECTOR,
 			"Whether to play hitsounds whenever you hit a note",
-			["OSU", "OFF"]
+			["OFF", "OSU", "NSWITCH"]
 		],
 		'Hitsound Volume' => [
-			10,
+			100,
 			SELECTOR,
-			"Only works when Hitsounds is enabled",
-			[0, 10]
+			"Only works when Hitsounds aren't off",
+			[0, 100]
 		],
 
 		// this one doesnt actually appear at the regular options menu

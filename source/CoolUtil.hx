@@ -200,6 +200,17 @@ class CoolUtil
 			}
 	}
 
+	public static function playHitSound()
+	{
+		if(SaveData.data.get("Hitsounds") != "OFF")
+		{
+			FlxG.sound.play(
+				Paths.sound('hitsounds/${SaveData.data.get("Hitsounds")}'),
+				SaveData.data.get("Hitsound Volume") / 100
+			);
+		}
+	}
+
 	// ONLY USE FORCED IF REALLY NEEDED
 	public static function flash(?camera:FlxCamera, ?duration:Float = 0.5, ?color:FlxColor, ?forced:Bool = false)
 	{

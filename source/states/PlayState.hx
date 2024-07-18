@@ -156,7 +156,7 @@ class PlayState extends MusicBeatState
 	public static function resetSongStatics()
 	{
 		blueballed = 0;
-		playedCutscene = true;
+		playedCutscene = false;
 	}
 
 	override public function create()
@@ -401,8 +401,9 @@ class PlayState extends MusicBeatState
 			}
 		}
 		
-		if(hasCutscene())
+		if(hasCutscene() && !playedCutscene)
 		{
+			playedCutscene = true;
 			switch(SONG.song)
 			{
 				case 'senpai'|'roses':
@@ -665,15 +666,18 @@ class PlayState extends MusicBeatState
 		if(strumline.isPlayer)
 		{
 			popUpRating(note, strumline, false);
-			if(!note.isHold && SaveData.data.get("Hitsounds") != "OFF")
-				FlxG.sound.play(
-					Paths.sound('hitsounds/${SaveData.data.get("Hitsounds")}'),
-					SaveData.data.get("Hitsound Volume") / 10
-				);
+			if(!note.isHold)
+				CoolUtil.playHitSound();
 		}
 		
 		//if(!['default', 'none'].contains(note.noteType))
 		//	trace('noteType: ${note.noteType}');
+		switch(note.noteType)
+		{
+			case "Shoot Note":
+				if(!thisChar.isPlayer)
+					FlxG.sound.play(Paths.sound('hitsounds/OSU'), 0.7);
+		}
 
 		if(!note.isHold)
 		{
@@ -733,6 +737,10 @@ class PlayState extends MusicBeatState
 				popUpRating(note, strumline, true);
 				switch(note.noteType)
 				{
+					case "Shoot Note":
+						health -= 0.4;
+						return;
+
 					case "EX Note":
 						startGameOver();
 						return;

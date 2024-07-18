@@ -1,7 +1,7 @@
 {
 	"song": {
-		"player1": "bidu-gold",
-		"player2": "dono",
+		"player1": "bf",
+		"player2": "pico",
 		"notes": [
 			{
 				"lengthInSteps": 16,
@@ -1498,7 +1498,7 @@
 						58181.8181818182,
 						7,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						58363.6363636364,
@@ -2094,7 +2094,7 @@
 						78545.4545454546,
 						4,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"mustHitSection": false
@@ -2553,7 +2553,7 @@
 						89818.1818181819,
 						0,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"mustHitSection": true
@@ -2996,7 +2996,7 @@
 						98909.090909091,
 						2,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						98909.090909091,
@@ -4089,7 +4089,7 @@
 						122181.818181818,
 						4,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"typeOfSection": 0,
@@ -4186,7 +4186,7 @@
 						125454.545454546,
 						7,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"typeOfSection": 0,
@@ -4233,7 +4233,7 @@
 						126909.090909091,
 						6,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"typeOfSection": 0,
@@ -4489,7 +4489,7 @@
 						136909.090909091,
 						3,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						136909.090909091,
@@ -4536,7 +4536,7 @@
 						138363.636363636,
 						0,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						138363.636363636,
@@ -4584,7 +4584,7 @@
 						139636.363636364,
 						5,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						139909.090909091,
@@ -4686,7 +4686,7 @@
 						142545.454545455,
 						5,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"typeOfSection": 0,
@@ -4973,7 +4973,7 @@
 						151272.727272727,
 						6,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"typeOfSection": 0,
@@ -5181,13 +5181,13 @@
 						155636.363636364,
 						1,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						156727.272727273,
 						3,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						156909.090909091,
@@ -5443,19 +5443,19 @@
 						161454.545454545,
 						4,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						162181.818181818,
 						4,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						162727.272727273,
 						6,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						161818.181818182,
@@ -6081,13 +6081,13 @@
 						174545.454545454,
 						1,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						175636.363636363,
 						1,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"typeOfSection": 0,
@@ -6146,7 +6146,7 @@
 						176000,
 						1,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						177272.727272727,
@@ -6164,13 +6164,13 @@
 						177363.636363636,
 						0,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						177272.727272727,
 						1,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"altAnim": false,
@@ -6240,7 +6240,7 @@
 						177454.545454545,
 						6,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"typeOfSection": 0,
@@ -6501,13 +6501,13 @@
 						182000,
 						3,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						182363.636363636,
 						0,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						182000,
@@ -6618,7 +6618,7 @@
 						183272.727272727,
 						6,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"altAnim": false,
@@ -7162,25 +7162,25 @@
 						192909.09090909,
 						2,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						193090.909090909,
 						0,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						193000,
 						1,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						193272.727272727,
 						1,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"altAnim": false,
@@ -7242,13 +7242,13 @@
 						193454.545454545,
 						0,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						194727.272727272,
 						1,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						194454.545454545,
@@ -7338,7 +7338,7 @@
 						194909.09090909,
 						2,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"altAnim": false,
@@ -7410,13 +7410,13 @@
 						197636.363636363,
 						1,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						197727.272727272,
 						2,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						197454.545454545,
@@ -7826,7 +7826,7 @@
 						203545.454545454,
 						7,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						203545.454545454,
@@ -8959,7 +8959,7 @@
 						217818.181818181,
 						3,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						217636.363636363,
@@ -9193,7 +9193,7 @@
 						219636.363636363,
 						1,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					],
 					[
 						219727.272727272,
@@ -9271,7 +9271,7 @@
 						221090.909090908,
 						4,
 						0,
-						"Dodge Note"
+						"Shoot Note"
 					]
 				],
 				"typeOfSection": 0,

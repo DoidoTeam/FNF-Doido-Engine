@@ -214,6 +214,11 @@ class OptionsSubState extends MusicBeatSubState
                     var check:OptionCheckmark = cast curAttach;
                     check.setValue(!check.value);
                     SaveData.data.set(curOption, check.value);
+                    // custom stuff
+                    /*if(curOption == "")
+                    {
+
+                    }*/
                     SaveData.save();
                     checkReload();
                 }
@@ -231,8 +236,17 @@ class OptionsSubState extends MusicBeatSubState
                         selec.changeSelection(selChange);
                         SaveData.data.set(selec.label, selec.value);
                         SaveData.save();
+
+                        // custom stuff
                         if(selec.label == "Window Size")
                             SaveData.updateWindowSize();
+                        // only happens when youre not holding the selector
+                        if(selec.holdTimer < holdMax)
+                        {
+                            if(selec.label.startsWith('Hitsound'))
+                                CoolUtil.playHitSound();
+                        }
+                        
                         checkReload();
                     }
 

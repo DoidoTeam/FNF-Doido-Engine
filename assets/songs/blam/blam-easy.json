@@ -1,6 +1,6 @@
 {
 	"song": {
-		"player1": "bidu-gold",
+		"player1": "bf",
 		"notes": [
 			{
 				"sectionNotes": [],
@@ -7770,7 +7770,7 @@
 				"mustHitSection": true
 			}
 		],
-		"player2": "dono",
+		"player2": "pico",
 		"player3": "barbara-chocolate-sunset",
 		"song": "Blam",
 		"stage": "favela",

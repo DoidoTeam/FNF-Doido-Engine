@@ -185,6 +185,22 @@ class Character extends FlxAnimate
 				
 				idleAnims = ["danceLeft", "danceRight"];
 				quickDancer = true;
+			
+			case "pico":
+				doidoChar.spritesheet += 'pico/Pico_FNF_assetss';
+				doidoChar.anims = [
+					['idle',		'Pico Idle Dance', 24, false],
+					['singRIGHT',	'Pico NOTE LEFT0', 24, false],
+					['singDOWN', 	'Pico Down Note0', 24, false],
+					['singUP', 		'pico Up note0',   24, false],
+					['singLEFT',	'Pico Note Right0',24, false],
+					// playable pico support soon maybe
+					['singRIGHTmiss',	'Pico NOTE LEFT miss', 24, false],
+					['singDOWNmiss',	'Pico Down Note MISS', 24, false],
+					['singUPmiss', 		'pico Up note miss',   24, false],
+					['singLEFTmiss',	'Pico Note Right Miss',24, false],
+				];
+				flipX = true;
 
 			case "gf":
 				isAnimateAtlas = true;
@@ -277,7 +293,7 @@ class Character extends FlxAnimate
 				];
 
 				idleAnims = ['firstDeath'];
-
+				
 				flipX = true;
 		}
 
@@ -310,12 +326,18 @@ class Character extends FlxAnimate
 					anim.addBySymbol(dAnim[0], dAnim[1], dAnim[2], dAnim[3]);
 			}
 		}
+		// adding animations to array
 		for(i in 0...doidoChar.anims.length) {
 			var daAnim = doidoChar.anims[i][0];
-			if(animExists(daAnim))
+			if(animExists(daAnim) && !animList.contains(daAnim))
 				animList.push(daAnim);
 		}
-			
+		// prevents crashing
+		for(i in 0...idleAnims.length)
+		{
+			if(!animList.contains(idleAnims[i]))
+				idleAnims[i] = animList[0];
+		}
 		
 		// offset gettin'
 		switch(curChar)

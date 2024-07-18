@@ -133,7 +133,10 @@ class ChartingState extends MusicBeatState
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD, false);
 
-		hitsound = new FlxSound().loadEmbedded(Paths.sound("hitsounds/OSU"), false, false);
+		var hitPath:String = SaveData.data.get("Hitsounds");
+		if(hitPath == "OFF")
+			hitPath = "OSU";
+		hitsound = new FlxSound().loadEmbedded(Paths.sound('hitsounds/$hitPath'), false, false);
 		hitsound.play();
 		hitsound.stop();
 		FlxG.sound.list.add(hitsound);
@@ -1697,8 +1700,8 @@ class ChartingState extends MusicBeatState
 	{
 		infoTxt.graphic.dump();
 		infoTxt.text = ""
-		+ "Time: " + Std.string(Math.floor(Conductor.songPos / 1000 * 100) / 100)
-		+ " // "   + Std.string(Math.floor(songLength		 / 1000 * 100) / 100)
+		+ "Time: " + CoolUtil.posToTimer(Conductor.songPos)
+		+ " - "    + CoolUtil.posToTimer(songLength)
 		+ "\nStep: " + curStep
 		+ "\nBeat: " + curBeat
 		+ "\nSect: " + curSection
@@ -1725,7 +1728,7 @@ class ChartGrid extends FlxGroup
 
 		//if(i == 1)
 		//	trace('sucessfully reloaded');
-		
+
 		clear();
 		var GRID_SIZE = ChartingState.GRID_SIZE;
 

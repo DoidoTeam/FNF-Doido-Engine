@@ -103,6 +103,11 @@ class Note extends FlxSprite
 				
 				animation.addByPrefix('hurt', 'hurt $typeName', 0, false);
 				animation.play('hurt');
+			
+			case "Shoot Note":
+				noteSize = 1.0;
+				var daWidth:Int = Math.floor(CoolUtil.noteWidth());
+				makeGraphic(daWidth,daWidth,0xFFFFFB2D);
 		}
 
 		//if(isHold)
@@ -132,7 +137,7 @@ class Note extends FlxSprite
 
 	// in case you want to avoid notes this will do
 	public var mustMiss:Bool = false;
-
+	
 	// doesnt actually change the scroll speed, just changes the hold note size
 	public var scrollSpeed:Float = Math.NEGATIVE_INFINITY;
 	

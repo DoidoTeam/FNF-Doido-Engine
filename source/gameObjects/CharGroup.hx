@@ -52,7 +52,11 @@ class CharGroup extends FlxTypedGroup<Character>
         }
         // avoids crashing ig
         if(char == null)
-            char = members[0];
+        {
+            curChar = members[0].curChar;
+            reload();
+            return;
+        } 
         char.alpha = 1.0;
     }
 }

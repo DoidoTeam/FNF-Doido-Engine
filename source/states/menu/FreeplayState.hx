@@ -87,7 +87,7 @@ class FreeplayState extends MusicBeatState
 			// if theres no difficulties, add easy normal and hard
 			if(diffArray.length < 1) diffArray = SongData.defaultDiffs;
 			// finally adding the song
-			addSong(songName, "dad", diffArray);
+			addSong(songName, "face", diffArray);
 		}
 
 		grpItems = new FlxGroup();
