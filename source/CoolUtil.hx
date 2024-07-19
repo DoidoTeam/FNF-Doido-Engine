@@ -200,15 +200,13 @@ class CoolUtil
 			}
 	}
 
-	public static function playHitSound()
+	public static function playHitSound(?sound:String, ?volume:Float)
 	{
-		if(SaveData.data.get("Hitsounds") != "OFF")
-		{
-			FlxG.sound.play(
-				Paths.sound('hitsounds/${SaveData.data.get("Hitsounds")}'),
-				SaveData.data.get("Hitsound Volume") / 100
-			);
-		}
+		if(sound == null) sound = SaveData.data.get("Hitsounds");
+		if(sound == "OFF") return;
+		
+		if(volume == null) volume = SaveData.data.get("Hitsound Volume") / 100;
+		FlxG.sound.play(Paths.sound('hitsounds/${sound}'), volume);
 	}
 
 	// ONLY USE FORCED IF REALLY NEEDED

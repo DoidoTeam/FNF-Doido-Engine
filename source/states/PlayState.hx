@@ -676,7 +676,7 @@ class PlayState extends MusicBeatState
 		{
 			case "Shoot Note":
 				if(!thisChar.isPlayer)
-					FlxG.sound.play(Paths.sound('hitsounds/OSU'), 0.7);
+					CoolUtil.playHitSound("OSU", 0.8);
 		}
 
 		if(!note.isHold)

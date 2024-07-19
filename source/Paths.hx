@@ -226,8 +226,9 @@ class Paths
 			"music/death/deathSound",
 			"music/death/deathMusic",
 			"music/death/deathMusicEnd",
-			'sounds/hitsounds/${SaveData.data.get("Hitsounds")}'
 		];
+		if(SaveData.data.get("HITSOUNDS") != "OFF")
+			preSounds.push('sounds/hitsounds/${SaveData.data.get("Hitsounds")}');
 		for(i in 1...4)
 			preSounds.push('sounds/miss/missnote${i}');
 		
