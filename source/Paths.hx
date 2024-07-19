@@ -33,6 +33,10 @@ class Paths
 	{
 		if(!renderedSounds.exists(key))
 		{
+			if(!fileExists('$key.ogg')) {
+				trace('$key.ogg doesnt exist');
+				key = 'sounds/beep';
+			}
 			renderedSounds.set(key,
 				#if desktop
 				Sound.fromFile(getPath('$key.ogg'))
@@ -66,7 +70,7 @@ class Paths
 			
 			return renderedGraphics.get(key);
 		}
-		trace('$key doesnt exist, fuck');
+		trace('$key.png doesnt exist, fuck');
 		return null;
 	}
 	
@@ -227,7 +231,7 @@ class Paths
 			"music/death/deathMusic",
 			"music/death/deathMusicEnd",
 		];
-		if(SaveData.data.get("HITSOUNDS") != "OFF")
+		if(SaveData.data.get("Hitsounds") != "OFF")
 			preSounds.push('sounds/hitsounds/${SaveData.data.get("Hitsounds")}');
 		for(i in 1...4)
 			preSounds.push('sounds/miss/missnote${i}');
