@@ -8,6 +8,8 @@ import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
 #end
 
+// REWORK NECESSARY!!!!
+
 class DiscordClient
 {
 	public static var isInitialized:Bool = false;
@@ -44,6 +46,7 @@ class DiscordClient
 		#end
 	}
 	
+	#if !html5
 	private static function onReady(request:cpp.RawConstPointer<DiscordUser>):Void {
 		#if DISCORD_RPC
 		var requestPtr:cpp.Star<DiscordUser> = cpp.ConstPointer.fromRaw(request).ptr;
@@ -56,18 +59,35 @@ class DiscordClient
 		changePresence();
 		#end
 	}
+	#else
+	private static function onReady(request:Dynamic) {
+		return false;
+	}
+	#end
 
+	#if !html5
 	private static function onError(errorCode:Int, message:cpp.ConstCharStar):Void {
 		#if DISCORD_RPC
 		trace('Discord: Error ($errorCode: ${cast(message, String)})');
 		#end
 	}
+	#else
+	private static function onError(request:Dynamic) {
+		return false;
+	}
+	#end
 
+	#if !html5
 	private static function onDisconnected(errorCode:Int, message:cpp.ConstCharStar):Void {
 		#if DISCORD_RPC
 		trace('Discord: Disconnected ($errorCode: ${cast(message, String)})');
 		#end
 	}
+	#else
+	private static function onDisconnected(request:Dynamic) {
+		return false;
+	}
+	#end
 
 	public static function initialize()
 	{
@@ -144,5 +164,6 @@ class DiscordClient
 		}
 		return newID;
 		#end
+		return "uhoh";
 	}
 }
