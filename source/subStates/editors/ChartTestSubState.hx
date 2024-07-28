@@ -338,8 +338,15 @@ class ChartTestSubState extends MusicBeatSubState
 		if(strumline.isPlayer)
 		{
 			popUpRating(note, strumline, false);
-			if(!note.isHold && hasHitsounds)
-				FlxG.sound.play(Paths.sound('hitsounds/OSU'), volHitsounds);
+			if(!note.isHold)
+				CoolUtil.playHitSound();
+		}
+
+		switch(note.noteType)
+		{
+			case "warn note":
+				if(!strumline.isPlayer)
+					CoolUtil.playHitSound("OSU", 1.0);
 		}
 		
 		//if(!['default', 'none'].contains(note.noteType))

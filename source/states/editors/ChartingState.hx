@@ -67,6 +67,8 @@ class ChartingState extends MusicBeatState
 		'none',
 		'no animation',
 		'bomb',
+		'hurt note',
+		'warn note',
 	];
 
 	public static var EVENTS:EventSong = SongData.defaultSongEvents();

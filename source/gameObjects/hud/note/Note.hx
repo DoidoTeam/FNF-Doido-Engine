@@ -99,15 +99,19 @@ class Note extends FlxSprite
 				mustMiss = true;
 				noteSize = ((fold == 'doido') ? 0.95 : 0.7);
 				frames = Paths.getSparrowAtlas('notes/$fold/hurt_notes');
-				var typeName:String = (isHold ? (isHoldEnd ? "hold end" : "hold0") : direction);
+				var typeName:String = (isHold ? (isHoldEnd ? "hold end" : "hold0") : 'note $direction');
 				
-				animation.addByPrefix('hurt', 'hurt $typeName', 0, false);
+				animation.addByPrefix('hurt', '$typeName', 0, false);
 				animation.play('hurt');
 			
-			case "Shoot Note":
-				noteSize = 1.0;
-				var daWidth:Int = Math.floor(CoolUtil.noteWidth());
-				makeGraphic(daWidth,daWidth,0xFFFFFB2D);
+			case "Shoot Note"|"warn note":
+				noteSize = 0.7;
+				noteType = "warn note";
+				frames = Paths.getSparrowAtlas('notes/base/warn_notes');
+				var typeName:String = (isHold ? (isHoldEnd ? "hold end" : "hold0") : 'note $direction');
+				
+				animation.addByPrefix('warn', '$typeName', 0, false);
+				animation.play('warn');
 		}
 
 		//if(isHold)

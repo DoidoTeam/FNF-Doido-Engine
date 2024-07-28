@@ -674,9 +674,9 @@ class PlayState extends MusicBeatState
 		//	trace('noteType: ${note.noteType}');
 		switch(note.noteType)
 		{
-			case "Shoot Note":
+			case "warn note":
 				if(!thisChar.isPlayer)
-					CoolUtil.playHitSound("OSU", 0.8);
+					CoolUtil.playHitSound("OSU", 1.0);
 		}
 
 		if(!note.isHold)
