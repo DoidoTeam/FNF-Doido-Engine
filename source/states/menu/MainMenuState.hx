@@ -133,12 +133,12 @@ class MainMenuState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if(FlxG.keys.justPressed.R)
+		/*if(FlxG.keys.justPressed.R)
 		{
 			Main.skipStuff();
 			Main.resetState();
 		}
-		/*if(FlxG.keys.justPressed.J)
+		if(FlxG.keys.justPressed.J)
 		{
 			optionShit.remove('options');
 			Main.skipStuff();
@@ -149,12 +149,17 @@ class MainMenuState extends MusicBeatState
 			optionShit.push('options');
 			Main.skipStuff();
 			Main.switchState();
-		}*/
-		/*itemSin += elapsed * Math.PI;
+		}
+		itemSin += elapsed * Math.PI;
 		for(item in grpOptions.members)
 		{
 			item.x = (FlxG.width / 2) + (Math.sin(itemSin + item.ID) * FlxG.width / 4);
 		}*/
+		if(FlxG.keys.justPressed.EIGHT)
+		{
+			FlxG.sound.play(Paths.sound("menu/cancelMenu"));
+			Main.switchState(new states.editors.CharacterEditorState("bf", false));
+		}
 		
 		if(!selectedSum)
 		{

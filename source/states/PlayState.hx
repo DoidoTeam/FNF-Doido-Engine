@@ -979,7 +979,7 @@ class PlayState extends MusicBeatState
 			if(FlxG.keys.pressed.CONTROL)
 				char = gf;
 			
-			Main.switchState(new CharacterEditorState(char.curChar));
+			Main.switchState(new CharacterEditorState(char.curChar, true));
 		}
 		if(oldIconEasterEgg)
 		{

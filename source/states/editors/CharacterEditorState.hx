@@ -26,12 +26,14 @@ import states.*;
 
 class CharacterEditorState extends MusicBeatState
 {
-	public function new(curChar:String)
+	public function new(curChar:String, wasPlayState:Bool = false)
 	{
 		this.curChar = curChar;
+		this.wasPlayState = wasPlayState;
 		super();
 	}
 	var curChar:String = "";
+	var wasPlayState:Bool = false;
 
 	var charGrp:FlxTypedGroup<Character> = new FlxTypedGroup<Character>();
 	var char:Character;
@@ -398,7 +400,10 @@ class CharacterEditorState extends MusicBeatState
 		{
 			CoolUtil.playMusic();
 			FlxG.mouse.visible = false;
-			Main.switchState(new LoadSongState());
+			if(wasPlayState)
+				Main.switchState(new LoadSongState());
+			else
+				Main.switchState(new states.menu.MainMenuState());
 		}
 			
 		if(FlxG.mouse.wheel != 0)

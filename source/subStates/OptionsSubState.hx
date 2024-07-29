@@ -23,39 +23,43 @@ class OptionsSubState extends MusicBeatSubState
         "preferences",
         "gameplay",
         "appearance",
-        "controls",
         "adjust offsets",
+        "controls",
     ];
     var optionShit:Map<String, Array<String>> =
 	[
         "preferences" => [
             #if desktop
             "Window Size",
-			"Framerate Cap",
+            #end
+            "Flashing Lights",
+            "Cutscenes",
+            #if desktop
             "FPS Counter",
             "Unfocus Freeze",
             #end
-            "Cutscenes",
             "Countdown on Unpause",
-            "Flashing Lights",
         ],
 		"gameplay" => [
 			"Ghost Tapping",
 			"Downscroll",
 			"Middlescroll",
+            #if desktop
+            "Framerate Cap",
+            #end
             "Hitsounds",
             "Hitsound Volume",
 		],
 		"appearance" => [
+            "Note Splashes",
             #if desktop
 			"Antialiasing",
             #end
-            "Single Rating",
-			"Note Splashes",
+            "Split Holds",
             "Static Hold Anim",
+            "Single Rating",
 			"Ratings on HUD",
 			"Song Timer",
-			"Split Holds",
 		],
 	];
     

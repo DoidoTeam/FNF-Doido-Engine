@@ -17,6 +17,49 @@ class SaveData
 {
 	public static var data:Map<String, Dynamic> = [];
 	public static var displaySettings:Map<String, Dynamic> = [
+		/*
+		*
+		* PREFERENCES
+		* 
+		*/
+		"Window Size" => [
+			"1280x720",
+			SELECTOR,
+			"Change the game's resolution if it doesn't fit your monitor",
+			["640x360","854x480","960x540","1024x576","1152x648","1280x720","1366x768","1600x900","1920x1080", "2560x1440", "3840x2160"],
+		],
+		'Flashing Lights' => [
+			"ON",
+			SELECTOR,
+			"Whether to show flashing lights and colors",
+			["ON", "REDUCED", "OFF"]
+		],
+		"Cutscenes" => [
+			"ON",
+			SELECTOR,
+			"Decides if the song cutscenes should play",
+			["ON", "FREEPLAY OFF", "OFF"],
+		],
+		"FPS Counter" => [
+			false,
+			CHECKMARK,
+			"Whether you want a counter showing your framerate and memory usage counter in the corner of the game",
+		],
+		'Unfocus Freeze' => [
+			true,
+			CHECKMARK,
+			"Freezes the game when unfocusing the window",
+		],
+		"Countdown on Unpause" => [
+			true,
+			CHECKMARK,
+			"Whether you want to have a countdown when unpausing the game",
+		],
+		/*
+		*
+		* GAMEPLAY
+		* 
+		*/
 		"Ghost Tapping" => [
 			true,
 			CHECKMARK,
@@ -32,87 +75,11 @@ class SaveData
 			CHECKMARK,
 			"Disables the opponent's notes and moves yours to the middle"
 		],
-		"Window Size" => [
-			"1280x720",
-			SELECTOR,
-			"Change the game's resolution if it doesn't fit your monitor",
-			["640x360","854x480","960x540","1024x576","1152x648","1280x720","1366x768","1600x900","1920x1080", "2560x1440", "3840x2160"],
-		],
-		"Antialiasing" => [
-			true,
-			CHECKMARK,
-			"Disabling it might increase the fps at the cost of smoother sprites"
-		],
-		"Single Rating" => [
-			false,
-			CHECKMARK,
-			"Makes only one rating appear at a time",
-		],
-		"Note Splashes" => [
-			"ON",
-			SELECTOR,
-			"Whether a splash appear when you hit a note perfectly",
-			["ON", "PLAYER ONLY", "OFF"],
-		],
-		"Static Hold Anim" => [
-			true,
-			CHECKMARK,
-			"Whether the character stays static when playing a hold note."
-		],
-		"Ratings on HUD" => [
-			true,
-			CHECKMARK,
-			"Makes the ratings stick on the HUD"
-		],
 		"Framerate Cap"	=> [
 			60, // 120
 			SELECTOR,
 			"Self explanatory",
 			[30, 360]
-		],
-		"FPS Counter" => [
-			false,
-			CHECKMARK,
-			"Whether you want a counter showing your framerate and memory usage counter in the corner of the game",
-		],
-		"Countdown on Unpause" => [
-			true,
-			CHECKMARK,
-			"Whether you want to have a countdown when unpausing the game",
-		],
-		
-		"Split Holds" => [
-			false,
-			CHECKMARK,
-			"Cuts the end of each hold note like classic engines did"
-		],
-		"Song Timer" => [
-			true,
-			CHECKMARK,
-			"Makes the song timer visible"
-		],
-		
-		"Cutscenes" => [
-			"ON",
-			SELECTOR,
-			"Decides if the song cutscenes should play",
-			["ON", "FREEPLAY OFF", "OFF"],
-		],
-		'Flashing Lights' => [
-			"ON",
-			SELECTOR,
-			"Whether to show flashing lights and colors",
-			["ON", "REDUCED", "OFF"]
-		],
-		'Unfocus Freeze' => [
-			true,
-			CHECKMARK,
-			"Freezes the game when unfocusing the window",
-		],
-		'Discord RPC' => [
-			true,
-			CHECKMARK,
-			"Whether to use Discord's game activity.",
 		],
 		'Hitsounds' => [
 			"OFF",
@@ -126,8 +93,62 @@ class SaveData
 			"Only works when Hitsounds aren't off",
 			[0, 100]
 		],
-
-		// this one doesnt actually appear at the regular options menu
+		/*
+		*
+		* APPEARANCE
+		* 
+		*/
+		"Note Splashes" => [
+			"ON",
+			SELECTOR,
+			"Whether a splash appear when you hit a note perfectly",
+			["ON", "PLAYER ONLY", "OFF"],
+		],
+		"Antialiasing" => [
+			true,
+			CHECKMARK,
+			"Disabling it might increase the fps at the cost of smoother sprites"
+		],
+		"Split Holds" => [
+			false,
+			CHECKMARK,
+			"Cuts the end of each hold note like classic engines did"
+		],
+		"Static Hold Anim" => [
+			true,
+			CHECKMARK,
+			"Whether the character stays static when playing a hold note."
+		],
+		"Single Rating" => [
+			false,
+			CHECKMARK,
+			"Makes only one rating appear at a time",
+		],
+		"Ratings on HUD" => [
+			true,
+			CHECKMARK,
+			"Makes the ratings stick on the HUD"
+		],
+		"Song Timer" => [
+			true,
+			CHECKMARK,
+			"Makes the song timer visible"
+		],
+		/*
+		*
+		* UNUSED (for now)
+		* 
+		*/
+		'Discord RPC' => [
+			true,
+			CHECKMARK,
+			"Whether to use Discord's game activity.",
+		],
+		/*
+		*
+		* EXTRA STUFF
+		* 
+		*/
 		"Song Offset" => [
 			0,
 			SELECTOR,
