@@ -49,7 +49,7 @@ there are a few extra things to compile but those are at [FNF's Source Code](htt
 
 ## Songs used to test the engine
 #### Base FNF' Songs - Kawai Sprite
-#### [Blam v1](https://youtu.be/0ig_WF-YAp8?t=1417), [-Debug v1](https://youtu.be/0ig_WF-YAp8?t=1824) - Yoisabo
+#### [Blam](https://youtu.be/0ig_WF-YAp8?t=1417), [-Debug](https://youtu.be/0ig_WF-YAp8?t=1824) - Yoisabo
 #### [Defeat](https://youtu.be/WMjytiClUzw) - Rareblin
 #### [Madness](https://youtu.be/GZmoHrq0mEY) - Rozebud
 #### [Expurgation](https://youtu.be/WmXn3L5bQy4) - JADS
