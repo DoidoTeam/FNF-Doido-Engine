@@ -49,10 +49,11 @@ there are a few extra things to compile but those are at [FNF's Source Code](htt
 
 ## Songs used to test the engine
 #### Base FNF' Songs - Kawai Sprite
+#### [Blam v1](https://youtu.be/0ig_WF-YAp8?t=1417), [-Debug v1](https://youtu.be/0ig_WF-YAp8?t=1824) - Yoisabo
 #### [Defeat](https://youtu.be/WMjytiClUzw) - Rareblin
 #### [Madness](https://youtu.be/GZmoHrq0mEY) - Rozebud
 #### [Expurgation](https://youtu.be/WmXn3L5bQy4) - JADS
 #### [Exploitation](https://youtu.be/s_9iYNDN_bw) - Oxygen/Cyrus
 #### [Collision](https://youtu.be/Q6x0ylzN7L0), [Lunar Odyssey](https://youtu.be/N0HzDRY38js) - BeastlyChip♧
-#### [Escape From California](https://youtu.be/X9MOPEqq-j8) - MoldyGH
 #### [Beep Power](https://youtu.be/NamGMx1xYL4) - Moodyyaser
+#### [Escape From California](https://youtu.be/X9MOPEqq-j8) - MoldyGH
