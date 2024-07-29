@@ -160,24 +160,8 @@ class FreeplayState extends MusicBeatState
 			updateScoreCount();
 		}
 
-		if(FlxG.keys.justPressed.SEVEN) {
-			var curSong = songList[curSelected];
-			PlayState.playList = [];
-			PlayState.songDiff = curSong.diffs[curDiff];
-			PlayState.loadSong(curSong.name);
-
-			if(ChartingState.SONG.song != PlayState.SONG.song)
-				ChartingState.curSection = 0;
-			
-			ChartingState.songDiff = PlayState.songDiff;
-
-			ChartingState.SONG = PlayState.SONG;
-			ChartingState.EVENTS = PlayState.EVENTS;
-
-			Main.switchState(new ChartingState());
-		}
-
-		if(Controls.justPressed("ACCEPT"))
+		var toChartEditor:Bool = FlxG.keys.justPressed.SEVEN;
+		if(Controls.justPressed("ACCEPT") || toChartEditor)
 		{
 			try
 			{
@@ -186,7 +170,19 @@ class FreeplayState extends MusicBeatState
 				PlayState.songDiff = curSong.diffs[curDiff];
 				PlayState.loadSong(curSong.name);
 				
-				Main.switchState(new LoadSongState());
+				if(!toChartEditor)
+					Main.switchState(new LoadSongState());
+				else
+				{
+					if(ChartingState.SONG.song != PlayState.SONG.song)
+						ChartingState.curSection = 0;
+
+					ChartingState.songDiff = PlayState.songDiff;
+					ChartingState.SONG   = PlayState.SONG;
+					ChartingState.EVENTS = PlayState.EVENTS;
+		
+					Main.switchState(new ChartingState());
+				}
 			}
 			catch(e)
 			{
