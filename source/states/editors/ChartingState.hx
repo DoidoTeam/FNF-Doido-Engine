@@ -114,6 +114,7 @@ class ChartingState extends MusicBeatState
 	var playing:Bool = false;
 	public static var songList:Array<FlxSound> = [];
 
+	static var oldTimer:Bool = false;
 	static var playHitSounds:Array<Bool> = [true, true];
 	var hitsound:FlxSound;
 
@@ -414,7 +415,7 @@ class ChartingState extends MusicBeatState
 		stepperVolVoices.value = Conductor.bpm;
 		stepperVolVoices.name = 'vol_voices';
 		addTypingShit(stepperVolVoices);
-		
+
 		var muteInst:FlxUICheckBox = null;
 		muteInst = new FlxUICheckBox(10, 190, null, null, 'Mute Inst', 100, function() {
 			songList[0].volume = 0;
@@ -429,6 +430,13 @@ class ChartingState extends MusicBeatState
 			if(!muteVoices.checked)
 				songList[1].volume = stepperVolVoices.value;
 		});
+
+		var oldTimerCheck:FlxUICheckBox = null;
+		oldTimerCheck = new FlxUICheckBox(110, 230, null, null, 'Old Timer', 100, function() {
+			oldTimer = oldTimerCheck.checked;
+			updateInfoTxt();
+		});
+		oldTimerCheck.checked = oldTimer;
 
 		var clearEventsButton = new FlxButton(200, 230, "Clear Events", function() {
 			EVENTS = SongData.defaultSongEvents();
@@ -464,6 +472,7 @@ class ChartingState extends MusicBeatState
 		tabSong.add(stepperVolVoices);
 		tabSong.add(muteInst);
 		tabSong.add(muteVoices);
+		tabSong.add(oldTimerCheck);
 		
 		tabSong.add(clearEventsButton);
 		tabSong.add(clearSongButton);
@@ -603,6 +612,61 @@ class ChartingState extends MusicBeatState
 			}
 			reloadSection(curSection, false);
 		});
+		var duetSection = new FlxButton(10, 190, "Duet section", function()
+		{
+			var sectionNotes = getSection(curSection).sectionNotes;
+			for(i in 0...sectionNotes.length)
+			{
+				var skipNote:Bool = false;
+				var note:Array<Dynamic> = sectionNotes[i];
+				for(j in 0...sectionNotes.length)
+				{
+					var jNote:Array<Dynamic> = sectionNotes[j];
+					if(jNote[0] == note[0] 			// has same time
+					&& jNote[1] % 4 == note[1] % 4 	// and already exists on the other side
+					&& jNote != note) 				// and isnt itself
+						skipNote = true;
+				}
+				if(skipNote)
+					continue;
+				else
+				{
+					//trace('created new note');
+					var newNote:Array<Dynamic> = [];
+					for(n in 0...note.length)
+						newNote[n] = note[n];
+					newNote[1] = (newNote[1] + 4) % 8;
+					getSection(curSection).sectionNotes.push(newNote);
+				}
+			}
+			reloadSection(curSection, false);
+		});
+		function invertSection(isDad:Bool = false)
+		{
+			var mustHit:Bool = getSection(curSection).mustHitSection;
+			if(!isDad)
+				mustHit = !mustHit;
+			for(i in 0...getSection(curSection).sectionNotes.length)
+			{
+				var note:Array<Dynamic> = getSection(curSection).sectionNotes[i];
+				if((note[1] < 4 && mustHit)
+				|| (note[1] >=4 && !mustHit))
+					continue;
+				
+				var noteSide:Int = Math.floor(note[1] / 4);
+				note[1] = (3 - (note[1] % 4)) + (4 * noteSide);
+				getSection(curSection).sectionNotes[i] = note;
+			}
+			reloadSection(curSection, false);
+		}
+		var invertDad = new FlxButton(10, 210, "Invert Dad Side", function()
+		{
+			invertSection(true);
+		});
+		var invertBf = new FlxButton(10, 230, "Invert Bf Side", function()
+		{
+			invertSection(false);
+		});
 
 		var check_copyNotes = new FlxUICheckBox(110, 150, null, null, "Notes?", 100);
 		check_copyNotes.name = 'check_copy_notes';
@@ -621,6 +685,9 @@ class ChartingState extends MusicBeatState
 		tabSect.add(check_changeBPM);
 		tabSect.add(clearSectionButton);
 		tabSect.add(swapSection);
+		tabSect.add(duetSection);
+		tabSect.add(invertDad);
+		tabSect.add(invertBf);
 		tabSect.add(check_copyNotes);
 		tabSect.add(check_copyEvents);
 
@@ -1700,14 +1767,24 @@ class ChartingState extends MusicBeatState
 
 	function updateInfoTxt()
 	{
+		var curTime = "";
+		var endTime = "";
+		if(oldTimer) {
+			curTime = '${Math.floor(Conductor.songPos / 1000 * 100) / 100}';
+			endTime = '${Math.floor(songLength / 1000 * 100) / 100}';
+		} else {
+			curTime = CoolUtil.posToTimer(Conductor.songPos, true);
+			endTime = CoolUtil.posToTimer(songLength, true);
+		}
+
 		infoTxt.graphic.dump();
 		infoTxt.text = ""
-		+ "Time: " + CoolUtil.posToTimer(Conductor.songPos)
-		+ " - "    + CoolUtil.posToTimer(songLength)
+		+ "Time: " + curTime
+		+ " - "    + endTime
 		+ "\nStep: " + curStep
 		+ "\nBeat: " + curBeat
 		+ "\nSect: " + curSection
-		+ "\nBPM: " + Std.string(Conductor.bpm)
+		+ "\nBPM: " + '${Conductor.bpm}'
 		+ '\nPress "T" to reload this';
 		infoTxt.x = mainGrid.x + mainGrid.width + 16;
 		infoTxt.y = FlxG.height - infoTxt.height - 16;

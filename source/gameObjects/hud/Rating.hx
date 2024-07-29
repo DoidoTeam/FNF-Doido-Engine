@@ -1,5 +1,6 @@
 package gameObjects.hud;
 
+import flixel.math.FlxPoint;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -16,6 +17,8 @@ class Rating extends FlxGroup
 	var daNum:NumberFNF;
 
 	var tweens:Array<FlxTween> = [];
+
+	public var numOffset:FlxPoint = new FlxPoint(0,0);
 	
 	public function new(rating:String, combo:Int, assetModifier:String = "base")
 	{
@@ -29,6 +32,14 @@ class Rating extends FlxGroup
 		// RED
 		if(combo < 0)
 			daNum.color = 0xFFFF0000;
+
+		switch(assetModifier)
+		{
+			case "pixel":
+				numOffset.set(4, 8);
+			default:
+				numOffset.set(12, 18);
+		}
 		
 		setPos();
 		
@@ -42,11 +53,9 @@ class Rating extends FlxGroup
 		}
 		else
 		{
-			daRating.scale.x += 0.07;
-			daRating.scale.y += 0.07;
-			tweens.push(FlxTween.tween(daRating.scale, {x: daRating.scale.x - 0.07, y: daRating.scale.y - 0.07}, 0.1));
+			jumpTween(daRating);
 		}
-		deathTween(daRating, Conductor.crochet / 1000);
+		deathTween(daRating, 0.3);
 		for(item in daNum)
 		{
 			if(!single)
@@ -55,7 +64,11 @@ class Rating extends FlxGroup
 				item.velocity.y 	= -FlxG.random.int(140, 160);
 				item.velocity.x 	= FlxG.random.int(-5, 5);
 			}
-			deathTween(item, (Conductor.crochet / 1000) + FlxG.random.int(0, 3) * 0.3);
+			else
+			{
+				jumpTween(item);
+			}
+			deathTween(item, FlxG.random.float(0.2, 0.8));
 		}
 	}
 	
@@ -67,8 +80,8 @@ class Rating extends FlxGroup
 		var center:Float = daRating.x + daRating.width / 2;
 		for(item in daNum)
 		{
-			item.x = center + ((item.width - 12) * item.ID);
-			item.y = daRating.y + daRating.height - 18;
+			item.x = center + ((item.width - numOffset.x) * item.ID);
+			item.y = daRating.y + daRating.height - numOffset.y;
 		}
 		
 		var lastItem = daNum.members[daNum.members.length - 1];
@@ -76,6 +89,15 @@ class Rating extends FlxGroup
 		
 		for(item in daNum)
 			item.x -= shitLength / 2;
+	}
+
+	// makes the thing do a little jump
+	public function jumpTween(item:FlxSprite)
+	{
+		var prevScale = [item.scale.x, item.scale.y];
+		item.scale.x *= 1.1;
+		item.scale.y *= 1.1;
+		tweens.push(FlxTween.tween(item.scale, {x: prevScale[0], y: prevScale[1]}, 0.15, {ease: FlxEase.cubeOut}));
 	}
 	
 	// KILLS the poor thing :[

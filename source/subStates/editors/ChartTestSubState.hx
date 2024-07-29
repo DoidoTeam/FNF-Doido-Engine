@@ -69,8 +69,8 @@ class ChartTestSubState extends MusicBeatSubState
 	var assetModifier:String = '';
 	static var botplay:Bool = false;
 	public static var downscroll:Bool = false;
-	public static var hasHitsounds:Bool = false;
-	public static var volHitsounds:Float = 1.0;
+	public static var hasHitsounds:Null<Bool> = null;
+	public static var volHitsounds:Null<Float> = null;
 	public static var noteInfo:Bool = true;
 
 	var playing:Bool = true;
@@ -103,6 +103,11 @@ class ChartTestSubState extends MusicBeatSubState
 		EVENTS = ChartingState.EVENTS;
 		
 		assetModifier = PlayState.assetModifier;
+
+		if(hasHitsounds == null)
+			hasHitsounds = (SaveData.data.get("Hitsounds") != "OFF");
+		if(volHitsounds == null)
+			volHitsounds = (SaveData.data.get("Hitsound Volume") / 100);
 		
 		// adjusting the conductor
 		Conductor.setBPM(SONG.bpm);
@@ -262,7 +267,10 @@ class ChartTestSubState extends MusicBeatSubState
 					case "bf"|"boyfriend": affected.remove(dadStrumline);
 				}
 				for(strumline in affected)
-					strumline.pauseNotes = (daEvent.value1 == 'true');
+				{
+					var isTrue = (daEvent.value1 == 'true');
+					strumline.pauseNotes = isTrue;
+				}
 				
 			case 'Change Note Speed':
 				for(strumline in strumlines)
@@ -338,8 +346,14 @@ class ChartTestSubState extends MusicBeatSubState
 		if(strumline.isPlayer)
 		{
 			popUpRating(note, strumline, false);
-			if(!note.isHold)
-				CoolUtil.playHitSound();
+			if(!note.isHold && hasHitsounds)
+			{
+				var daHit = SaveData.data.get("Hitsounds");
+				if(daHit == "OFF")
+					daHit = "OSU";
+
+				CoolUtil.playHitSound(daHit, volHitsounds);
+			}
 		}
 
 		switch(note.noteType)
@@ -650,7 +664,6 @@ class ChartTestSubState extends MusicBeatSubState
 
 			// downscroll
 			//var downMult:Int = (strumline.downscroll ? -1 : 1);
-
 			for(note in strumline.noteGroup)
 			{
 				var thisStrum = strumline.strumGroup.members[note.noteData];
@@ -665,9 +678,8 @@ class ChartTestSubState extends MusicBeatSubState
 					noteAngle += 180;
 				
 				note.angle = thisStrum.angle;
-				if(!strumline.pauseNotes) {
+				if(!strumline.pauseNotes)
 					CoolUtil.setNotePos(note, thisStrum, noteAngle, offsetX, offsetY);
-				}
 				
 				// alings the hold notes
 				for(hold in note.children)

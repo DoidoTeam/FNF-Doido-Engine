@@ -733,28 +733,7 @@ class PlayState extends MusicBeatState
 			
 			// when the player misses notes
 			if(strumline.isPlayer)
-			{
 				popUpRating(note, strumline, true);
-				switch(note.noteType)
-				{
-					case "Shoot Note":
-						health -= 0.4;
-						return;
-
-					case "EX Note":
-						startGameOver();
-						return;
-				}
-				
-				switch(SONG.song)
-				{
-					case 'defeat':
-						if(Timings.misses > 5) {
-							startGameOver();
-							return;
-						}
-				}
-			}
 		}
 	}
 	function onNoteHold(note:Note, strumline:Strumline)
@@ -792,6 +771,7 @@ class PlayState extends MusicBeatState
 	public function popUpRating(note:Note, strumline:Strumline, miss:Bool = false)
 	{
 		// return;
+		var thisChar = strumline.character.char;
 		var noteDiff:Float = Math.abs(note.noteDiff());
 		if(strumline.botplay)
 			noteDiff = 0;
@@ -820,6 +800,27 @@ class PlayState extends MusicBeatState
 		if(judge < 0)
 			healthJudge *= 2;
 
+		if(miss)
+		{
+			switch(note.noteType)
+			{
+				case "warn note":
+					healthJudge = -0.5;
+	
+				case "EX Note":
+					startGameOver();
+					return;
+			}
+			switch(SONG.song)
+			{
+				case 'defeat':
+					if(Timings.misses > 5) {
+						startGameOver();
+						return;
+					}
+			}
+		}
+
 		if(healthJudge < 0)
 		{
 			if(songDiff == "easy")
@@ -828,7 +829,7 @@ class PlayState extends MusicBeatState
 				healthJudge *= 0.8;
 		}
 
-		// handling stuff
+		// handling health and score
 		health += healthJudge;
 		//Timings.score += Math.floor(100 * judge); // old bad rating system
 		if(!miss) {
@@ -893,11 +894,9 @@ class PlayState extends MusicBeatState
 		else
 		{
 			add(daRating);
-
-			var bf = boyfriend.char;
 			daRating.setPos(
-				bf.x + bf.ratingsOffset.x,
-				bf.y + bf.ratingsOffset.y
+				thisChar.x + thisChar.ratingsOffset.x,
+				thisChar.y + thisChar.ratingsOffset.y
 			);
 		}
 	}
@@ -984,7 +983,9 @@ class PlayState extends MusicBeatState
 		}
 		if(oldIconEasterEgg)
 		{
-			if(FlxG.keys.justPressed.NINE && (FlxG.keys.pressed.SHIFT || FlxG.keys.pressed.CONTROL))
+			if(FlxG.keys.justPressed.NINE
+			&& (FlxG.keys.pressed.SHIFT || FlxG.keys.pressed.CONTROL)
+			&& boyfriend.curChar == "bf")
 			{
 				var changeBack:Bool = false;
 				var curIcon:String = hudBuild.healthBar.icons[1].curIcon;
@@ -1315,6 +1316,19 @@ class PlayState extends MusicBeatState
 					char.holdTimer = Math.NEGATIVE_INFINITY;
 					char.dance();
 				}
+			}
+
+			switch(char.curChar)
+			{
+				case "face":
+					var altShit:String = "";
+					var daHealth = (health / 2);
+					if(!char.isPlayer)
+						daHealth = 1 - (health / 2);
+					if(daHealth <= 0.3)
+						altShit = 'miss';
+					if(altShit != char.altIdle)
+						char.altSing = char.altIdle = 'miss';
 			}
 		}
 		

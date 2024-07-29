@@ -52,7 +52,7 @@ class CoolUtil
 		return daList;
 	}
 	
-	public static function posToTimer(mil:Float = 0, ?divisor:String = ":"):String
+	public static function posToTimer(mil:Float = 0, hasMil:Bool = false):String
 	{
 		if(mil < 0) mil = 0;
 		// gets song pos and makes a timer out of it
@@ -71,7 +71,10 @@ class CoolUtil
 		disSec = forceZero(disSec);
 		//disMin = forceZero(disMin);
 		
-		return '$disMin$divisor$disSec';
+		if(!hasMil)
+			return '$disMin:$disSec';
+		else
+			return '$disMin:${disSec}.${Math.floor((mil % 1000) / 10)}';
 	}
 	
 	inline public static function intArray(end:Int, start:Int = 0):Array<Int>
@@ -104,14 +107,15 @@ class CoolUtil
 	inline public static function noteWidth()
 		return (160 * 0.7); // 112
 	
-	public static function setNotePos(note:FlxSprite, target:FlxSprite, angle:Float, offsetX:Float, offsetY:Float)
+	public static function setNotePos(note:FlxSprite, target:FlxSprite, angle:Float, offsetX:Float, offsetY:Float, usesLerp:Bool = false)
 	{
+		var radAngle = FlxAngle.asRadians(angle);
 		note.x = target.x
-			+ (Math.cos(FlxAngle.asRadians(angle)) * offsetX)
-			+ (Math.sin(FlxAngle.asRadians(angle)) * offsetY);
+			+ (Math.cos(radAngle) * offsetX)
+			+ (Math.sin(radAngle) * offsetY);
 		note.y = target.y
-			+ (Math.cos(FlxAngle.asRadians(angle)) * offsetY)
-			+ (Math.sin(FlxAngle.asRadians(angle)) * offsetX);
+			+ (Math.cos(radAngle) * offsetY)
+			+ (Math.sin(radAngle) * offsetX);
 	}
 	
 	public static function sortByShit(Obj1:Note, Obj2:Note):Int

@@ -54,13 +54,39 @@ class Main extends Sprite
 		addChild(fpsCount);
 		#end
 
+		// shader coords fix
+		FlxG.signals.focusGained.add(function() {
+			resetCamCache();
+		});
+		FlxG.signals.gameResized.add(function(w, h) {
+			resetCamCache();
+		});
+		// Prevent flixel from listening to key inputs when switching fullscreen mode
+		// thanks @nebulazura, @crowplexus, @diogotvv
 		FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, (e) ->
 		{
-			// Prevent flixel from listening to key inputs when switching fullscreen mode
-			// thanks @nebulazura, @crowplexus @diogotvv
 			if (e.keyCode == FlxKey.ENTER && e.altKey)
 				e.stopImmediatePropagation();
 		}, false, 100);
+	}
+
+	function resetCamCache()
+	{
+		if(FlxG.cameras != null) {
+			for(cam in FlxG.cameras.list) {
+				if(cam != null && cam.filters != null)
+					resetSpriteCache(cam.flashSprite);
+			}
+		}
+		if(FlxG.game != null)
+			resetSpriteCache(FlxG.game);
+	}
+
+	static function resetSpriteCache(sprite:Sprite):Void {
+		@:privateAccess {
+			sprite.__cacheBitmap 	 = null;
+			sprite.__cacheBitmapData = null;
+		}
 	}
 	
 	public static var activeState:FlxState;

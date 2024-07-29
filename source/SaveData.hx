@@ -118,7 +118,7 @@ class SaveData
 			"OFF",
 			SELECTOR,
 			"Whether to play hitsounds whenever you hit a note",
-			["OFF", "OSU", "NSWITCH"]
+			["OFF"]
 		],
 		'Hitsound Volume' => [
 			100,
@@ -171,6 +171,9 @@ class SaveData
 			
 			saveSettings.data.settings = data;
 		}
+
+		for(hitsound in Paths.readDir('sounds/hitsounds', ".ogg", true))
+			displaySettings.get("Hitsounds")[3].insert(1, hitsound);
 		
 		data = saveSettings.data.settings;
 		save();

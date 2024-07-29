@@ -24,6 +24,8 @@ class Character extends FlxAnimate
 	public var holdLoop:Int = 4;
 
 	public var idleAnims:Array<String> = ["idle"];
+	public var altIdle:String = "";
+	public var altSing:String = "";
 
 	public var quickDancer:Bool = false;
 	public var specialAnim:Int = 0;
@@ -243,9 +245,11 @@ class Character extends FlxAnimate
 				];
 			
 			default: // case "bf"
-				if(isPlayer || curChar == "bf")
+				if(!["bf", "face"].contains(curChar))
+					curChar = (isPlayer ? "bf" : "face");
+
+				if(curChar == "bf")
 				{
-					curChar = 'bf';
 					doidoChar.spritesheet += 'bf/BOYFRIEND';
 					doidoChar.anims = [
 						['idle', 			'BF idle dance', 		24, false],
@@ -263,23 +267,22 @@ class Character extends FlxAnimate
 					
 					flipX = true;
 				}
-				else // case 'face':
+				else if(curChar == "face")
 				{
-					curChar = 'face';
 					isAnimateAtlas = true;
 					doidoChar.spritesheet += 'face';
 					doidoChar.anims = [
 						['idle', 			'idle-alive', 		24, false],
-						['idle-alt', 		'idle-dead', 		24, false],
+						['idlemiss', 		'idle-dead', 		24, false],
 
 						['singLEFT', 		'left-alive', 		24, false],
 						['singDOWN', 		'down-alive', 		24, false],
 						['singUP', 			'up-alive', 		24, false],
 						['singRIGHT', 		'right-alive', 		24, false],
-						['singLEFT-alt', 	'left-dead', 		24, false],
-						['singDOWN-alt', 	'down-dead', 		24, false],
-						['singUP-alt', 		'up-dead', 		24, false],
-						['singRIGHT-alt', 	'right-dead', 		24, false],
+						['singLEFTmiss', 	'left-dead', 		24, false],
+						['singDOWNmiss', 	'down-dead', 		24, false],
+						['singUPmiss', 		'up-dead', 			24, false],
+						['singRIGHTmiss', 	'right-dead', 		24, false],
 					];
 				}
 				this.curChar = curChar;
@@ -385,8 +388,8 @@ class Character extends FlxAnimate
 		{
 			default:
 				var daIdle = idleAnims[curDance];
-				if(animExists(daIdle + getAnimPostFix()))
-					daIdle += getAnimPostFix();
+				if(animExists(daIdle + altIdle))
+					daIdle += altIdle;
 				playAnim(daIdle);
 				curDance++;
 
@@ -418,27 +421,12 @@ class Character extends FlxAnimate
 		if(animExists(daAnim + 'miss') && miss)
 			daAnim += 'miss';
 
-		if(animExists(daAnim + getAnimPostFix()))
-			daAnim += getAnimPostFix();
+		if(animExists(daAnim + altSing))
+			daAnim += altSing;
 
 		holdTimer = 0;
 		specialAnim = 0;
 		playAnim(daAnim, true);
-	}
-
-	public function getAnimPostFix():String
-	{
-		var postFix:String = '';
-		switch(curChar)
-		{
-			case 'face':
-				var daHealth = (PlayState.health / 2);
-				if(!isPlayer)
-					daHealth = 1 - (PlayState.health / 2);
-				if(daHealth <= 0.3)
-					postFix = '-alt';
-		}
-		return postFix;
 	}
 
 	// animation handler

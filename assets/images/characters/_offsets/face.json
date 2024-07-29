@@ -5,12 +5,12 @@
 	],
 	"animOffsets": [
 		[
-			"idle-alt",
+			"idlemiss",
 			0,
 			0
 		],
 		[
-			"singRIGHT-alt",
+			"singRIGHTmiss",
 			0,
 			0
 		],
@@ -20,7 +20,7 @@
 			0
 		],
 		[
-			"singLEFT-alt",
+			"singLEFTmiss",
 			0,
 			0
 		],
@@ -40,12 +40,12 @@
 			0
 		],
 		[
-			"singDOWN-alt",
+			"singDOWNmiss",
 			0,
 			0
 		],
 		[
-			"singUP-alt",
+			"singUPmiss",
 			0,
 			0
 		],
