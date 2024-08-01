@@ -62,7 +62,7 @@ class Main extends Sprite
 			resetCamCache();
 		});
 		// Prevent flixel from listening to key inputs when switching fullscreen mode
-		// thanks @nebulazoura, @crowplexus, @diogotvv
+		// thanks @nebulazorua, @crowplexus, @diogotvv
 		FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, (e) ->
 		{
 			if (e.keyCode == FlxKey.ENTER && e.altKey)
