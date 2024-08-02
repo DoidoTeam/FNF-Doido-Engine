@@ -398,32 +398,39 @@ class ChartingState extends MusicBeatState
 		});
 		player2DropDown.selectedLabel = SONG.player2;
 		
-		var playTicksBf = new FlxUICheckBox(10, 230, null, null, 'BF Hitsounds', 100);
+		var playTicksBf = new FlxUICheckBox(10, 210, null, null, 'BF Hitsounds', 100);
 		playTicksBf.name = "bf_hitsounds";
 		playTicksBf.checked = playHitSounds[1];
 
-		var playTicksDad = new FlxUICheckBox(10, 250, null, null, 'Dad Hitsounds', 100);
+		var playTicksDad = new FlxUICheckBox(10, 230, null, null, 'Dad Hitsounds', 100);
 		playTicksDad.name = "dad_hitsounds";
 		playTicksDad.checked = playHitSounds[0];
+
+		var oldTimerCheck:FlxUICheckBox = null;
+		oldTimerCheck = new FlxUICheckBox(10, 250, null, null, 'Old Timer', 100, function() {
+			oldTimer = oldTimerCheck.checked;
+			updateInfoTxt();
+		});
+		oldTimerCheck.checked = oldTimer;
 		
-		var stepperVolInst = new FlxUINumericStepper(110, 190, 0.1, 1, 0, 1.0, 2);
+		var stepperVolInst = new FlxUINumericStepper(110, 170, 0.1, 1, 0, 1.0, 2);
 		stepperVolInst.value = Conductor.bpm;
 		stepperVolInst.name = 'vol_inst';
 		addTypingShit(stepperVolInst);
 		
-		var stepperVolVoices = new FlxUINumericStepper(110, 210, 1, 1, 0, 1.0, 2);
+		var stepperVolVoices = new FlxUINumericStepper(110, 190, 0.1, 1, 0, 1.0, 2);
 		stepperVolVoices.value = Conductor.bpm;
 		stepperVolVoices.name = 'vol_voices';
 		addTypingShit(stepperVolVoices);
 
 		var muteInst:FlxUICheckBox = null;
-		muteInst = new FlxUICheckBox(10, 190, null, null, 'Mute Inst', 100, function() {
+		muteInst = new FlxUICheckBox(10, 170, null, null, 'Mute Inst', 100, function() {
 			songList[0].volume = 0;
 			if(!muteInst.checked)
 				songList[0].volume = stepperVolInst.value;
 		});
 		var muteVoices:FlxUICheckBox = null;
-		muteVoices = new FlxUICheckBox(10, 210, null, null, 'Mute Voices', 100, function() {
+		muteVoices = new FlxUICheckBox(10, 190, null, null, 'Mute Voices', 100, function() {
 			if(songList.length <= 1) return;
 			
 			songList[1].volume = 0;
@@ -431,22 +438,24 @@ class ChartingState extends MusicBeatState
 				songList[1].volume = stepperVolVoices.value;
 		});
 
-		var oldTimerCheck:FlxUICheckBox = null;
-		oldTimerCheck = new FlxUICheckBox(110, 230, null, null, 'Old Timer', 100, function() {
-			oldTimer = oldTimerCheck.checked;
-			updateInfoTxt();
-		});
-		oldTimerCheck.checked = oldTimer;
-
-		var clearEventsButton = new FlxButton(200, 230, "Clear Events", function() {
+		var clearEventsButton = new FlxButton(200, 210, "Clear Events", function() {
+			addAutoSave();
 			EVENTS = SongData.defaultSongEvents();
-			reloadSection(0);
+			reloadSection(curSection, false);
+		});
+		var clearNotesButton = new FlxButton(200, 230, "Clear Notes", function() {
+			addAutoSave();
+			for(section in SONG.notes)
+				section.sectionNotes = [];
+			reloadSection(curSection, false);
 		});
 		var clearSongButton = new FlxButton(200, 250, "Clear Song", function() {
-			//SONG = SongData.defaultSong();
+			addAutoSave();
+			EVENTS = SongData.defaultSongEvents();
 			SONG.notes = [];
 			reloadSection(0);
 		});
+		dangerButton(clearNotesButton);
 		dangerButton(clearEventsButton);
 		dangerButton(clearSongButton);
 		
@@ -466,15 +475,16 @@ class ChartingState extends MusicBeatState
 		tabSong.add(stepperSpeed);
 		tabSong.add(playTicksBf);
 		tabSong.add(playTicksDad);
+		tabSong.add(oldTimerCheck);
 		tabSong.add(new FlxText(stepperVolInst.x   + stepperVolInst.width,   stepperVolInst.y,   0, ' :Inst Volume'));
 		tabSong.add(new FlxText(stepperVolVoices.x + stepperVolVoices.width, stepperVolVoices.y, 0, ' :Voices Volume'));
 		tabSong.add(stepperVolInst);
 		tabSong.add(stepperVolVoices);
 		tabSong.add(muteInst);
 		tabSong.add(muteVoices);
-		tabSong.add(oldTimerCheck);
 		
 		tabSong.add(clearEventsButton);
+		tabSong.add(clearNotesButton);
 		tabSong.add(clearSongButton);
 
 		tabSong.add(new FlxText(player1DropDown.x, player1DropDown.y - 15, 0, 'Boyfriend:'));
@@ -1364,6 +1374,11 @@ class ChartingState extends MusicBeatState
 	// even if you leave the state the
 	// value will still count the 5 minutes
 	static var autosavetimer:Float = 0;
+	public function addAutoSave()
+	{
+		ChartAutoSaveSubState.addSave(SONG, EVENTS, songDiff);
+	}
+
 	var globalMult:Int = 1;
 
 	function getNoteOverlap():Note
@@ -1431,7 +1446,7 @@ class ChartingState extends MusicBeatState
 		{
 			trace('autosaved');
 			autosavetimer = 0;
-			ChartAutoSaveSubState.addSave(SONG, EVENTS, songDiff);
+			addAutoSave();
 		}
 
 		if(curNoteSprite != null || curEventSprite != null)
@@ -1478,7 +1493,7 @@ class ChartingState extends MusicBeatState
 			if(FlxG.keys.justPressed.ENTER)
 			{
 				FlxG.mouse.visible = false;
-				ChartAutoSaveSubState.addSave(SONG, EVENTS, songDiff);
+				addAutoSave();
 				PlayState.songDiff = songDiff;
 				PlayState.SONG = SONG;
 				PlayState.EVENTS = EVENTS;

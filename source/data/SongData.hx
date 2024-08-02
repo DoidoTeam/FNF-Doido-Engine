@@ -143,7 +143,7 @@ class SongData
 	}
 	inline public static function defaultSongEvents():EventSong
 		return {songEvents: []};
-	// [0] = section // [1] = strumTime // [2] = label // [3] = values
+	// [0] = section // [1] = strumTime // [2] events
 	inline public static function defaultEventNote():Array<Dynamic>
 		return [0, 0, []];
 	inline public static function defaultEvent():Array<Dynamic>

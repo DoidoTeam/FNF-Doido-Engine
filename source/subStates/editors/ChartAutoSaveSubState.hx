@@ -88,10 +88,54 @@ class ChartAutoSaveSubState extends MusicBeatSubState
 	
 	public static function addSave(SONG:SwagSong, EVENTS:EventSong, diff:String)
 	{
+		// not sure why, but autosave acts weird if i dont do this
+		var songClone = {
+			song: SONG.song,
+			notes: [],
+			bpm: SONG.bpm,
+			needsVoices: SONG.needsVoices,
+			speed: SONG.speed,
+			player1: SONG.player1,
+			player2: SONG.player2,
+		};
+		for(section in SONG.notes)
+		{
+			var sectionClone = {
+				sectionNotes: [],
+				lengthInSteps: section.lengthInSteps,
+				mustHitSection: section.mustHitSection,
+				bpm: section.bpm,
+				changeBPM: section.changeBPM,
+				// null stuff
+				sectionBeats: section.sectionBeats,
+			};
+			for(note in section.sectionNotes)
+			{
+				var cloneNote = [];
+				for(i in 0...note.length)
+					cloneNote.push(note[i]);
+				sectionClone.sectionNotes.push(cloneNote);
+			}
+			songClone.notes.push(sectionClone);
+		}
+		var eventsClone = SongData.defaultSongEvents();
+		for(note in EVENTS.songEvents)
+		{
+			var cloneNote = [note[0], note[1], []];
+			for(i in 0...note[2].length)
+			{
+				var cloneEvent = [];
+				for(j in 0...note[2][i].length)
+					cloneEvent.push(note[2][i][j]);
+				cloneNote[2].push(cloneEvent);
+			}
+			eventsClone.songEvents.push(cloneNote);
+		}
+		
 		// adding it (max is 5 so watch out!!)
 		autoSaveArray.push({
-			SONG: SONG,
-			EVENTS: EVENTS,
+			SONG: songClone,
+			EVENTS: eventsClone,
 			diff: diff,
 			date: Date.now().toString(),
 		});
