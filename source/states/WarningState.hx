@@ -22,8 +22,8 @@ class WarningState extends MusicBeatState
 	override public function update(elapsed:Float):Void 
 	{
 		super.update(elapsed);
-
-		if(Controls.justPressed("ACCEPT"))
+		
+		if(Controls.justPressed(ACCEPT))
 		{
             Main.switchState(new states.TitleState());
 

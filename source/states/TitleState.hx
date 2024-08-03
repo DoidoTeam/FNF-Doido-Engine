@@ -102,7 +102,7 @@ class TitleState extends MusicBeatState
 			if(FlxG.sound.music.playing)
 				Conductor.songPos = FlxG.sound.music.time;
 		
-		if(Controls.justPressed("ACCEPT"))
+		if(Controls.justPressed(ACCEPT))
 		{
 			if(introEnded)
 			{

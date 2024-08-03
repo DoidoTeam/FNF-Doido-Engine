@@ -105,14 +105,14 @@ class Dialogue extends FlxGroup
 	{
 		super.update(elapsed);
 		
-		if(Controls.justPressed('ACCEPT'))
+		if(Controls.justPressed(ACCEPT))
 		{
 			if(isTyping)
 				isTyping = false;
 			else
 				changePage();
 		}
-		if(Controls.justPressed('BACK'))
+		if(Controls.justPressed(BACK))
 			finishCallback();
 		
 		if(isTyping)

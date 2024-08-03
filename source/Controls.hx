@@ -6,31 +6,49 @@ import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;
 
-/*enum Keybind {
+using haxe.EnumTools;
 
-}*/
+enum DoidoKey
+{
+	// gameplay
+	LEFT;
+	DOWN;
+	UP;
+	RIGHT;
+	RESET;
+	// ui stuff
+	UI_LEFT;
+	UI_DOWN;
+	UI_UP;
+	UI_RIGHT;
+	ACCEPT;
+	BACK;
+	PAUSE;
+}
+
 class Controls
 {
-	public static function justPressed(bind:String):Bool
+	public static function justPressed(bind:DoidoKey):Bool
 	{
 		return checkBind(bind, JUST_PRESSED);
 	}
 
-	public static function pressed(bind:String):Bool
+	public static function pressed(bind:DoidoKey):Bool
 	{
 		return checkBind(bind, PRESSED);
 	}
 
-	public static function released(bind:String):Bool
+	public static function released(bind:DoidoKey):Bool
 	{
 		return checkBind(bind, JUST_RELEASED);
 	}
 
-	public static function checkBind(bind:String, inputState:FlxInputState):Bool
+	public static function checkBind(rawBind:DoidoKey, inputState:FlxInputState):Bool
 	{
+		var bind = bindToString(rawBind);
 		if(!allControls.exists(bind))
 		{
-			trace("that bind does not exist dumbass");
+			trace("that bind does not exist dummy");
 			return false;
 		}
 
@@ -53,6 +71,16 @@ class Controls
 		}
 
 		return false;
+	}
+
+	inline public static function bindToString(bind:DoidoKey):String
+	{
+		var constructors = DoidoKey.getConstructors();
+		return constructors[constructors.indexOf(Std.string(bind))];
+	}
+	inline public static function stringToBind(bind:String):DoidoKey
+	{
+		return cast DoidoKey.getConstructors().indexOf(Std.string(bind));
 	}
 	
 	public static function setSoundKeys(?empty:Bool = false)

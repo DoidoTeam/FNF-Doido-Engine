@@ -200,23 +200,23 @@ class OffsetsSubState extends MusicBeatSubState
         }
 
         var pressed:Array<Bool> = [
-            Controls.pressed("LEFT"),
-            Controls.pressed("DOWN"),
-            Controls.pressed("UP"),
-            Controls.pressed("RIGHT"),
+            Controls.pressed(LEFT),
+            Controls.pressed(DOWN),
+            Controls.pressed(UP),
+            Controls.pressed(RIGHT),
         ];
         var justPressed:Array<Bool> = [
-            Controls.justPressed("LEFT"),
-            Controls.justPressed("DOWN"),
-            Controls.justPressed("UP"),
-            Controls.justPressed("RIGHT"),
+            Controls.justPressed(LEFT),
+            Controls.justPressed(DOWN),
+            Controls.justPressed(UP),
+            Controls.justPressed(RIGHT),
         ];
 
         cameras[0].zoom = FlxMath.lerp(cameras[0].zoom, 1.0, elapsed * 6);
         
         if(!testingInput)
         {
-            if(Controls.justPressed("BACK"))
+            if(Controls.justPressed(BACK))
             {
                 cameras[0].zoom = 1.0;
                 offsetMusic.stop();
@@ -225,22 +225,22 @@ class OffsetsSubState extends MusicBeatSubState
                 close();
             }
         
-            if(Controls.justPressed("UI_UP"))
+            if(Controls.justPressed(UI_UP))
                 changeOption(-1);
-            if(Controls.justPressed("UI_DOWN"))
+            if(Controls.justPressed(UI_DOWN))
                 changeOption(1);
         
             if(curSelected != 2)
             {
-                if(Controls.justPressed("UI_LEFT")) {
+                if(Controls.justPressed(UI_LEFT)) {
                     holdTimer = 0;
                     changeSelector(-1);
                 }
-                if(Controls.justPressed("UI_RIGHT")) {
+                if(Controls.justPressed(UI_RIGHT)) {
                     holdTimer = 0;
                     changeSelector(1);
                 }
-                if(Controls.pressed("UI_LEFT") || Controls.pressed("UI_RIGHT"))
+                if(Controls.pressed(UI_LEFT) || Controls.pressed(UI_RIGHT))
                     holdTimer += elapsed;
                 else
                     holdTimer = 0;
@@ -249,10 +249,10 @@ class OffsetsSubState extends MusicBeatSubState
                 {
                     function toInt(bool:Bool):Int
                         return bool ? 1 : 0;
-                    changeSelector(toInt(Controls.pressed("UI_RIGHT"))-toInt(Controls.pressed("UI_LEFT")));
+                    changeSelector(toInt(Controls.pressed(UI_RIGHT))-toInt(Controls.pressed(UI_LEFT)));
                 }
             }
-            else if(Controls.justPressed("ACCEPT"))
+            else if(Controls.justPressed(ACCEPT))
             {
                 trace('started testing!!');
                 testingInput = true;

@@ -931,10 +931,10 @@ class PlayState extends MusicBeatState
 		
 		CoolUtil.dumbCamPosLerp(camGame, camFollow, followLerp);
 		
-		if(Controls.justPressed("PAUSE"))
+		if(Controls.justPressed(PAUSE))
 			pauseSong();
 
-		if(Controls.justPressed("RESET"))
+		if(Controls.justPressed(RESET))
 			startGameOver();
 
 		/*if(!FlxG.mouse.visible) FlxG.mouse.visible = true;
@@ -1063,22 +1063,22 @@ class PlayState extends MusicBeatState
 			Conductor.songPos += elapsed * 1000;
 
 		pressed = [
-			Controls.pressed("LEFT"),
-			Controls.pressed("DOWN"),
-			Controls.pressed("UP"),
-			Controls.pressed("RIGHT"),
+			Controls.pressed(LEFT),
+			Controls.pressed(DOWN),
+			Controls.pressed(UP),
+			Controls.pressed(RIGHT),
 		];
 		justPressed = [
-			Controls.justPressed("LEFT"),
-			Controls.justPressed("DOWN"),
-			Controls.justPressed("UP"),
-			Controls.justPressed("RIGHT"),
+			Controls.justPressed(LEFT),
+			Controls.justPressed(DOWN),
+			Controls.justPressed(UP),
+			Controls.justPressed(RIGHT),
 		];
 		released = [
-			Controls.released("LEFT"),
-			Controls.released("DOWN"),
-			Controls.released("UP"),
-			Controls.released("RIGHT"),
+			Controls.released(LEFT),
+			Controls.released(DOWN),
+			Controls.released(UP),
+			Controls.released(RIGHT),
 		];
 		
 		playerSinging = false;

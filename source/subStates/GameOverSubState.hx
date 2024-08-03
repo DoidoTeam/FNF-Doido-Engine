@@ -67,7 +67,7 @@ class GameOverSubState extends MusicBeatSubState
 
 		if(!ended)
 		{
-			if(Controls.justPressed("BACK"))
+			if(Controls.justPressed(BACK))
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 0.2, false, function()
 				{
@@ -75,7 +75,7 @@ class GameOverSubState extends MusicBeatSubState
 				}, true);
 			}
 
-			if(Controls.justPressed("ACCEPT"))
+			if(Controls.justPressed(ACCEPT))
 				endBullshit();
 		}
 	}

@@ -510,7 +510,7 @@ class ChartTestSubState extends MusicBeatSubState
 		if(playing)
 			Conductor.songPos += elapsed * 1000;
 
-		if(Controls.justPressed("PAUSE"))
+		if(Controls.justPressed(PAUSE))
 		{
 			playing = !playing;
 			if(!playing)
@@ -528,22 +528,22 @@ class ChartTestSubState extends MusicBeatSubState
 		if(playing)
 		{
 			pressed = [
-				Controls.pressed("LEFT"),
-				Controls.pressed("DOWN"),
-				Controls.pressed("UP"),
-				Controls.pressed("RIGHT")
+				Controls.pressed(LEFT),
+				Controls.pressed(DOWN),
+				Controls.pressed(UP),
+				Controls.pressed(RIGHT)
 			];
 			justPressed = [
-				Controls.justPressed("LEFT"),
-				Controls.justPressed("DOWN"),
-				Controls.justPressed("UP"),
-				Controls.justPressed("RIGHT")
+				Controls.justPressed(LEFT),
+				Controls.justPressed(DOWN),
+				Controls.justPressed(UP),
+				Controls.justPressed(RIGHT)
 			];
 			released = [
-				Controls.released("LEFT"),
-				Controls.released("DOWN"),
-				Controls.released("UP"),
-				Controls.released("RIGHT")
+				Controls.released(LEFT),
+				Controls.released(DOWN),
+				Controls.released(UP),
+				Controls.released(RIGHT)
 			];
 		}
 

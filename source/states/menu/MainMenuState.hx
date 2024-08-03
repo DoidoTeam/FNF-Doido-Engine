@@ -163,15 +163,15 @@ class MainMenuState extends MusicBeatState
 		
 		if(!selectedSum)
 		{
-			if(Controls.justPressed("UI_UP"))
+			if(Controls.justPressed(UI_UP))
 				changeSelection(-1);
-			if(Controls.justPressed("UI_DOWN"))
+			if(Controls.justPressed(UI_DOWN))
 				changeSelection(1);
 			
-			if(Controls.justPressed("BACK"))
+			if(Controls.justPressed(BACK))
 				Main.switchState(new TitleState());
 			
-			if(Controls.justPressed("ACCEPT"))
+			if(Controls.justPressed(ACCEPT))
 			{
 				if(["donate"].contains(optionShit[curSelected]))
 				{

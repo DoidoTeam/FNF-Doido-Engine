@@ -157,12 +157,12 @@ class PauseSubState extends MusicBeatSubState
 			if(!pauseSong.playing && Conductor.songPos >= 0)
 				pauseSong.play(false, pauseSong.time);
 
-			if(Controls.justPressed("UI_UP"))
+			if(Controls.justPressed(UI_UP))
 				changeSelection(-1);
-			if(Controls.justPressed("UI_DOWN"))
+			if(Controls.justPressed(UI_DOWN))
 				changeSelection(1);
 
-			if(Controls.justPressed("ACCEPT"))
+			if(Controls.justPressed(ACCEPT))
 			{
 				switch(optionShit[curSelected])
 				{
@@ -194,7 +194,7 @@ class PauseSubState extends MusicBeatSubState
 			}
 
 			// works the same as resume
-			if(Controls.justPressed("BACK"))
+			if(Controls.justPressed(BACK))
 				closePause();
 		}
 		else

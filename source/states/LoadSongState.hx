@@ -177,7 +177,7 @@ class LoadSongState extends MusicBeatState
 			Main.switchState(new PlayState());
 		}
 		
-		if(Controls.justPressed("ACCEPT"))
+		if(Controls.justPressed(ACCEPT))
 		{
 			bg.scale.x += 0.04;
 			bg.scale.y += 0.04;

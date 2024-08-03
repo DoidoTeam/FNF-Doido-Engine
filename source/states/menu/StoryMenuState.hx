@@ -137,14 +137,14 @@ class StoryMenuState extends MusicBeatState
 		super.update(elapsed);
 		if(canSelect)
 		{
-			if(Controls.justPressed("BACK"))
+			if(Controls.justPressed(BACK))
 			{
 				canSelect = false;
 				FlxG.sound.play(Paths.sound('menu/cancelMenu'));
 				Main.switchState(new MainMenuState());
 			}
 			
-			if(Controls.justPressed("ACCEPT"))
+			if(Controls.justPressed(ACCEPT))
 			{
 				canSelect = false;
 				FlxG.sound.play(Paths.sound('menu/confirmMenu'));
@@ -188,27 +188,27 @@ class StoryMenuState extends MusicBeatState
 				});
 			}
 			
-			if(Controls.justPressed("UI_UP"))
+			if(Controls.justPressed(UI_UP))
 				changeWeek(-1);
-			if(Controls.justPressed("UI_DOWN"))
+			if(Controls.justPressed(UI_DOWN))
 				changeWeek(1);
-			if(Controls.justPressed("UI_LEFT"))
+			if(Controls.justPressed(UI_LEFT))
 				changeDiff(-1);
-			if(Controls.justPressed("UI_RIGHT"))
+			if(Controls.justPressed(UI_RIGHT))
 				changeDiff(1);
 			
-			if(Controls.justPressed("RESET"))
+			if(Controls.justPressed(RESET))
 			{
 				var displayName:String = weekList[curWeek].weekFile;
 				openSubState(new DeleteScoreSubState('week-' + displayName, curDiff, displayName));
 			}
 			
 			var animL:String = "idle";
-			if(Controls.pressed("UI_LEFT"))
+			if(Controls.pressed(UI_LEFT))
 				animL = "push";
 			
 			var animR:String = "idle";
-			if(Controls.pressed("UI_RIGHT"))
+			if(Controls.pressed(UI_RIGHT))
 				animR = "push";
 			
 			diffSelector.arrowL.animation.play(animL);

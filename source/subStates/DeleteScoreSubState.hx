@@ -57,13 +57,13 @@ class DeleteScoreSubState extends MusicBeatSubState
     override function update(elapsed:Float)
     {
         super.update(elapsed);
-        if(Controls.justPressed("BACK"))
+        if(Controls.justPressed(BACK))
         {
             playSound();
             close();
         }
 
-        if(Controls.justPressed("ACCEPT"))
+        if(Controls.justPressed(ACCEPT))
         {
             if(curSelection == 1)
             {
@@ -76,8 +76,8 @@ class DeleteScoreSubState extends MusicBeatSubState
             close();
         }
         
-        if(Controls.justPressed("UI_LEFT")
-        || Controls.justPressed("UI_RIGHT"))
+        if(Controls.justPressed(UI_LEFT)
+        || Controls.justPressed(UI_RIGHT))
             changeSelection();
     }
 

@@ -162,7 +162,7 @@ class OptionsSubState extends MusicBeatSubState
             return;
         }
 
-        if(Controls.justPressed("BACK"))
+        if(Controls.justPressed(BACK))
         {
             if(curCat == 'main')
             {
@@ -182,14 +182,14 @@ class OptionsSubState extends MusicBeatSubState
             }
         }
 
-        if(Controls.justPressed("UI_UP"))
+        if(Controls.justPressed(UI_UP))
             changeSelection(-1);
-        if(Controls.justPressed("UI_DOWN"))
+        if(Controls.justPressed(UI_DOWN))
             changeSelection(1);
 
         if(curCat == 'main')
         {
-            if(Controls.justPressed("ACCEPT"))
+            if(Controls.justPressed(ACCEPT))
             {
                 switch(mainShit[curSelected])
                 {
@@ -210,7 +210,7 @@ class OptionsSubState extends MusicBeatSubState
         else
         {
             var curOption:String = optionShit.get(curCat)[curSelected];
-            if(Controls.justPressed("ACCEPT"))
+            if(Controls.justPressed(ACCEPT))
             {
                 if(Std.isOfType(curAttach, OptionCheckmark))
                 {
@@ -232,9 +232,9 @@ class OptionsSubState extends MusicBeatSubState
             {
                 var holdMax:Float = 0.4;
                 var selec:OptionSelector = cast curAttach;
-                if(Controls.justPressed("UI_LEFT") || Controls.justPressed("UI_RIGHT") || selec.holdTimer >= holdMax)
+                if(Controls.justPressed(UI_LEFT) || Controls.justPressed(UI_RIGHT) || selec.holdTimer >= holdMax)
                 {
-                    var selChange:Int = -(Controls.pressed("UI_LEFT") ? 1 : 0) + (Controls.pressed("UI_RIGHT") ? 1 : 0);
+                    var selChange:Int = -(Controls.pressed(UI_LEFT) ? 1 : 0) + (Controls.pressed(UI_RIGHT) ? 1 : 0);
                     if(selChange != 0)
                     {
                         selec.changeSelection(selChange);
@@ -260,14 +260,14 @@ class OptionsSubState extends MusicBeatSubState
                         FlxG.sound.play(Paths.sound('menu/scrollMenu'));
                 }
                 
-                selec.arrowL.animation.play(Controls.pressed("UI_LEFT") ? "push" : "idle", true);
-                selec.arrowR.animation.play(Controls.pressed("UI_RIGHT")? "push" : "idle", true);
+                selec.arrowL.animation.play(Controls.pressed(UI_LEFT) ? "push" : "idle", true);
+                selec.arrowR.animation.play(Controls.pressed(UI_RIGHT)? "push" : "idle", true);
                 
-                if(Controls.pressed("UI_LEFT") || Controls.pressed("UI_RIGHT")
+                if(Controls.pressed(UI_LEFT) || Controls.pressed(UI_RIGHT)
                 && selec.holdTimer <= holdMax
                 && Std.isOfType(selec.options[0], Int))
                     selec.holdTimer += elapsed;
-                if(Controls.released("UI_LEFT") || Controls.released("UI_RIGHT"))
+                if(Controls.released(UI_LEFT) || Controls.released(UI_RIGHT))
                     selec.holdTimer = 0;
             }
         }

@@ -140,16 +140,16 @@ class FreeplayState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if(Controls.justPressed("UI_UP"))
+		if(Controls.justPressed(UI_UP))
 			changeSelection(-1);
-		if(Controls.justPressed("UI_DOWN"))
+		if(Controls.justPressed(UI_DOWN))
 			changeSelection(1);
-		if(Controls.justPressed("UI_LEFT"))
+		if(Controls.justPressed(UI_LEFT))
 			changeDiff(-1);
-		if(Controls.justPressed("UI_RIGHT"))
+		if(Controls.justPressed(UI_RIGHT))
 			changeDiff(1);
 
-		if(Controls.justPressed("RESET")) {
+		if(Controls.justPressed(RESET)) {
 			var curSong = songList[curSelected];
 			openSubState(new DeleteScoreSubState(curSong.name, curSong.diffs[curDiff]));
 		}
@@ -161,7 +161,7 @@ class FreeplayState extends MusicBeatState
 		}
 
 		var toChartEditor:Bool = FlxG.keys.justPressed.SEVEN;
-		if(Controls.justPressed("ACCEPT") || toChartEditor)
+		if(Controls.justPressed(ACCEPT) || toChartEditor)
 		{
 			try
 			{
@@ -190,7 +190,7 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 		
-		if(Controls.justPressed("BACK"))
+		if(Controls.justPressed(BACK))
 		{
 			FlxG.sound.play(Paths.sound('menu/cancelMenu'));
 			Main.switchState(new MainMenuState());

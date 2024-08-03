@@ -430,7 +430,7 @@ class ControlsSubState extends MusicBeatSubState
             checkAnalogs();
 
         var curOpt:String = optionShit[curSelected];
-        if(Controls.justPressed("BACK"))
+        if(Controls.justPressed(BACK))
         {
             if(changinBinds == 0)
                 close();
@@ -441,7 +441,7 @@ class ControlsSubState extends MusicBeatSubState
                 changeSelection();
             }
         }
-        if(Controls.justPressed("ACCEPT"))
+        if(Controls.justPressed(ACCEPT))
         {
             if(changinBinds < 2 && curOpt == 'edit binds')
             {
@@ -452,16 +452,16 @@ class ControlsSubState extends MusicBeatSubState
         }
         if(changinBinds == 1)
         {
-            if(Controls.justPressed("UI_UP") || Controls.justPressed("UI_DOWN"))
+            if(Controls.justPressed(UI_UP) || Controls.justPressed(UI_DOWN))
                 changeLane(true);
         }
         if(changinBinds > 0)
             return;
 
-        gamepadSelector.arrowL.animation.play(Controls.pressed("UI_LEFT") ? "push" : "idle");
-        gamepadSelector.arrowR.animation.play(Controls.pressed("UI_RIGHT")? "push" : "idle");
+        gamepadSelector.arrowL.animation.play(Controls.pressed(UI_LEFT) ? "push" : "idle");
+        gamepadSelector.arrowR.animation.play(Controls.pressed(UI_RIGHT)? "push" : "idle");
 
-        if(Controls.justPressed("ACCEPT"))
+        if(Controls.justPressed(ACCEPT))
         {
             FlxG.sound.play(Paths.sound('menu/scrollMenu'));
             switch(curOpt)
@@ -480,12 +480,12 @@ class ControlsSubState extends MusicBeatSubState
             }
         }
 
-        if(Controls.justPressed("UI_LEFT") || Controls.justPressed("UI_RIGHT"))
+        if(Controls.justPressed(UI_LEFT) || Controls.justPressed(UI_RIGHT))
             changeGamepad(true);
 
-        if(Controls.justPressed("UI_UP"))
+        if(Controls.justPressed(UI_UP))
             changeSelection(-1);
-        if(Controls.justPressed("UI_DOWN"))
+        if(Controls.justPressed(UI_DOWN))
             changeSelection(1);
     }
 
