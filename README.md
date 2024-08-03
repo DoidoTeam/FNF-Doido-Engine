@@ -44,8 +44,12 @@ there are a few extra things to compile but those are at [FNF's Source Code](htt
 ### [Anna The Fennec (GoldenFoxy)](https://twitter.com/goldenfoxy2604) - Design help
 ### [JulianoBeta](https://www.youtube.com/@prodjuyko) - Composed the offset menu music
 
+## Contributors
+### [CrowPlexus](https://twitter.com/crowplexus)
+### [Gazozoz](https://x.com/Gazozoz_)
+
 ## Special Thanks
-### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip♧](https://www.youtube.com/@beastlychip_), [Bepixel](https://twitter.com/BepixelOfficial), [CrowPlexus](https://twitter.com/crowplexus), [Evandro](https://twitter.com/Evandroo__), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama](https://twitter.com/sama_ziero)
+### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip♧](https://www.youtube.com/@beastlychip_), [Bepixel](https://twitter.com/BepixelOfficial), [Evandro](https://twitter.com/Evandroo__), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama](https://twitter.com/sama_ziero)
 
 ## Songs used to test the engine
 #### Base FNF' Songs - Kawai Sprite
