@@ -7,6 +7,7 @@ import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
 import openfl.system.Capabilities;
 import data.Highscore;
+import data.Discord.DiscordIO;
 
 enum SettingType
 {
@@ -220,6 +221,8 @@ class SaveData
 
 		Conductor.musicOffset = data.get('Song Offset');
 		Conductor.inputOffset = data.get('Input Offset');
+
+		DiscordIO.check();
 	}
 
 	public static function updateWindowSize()

@@ -2,53 +2,95 @@ package data;
 
 import lime.app.Application;
 
-#if !html5
+#if DISCORD_RPC
 import Sys.sleep;
 import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
 #end
 
-// REWORK NECESSARY!!!!
+/*
+	New Discord.hx rewrite is here!
 
-class DiscordClient
+	Main purpose is to simplify Discord RPC implementation throughout the engine,
+	removing many redundancies and the huge mess that was incompatible platforms.
+
+	The current system is split into 2 classes, DiscordIO and DiscordAPI.
+	DiscordIO is used by the game to set RPC status and is what decides wether its
+	on or off. It's also used to block other platforms (HTML5, Neko and Android)
+	from accessing DiscordAPI, to avoid having to use if statements to fix any
+	classes they cant use.
+
+	DiscordAPI functions largely like the old DiscordClient but now is able to remember
+	the last RPC status used and fixes a couple of unoptimized things (trying to initialize
+	or shutdown while isInitialized is true or false, respectively, now stops the function
+	from doing anything)
+
+	Another feature is that you can now toggle Discord RPC from the Options Menu!
+
+	- teles
+*/
+
+class DiscordIO
 {
-	public static var isInitialized:Bool = false;
-	private static final _defaultID:String = "1125409482101493823";
-	public static var clientID(default, set):String = _defaultID;
-	#if !html5
-	private static var presence:DiscordRichPresence = DiscordRichPresence.create();
-	#end
+	public static var lastDetails:String = "In the Menus";
+	public static function initialize()
+	{
+		#if DISCORD_RPC
+		if (!DiscordAPI.isInitialized) {
+			DiscordAPI.initialize();
+			
+			Application.current.window.onClose.add(function() {
+				DiscordAPI.shutdown();
+			});
+
+			trace("initialized Discord RPC");
+		}
+		#end
+	}
+
+	public static function shutdown()
+	{
+		#if DISCORD_RPC
+		DiscordAPI.shutdown();
+		trace("shutdown Discord RPC");
+		#end
+	}
+
+	public static function changePresence(?details:String = 'In the Menus', ?state:Null<String>)
+	{
+		#if DISCORD_RPC
+		DiscordAPI.changePresence(details, state);
+		trace("changed RPC to " + details);
+		lastDetails = details;
+		#end
+	}
 
 	public static function check()
 	{
 		#if DISCORD_RPC
-		if(SaveData.data.get('Discord RPC')) initialize();
-		else if(isInitialized) shutdown();
+		if(SaveData.data.get("Discord RPC"))
+			DiscordAPI.initialize();
+		else
+			shutdown();
 		#end
 	}
-	
-	public static function prepare()
-	{
-		#if DISCORD_RPC
-		if (!isInitialized && SaveData.data.get('Discord RPC'))
-			initialize();
+}
 
-		Application.current.window.onClose.add(function() {
-			if(isInitialized) shutdown();
-		});
-		#end
-	}
+#if DISCORD_RPC
+class DiscordAPI
+{
+	public static var isInitialized:Bool = false;
+	private static final _defaultID:String = "1125409482101493823";
+	public static var clientID(default, set):String = _defaultID;
+	private static var presence:DiscordRichPresence = DiscordRichPresence.create();
 
 	public dynamic static function shutdown() {
-		#if DISCORD_RPC
-		Discord.Shutdown();
+		if(isInitialized)
+			Discord.Shutdown();
 		isInitialized = false;
-		#end
 	}
 	
-	#if !html5
 	private static function onReady(request:cpp.RawConstPointer<DiscordUser>):Void {
-		#if DISCORD_RPC
 		var requestPtr:cpp.Star<DiscordUser> = cpp.ConstPointer.fromRaw(request).ptr;
 
 		if (Std.parseInt(cast(requestPtr.discriminator, String)) != 0) //New Discord IDs/Discriminator system
@@ -56,49 +98,29 @@ class DiscordClient
 		else //Old discriminators
 			trace('(Discord) Connected to User (${cast(requestPtr.username, String)})');
 
-		changePresence();
-		#end
+		changePresence(DiscordIO.lastDetails);
 	}
-	#else
-	private static function onReady(request:Dynamic) {
-		return false;
-	}
-	#end
 
-	#if !html5
 	private static function onError(errorCode:Int, message:cpp.ConstCharStar):Void {
-		#if DISCORD_RPC
 		trace('Discord: Error ($errorCode: ${cast(message, String)})');
-		#end
 	}
-	#else
-	private static function onError(request:Dynamic) {
-		return false;
-	}
-	#end
 
-	#if !html5
 	private static function onDisconnected(errorCode:Int, message:cpp.ConstCharStar):Void {
-		#if DISCORD_RPC
 		trace('Discord: Disconnected ($errorCode: ${cast(message, String)})');
-		#end
 	}
-	#else
-	private static function onDisconnected(request:Dynamic) {
-		return false;
-	}
-	#end
 
 	public static function initialize()
 	{
-		#if DISCORD_RPC
+		if(isInitialized) //stop!
+			return;
+
 		var discordHandlers:DiscordEventHandlers = DiscordEventHandlers.create();
 		discordHandlers.ready = cpp.Function.fromStaticFunction(onReady);
 		discordHandlers.disconnected = cpp.Function.fromStaticFunction(onDisconnected);
 		discordHandlers.errored = cpp.Function.fromStaticFunction(onError);
 		Discord.Initialize(clientID, cpp.RawPointer.addressOf(discordHandlers), 1, null);
 
-		if(!isInitialized) trace("Discord Client initialized");
+		trace("Discord Client initialized");
 
 		sys.thread.Thread.create(() ->
 		{
@@ -115,12 +137,10 @@ class DiscordClient
 			}
 		});
 		isInitialized = true;
-		#end
 	}
 
 	public static function changePresence(?details:String = 'In the Menus', ?state:Null<String>, ?smallImageKey : String, ?hasStartTimestamp : Bool, ?endTimestamp: Float)
 	{
-		#if DISCORD_RPC
 		var startTimestamp:Float = 0;
 		if (hasStartTimestamp) startTimestamp = Date.now().getTime();
 		if (endTimestamp > 0) endTimestamp = startTimestamp + endTimestamp;
@@ -134,25 +154,19 @@ class DiscordClient
 		presence.startTimestamp = Std.int(startTimestamp / 1000);
 		presence.endTimestamp = Std.int(endTimestamp / 1000);
 		updatePresence();
-		#end
 		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
 
 	public static function updatePresence() {
-		#if DISCORD_RPC
 		Discord.UpdatePresence(cpp.RawConstPointer.addressOf(presence));
-		#end
 	}
 	
 	public static function resetClientID() {
-		#if DISCORD_RPC
 		clientID = _defaultID;
-		#end
 	}
 
 	private static function set_clientID(newID:String)
 	{
-		#if DISCORD_RPC
 		var change:Bool = (clientID != newID);
 		clientID = newID;
 
@@ -163,7 +177,6 @@ class DiscordClient
 			updatePresence();
 		}
 		return newID;
-		#end
-		return "uhoh";
 	}
 }
+#end

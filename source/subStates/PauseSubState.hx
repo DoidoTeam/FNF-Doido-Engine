@@ -1,8 +1,6 @@
 package subStates;
 
-#if DISCORD_RPC
-import data.Discord.DiscordClient;
-#end
+import data.Discord.DiscordIO;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
@@ -135,9 +133,7 @@ class PauseSubState extends MusicBeatSubState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		#if DISCORD_RPC
-		DiscordClient.changePresence("Paused - Restin' a bit", null);
-		#end
+		DiscordIO.changePresence("Paused - Restin' a bit");
 
 		bottomTxt.text = "";
 		if(PlayState.botplay)

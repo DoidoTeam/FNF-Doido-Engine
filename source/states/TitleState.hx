@@ -1,8 +1,6 @@
 package states;
 
-#if DISCORD_RPC
-import data.Discord.DiscordClient;
-#end
+import data.Discord.DiscordIO;
 import data.GameData.MusicBeatState;
 import data.SongData;
 import data.Conductor;
@@ -44,9 +42,7 @@ class TitleState extends MusicBeatState
 			curWacky = allTexts[FlxG.random.int(0, allTexts.length - 1)].split('--');
 		}
 		
-		#if DISCORD_RPC
-		DiscordClient.changePresence("In Game Title", null);
-		#end
+		DiscordIO.changePresence("In Title Screen");
 		
 		persistentUpdate = true;
 		Conductor.setBPM(102);

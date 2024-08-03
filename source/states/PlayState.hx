@@ -1,8 +1,6 @@
 package states;
 
-#if DISCORD_RPC
-import data.Discord.DiscordClient;
-#end
+import data.Discord.DiscordIO;
 import data.SongData.EventSong;
 import flixel.FlxG;
 import flixel.FlxBasic;
@@ -1638,9 +1636,7 @@ class PlayState extends MusicBeatState
 	override function stepHit()
 	{
 		super.stepHit();
-		#if DISCORD_RPC
-		DiscordClient.changePresence("Playing: " + SONG.song.toUpperCase().replace("-", " "), null);
-		#end
+		DiscordIO.changePresence("Playing: " + SONG.song.toUpperCase().replace("-", " "));
 		stageBuild.stepHit(curStep);
 		syncSong();
 	}

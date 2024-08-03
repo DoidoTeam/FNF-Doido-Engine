@@ -12,10 +12,7 @@ import haxe.CallStack;
 import haxe.io.Path;
 import openfl.Lib;
 import flixel.input.keyboard.FlxKey;
-
-#if DISCORD_RPC
-import data.Discord.DiscordClient;
-#end
+import data.Discord.DiscordIO;
 
 #if !html5
 import sys.FileSystem;
@@ -36,15 +33,6 @@ class Main extends Sprite
 
 		#if desktop
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
-		#end
-
-		#if DISCORD_RPC
-		if (!DiscordClient.isInitialized) {
-			DiscordClient.initialize();
-			Application.current.window.onClose.add(function() {
-				DiscordClient.shutdown();
-			});
-		}
 		#end
 
 		addChild(new FlxGame(0, 0, Init, 120, 120, true));
@@ -175,9 +163,7 @@ class Main extends Sprite
 		Sys.println("Crash dump saved in " + Path.normalize(path));
 
 		Application.current.window.alert(errMsg, "Error!");
-		#if DISCORD_RPC
-		DiscordClient.shutdown();
-		#end
+		DiscordIO.shutdown();
 		Sys.exit(1);
 	}
 	#end
