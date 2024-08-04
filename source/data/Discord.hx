@@ -56,11 +56,12 @@ class DiscordIO
 		#end
 	}
 
-	public static function changePresence(?details:String = 'In the Menus', ?state:Null<String>)
+	public static function changePresence(?details:String = 'In the Menus', ?state:Null<String>, ?log:Bool = true)
 	{
 		#if DISCORD_RPC
 		DiscordAPI.changePresence(details, state);
-		trace("changed RPC to " + details);
+		if(log)
+			trace("changed RPC to " + details);
 		lastDetails = details;
 		#end
 	}

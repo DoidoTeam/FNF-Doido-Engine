@@ -40,6 +40,7 @@ class PauseSubState extends MusicBeatSubState
 	public function new()
 	{
 		super();
+		DiscordIO.changePresence("Paused - Restin' a bit");
 		this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 		var banana = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
 		add(banana);
@@ -133,8 +134,6 @@ class PauseSubState extends MusicBeatSubState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		DiscordIO.changePresence("Paused - Restin' a bit");
-
 		bottomTxt.text = "";
 		if(PlayState.botplay)
 			bottomTxt.text += "BOTPLAY";

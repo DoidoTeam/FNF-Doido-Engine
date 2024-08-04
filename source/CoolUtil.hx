@@ -20,6 +20,9 @@ class CoolUtil
 		return char.substring(0, char.lastIndexOf('-'));
 	}
 
+	inline public static function displayName(song:String):String
+		return song.toUpperCase().replace("-", " ");
+
 	public static function charList():Array<String>
 	{
 		return [

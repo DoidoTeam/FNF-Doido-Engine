@@ -45,8 +45,11 @@ class PlayState extends MusicBeatState
 	public var inst:FlxSound;
 	public var vocals:FlxSound;
 	public var musicList:Array<FlxSound> = [];
-	
+
 	public static var songLength:Float = 0;
+
+	// to avoid updating discord rpc each frame, it only updates each second
+	private var discordUpdateTime:Float = 0;
 	
 	// story mode stuff
 	public static var playList:Array<String> = [];
@@ -173,7 +176,7 @@ class PlayState extends MusicBeatState
 		// preloading stuff
 		/*Paths.preloadPlayStuff();
 		Rating.preload(assetModifier);*/
-		
+
 		//trace('tu ta jogando na linguagem ${openfl.system.Capabilities.language}');
 		
 		// adjusting the conductor
@@ -934,6 +937,20 @@ class PlayState extends MusicBeatState
 
 		if(Controls.justPressed(RESET))
 			startGameOver();
+		
+		if(SaveData.data.get("Discord RPC") && !paused)
+		{
+			discordUpdateTime -= elapsed;
+			if(discordUpdateTime <= 0.0)
+			{
+				discordUpdateTime = 10.0;
+				var presenceTxt:String = 'Playing: ${CoolUtil.displayName(SONG.song)} [${songDiff.toUpperCase()}]';
+				if(startedSong)
+					presenceTxt += ' - ${CoolUtil.posToTimer(Conductor.songPos)} / ${CoolUtil.posToTimer(songLength)}';
+
+				DiscordIO.changePresence(presenceTxt, false);
+			}
+		}
 
 		/*if(!FlxG.mouse.visible) FlxG.mouse.visible = true;
 		
@@ -1677,7 +1694,6 @@ class PlayState extends MusicBeatState
 	override function stepHit()
 	{
 		super.stepHit();
-		DiscordIO.changePresence("Playing: " + SONG.song.toUpperCase().replace("-", " "));
 		stageBuild.stepHit(curStep);
 		syncSong();
 	}
@@ -1773,6 +1789,7 @@ class PlayState extends MusicBeatState
 		
 		paused = true;
 		activateTimers(false);
+		discordUpdateTime = 0.0;
 		openSubState(new PauseSubState());
 	}
 	

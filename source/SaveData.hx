@@ -56,6 +56,11 @@ class SaveData
 			CHECKMARK,
 			"Whether you want to have a countdown when unpausing the game",
 		],
+		'Discord RPC' => [
+			true,
+			CHECKMARK,
+			"Whether to use Discord's game activity.",
+		],
 		/*
 		*
 		* GAMEPLAY
@@ -134,16 +139,6 @@ class SaveData
 			true,
 			CHECKMARK,
 			"Makes the song timer visible"
-		],
-		/*
-		*
-		* UNUSED (for now)
-		* 
-		*/
-		'Discord RPC' => [
-			true,
-			CHECKMARK,
-			"Whether to use Discord's game activity.",
 		],
 		/*
 		*
