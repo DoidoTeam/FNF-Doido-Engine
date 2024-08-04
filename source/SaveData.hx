@@ -60,7 +60,7 @@ class SaveData
 			#if DISCORD_RPC
 			true,
 			#else
-			false
+			false,
 			#end
 			CHECKMARK,
 			"Whether to use Discord's game activity.",
