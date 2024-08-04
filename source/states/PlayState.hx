@@ -1158,9 +1158,50 @@ class PlayState extends MusicBeatState
 					
 					case 'Flash Screen':
 						CoolUtil.flash(
-							camGame,
+							stringToCam(daEvent.value3),
 							Conductor.stepCrochet / 1000 * Std.parseFloat(daEvent.value1),
 							CoolUtil.stringToColor(daEvent.value2)
+						);
+
+					case 'Change UI Alpha':
+						var alpha:Float = Std.parseFloat(daEvent.value1);
+						var duration:Float = Conductor.stepCrochet / 1000 * Std.parseFloat(daEvent.value2);
+
+						hudBuild.setAlpha(alpha, duration, daEvent.value3);
+						//FlxTween.tween(camHUD, {alpha: alpha}, duration, {ease: CoolUtil.stringToEase(daEvent.value3)}); -- switch these if you want the ratings to be hidden too!
+
+					case 'Change Notes Alpha':
+						var alpha:Float = Std.parseFloat(daEvent.value1);
+						var duration:Float = Conductor.stepCrochet / 1000 * Std.parseFloat(daEvent.value2);
+
+						FlxTween.tween(camStrum, {alpha: alpha}, duration, {ease: CoolUtil.stringToEase(daEvent.value3)});
+
+					case 'Change Camera Position':
+						var x:Float = Std.parseFloat(daEvent.value1);
+						var y:Float = Std.parseFloat(daEvent.value2);
+						cameraSpeed = Std.parseFloat(daEvent.value3);
+
+						if(x == 0 && y == 0)
+							forcedCamPos = null;
+						else {
+							forcedCamPos = new FlxPoint(
+								x,
+								y
+							);
+						}
+
+					case 'Shake Screen':
+						var intensity:Float = Std.parseFloat(daEvent.value1);
+						var duration:Float = Std.parseFloat(daEvent.value2);
+						var cam:FlxCamera = stringToCam(daEvent.value3);
+
+						cam.shake(intensity, duration);
+
+					case 'Fade Screen':
+						camGame.fade(
+							CoolUtil.stringToColor(daEvent.value3),
+							Std.parseFloat(daEvent.value2) * Conductor.stepCrochet / 1000,
+							(daEvent.value1.toLowerCase() == 'true')
 						);
 				}
 				eventCount++;
@@ -1902,5 +1943,15 @@ class PlayState extends MusicBeatState
 	{
 		SONG = SongData.loadFromJson(song, songDiff);
 		EVENTS = SongData.loadEventsJson(song, songDiff);
+	}
+	
+	function stringToCam(str:String):FlxCamera {
+		return switch(str.toLowerCase())
+		{
+			default: camGame;
+			case 'camhud': camHUD;
+			case 'camstrum': camStrum;
+			case 'camother': camOther;
+		}
 	}
 }

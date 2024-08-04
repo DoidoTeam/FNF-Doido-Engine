@@ -49,15 +49,27 @@ class ChartingState extends MusicBeatState
 {
 	// EVENT NOTES
 	public static final easeDesc:String = "Easing\nEases: linear/quad/cube/quart/quint/sine/circ/expo\nModifiers: In/InOut/Out\nExamples: cubeInOut/quartIn/sineOut";
+	public static final colorDesc:String = "Colors: white/black/silver/gray/red/purple/pink/\ngreen/lime/yellow/blue/aqua";
 	public static final possibleEvents:Array<Array<String>> = [
 		['none', 				''],
-		['Play Animation',		'Value 1: Character (dad/gf/bf)\nValue 2: Animation to play\nValue 3: Override singing? (true/false)\n(if the character presses a note, does the animation stop?)'],
+
+		//CAMERA
+		['Change Cam Zoom', 	'Value 1: New Zoom \nValue 2: Duration (in steps)\nValue 3: $easeDesc'],
+		['Change Cam Pos', 		'Value 1: New X \nValue 2: New Y\nValue 3: Camera Speed (Default: 1)'],
+		['Flash Screen',		'Value 1: Duration (in steps)\nValue 2: Color\nValue 3: Camera? (camGame, camHUD, camStrum)\n$colorDesc'],
+		['Fade Screen',			'Value 1: Fade In (true/false)\nValue 2: Duration (in steps)\nValue 3: Color\n$colorDesc'],
+		['Shake Screen',		'Value 1: Intensity\nValue 2: Duration (in steps)\nValue 3: Camera? (camGame, camHUD, camStrum)'],
+		['Change UI Alpha', 	'Value 1: New Alpha \nValue 2: Duration (in steps)\nValue 3: $easeDesc'],
+		['Change Notes Alpha', 	'Value 1: New Alpha \nValue 2: Duration (in steps)\nValue 3: $easeDesc'],
+	
+		//GAME
 		['Change Character', 	'Value 1: Character to change (dad/gf/bf)\nValue 2: New Character (dad/pico/senpai-angry)'],
 		['Change Stage',		'Value 1: New Stage'],
+		['Play Animation',		'Value 1: Character (dad/gf/bf)\nValue 2: Animation to play\nValue 3: Override singing? (true/false)\n(if the character presses a note, does the animation stop?)'],
+
+		//PLAY
 		['Freeze Notes',		'Value 1: Freeze? (true/false)\nValue 2: Strumline? (dad/bf/both)'],
 		['Change Note Speed', 	'Value 1: New Speed\nValue 2: Duration (in steps)\nValue 3: $easeDesc'],
-		['Change Cam Zoom', 	'Value 1: New Zoom \nValue 2: Duration (in steps)\nValue 3: $easeDesc'],
-		['Flash Screen',		'Value 1: Duration (in steps)\nValue 2: Color\nColors: white/black/silver/gray/red/purple/pink/\ngreen/lime/yellow/blue/aqua'],
 	];
 	public var eventsLabels:Array<String> = [];
 

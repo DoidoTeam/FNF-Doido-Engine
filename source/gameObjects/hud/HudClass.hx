@@ -108,7 +108,7 @@ class HudClass extends FlxGroup
 		timeTxt.y = downscroll ? (FlxG.height - timeTxt.height - 8) : (8);
 	}
 	
-	public function setAlpha(hudAlpha:Float = 1, ?tweenTime:Float = 0)
+	public function setAlpha(hudAlpha:Float = 1, ?tweenTime:Float = 0, ?ease:String = "cubeout")
 	{
 		// put the items you want to set invisible when the song starts here
 		var allItems:Array<FlxSprite> = [
@@ -126,7 +126,7 @@ class HudClass extends FlxGroup
 			if(tweenTime <= 0)
 				item.alpha = hudAlpha;
 			else
-				FlxTween.tween(item, {alpha: hudAlpha}, tweenTime, {ease: FlxEase.cubeOut});
+				FlxTween.tween(item, {alpha: hudAlpha}, tweenTime, {ease: CoolUtil.stringToEase(ease)});
 		}
 	}
 
