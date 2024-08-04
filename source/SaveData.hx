@@ -57,7 +57,11 @@ class SaveData
 			"Whether you want to have a countdown when unpausing the game",
 		],
 		'Discord RPC' => [
+			#if DISCORD_RPC
 			true,
+			#else
+			false
+			#end
 			CHECKMARK,
 			"Whether to use Discord's game activity.",
 		],
