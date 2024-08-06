@@ -150,6 +150,23 @@ class CoolUtil
 		}
 	}
 
+	public static function stringToBool(str:String):Bool
+	{
+		str = str.toLowerCase();
+		if(str == "true"
+		|| str == "1")
+			return true;
+		return false;
+	}
+
+	public static function stringToFloat(str:String, ?backup:Float = 0):Float
+	{
+		var num:Float = Std.parseFloat(str);
+		if(!Std.isOfType(num, Float))
+			num = backup;
+		return num;
+	}
+
 	public static function stringToEase(str:String = 'linear'):EaseFunction
 	{
 		// linear/quad/cube/quart/quint/sine/circ/expo

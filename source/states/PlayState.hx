@@ -1112,7 +1112,7 @@ class PlayState extends MusicBeatState
 				{
 					case 'Play Animation':
 						var char = strToChar(daEvent.value1);
-						char.char.specialAnim = ((daEvent.value3.toLowerCase() == 'true') ? 2 : 1);
+						char.char.specialAnim = (CoolUtil.stringToBool(daEvent.value3) ? 2 : 1);
 						char.char.playAnim(daEvent.value2, true);
 
 					case 'Change Character':
@@ -1129,17 +1129,15 @@ class PlayState extends MusicBeatState
 							case "bf"|"boyfriend": affected.remove(dadStrumline);
 						}
 						for(strumline in affected)
-							strumline.pauseNotes = (daEvent.value1 == 'true');
+							strumline.pauseNotes = CoolUtil.stringToBool(daEvent.value1);
 
 					case 'Change Note Speed':
 						for(strumline in strumlines)
 						{
 							if(strumline.scrollTween != null)
 								strumline.scrollTween.cancel();
-							var newSpeed:Float = Std.parseFloat(daEvent.value1);
-							var duration:Float = Std.parseFloat(daEvent.value2);
-							if(!Std.isOfType(newSpeed, Float)) newSpeed = 2;
-							if(!Std.isOfType(duration, Float)) duration = 4;
+							var newSpeed:Float = CoolUtil.stringToFloat(daEvent.value1, 2);
+							var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 4);
 							if(duration <= 0)
 								strumline.scrollSpeed = newSpeed;
 							else
@@ -1156,10 +1154,8 @@ class PlayState extends MusicBeatState
 
 					case 'Change Cam Zoom':
 						if(camZoomTween != null) camZoomTween.cancel();
-						var newZoom:Float = Std.parseFloat(daEvent.value1);
-						var duration:Float = Std.parseFloat(daEvent.value2);
-						if(!Std.isOfType(newZoom, Float)) newZoom = 1;
-						if(!Std.isOfType(duration, Float)) duration = 4;
+						var newZoom:Float  = CoolUtil.stringToFloat(daEvent.value1, 1);
+						var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 4);
 						if(duration <= 0)
 							defaultCamZoom = newZoom;
 						else
@@ -1176,29 +1172,25 @@ class PlayState extends MusicBeatState
 					case 'Flash Screen':
 						CoolUtil.flash(
 							stringToCam(daEvent.value3),
-							Conductor.stepCrochet / 1000 * Std.parseFloat(daEvent.value1),
+							Conductor.stepCrochet / 1000 * CoolUtil.stringToFloat(daEvent.value1, 2),
 							CoolUtil.stringToColor(daEvent.value2)
 						);
 
-					case 'Change UI Alpha':
-						var alpha:Float = Std.parseFloat(daEvent.value1);
-						var duration:Float = Conductor.stepCrochet / 1000 * Std.parseFloat(daEvent.value2);
-
-						hudBuild.setAlpha(alpha, duration, daEvent.value3);
-						//FlxTween.tween(camHUD, {alpha: alpha}, duration, {ease: CoolUtil.stringToEase(daEvent.value3)}); -- switch these if you want the ratings to be hidden too!
-
-					case 'Change Notes Alpha':
-						var alpha:Float = Std.parseFloat(daEvent.value1);
-						var duration:Float = Conductor.stepCrochet / 1000 * Std.parseFloat(daEvent.value2);
-
-						FlxTween.tween(camStrum, {alpha: alpha}, duration, {ease: CoolUtil.stringToEase(daEvent.value3)});
+					case 'Change UI Alpha'|'Change Notes Alpha':
+						var alpha:Float = CoolUtil.stringToFloat(daEvent.value1, 1);
+						var duration:Float = Conductor.stepCrochet / 1000 * CoolUtil.stringToFloat(daEvent.value2, 4);
+						
+						if(daEvent.eventName.contains("Notes"))
+							FlxTween.tween(camStrum, {alpha: alpha}, duration, {ease: CoolUtil.stringToEase(daEvent.value3)});
+						else
+							hudBuild.setAlpha(alpha, duration, daEvent.value3);
 
 					case 'Change Camera Position':
 						var x:Float = Std.parseFloat(daEvent.value1);
 						var y:Float = Std.parseFloat(daEvent.value2);
 						cameraSpeed = Std.parseFloat(daEvent.value3);
 
-						if(x == 0 && y == 0)
+						if(!Std.isOfType(x, Float) || !Std.isOfType(y, Float))
 							forcedCamPos = null;
 						else {
 							forcedCamPos = new FlxPoint(
@@ -1208,8 +1200,8 @@ class PlayState extends MusicBeatState
 						}
 
 					case 'Shake Screen':
-						var intensity:Float = Std.parseFloat(daEvent.value1);
-						var duration:Float = Std.parseFloat(daEvent.value2);
+						var intensity:Float = CoolUtil.stringToFloat(daEvent.value1, 0.05);
+						var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 0.4);
 						var cam:FlxCamera = stringToCam(daEvent.value3);
 
 						cam.shake(intensity, duration);
@@ -1217,8 +1209,8 @@ class PlayState extends MusicBeatState
 					case 'Fade Screen':
 						camGame.fade(
 							CoolUtil.stringToColor(daEvent.value3),
-							Std.parseFloat(daEvent.value2) * Conductor.stepCrochet / 1000,
-							(daEvent.value1.toLowerCase() == 'true')
+							CoolUtil.stringToFloat(daEvent.value2, 1) * Conductor.stepCrochet / 1000,
+							CoolUtil.stringToBool(daEvent.value1)
 						);
 				}
 				eventCount++;
