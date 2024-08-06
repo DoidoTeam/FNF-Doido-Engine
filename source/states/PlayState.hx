@@ -923,6 +923,16 @@ class PlayState extends MusicBeatState
 			case 'gf'|'girlfriend': gf;
 		}
 	}
+
+	function stringToCam(str:String):FlxCamera {
+		return switch(str.toLowerCase())
+		{
+			default: camGame;
+			case 'camhud': camHUD;
+			case 'camstrum': camStrum;
+			case 'camother': camOther;
+		}
+	}
 	
 	override function update(elapsed:Float)
 	{
@@ -1168,29 +1178,14 @@ class PlayState extends MusicBeatState
 								}
 							);
 						}
-					
-					case 'Flash Screen':
-						CoolUtil.flash(
-							stringToCam(daEvent.value3),
-							Conductor.stepCrochet / 1000 * CoolUtil.stringToFloat(daEvent.value1, 2),
-							CoolUtil.stringToColor(daEvent.value2)
-						);
 
-					case 'Change UI Alpha'|'Change Notes Alpha':
-						var alpha:Float = CoolUtil.stringToFloat(daEvent.value1, 1);
-						var duration:Float = Conductor.stepCrochet / 1000 * CoolUtil.stringToFloat(daEvent.value2, 4);
-						
-						if(daEvent.eventName.contains("Notes"))
-							FlxTween.tween(camStrum, {alpha: alpha}, duration, {ease: CoolUtil.stringToEase(daEvent.value3)});
-						else
-							hudBuild.setAlpha(alpha, duration, daEvent.value3);
-
-					case 'Change Camera Position':
-						var x:Float = Std.parseFloat(daEvent.value1);
-						var y:Float = Std.parseFloat(daEvent.value2);
-						cameraSpeed = Std.parseFloat(daEvent.value3);
-
-						if(!Std.isOfType(x, Float) || !Std.isOfType(y, Float))
+					case 'Change Cam Pos':
+						var x:Float = CoolUtil.stringToFloat(daEvent.value1, 0);
+						var y:Float = CoolUtil.stringToFloat(daEvent.value2, 0);
+						cameraSpeed = CoolUtil.stringToFloat(daEvent.value3, 1);
+	
+						if(daEvent.value1 == ""
+						|| daEvent.value2 == "")
 							forcedCamPos = null;
 						else {
 							forcedCamPos = new FlxPoint(
@@ -1198,13 +1193,13 @@ class PlayState extends MusicBeatState
 								y
 							);
 						}
-
-					case 'Shake Screen':
-						var intensity:Float = CoolUtil.stringToFloat(daEvent.value1, 0.05);
-						var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 0.4);
-						var cam:FlxCamera = stringToCam(daEvent.value3);
-
-						cam.shake(intensity, duration);
+					
+					case 'Flash Screen':
+						CoolUtil.flash(
+							camGame,
+							Conductor.stepCrochet / 1000 * CoolUtil.stringToFloat(daEvent.value1, 2),
+							CoolUtil.stringToColor(daEvent.value2)
+						);
 
 					case 'Fade Screen':
 						camGame.fade(
@@ -1212,6 +1207,13 @@ class PlayState extends MusicBeatState
 							CoolUtil.stringToFloat(daEvent.value2, 1) * Conductor.stepCrochet / 1000,
 							CoolUtil.stringToBool(daEvent.value1)
 						);
+
+					case 'Shake Screen':
+						var intensity:Float = CoolUtil.stringToFloat(daEvent.value1, 0.05);
+						var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 0.4);
+						var cam:FlxCamera = stringToCam(daEvent.value3);
+						
+						cam.shake(intensity, duration);
 				}
 				eventCount++;
 			}
@@ -1952,15 +1954,5 @@ class PlayState extends MusicBeatState
 	{
 		SONG = SongData.loadFromJson(song, songDiff);
 		EVENTS = SongData.loadEventsJson(song, songDiff);
-	}
-	
-	function stringToCam(str:String):FlxCamera {
-		return switch(str.toLowerCase())
-		{
-			default: camGame;
-			case 'camhud': camHUD;
-			case 'camstrum': camStrum;
-			case 'camother': camOther;
-		}
 	}
 }

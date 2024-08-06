@@ -47,12 +47,14 @@ class ChartTestSubState extends MusicBeatSubState
 	public static var startConductor:Float = 0;
 	
 	var bg:FlxSprite;
+	var fakeFade:FlxSprite;
 	var fakeFlash:FlxSprite;
 	var backGroup:FlxGroup;
 	var infoTxt:FlxText;
 	var botplayTxt:FlxText;
 
 	var flashTween:FlxTween;
+	var fadeTween:FlxTween;
 	
 	// strumlines
 	var strumlines:FlxTypedGroup<Strumline>;
@@ -120,6 +122,11 @@ class ChartTestSubState extends MusicBeatSubState
 		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/chartTestBg'));
 		bg.screenCenter();
 		backGroup.add(bg);
+
+		fakeFade = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2);
+		fakeFade.alpha = 0.0001;
+		fakeFade.screenCenter();
+		backGroup.add(fakeFade);
 
 		fakeFlash = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2);
 		fakeFlash.alpha = 0.0001;
@@ -309,6 +316,22 @@ class ChartTestSubState extends MusicBeatSubState
 						);
 					}
 				}
+
+			case 'Fade Screen':
+				fakeFade.color = CoolUtil.stringToColor(daEvent.value3);
+				var fadeIn:Bool = CoolUtil.stringToBool(daEvent.value1);
+				if(!preload)
+				{
+					fakeFade.alpha = (fadeIn ? 1 : 0);
+
+					if(fadeTween != null)
+						fadeTween.cancel();
+					fadeTween = FlxTween.tween(fakeFade, {alpha: (fadeIn ? 0 : 1)},
+						Conductor.stepCrochet / 1000 * Std.parseFloat(daEvent.value2)
+					);
+				}
+				else
+					fakeFade.alpha = (fadeIn ? 0 : 1);
 		}
 	}
 

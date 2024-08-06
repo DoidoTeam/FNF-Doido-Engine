@@ -153,8 +153,7 @@ class CoolUtil
 	public static function stringToBool(str:String):Bool
 	{
 		str = str.toLowerCase();
-		if(str == "true"
-		|| str == "1")
+		if(str == "true" || str == "1")
 			return true;
 		return false;
 	}
@@ -204,8 +203,8 @@ class CoolUtil
 	}
 	public static function stringToColor(str:String):Int
 	{
-		if(str.startsWith('#'))
-			return Std.parseInt(str.replace('#', '0xFF'));
+		if(str.startsWith('#') || str.startsWith('0x'))
+			return FlxColor.fromString(str);
 		else
 			return switch(str.toLowerCase())
 			{
