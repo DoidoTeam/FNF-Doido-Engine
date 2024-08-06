@@ -280,14 +280,10 @@ class ChartTestSubState extends MusicBeatSubState
 				{
 					if(strumline.scrollTween != null)
 						strumline.scrollTween.cancel();
-					var newSpeed:Float = Std.parseFloat(daEvent.value1);
-					var duration:Float = Std.parseFloat(daEvent.value2);
-					if(!Std.isOfType(newSpeed, Float)) newSpeed = 2;
-					if(!Std.isOfType(duration, Float)) duration = 4;
+					var newSpeed:Float = CoolUtil.stringToFloat(daEvent.value1, 2);
+					var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 4);
 
-					if(preload) duration = 0;
-
-					if(duration <= 0)
+					if(duration <= 0 || preload)
 						strumline.scrollSpeed = newSpeed;
 					else
 					{
@@ -319,19 +315,19 @@ class ChartTestSubState extends MusicBeatSubState
 
 			case 'Fade Screen':
 				fakeFade.color = CoolUtil.stringToColor(daEvent.value3);
-				var fadeIn:Bool = CoolUtil.stringToBool(daEvent.value1);
+				var fadeOut:Bool = CoolUtil.stringToBool(daEvent.value1);
 				if(!preload)
 				{
-					fakeFade.alpha = (fadeIn ? 1 : 0);
+					fakeFade.alpha = (fadeOut ? 1 : 0);
 
 					if(fadeTween != null)
 						fadeTween.cancel();
-					fadeTween = FlxTween.tween(fakeFade, {alpha: (fadeIn ? 0 : 1)},
+					fadeTween = FlxTween.tween(fakeFade, {alpha: (fadeOut ? 0 : 1)},
 						Conductor.stepCrochet / 1000 * Std.parseFloat(daEvent.value2)
 					);
 				}
 				else
-					fakeFade.alpha = (fadeIn ? 0 : 1);
+					fakeFade.alpha = (fadeOut ? 0 : 1);
 		}
 	}
 
