@@ -185,11 +185,27 @@ class SaveData
 		if(saveSettings.data.muted != null)
 			FlxG.sound.muted  = saveSettings.data.muted;
 
-		if(saveSettings.data.settings == null || Lambda.count(displaySettings) != Lambda.count(saveSettings.data.settings))
+		if(saveSettings.data.settings == null)
 		{
 			for(key => values in displaySettings)
 				data[key] = values[0];
 			
+			saveSettings.data.settings = data;
+		}
+		
+		if(Lambda.count(displaySettings) != Lambda.count(saveSettings.data.settings)) {
+			data = saveSettings.data.settings;
+			
+			for(key => values in displaySettings) {
+				if(data[key] == null)
+					data[key] = values[0];
+			}
+
+			for(key => values in data) {
+				if(displaySettings[key] == null)
+					data.remove(key);
+			}
+
 			saveSettings.data.settings = data;
 		}
 
