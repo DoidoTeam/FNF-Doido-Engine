@@ -16,7 +16,7 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	var optionShit:Array<String> = ["story mode", "freeplay", "donate", "options"];
+	var optionShit:Array<String> = ["story mode", "freeplay", "donate", "credits", "options"];
 	static var curSelected:Int = 0;
 	
 	var grpOptions:FlxTypedGroup<FlxSprite>;
@@ -71,7 +71,7 @@ class MainMenuState extends MusicBeatState
 		if(optionShit.length > 4)
 		{
 			for(i in 0...(optionShit.length - 4))
-				optionSize -= 0.05;
+				optionSize -= 0.04;
 		}
 		
 		//trace('optionSize: ' + optionSize);
@@ -90,8 +90,8 @@ class MainMenuState extends MusicBeatState
 			
 			var itemSize:Float = (90 * optionSize);
 			
-			var minY:Float = 70 + itemSize;
-			var maxY:Float = FlxG.height - itemSize - 70;
+			var minY:Float = 40 + itemSize;
+			var maxY:Float = FlxG.height - itemSize - 40;
 			
 			if(optionShit.length < 4)
 			for(i in 0...(4 - optionShit.length))
@@ -197,9 +197,15 @@ class MainMenuState extends MusicBeatState
 						
 							case "freeplay":
 								Main.switchState(new FreeplayState());
+							
+							case "credits":
+								Main.switchState(null);
 
 							case "options":
 								Main.switchState(new OptionsState());
+
+							default: // avoids freezing
+								Main.resetState();
 						}
 					});
 				}
