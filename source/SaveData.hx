@@ -95,7 +95,7 @@ class SaveData
 			"OFF",
 			SELECTOR,
 			"Whether to play hitsounds whenever you hit a note",
-			["OFF"]
+			["OFF", "OSU", "NSWITCH", "CD"]
 		],
 		'Hitsound Volume' => [
 			100,
@@ -208,9 +208,10 @@ class SaveData
 
 			saveSettings.data.settings = data;
 		}
-
+		
 		for(hitsound in Paths.readDir('sounds/hitsounds', ".ogg", true))
-			displaySettings.get("Hitsounds")[3].insert(1, hitsound);
+			if(!displaySettings.get("Hitsounds")[3].contains(hitsound))
+				displaySettings.get("Hitsounds")[3].insert(1, hitsound);
 		
 		data = saveSettings.data.settings;
 		save();
@@ -244,9 +245,9 @@ class SaveData
 	{
 		if(FlxG.fullscreen) return;
 		var ws:Array<String> = data.get("Window Size").split("x");
-        var windowSize:Array<Int> = [Std.parseInt(ws[0]),Std.parseInt(ws[1])];
-        FlxG.stage.window.width = windowSize[0];
-        FlxG.stage.window.height= windowSize[1];
+        	var windowSize:Array<Int> = [Std.parseInt(ws[0]),Std.parseInt(ws[1])];
+        	FlxG.stage.window.width = windowSize[0];
+        	FlxG.stage.window.height= windowSize[1];
 		
 		// centering the window
 		FlxG.stage.window.x = Math.floor(Capabilities.screenResolutionX / 2 - windowSize[0] / 2);
