@@ -33,7 +33,7 @@ class MainMenuState extends MusicBeatState
 		super.create();
 		CoolUtil.playMusic("freakyMenu");
 		
-		#if !desktop
+		#if mobile
 			optionShit.remove('donate');
 		#end
 		
