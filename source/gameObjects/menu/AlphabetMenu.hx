@@ -27,7 +27,7 @@ class AlphabetMenu extends Alphabet
 	public var posUpdate:Bool = true;
 
 	// freeplay
-	public var icon:HealthIcon = null;
+	public var icon:FlxSprite = null;
 
 	override function update(elapsed:Float)
 	{

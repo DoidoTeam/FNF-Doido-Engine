@@ -41,7 +41,7 @@ class Alphabet extends FlxSpriteGroup
 
 	public var letters:String = "abcdefghijklmnopqrstuvwxyzç";
 	public var numbers:String = "0123456789";
-	public var symbols:String = "#$%&()*+-:;<=>@[]^_!¨?/|~'\"";
+	public var symbols:String = ",.#$%&()*+-:;<=>@[]^_!¨?/|~'\"";
 
 	public function typeTxt()
 	{
@@ -202,6 +202,7 @@ class AlphaLetter extends FlxSprite
 		switch(key)
 		{
 			case "-": letterOffset.y = -20;
+			case '"'|"'": letterOffset.y = -40;
 		}
 	}
 

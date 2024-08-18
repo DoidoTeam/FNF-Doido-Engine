@@ -223,6 +223,12 @@ class CoolUtil
 			}
 	}
 
+	public static function openURL(url:String)
+	{
+		if(Main.activeState != null)
+			Main.activeState.openSubState(new subStates.WebsiteSubState(url));
+	}
+
 	public static function playHitSound(?sound:String, ?volume:Float)
 	{
 		if(sound == null) sound = SaveData.data.get("Hitsounds");

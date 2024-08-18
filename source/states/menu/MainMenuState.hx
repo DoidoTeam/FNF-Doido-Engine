@@ -171,11 +171,7 @@ class MainMenuState extends MusicBeatState
 			{
 				if(["donate"].contains(optionShit[curSelected]))
 				{
-					switch(optionShit[curSelected])
-					{
-						case "donate":
-							FlxG.openURL("https://ninja-muffin24.itch.io/funkin");
-					}
+					CoolUtil.openURL("https://ninja-muffin24.itch.io/funkin");
 				}
 				else
 				{
@@ -199,7 +195,7 @@ class MainMenuState extends MusicBeatState
 								Main.switchState(new FreeplayState());
 							
 							case "credits":
-								Main.switchState(null);
+								Main.switchState(new CreditsState());
 
 							case "options":
 								Main.switchState(new OptionsState());
