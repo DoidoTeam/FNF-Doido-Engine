@@ -71,7 +71,7 @@ class CreditsState extends MusicBeatState
         infoTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
         add(infoTxt);
 
-		final specialPeople = 'Anakim, ArturYoshi, BeastlyChip♧, Bepixel, Evandro, NxtVithor, Pi3tr0, Raphalitos, Yoisabo, ZieroSama';
+		final specialPeople = 'Anakim, ArturYoshi, BeastlyChip♧, Bnyu, Evandro, NxtVithor, Pi3tr0, Raphalitos, Yoisabo, ZieroSama';
 		final specialCoders = 'Crowplexus, Gazozoz';
 		// yes, this implies coders aren't people
 		// lol
@@ -81,7 +81,7 @@ class CreditsState extends MusicBeatState
 		addCredit('Anna The Fennec',	'anna', 	0xFFFFE100, 'Helped with a lot of the design choices', 'https://twitter.com/goldenfoxy2604');
 		addCredit('JulianoBeta', 		'juyko', 	0xFF0BA5FF, 'Composed the offset menu music',			'https://www.youtube.com/@prodjuyko');
 		addCredit('BeastlyNikoo', 		'nikoo', 	0xFF60458A, '(WIP) Logo Artist',						'https://twitter.com/Mudoku__');
-		addCredit('Github Contributors','github', 	0xFFFFFFFF, 'Thank you\n${specialCoders}!!', 'https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors');
+		addCredit('Github Contributors','github', 	0xFFFFFFFF, 'Thank you\n${specialCoders}!!', 			'https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors');
 		addCredit('Special Thanks', 	'heart', 	0xFFC01B42, 'Thank you\n${specialPeople}!!');
 		
 		for(i in 0...creditList.length)
