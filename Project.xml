@@ -37,7 +37,7 @@
 
 	<!-- _____________________________ Custom Defines ___________________________ -->
 
-	<define name="DISCORD_RPC" if="desktop" unless="web || neko" />
+	<define name="DISCORD_RPC" if="desktop" unless="web || neko || air" />
 	<define name="PRELOAD_SONG" if="desktop" unless="debug" />
 	
 	<!-- _______________________________ Libraries ______________________________ -->
@@ -46,7 +46,7 @@
 	<haxelib name="flixel-addons" />
 	<haxelib name="flixel-ui" />
 	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
-	<haxelib name="flxanimate" version="3.0.4" />
+	<haxelib name="flxanimate"/>
 
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->

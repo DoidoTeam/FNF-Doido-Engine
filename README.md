@@ -19,7 +19,7 @@ openfl 9.3.3
 flixel 5.8.0
 flixel-addons 3.2.2
 flixel-ui 2.6.1
-flxanimate 3.0.4
+flxanimate https://github.com/FunkinCrew/flxanimate
 hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ```
 if you're dumb (like me) follow these steps
