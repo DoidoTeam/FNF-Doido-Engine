@@ -129,6 +129,10 @@ class MainMenuState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		if(FlxG.keys.justPressed.J)
+		{
+			null.draw();
+		}
 		/*if(FlxG.keys.justPressed.R)
 		{
 			Main.skipStuff();

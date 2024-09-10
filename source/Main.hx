@@ -3,16 +3,9 @@ package;
 import data.*;
 import flixel.FlxG;
 import flixel.FlxState;
-import flixel.FlxGame;
 import openfl.display.Sprite;
 import data.FPSCounter;
-import lime.app.Application;
-import openfl.events.UncaughtErrorEvent;
-import haxe.CallStack;
-import haxe.io.Path;
-import openfl.Lib;
 import flixel.input.keyboard.FlxKey;
-import data.Discord.DiscordIO;
 
 #if !html5
 import sys.FileSystem;
@@ -27,15 +20,16 @@ class Main extends Sprite
 
 	public static final savePath:String = "DiogoTV/DoidoEngine";
 
+	public static var instance:Main;
+	@:unreflective
+	var game:DoidoGame;
+
 	public function new()
 	{
 		super();
+		instance = this;
 
-		#if desktop
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
-		#end
-
-		addChild(new FlxGame(0, 0, Init, 120, 120, true));
+		addChild(game = new DoidoGame(0, 0, Init, 120, 120, true));
 
 		#if desktop
 		fpsCount = new FPSCounter(10, 3);
@@ -57,7 +51,7 @@ class Main extends Sprite
 				e.stopImmediatePropagation();
 		}, false, 100);
 	}
-
+	
 	function resetCamCache()
 	{
 		if(FlxG.cameras != null) {
@@ -127,44 +121,4 @@ class Main extends Sprite
 			FlxG.updateFramerate = newFps;
 		}
 	}
-	
-	#if desktop
-	function onCrash(e:UncaughtErrorEvent):Void
-	{
-		var errMsg:String = "";
-		var path:String;
-		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
-		var dateNow:String = Date.now().toString();
-
-		dateNow = dateNow.replace(" ", "_");
-		dateNow = dateNow.replace(":", "'");
-
-		path = "./crash/" + "DoidoEngine_" + dateNow + ".txt";
-
-		for (stackItem in callStack)
-		{
-			switch (stackItem)
-			{
-				case FilePos(s, file, line, column):
-					errMsg += file + " (line " + line + ")\n";
-				default:
-					Sys.println(stackItem);
-			}
-		}
-
-		errMsg += "Uncaught Error: " + e.error + "\nPlease report this error to the developers! Crash Handler written by: sqirra-rng";
-
-		if (!FileSystem.exists("./crash/"))
-			FileSystem.createDirectory("./crash/");
-
-		File.saveContent(path, errMsg + "\n");
-
-		Sys.println(errMsg);
-		Sys.println("Crash dump saved in " + Path.normalize(path));
-
-		Application.current.window.alert(errMsg, "Error!");
-		DiscordIO.shutdown();
-		Sys.exit(1);
-	}
-	#end
 }
