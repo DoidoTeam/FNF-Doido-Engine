@@ -30,7 +30,6 @@ jobs:
           haxe -cp ./ -D analyzer-optimize -main Setup --interp
       - name: Compile
         run:
-          haxelib fixrepo 
           haxelib run lime build linux --app-version="${{ steps.ver.outputs.content }}-${{ github.run_id}}"
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.4.0

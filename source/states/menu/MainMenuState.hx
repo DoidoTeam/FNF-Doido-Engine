@@ -110,7 +110,7 @@ class MainMenuState extends MusicBeatState
 			item.ID = i;
 		}
 		
-		var doidoSplash:String = 'Doido Engine ${FlxG.stage.application.meta.get('version')}';
+		var doidoSplash:String = 'Doido Engine ${lime.app.Application.current.meta.get('version')}';
 		var funkySplash:String = 'Friday Night Funkin\' Rewritten';
 
 		var splashTxt = new FlxText(4, 0, 0, '$doidoSplash\n$funkySplash');
