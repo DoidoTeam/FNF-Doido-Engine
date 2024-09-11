@@ -30,5 +30,5 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.4.0
         with:
-          name: Build
+          name: DoidoEngine-${{ steps.ver.outputs.content }}-${{ github.run_id}}
           path: export/release/windows/bin
