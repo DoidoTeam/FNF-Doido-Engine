@@ -1,11 +1,11 @@
 
-name: Windows Build
+name: Linux Build
 on:
   push:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -20,15 +20,20 @@ jobs:
         uses: jaywcjlove/github-action-read-file@v2.0.0
         with:
           path: ver.txt
-            
       # Runs a set of commands using the runners shell
       - name: Install Haxelib
-        run: haxe -cp ./ -D analyzer-optimize -main Setup --interp
-        shell: cmd
+        run: |
+          sudo apt-get install libvlc-dev
+          sudo apt-get install libvlccore-dev
+          haxelib setup ~/haxelib
+          haxelib install hxcpp > /dev/null --quiet
+          haxe -cp ./ -D analyzer-optimize -main Setup --interp
       - name: Compile
-        run: haxelib run lime build windows --app-version="${{ steps.ver.outputs.content }}-${{ github.run_id}}"
+        run:
+          haxelib fixrepo 
+          haxelib run lime build linux --app-version="${{ steps.ver.outputs.content }}-${{ github.run_id}}"
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.4.0
         with:
           name: Build
-          path: export/release/windows/bin
+          path: 'export/release/linux/bin'
