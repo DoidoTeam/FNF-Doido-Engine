@@ -42,6 +42,7 @@ class CoolUtil
 			"senpai-angry",
 			"spirit",
 			"gemamugen",
+			"zero"
 		];
 	}
 	

@@ -186,6 +186,10 @@ class Paths
 	// packer (.txt) sheets
 	public static function getPackerAtlas(key:String)
 		return FlxAtlasFrames.fromSpriteSheetPacker(getGraphic(key), getPath('images/$key.txt'));
+
+	// aseprite (.json) sheets
+	public static function getAsepriteAtlas(key:String)
+		return FlxAtlasFrames.fromAseprite(getGraphic(key), getPath('images/$key.json'));
 		
 	public static function readDir(dir:String, ?type:String, ?removeType:Bool = true):Array<String>
 	{

@@ -53,6 +53,19 @@ class Character extends FlxAnimate
 		// what
 		switch(curChar)
 		{
+			case "zero":
+				doidoChar.spritesheet += 'zero/zero';
+				doidoChar.anims = [
+					["idle", 	 'idle', 24, false],
+					['intro', 	'intro', 24, false],
+
+					["singLEFT", 'left', 24, false],
+					["singDOWN", 'down', 24, false],
+					["singUP",   'up', 	 24, false],
+					["singRIGHT",'right',24, false],
+				];
+				antialiasing = false;
+				scale.set(12,12);
 			case "gemamugen":
 				doidoChar.spritesheet += 'gemamugen/gemamugen';
 				doidoChar.anims = [
@@ -304,6 +317,8 @@ class Character extends FlxAnimate
 		{
 			if(Paths.fileExists('images/${doidoChar.spritesheet}.txt'))
 				frames = Paths.getPackerAtlas(doidoChar.spritesheet);
+			else if(Paths.fileExists('images/${doidoChar.spritesheet}.json'))
+				frames = Paths.getAsepriteAtlas(doidoChar.spritesheet);
 			else
 				frames = Paths.getSparrowAtlas(doidoChar.spritesheet);
 
