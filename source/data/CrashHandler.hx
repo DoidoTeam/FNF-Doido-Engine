@@ -1,5 +1,6 @@
 package data;
 
+import openfl.media.Sound;
 import openfl.display.Stage;
 import openfl.display.BitmapData;
 import openfl.display.Bitmap;
@@ -13,13 +14,13 @@ import openfl.display.Sprite;
 class CrashHandler extends Sprite
 {
     var _stage:Stage;
-
     var imgData:BitmapData;
+    var crashSnd:Sound;
 
     public function new(stack:String, ?path:String = "")
     {
         super();
-        this._stage = openfl.Lib.application.window.stage;
+        _stage = openfl.Lib.application.window.stage;
 
         final _matrix = new flixel.math.FlxMatrix().rotateByPositive90();
 		graphics.beginGradientFill(LINEAR, [0xFF38173F, 0xFF733A8D], [0.6, 1], [125, 255], _matrix);
@@ -39,7 +40,10 @@ class CrashHandler extends Sprite
             field.x = (_stage.stageWidth - field.width) / 2;
             field.selectable = false;
         }
-        errorField.text = 'THE GAME HAS CRASHED\n\n${stack}\n\nCrash log created at: "${path}"';
+        errorField.text = 'THE GAME HAS CRASHED\n\n${stack}';
+        #if sys
+        errorField.text += '\n\nCrash log created at: "${path}"';
+        #end
         errorField.y = 24;
         pressField.text = 'Press ESCAPE to return to main menu\nPress ENTER to open github issues';
         pressField.y = _stage.stageHeight - pressField.height - 24;
@@ -52,6 +56,9 @@ class CrashHandler extends Sprite
         addChild(crashImg);
         addChild(errorField);
         addChild(pressField);
+
+        crashSnd = Sound.fromFile("assets/sounds/crash.ogg");
+        crashSnd.play();
         
         openfl.Lib.application.window.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }
@@ -66,6 +73,7 @@ class CrashHandler extends Sprite
         if(e.keyCode == Keyboard.ESCAPE)
         {
             imgData.dispose();
+            crashSnd.close();
             openfl.Lib.application.window.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
             if(Main.instance != null && Main.instance.contains(this))
                 Main.instance.removeChild(this);

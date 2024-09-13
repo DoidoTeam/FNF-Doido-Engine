@@ -129,11 +129,11 @@ class MainMenuState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		/*if(FlxG.keys.justPressed.J)
+		if(FlxG.keys.justPressed.J)
 		{
 			// crash handler test
 			null.draw();
-		}*/
+		}
 		/*if(FlxG.keys.justPressed.R)
 		{
 			Main.skipStuff();

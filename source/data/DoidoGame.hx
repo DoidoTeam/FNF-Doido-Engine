@@ -162,9 +162,7 @@ class DoidoGame extends FlxGame {
 		FlxG.bitmap.clearCache();
 
 		// this should hopefully cover sounds playing..
-		if (FlxG.sound.music != null)
-			FlxG.sound.music.stop();
-
+		CoolUtil.playMusic();
 		//AssetHelper.destroyAllSounds();
 
 		Main.instance.addChild(new CrashHandler(e.details(), Path.normalize(path)));
