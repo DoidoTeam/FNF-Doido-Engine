@@ -7,8 +7,10 @@
       },
       {
         "name": "flxanimate",
-        "type": "haxelib",
-        "version": "3.0.4"
+        "type": "git",
+        "dir": null,
+        "ref": "main",
+        "url": "https://github.com/DoidoTeam/flxanimate"
       },
       {
         "name": "openfl",
