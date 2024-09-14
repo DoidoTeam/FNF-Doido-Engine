@@ -9,6 +9,8 @@
 ### note on html5: this is still a huge wip but you can test it out and if you find any bugs please report them
 this engine is basically the base friday night funkin' engine but rewritten entirelly from scratch in my way of codin', still uses haxeflixel btw
 
+### [Compiling and Source Guide](https://doidoteam.github.io/wiki/)
+
 
 ### [Haxe version is 4.3.3](https://haxe.org/download/version/4.3.3/)
 uhhh you gonna need the libraries too hold on
@@ -19,19 +21,9 @@ openfl 9.3.3
 flixel 5.8.0
 flixel-addons 3.2.2
 flixel-ui 2.6.1
-flxanimate https://github.com/FunkinCrew/flxanimate
+flxanimate https://github.com/DoidoTeam/flxanimate
 hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ```
-if you're dumb (like me) follow these steps
-1. if a library has a number in front of it then you put haxelib install behind it
-2. if it has a link in front of it then put haxelib git behind it
-#### example:
-```
-haxelib install flixel 5.8.0
-haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
-```
-#### you should be good to compile the engine now (probably)
-there are a few extra things to compile but those are at [FNF's Source Code](https://github.com/FunkinCrew/Funkin) so im not gonna teach ya ``>:]``
 
 <p align="center">
 <img src="https://www.newgrounds.com/dump/draw/5657fbf528979526e5e7da27e30cd2a7">
