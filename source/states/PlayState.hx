@@ -1763,8 +1763,8 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			loadSong(playList[0]);
 			playList.remove(playList[0]);
+			loadSong(playList[0]);
 			
 			//trace(playList);
 			Main.switchState(new LoadSongState());

@@ -177,7 +177,6 @@ class StoryMenuState extends MusicBeatState
 						songList.push(song[0]);
 					
 					PlayState.playList = songList;
-					PlayState.playList.remove(songList[0]);
 					PlayState.loadSong(songList[0]);
 					
 					Main.switchState(new LoadSongState());
