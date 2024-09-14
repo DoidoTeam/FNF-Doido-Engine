@@ -34,11 +34,14 @@ class CrashHandler extends Sprite
             field.defaultTextFormat = new TextFormat(
                 Main.gFont, 24, 0xFFFFFFFF, true
             );
-            field.multiline = true;
-            field.autoSize = CENTER;
-            field.width = _stage.stageWidth * 0.8;
-            field.x = (_stage.stageWidth - field.width) / 2;
             field.selectable = false;
+            field.multiline = true;
+            if(field != pressField) {
+                field.wordWrap = true;
+                field.width = _stage.stageWidth - 48;
+            }
+            field.x = (_stage.stageWidth - field.width) / 2;
+            field.autoSize = CENTER;
         }
         errorField.text = 'THE GAME HAS CRASHED\n\n${stack}';
         #if sys
