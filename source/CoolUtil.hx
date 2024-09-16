@@ -167,6 +167,14 @@ class CoolUtil
 		return num;
 	}
 
+	public static function stringToInt(str:String, ?backup:Int = 0):Int
+	{
+		var num:Int = Std.parseInt(str);
+		if(!Std.isOfType(num, Int))
+			num = backup;
+		return num;
+	}
+
 	public static function stringToEase(str:String = 'linear'):EaseFunction
 	{
 		// linear/quad/cube/quart/quint/sine/circ/expo
