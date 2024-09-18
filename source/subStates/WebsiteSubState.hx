@@ -41,11 +41,8 @@ class WebsiteSubState extends MusicBeatSubState
 
             if(i == 1)
             {
-                var white = new FlxSprite().makeGraphic(Math.floor(item.width + 16), Math.floor(item.height + 16), 0xFFFFFFFF);
-                white.alpha = 0.7;
-                white.x = item.x - white.width / 2;
-                white.y = item.y + item.height / 2 - white.height / 2;
-                add(white);
+                for(letter in item.members)
+                    letter.setColorTransform(1, 1, 1, letter.alpha, 255, 255, 255);
             }
 
             lastItem = item;
