@@ -1,6 +1,8 @@
 package data;
 
 import openfl.media.Sound;
+import openfl.media.SoundChannel;
+import openfl.media.SoundTransform;
 import openfl.display.Stage;
 import openfl.display.BitmapData;
 import openfl.display.Bitmap;
@@ -15,12 +17,22 @@ class CrashHandler extends Sprite
 {
     var _stage:Stage;
     var imgData:BitmapData;
-    var crashSnd:Sound;
 
+    var crashSnd:Sound;
+    var trans:SoundTransform;
+    var channel:SoundChannel;
+
+    var fontSize:Int = 24;
+    var showBuddy:Bool = true;
     public function new(stack:String, ?path:String = "")
     {
         super();
         _stage = openfl.Lib.application.window.stage;
+
+        var windowSize:Int = CoolUtil.stringToInt((SaveData.data.get("Window Size").split("x")[1]));
+
+        fontSize = Std.int((windowSize / 30));
+        trace(fontSize);
 
         final _matrix = new flixel.math.FlxMatrix().rotateByPositive90();
 		graphics.beginGradientFill(LINEAR, [0xFF38173F, 0xFF733A8D], [0.6, 1], [125, 255], _matrix);
@@ -32,7 +44,7 @@ class CrashHandler extends Sprite
         for(field in [errorField, pressField])
         {
             field.defaultTextFormat = new TextFormat(
-                Main.gFont, 24, 0xFFFFFFFF, true
+                Main.gFont, fontSize, 0xFFFFFFFF, true
             );
             field.selectable = false;
             field.multiline = true;
@@ -47,21 +59,28 @@ class CrashHandler extends Sprite
         #if sys
         errorField.text += '\n\nCrash log created at: "${path}"';
         #end
-        errorField.y = 24;
+        errorField.y = fontSize;
         pressField.text = 'Press ESCAPE to return to main menu\nPress ENTER to open github issues';
-        pressField.y = _stage.stageHeight - pressField.height - 24;
+        pressField.y = _stage.stageHeight - pressField.height - fontSize;
 
         imgData = Assets.getBitmapData("assets/images/crash.png");
         var crashImg = new Bitmap(imgData);
+        crashImg.width = crashImg.width * (windowSize / 720);
+        crashImg.height = crashImg.height * (windowSize / 720);
         crashImg.x = (_stage.stageWidth - crashImg.width) / 2;
         crashImg.y = (_stage.stageHeight- crashImg.height - pressField.height - 32);
 
-        addChild(crashImg);
+        if(showBuddy)
+            addChild(crashImg);
+
         addChild(errorField);
         addChild(pressField);
 
-        crashSnd = Sound.fromFile("assets/sounds/crash.ogg");
-        crashSnd.play();
+        if(!SaveData.saveSettings.data.muted) {
+            crashSnd = Sound.fromFile("assets/sounds/crash.ogg");
+            trans = new SoundTransform(SaveData.saveSettings.data.volume, 0);
+            channel = crashSnd.play(0, 1, trans);
+        }
         
         openfl.Lib.application.window.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }

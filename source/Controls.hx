@@ -24,6 +24,8 @@ enum DoidoKey
 	ACCEPT;
 	BACK;
 	PAUSE;
+
+	NONE;
 }
 
 class Controls
@@ -78,9 +80,42 @@ class Controls
 		var constructors = DoidoKey.getConstructors();
 		return constructors[constructors.indexOf(Std.string(bind))];
 	}
+
+	//THIS IS A TEMP FIX!!!! CHANGE LATER!!!!
 	inline public static function stringToBind(bind:String):DoidoKey
 	{
+		#if linux
+		switch(bind) {
+			case "LEFT":
+				return LEFT;
+			case "DOWN":
+				return DOWN;
+			case "UP":
+				return UP;
+			case "RIGHT":
+				return RIGHT;
+			case "RESET":
+				return RESET;
+			case "UI_LEFT":
+				return UI_LEFT;
+			case "UI_DOWN":
+				return UI_DOWN;
+			case "UI_UP":
+				return UI_UP;
+			case "UI_RIGHT":
+				return UI_RIGHT;
+			case "ACCEPT":
+				return ACCEPT;
+			case "BACK":
+				return BACK;
+			case "PAUSE":
+				return PAUSE;
+			default:
+				return NONE;
+		}
+		#else
 		return cast DoidoKey.getConstructors().indexOf(Std.string(bind));
+		#end
 	}
 	
 	public static function setSoundKeys(?empty:Bool = false)

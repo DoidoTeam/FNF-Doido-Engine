@@ -103,6 +103,16 @@ class DoidoGame extends FlxGame {
 	 * Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!
 	 * very cool person for real they don't get enough credit for their work
 	 */
+
+	function println(str:Dynamic) {
+		#if sys Sys.println(str); #else
+		var traceStr = "Unsupported stack call.";
+		if(Std.isOfType(str, String))
+			traceStr = str;
+		trace(traceStr);
+		#end
+	}
+
 	private function exceptionCaught(e:haxe.Exception, func:String = null) {
 		if (_viewingCrash)
 			return;
@@ -111,7 +121,7 @@ class DoidoGame extends FlxGame {
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
 		var fileStack:Array<String> = [];
 		var dateNow:String = Date.now().toString();
-		var println = #if sys Sys.println #else trace #end;
+		//var println = #if sys Sys.println #else traceThis #end;
 
 		dateNow = StringTools.replace(dateNow, " ", "_");
 		dateNow = StringTools.replace(dateNow, ":", "'");
