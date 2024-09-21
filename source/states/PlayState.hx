@@ -104,6 +104,7 @@ class PlayState extends MusicBeatState
 	public static var beatCamZoom:Float = 0.0;
 	public static var extraCamZoom:Float = 0.0;
 	public static var forcedCamPos:Null<FlxPoint>;
+	public static var cameraSection:String = "none";
 	public var camZoomTween:FlxTween;
 
 	public static var camFollow:FlxObject = new FlxObject();
@@ -125,6 +126,7 @@ class PlayState extends MusicBeatState
 		beatCamZoom = 0.0;
 		extraCamZoom = 0.0;
 		forcedCamPos = null;
+		cameraSection = "none";
 		paused = false;
 		
 		validScore = true;
@@ -1214,6 +1216,9 @@ class PlayState extends MusicBeatState
 						var cam:FlxCamera = stringToCam(daEvent.value3);
 						
 						cam.shake(intensity, duration);
+					
+					case "Change Cam Section":
+						cameraSection = daEvent.value1;
 				}
 				eventCount++;
 			}
@@ -1604,12 +1609,14 @@ class PlayState extends MusicBeatState
 	
 	public function followCamSection(sect:SwagSection):Void
 	{
-		followCamera(dadStrumline.character.char);
-		
+		var char:Character = dadStrumline.character.char;
+
 		if(sect != null)
 		{
-			if(sect.mustHitSection)
-				followCamera(bfStrumline.character.char);
+			if(cameraSection != "none")
+				char = strToChar(cameraSection).char;
+			else if(sect.mustHitSection)
+				char = bfStrumline.character.char;
 			
 			switch(SONG.song)
 			{
@@ -1619,6 +1626,8 @@ class PlayState extends MusicBeatState
 					});
 			}
 		}
+
+		followCamera(char);
 	}
 
 	public function followCamera(?char:Character, ?offsetX:Float = 0, ?offsetY:Float = 0)

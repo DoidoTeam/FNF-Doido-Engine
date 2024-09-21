@@ -56,6 +56,7 @@ class ChartingState extends MusicBeatState
 		//CAMERA
 		['Change Cam Zoom', 	'Value 1: New Zoom \nValue 2: Duration (in steps)\nValue 3: $easeDesc'],
 		['Change Cam Pos', 		'Value 1: New X \nValue 2: New Y\nValue 3: Camera Speed (Default: 1)\n(Leave Value 1 or 2 empty to revert back to normal camera)'],
+		['Change Cam Section', 	'Value 1: Character to change (dad/gf/bf/none) \nChoosing NONE returns camera to focusing on mustHitSections'],
 		['Flash Screen',		'Value 1: Duration (in steps)\nValue 2: Color\n$colorDesc'],
 		['Fade Screen',			'Value 1: Fade Out (true/false)\nValue 2: Duration (in steps)\nValue 3: Color\n$colorDesc'],
 		['Shake Screen',		'Value 1: Intensity\nValue 2: Duration (in steps)\nValue 3: Camera? (camGame, camHUD, camStrum)'],
