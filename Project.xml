@@ -48,6 +48,9 @@
 	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
 	<haxelib name="flxanimate"/>
 
+	<!--Used only for flixel's debugger!-->
+	<haxelib name="hscript" if="debug" />
+
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->
 
