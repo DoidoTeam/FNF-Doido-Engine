@@ -1,4 +1,5 @@
 .git/
 .haxelib/
 export/
-.vscode/
+.vscode/launch.json
+RECOVER_*.fla

@@ -1,0 +1,34 @@
+{
+    "lime.targetConfigurations": [
+        {
+          "label": "Windows / Debug",
+          "target": "windows",
+          "args": ["-debug"]
+        },
+        {
+            "label": "Windows / Debug (MENU)",
+            "target": "windows",
+            "args": ["-debug", "-DMENU"]
+        },
+        {
+            "label": "Windows / Debug (FREEPLAY)",
+            "target": "windows",
+            "args": ["-debug", "-DFREEPLAY"]
+        },
+        {
+            "label": "Linux / Debug",
+            "target": "linux",
+            "args": ["-debug"]
+        },
+        {
+            "label": "Linux / Debug (MENU)",
+            "target": "linux",
+            "args": ["-debug", "-DMENU"]
+        },
+        {
+            "label": "Linux / Debug (FREEPLAY)",
+            "target": "linux",
+            "args": ["-debug", "-DFREEPLAY"]
+        },
+    ]
+}
