@@ -1,33 +1,74 @@
 package gameObjects.hud.note;
 
+import states.PlayState;
 import flixel.FlxG;
 import flixel.FlxSprite;
 
 class SplashNote extends FlxSprite
 {
-	public function new()
+	public var isHold:Bool = false;
+	public var holdNote:Note = null;
+
+	public function new(?isHold:Bool = false)
 	{
 		super();
 		visible = false;
+		this.isHold = isHold;
 	}
+
+	public var direction:String = "";
 
 	public var assetModifier:String = "";
 	public var noteType:String = "";
 	public var noteData:Int = 0;
 
-	public function reloadSplash(note:Note)
+	public function updateData(note:Note)
 	{
-		var direction:String = CoolUtil.getDirection(note.noteData);
-
+		direction = CoolUtil.getDirection(note.noteData);
 		assetModifier = note.assetModifier;
 		noteType = note.noteType;
 		noteData = note.noteData;
-		
-		switch(note.assetModifier)
+		if(!isHold)
+			reloadSplash();
+		else
+		{
+			holdNote = note;
+			reloadHoldSplash();
+		}
+	}
+
+	public function reloadHoldSplash()
+	{
+		isPixelSprite = false;
+		switch(assetModifier)
+		{
+			default:
+				frames = Paths.getSparrowAtlas("notes/base/holdSplashes");
+				
+				direction = direction.toUpperCase();
+				animation.addByPrefix("start", 	'holdCoverStart$direction', 24, false);
+				animation.addByPrefix("loop",  	'holdCover$direction', 		24, true);
+				animation.addByPrefix("splash",	'holdCoverEnd$direction', 	24, false);
+				
+				scale.set(0.7,0.7);
+				updateHitbox();
+		}
+
+		if(isPixelSprite)
+			antialiasing = false;
+
+		playAnim("start");
+		visible = true;
+	}
+
+	public function reloadSplash()
+	{
+		isPixelSprite = false;
+		switch(assetModifier)
 		{
 			case 'doido':
 				frames = Paths.getSparrowAtlas('notes/doido/splashes');
-				animation.addByPrefix('splash', '$direction splash', 24, false);
+				animation.addByPrefix("splash", '$direction splash', 24, false);
 				scale.set(0.95,0.95);
 				updateHitbox();
 			
@@ -58,22 +99,62 @@ class SplashNote extends FlxSprite
 		if(isPixelSprite)
 			antialiasing = false;
 
-		playAnim();
+		playRandom();
 		visible = false;
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if(animation.finished)
-			visible = false;
+		if(!isHold)
+		{
+			if(animation.finished)
+				visible = false;
+		}
+		else
+		{
+			var holdPercent = (holdNote.holdHitLength / holdNote.holdLength);
+			if(holdNote.gotReleased || holdPercent >= 0.95)
+			{
+				if(animation.curAnim.name != "splash")
+				{
+					playAnim("splash");
+					if(holdPercent < data.Timings.holdTimings[0][0])
+						visible = false;
+				}
+			}
+			if(animation.finished)
+			{
+				switch(animation.curAnim.name)
+				{
+					case "start": playAnim('loop');
+					case "splash": visible = false;
+				}
+			}
+			if(!visible)
+				destroy();
+		}
 	}
 
 	// plays a random animation
-	public function playAnim()
+	public function playRandom()
 	{
 		visible = true;
 		var animList = animation.getNameList();
-		animation.play(animList[FlxG.random.int(0, animList.length - 1)], true, false, 0);
+		playAnim(animList[FlxG.random.int(0, animList.length - 1)], true);
+	}
+
+	public function playAnim(animName:String, forced:Bool = true, frame:Int = 0)
+	{
+		animation.play(animName, forced, false, frame);
+		updateHitbox();
+		offset.x += frameWidth * scale.x / 2;
+		offset.y += frameHeight* scale.y / 2;
+		// shitty fix, ill work on a better alternative later :P
+		if(isHold)
+		{
+			offset.x += 6;
+			offset.y -= 28;
+		}
 	}
 }

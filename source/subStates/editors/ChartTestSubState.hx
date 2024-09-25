@@ -383,11 +383,20 @@ class ChartTestSubState extends MusicBeatSubState
 
 		if(!note.isHold)
 		{
-			var noteDiff:Float = Math.abs(note.songTime - Conductor.songPos);
-			if(noteDiff <= Timings.getTimings("sick")[1] || strumline.botplay)
+			// splashes for hold notes
+			if(note.hasHoldSplash)
 			{
-				strumline.playSplash(note, strumline.isPlayer);
+				if(note.children.length > 0)
+				{
+					for(child in note.children)
+						if(child.isHoldEnd)
+							strumline.playSplash(child, true);
+				}
 			}
+			// regular splashes
+			var noteDiff:Float = Math.abs(note.noteDiff());
+			if(noteDiff <= Timings.getTimings("sick")[1] || strumline.botplay)
+				strumline.playSplash(note);
 		}
 	}
 	function onNoteMiss(note:Note, strumline:Strumline)
@@ -775,6 +784,7 @@ class ChartTestSubState extends MusicBeatSubState
 						
 						if(notPressed || holdPercent >= 1.0)
 						{
+							hold.gotReleased = true;
 							if(holdPercent > 0.3)
 							{
 								if(hold.isHoldEnd && !hold.gotHit)

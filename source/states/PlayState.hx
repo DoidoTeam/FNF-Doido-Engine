@@ -684,9 +684,20 @@ class PlayState extends MusicBeatState
 
 		if(!note.isHold)
 		{
+			// splashes for hold notes
+			if(note.hasHoldSplash)
+			{
+				if(note.children.length > 0)
+				{
+					for(child in note.children)
+						if(child.isHoldEnd)
+							strumline.playSplash(child, true);
+				}
+			}
+			// regular splashes
 			var noteDiff:Float = Math.abs(note.noteDiff());
 			if(noteDiff <= Timings.getTimings("sick")[1] || strumline.botplay)
-				strumline.playSplash(note, strumline.isPlayer);
+				strumline.playSplash(note);
 		}
 
 		if(thisChar != null && !note.isHold)
@@ -904,9 +915,9 @@ class PlayState extends MusicBeatState
 		}
 	}
 	
-	var pressed:Array<Bool> 	= [];
-	var justPressed:Array<Bool> = [];
-	var released:Array<Bool> 	= [];
+	public var pressed:Array<Bool> 		= [];
+	public var justPressed:Array<Bool> 	= [];
+	public var released:Array<Bool> 	= [];
 	
 	var playerSinging:Bool = false;
 	
@@ -1546,7 +1557,6 @@ class PlayState extends MusicBeatState
 						if(holdParent.gotHeld && !hold.missed)
 						{
 							hold.gotHeld = true;
-							
 							hold.holdHitLength = (Conductor.songPos - hold.songTime);
 								
 							var daRect = new FlxRect(
@@ -1585,6 +1595,7 @@ class PlayState extends MusicBeatState
 							
 							if(notPressed || holdPercent >= 1.0)
 							{
+								hold.gotReleased = true;
 								if(holdPercent > 0.3)
 								{
 									if(hold.isHoldEnd && !hold.gotHit)
@@ -1593,9 +1604,7 @@ class PlayState extends MusicBeatState
 									hold.gotHit = true;
 								}
 								else
-								{
 									onNoteMiss(hold, strumline);
-								}
 							}
 						}
 						

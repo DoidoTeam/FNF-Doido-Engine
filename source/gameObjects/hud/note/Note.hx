@@ -16,6 +16,7 @@ class Note extends FlxSprite
 
 	public var noteSize:Float = 1.0;
 	public var assetModifier:String = "base";
+	public var hasHoldSplash:Bool = true;
 
 	public function updateData(songTime:Float, noteData:Int, ?noteType:String = "default", ?assetModifier:String = "base")
 	{
@@ -29,6 +30,7 @@ class Note extends FlxSprite
 	{
 		noteSize = 1.0;
 		mustMiss = false;
+		hasHoldSplash = true;
 		var direction:String = CoolUtil.getDirection(noteData);
 		antialiasing = FlxSprite.defaultAntialiasing;
 		isPixelSprite = false;
@@ -38,6 +40,7 @@ class Note extends FlxSprite
 		{
 			case "pixel":
 				noteSize = 6;
+				hasHoldSplash = true;
 				if(!isHold)
 				{
 					loadGraphic(Paths.image("notes/pixel/notesPixel"), true, 17, 17);
@@ -58,12 +61,13 @@ class Note extends FlxSprite
 				switch(noteType)
 				{
 					default:
-						noteSize = 0.7;
-						frames = Paths.getSparrowAtlas("notes/base/notes");
-
 						switch(assetModifier)
 						{
+							default:
+								noteSize = 0.7;
+								frames = Paths.getSparrowAtlas("notes/base/notes");
 							case "doido":
+								hasHoldSplash = false;
 								frames = Paths.getSparrowAtlas("notes/doido/notes");
 								noteSize = 0.95;
 						}
@@ -161,6 +165,7 @@ class Note extends FlxSprite
 	public var missed:Bool = false;
 	public var gotHit:Bool = false;
 	public var gotHeld:Bool = false;
+	public var gotReleased:Bool = false;
 	
 	public var spawned:Bool = false;
 
@@ -198,6 +203,7 @@ class Note extends FlxSprite
 		missed = false;
 		gotHit = false;
 		gotHeld = false;
+		gotReleased = false;
 		holdHitLength = 0;
 		//spawned = false;
 		

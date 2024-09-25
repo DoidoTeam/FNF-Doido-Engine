@@ -14,6 +14,7 @@ class Strumline extends FlxGroup
 	public var allNotes:FlxTypedGroup<Note>;
 
 	public var splashGroup:FlxTypedGroup<SplashNote>;
+	public var coverGroup:FlxTypedGroup<SplashNote>;
 	
 	public var x:Float = 0;
 	public var downscroll:Bool = false;
@@ -42,6 +43,7 @@ class Strumline extends FlxGroup
 		add(holdGroup 	= new FlxTypedGroup<Note>());
 		add(strumGroup 	= new FlxTypedGroup<StrumNote>());
 		add(splashGroup = new FlxTypedGroup<SplashNote>());
+		add(coverGroup 	= new FlxTypedGroup<SplashNote>());
 		add(noteGroup 	= new FlxTypedGroup<Note>());
 		
 		for(i in 0...4)
@@ -92,35 +94,47 @@ class Strumline extends FlxGroup
 			spawnedSplashes.push(splashName);
 			
 			var splash = new SplashNote();
-			splash.reloadSplash(note);
-			splash.visible = false;
+			splash.updateData(note);
 			splashGroup.add(splash);
-			
 			//trace('added ${note.strumlineID} $splashName lol');
 		}
 	}
 
-	public function playSplash(note:Note, isPlayer:Bool = false)
+	public function playSplash(note:Note, isHold:Bool = false)
 	{
 		switch(SaveData.data.get("Note Splashes"))
 		{
 			case "PLAYER ONLY": if(!isPlayer) return;
 			case "OFF": return;
 		}
-		for(splash in splashGroup.members)
+		if(!isHold)
 		{
-			if(splash.assetModifier == note.assetModifier
-			&& splash.noteType == note.noteType
-			&& splash.noteData == note.noteData)
+			for(splash in splashGroup.members)
 			{
-				//trace("played");
-				var thisStrum = strumGroup.members[splash.noteData];
-				splash.x = thisStrum.x - splash.width / 2;
-				splash.y = thisStrum.y - splash.height/ 2;
-
-				splash.playAnim();
+				if(splash.assetModifier == note.assetModifier
+				&& splash.noteType == note.noteType
+				&& splash.noteData == note.noteData)
+				{
+					splash.playRandom();
+					centerSplash(splash);
+				}
 			}
 		}
+		else
+		{
+			//trace('did it work?');
+			var splash = new SplashNote(true);
+			splash.updateData(note);
+			coverGroup.add(splash);
+			centerSplash(splash);
+		}
+	}
+
+	public function centerSplash(splash:SplashNote)
+	{
+		var thisStrum = strumGroup.members[splash.noteData];
+		splash.x = thisStrum.x;// - splash.width / 2;
+		splash.y = thisStrum.y;// - splash.height/ 2;
 	}
 	
 	/*
