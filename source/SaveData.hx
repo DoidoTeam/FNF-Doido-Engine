@@ -117,7 +117,7 @@ class SaveData
 		"Hold Splashes" => [
 			true,
 			CHECKMARK,
-			"Whether a splash appears when you completely press a hold note.\nDisable if it distracts you."
+			"Whether a splash appears when you completely press a hold note.\nDisable if it distracts you. (Only works if Note Splashes is enabled)."
 		],
 		"Antialiasing" => [
 			true,

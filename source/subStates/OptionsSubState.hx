@@ -265,8 +265,8 @@ class OptionsSubState extends MusicBeatSubState
 
                     if(selec.holdTimer >= holdMax)
                         selec.holdTimer = holdMax - 0.005; // 0.02
-                    else
-                        FlxG.sound.play(Paths.sound('menu/scrollMenu'));
+                    /*else
+                        FlxG.sound.play(Paths.sound('menu/scrollMenu'));*/
                 }
                 
                 selec.arrowL.animation.play(Controls.pressed(UI_LEFT) ? "push" : "idle", true);
