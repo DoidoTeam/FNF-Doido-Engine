@@ -12,6 +12,7 @@ import flixel.util.FlxColor;
 import states.PlayState;
 import data.GameData.MusicBeatSubState;
 import gameObjects.menu.Alphabet;
+import gameObjects.menu.Alphabet;
 import gameObjects.menu.options.*;
 import states.menu.MainMenuState;
 
@@ -53,6 +54,7 @@ class OptionsSubState extends MusicBeatSubState
 		],
 		"appearance" => [
             "Note Splashes",
+            "Hold Splashes",
             #if desktop
 			"Antialiasing",
             #end
@@ -82,9 +84,10 @@ class OptionsSubState extends MusicBeatSubState
     var curSelected:Int = 0;
     var storedSelected:Map<String, Int> = [];
 
-    var grpItems:FlxTypedGroup<FlxSprite>;
+    var grpItems:FlxTypedGroup<Alphabet>;
     var grpAttachs:FlxGroup;
     var restartTxt:Alphabet;
+    var infoBG:FlxSprite;
     var infoTxt:FlxText;
     
     var curAttach:FlxBasic;
@@ -119,7 +122,7 @@ class OptionsSubState extends MusicBeatSubState
         bg.screenCenter();
         add(bg);
 
-        grpItems = new FlxTypedGroup<FlxSprite>();
+        grpItems = new FlxTypedGroup<Alphabet>();
         grpAttachs = new FlxGroup();
         add(grpItems);
         add(grpAttachs);
@@ -132,9 +135,14 @@ class OptionsSubState extends MusicBeatSubState
         restartTxt.alpha = 0.0;
         add(restartTxt);
 
+        infoBG = new FlxSprite().makeGraphic(FlxG.width + 20, FlxG.height, 0xFF000000);
+        infoBG.visible = false;
+        infoBG.alpha = 0.6;
+        add(infoBG);
+
         infoTxt = new FlxText(0, 0, FlxG.width * 0.8, 'balls');
 		infoTxt.setFormat(Main.gFont, 28, 0xFFFFFFFF, CENTER);
-        infoTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
+        //infoTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5); // kinda useless now
         add(infoTxt);
 
         spawnItems('main');
@@ -145,6 +153,7 @@ class OptionsSubState extends MusicBeatSubState
     override function update(elapsed:Float)
     {
         super.update(elapsed);
+        infoBG.visible = (curCat != 'main');
         if(curCat != 'main')
             updateItemPos(elapsed * 8);
 
@@ -154,6 +163,7 @@ class OptionsSubState extends MusicBeatSubState
             restartTxt.alpha -= elapsed / 0.4;
 
         infoTxt.y = FlxMath.lerp(infoTxt.y, FlxG.height - infoTxt.height - 12, elapsed * 8);
+        infoBG.y = infoTxt.y - 12;
 
         if(inputDelay > 0.0)
         {
@@ -274,45 +284,59 @@ class OptionsSubState extends MusicBeatSubState
 
     function updateItemPos(lerpTime:Float)
     {
-        var bigItem:Float = 0;
+        var itemY:Array<Float> = [];
         for(item in grpItems.members)
         {
-            if(item.width > bigItem)
-                bigItem = item.width;
+            itemY[item.ID] = 100 + (80 * item.ID);
+        }
+        while(itemY[curSelected] > FlxG.height - 260)
+        {
+            for(i in 0...itemY.length)
+                itemY[i] -= 10;
         }
 
-        var bigAttach:Float = 98 * 0.75; // defaults to checkmark size
+        var maxAttach:Float = 0;
         for(rawItem in grpAttachs.members)
         {
+            var daWidth = grpItems.members[rawItem.ID].width;
             if(Std.isOfType(rawItem, OptionSelector))
             {
                 var item:OptionSelector = cast rawItem;
-                if(item.getWidth() > bigAttach)
-                {
-                    bigAttach = item.getWidth();
-                }
+                var daCalc = daWidth + item.getWidth() + 42;
+                if(daCalc > maxAttach)
+                    maxAttach = daCalc;
+            }
+            else if(Std.isOfType(rawItem, OptionCheckmark))
+            {
+                var item:OptionCheckmark = cast rawItem;
+                var daCalc = daWidth + item.width + 42;
+                if(daCalc > maxAttach)
+                    maxAttach = daCalc;
             }
         }
 
-        var posItem:Float = (FlxG.width / 2) - ((bigItem + bigAttach) / 2);
-        var posAttach:Float = (posItem + bigItem + bigAttach);
-        var offsetX:Float = 20;
+        var posItem:Float = (FlxG.width / 2) - (maxAttach / 2);
+        var posAttach:Float = posItem + maxAttach;
 
         for(item in grpItems.members)
         {
-            item.x = FlxMath.lerp(item.x, posItem - offsetX, lerpTime);
+            item.x = FlxMath.lerp(item.x, posItem, lerpTime);
+            item.y = FlxMath.lerp(item.y, itemY[item.ID], lerpTime);
         }
         for(rawItem in grpAttachs.members)
         {
+            var daItem = grpItems.members[rawItem.ID];
             if(Std.isOfType(rawItem, FlxSprite))
             {
                 var item:FlxSprite = cast rawItem;
-                item.x = FlxMath.lerp(item.x, posAttach + offsetX - item.width, lerpTime);
+                item.x = FlxMath.lerp(item.x, posAttach - item.width, lerpTime);
+                item.y = daItem.y + daItem.height / 2 - item.height / 2;
             }
             if(Std.isOfType(rawItem, OptionSelector))
             {
                 var selec:OptionSelector = cast rawItem;
-                selec.setX(FlxMath.lerp(selec.arrowL.x, posAttach + offsetX - selec.getWidth(), lerpTime));
+                selec.setX(FlxMath.lerp(selec.arrowL.x, posAttach - selec.getWidth(), lerpTime));
+                selec.setY(daItem.y + daItem.height / 2);
                 if(selec.ID != curSelected)
                 {
                     selec.holdTimer = 0.0;
@@ -366,24 +390,18 @@ class OptionsSubState extends MusicBeatSubState
                 item.updateHitbox();
                 item.ID = i;
 
-                item.y = (FlxG.height / 2) - (item.height / 2);
-                item.y += (80 * i);
-                item.y -= (80 * ((curOption.length - 1) / 2));
-
                 if(!SaveData.displaySettings.exists(curOption[i])) continue;
 
                 var daSave = SaveData.displaySettings.get(curOption[i]);
                 if(daSave[1] == CHECKMARK)
                 {
                     var check = new OptionCheckmark(SaveData.data.get(curOption[i]), 0.75);
-                    check.y = item.y + item.height / 2 - check.height / 2;
                     check.ID = i;
                     grpAttachs.add(check);
                 }
                 if(daSave[1] == SELECTOR)
                 {
                     var selec = new OptionSelector(curOption[i]);
-                    selec.setY(item.y + item.height / 2);
                     grpAttachs.add(selec);
                     selec.ID = i;
                 }

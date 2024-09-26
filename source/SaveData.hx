@@ -111,8 +111,13 @@ class SaveData
 		"Note Splashes" => [
 			"ON",
 			SELECTOR,
-			"Whether a splash appear when you hit a note perfectly",
+			"Whether a splash appears when you hit a note perfectly.\nDisable if it distracts you.",
 			["ON", "PLAYER ONLY", "OFF"],
+		],
+		"Hold Splashes" => [
+			true,
+			CHECKMARK,
+			"Whether a splash appears when you completely press a hold note.\nDisable if it distracts you."
 		],
 		"Antialiasing" => [
 			true,

@@ -37,30 +37,6 @@ class SplashNote extends FlxSprite
 		}
 	}
 
-	public function reloadHoldSplash()
-	{
-		isPixelSprite = false;
-		switch(assetModifier)
-		{
-			default:
-				frames = Paths.getSparrowAtlas("notes/base/holdSplashes");
-				
-				direction = direction.toUpperCase();
-				animation.addByPrefix("start", 	'holdCoverStart$direction', 24, false);
-				animation.addByPrefix("loop",  	'holdCover$direction', 		24, true);
-				animation.addByPrefix("splash",	'holdCoverEnd$direction', 	24, false);
-				
-				scale.set(0.7,0.7);
-				updateHitbox();
-		}
-
-		if(isPixelSprite)
-			antialiasing = false;
-
-		playAnim("start");
-		visible = true;
-	}
-
 	public function reloadSplash()
 	{
 		isPixelSprite = false;
@@ -102,6 +78,33 @@ class SplashNote extends FlxSprite
 		playRandom();
 		visible = false;
 	}
+	
+	public function reloadHoldSplash()
+	{
+		isPixelSprite = false;
+		switch(assetModifier)
+		{
+			default:
+				frames = Paths.getSparrowAtlas("notes/base/holdSplashes");
+				
+				direction = direction.toUpperCase();
+				animation.addByPrefix("start", 	'holdCoverStart$direction', 24, false);
+				animation.addByPrefix("loop",  	'holdCover$direction', 		24, true);
+				animation.addByPrefix("splash",	'holdCoverEnd$direction', 	24, false);
+
+				for(anim in ["start", "loop", "splash"])
+					addOffset(anim, 6, -28);
+				
+				scale.set(0.7,0.7);
+				updateHitbox();
+		}
+
+		if(isPixelSprite)
+			antialiasing = false;
+
+		playAnim("start");
+		visible = true;
+	}
 
 	override function update(elapsed:Float)
 	{
@@ -114,13 +117,12 @@ class SplashNote extends FlxSprite
 		else
 		{
 			var holdPercent = (holdNote.holdHitLength / holdNote.holdLength);
-			var sick:Bool = holdPercent >= data.Timings.holdTimings[0][0];
-			if(holdNote.gotReleased || sick)
+			if(holdNote.gotReleased || holdPercent >= 1.0)
 			{
 				if(animation.curAnim.name != "splash")
 				{
 					playAnim("splash");
-					if(!sick)
+					if(holdPercent < data.Timings.holdTimings[0][0])
 						visible = false;
 				}
 			}
@@ -137,12 +139,18 @@ class SplashNote extends FlxSprite
 		}
 	}
 
-	// plays a random animation
+	// plays a random animation, useful for common splashes
 	public function playRandom()
 	{
 		visible = true;
 		var animList = animation.getNameList();
 		playAnim(animList[FlxG.random.int(0, animList.length - 1)], true);
+	}
+
+	// not necessary on most cases, but base game's hold covers were acting weird so yeah...
+	public var animOffsets:Map<String, Array<Float>> = [];
+	public function addOffset(animName:String, offsetX:Float, offsetY:Float) {
+		animOffsets.set(animName, [offsetX, offsetY]);
 	}
 
 	public function playAnim(animName:String, forced:Bool = true, frame:Int = 0)
@@ -151,11 +159,11 @@ class SplashNote extends FlxSprite
 		updateHitbox();
 		offset.x += frameWidth * scale.x / 2;
 		offset.y += frameHeight* scale.y / 2;
-		// shitty fix, ill work on a better alternative later :P
-		if(isHold)
+		if(animOffsets.exists(animName))
 		{
-			offset.x += 6;
-			offset.y -= 28;
+			var daOffset = animOffsets.get(animName);
+			offset.x += daOffset[0];
+			offset.y += daOffset[1];
 		}
 	}
 }

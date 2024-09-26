@@ -137,6 +137,7 @@ class Strumline extends FlxGroup
 		}
 		else
 		{
+			if(!SaveData.data.get("Hold Splashes")) return;
 			//trace('did it work?');
 			var splash = new SplashNote(true);
 			splash.updateData(note);

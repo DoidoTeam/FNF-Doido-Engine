@@ -387,11 +387,7 @@ class ChartTestSubState extends MusicBeatSubState
 			if(note.hasHoldSplash)
 			{
 				if(note.children.length > 0)
-				{
-					for(child in note.children)
-						if(child.isHoldEnd)
-							strumline.playSplash(child, true);
-				}
+					strumline.playSplash(note.children[note.children.length - 1], true);
 			}
 			// regular splashes
 			var noteDiff:Float = Math.abs(note.noteDiff());
