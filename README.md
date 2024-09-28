@@ -21,6 +21,7 @@ openfl 9.3.3
 flixel 5.8.0
 flixel-addons 3.2.2
 flixel-ui 2.6.1
+hscript-iris 1.1.0
 flxanimate https://github.com/DoidoTeam/flxanimate
 hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ```

@@ -50,6 +50,8 @@
 
 	<!--Used only for flixel's debugger!-->
 	<haxelib name="hscript" if="debug" />
+	<haxelib name="hscript-iris" />
+	<haxedef name="hscriptPos" />
 
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->

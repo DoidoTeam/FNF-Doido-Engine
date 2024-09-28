@@ -63,13 +63,13 @@ class Note extends FlxSprite
 					default:
 						switch(assetModifier)
 						{
-							default:
-								noteSize = 0.7;
-								frames = Paths.getSparrowAtlas("notes/base/notes");
 							case "doido":
 								hasHoldSplash = false;
 								frames = Paths.getSparrowAtlas("notes/doido/notes");
 								noteSize = 0.95;
+							default:
+								noteSize = 0.7;
+								frames = Paths.getSparrowAtlas("notes/base/notes");
 						}
 
 						var typeName:String = (isHold ? (isHoldEnd ? " hold end" : " hold") : "");

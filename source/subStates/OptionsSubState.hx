@@ -71,8 +71,6 @@ class OptionsSubState extends MusicBeatSubState
         "Ghost Tapping", // you can't cheat >:]
     ];
     var reloadOptions:Array<String> = [ // options that need some manual reloading on playstate when changed
-        "Downscroll",
-        "Middlescroll",
         "Antialiasing",
         "Song Timer",
     ];
@@ -105,6 +103,14 @@ class OptionsSubState extends MusicBeatSubState
         super();
         this.playState = playState;
         this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+        if(playState != null)
+        {
+            for(i in ["Downscroll", "Middlescroll"])
+                if(PlayState.hasModchart)
+                    forceRestartOptions.push(i);
+                else
+                    reloadOptions.push(i);
+        }
 
         #if !html5
         CoolUtil.playMusic('lilBitBack');

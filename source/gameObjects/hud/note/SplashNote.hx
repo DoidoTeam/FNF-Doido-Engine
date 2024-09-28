@@ -8,6 +8,7 @@ class SplashNote extends FlxSprite
 {
 	public var isHold:Bool = false;
 	public var holdNote:Note = null;
+	public var holdStrum:StrumNote = null;
 
 	public function new(?isHold:Bool = false)
 	{
@@ -116,6 +117,10 @@ class SplashNote extends FlxSprite
 		}
 		else
 		{
+			// only follows the strum if its not splashing
+			if(animation.curAnim.name != "splash")
+				setPosition(holdStrum.x, holdStrum.y);
+			
 			var holdPercent = (holdNote.holdHitLength / holdNote.holdLength);
 			if(holdNote.gotReleased || holdPercent >= 1.0)
 			{

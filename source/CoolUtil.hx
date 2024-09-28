@@ -180,7 +180,6 @@ class CoolUtil
 		// linear/quad/cube/quart/quint/sine/circ/expo
 		return switch(str.toLowerCase())
 		{
-			default: FlxEase.linear;
 			case 'quadin': FlxEase.quadIn;
 			case 'quadinout': FlxEase.quadInOut;
 			case 'quadout': FlxEase.quadOut;
@@ -208,6 +207,8 @@ class CoolUtil
 			case 'expoin': FlxEase.expoIn;
 			case 'expoinout': FlxEase.expoInOut;
 			case 'expoout': FlxEase.expoOut;
+
+			default: FlxEase.linear;
 		}
 	}
 	public static function stringToColor(str:String):Int
@@ -217,7 +218,6 @@ class CoolUtil
 		else
 			return switch(str.toLowerCase())
 			{
-				default: 		0xFFFFFFFF;
 				case 'black': 	0xFF000000;
 				case 'silver':  0xFFC0C0C0;
 				case 'gray': 	0xFF808080;
@@ -229,6 +229,7 @@ class CoolUtil
 				case 'yellow':  0xFFFFFF00;
 				case 'blue': 	0xFF0000FF;
 				case 'aqua': 	0xFF00FFFF;
+				default: 		0xFFFFFFFF;
 			}
 	}
 

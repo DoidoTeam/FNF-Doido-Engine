@@ -174,10 +174,26 @@ class Paths
 		return Json.parse(rawJson);
 	}
 
-	public static function video(key:String):String
+	public static function script(key:String):String
+		return getContent('scripts/$key');
+
+	public static function getScriptArray(?song:String):Array<String>
 	{
-		return getPath('videos/$key.mp4');
+		var arr:Array<String> = [];
+		for(folder in [Paths.readDir("scripts"), Paths.readDir('songs/$song')])
+		{
+			for(file in folder)
+			{
+				if(file.endsWith(".hxc"))
+					arr.push(file);
+			}
+		}
+		//trace(arr);
+		return arr;
 	}
+
+	public static function video(key:String):String
+		return getPath('videos/$key.mp4');
 	
 	// sparrow (.xml) sheets
 	public static function getSparrowAtlas(key:String)

@@ -1,5 +1,9 @@
 package states;
 
+import crowplexus.iris.Iris;
+import crowplexus.hscript.Parser;
+import crowplexus.hscript.Printer;
+import crowplexus.hscript.Bytes;
 import data.Discord.DiscordIO;
 import data.SongData.EventSong;
 import flixel.FlxG;
@@ -65,6 +69,9 @@ class PlayState extends MusicBeatState
 	public static var countdownModifier:String = "base";
 	// score, misses, accuracy and other stuff
 	// are on the Timings.hx class!!
+
+	// hscript!!
+	public var loadedScripts:Array<Iris> = [];
 	
 	// objects
 	public var stageBuild:Stage;
@@ -75,6 +82,7 @@ class PlayState extends MusicBeatState
 	public var gf:CharGroup;
 
 	// strumlines
+	public static var hasModchart:Bool = false;
 	public var strumlines:FlxTypedGroup<Strumline>;
 	public var bfStrumline:Strumline;
 	public var dadStrumline:Strumline;
@@ -129,6 +137,7 @@ class PlayState extends MusicBeatState
 		cameraSection = "none";
 		paused = false;
 		
+		hasModchart = false;
 		validScore = true;
 		
 		Timings.init();
@@ -172,12 +181,17 @@ class PlayState extends MusicBeatState
 		//if(SONG == null)
 		//	SONG = SongData.loadFromJson("ugh");
 
+		// loading scripts
+		var scriptPaths:Array<String> = Paths.getScriptArray();
+		for(path in scriptPaths)
+		{
+			var newScript:Iris = new Iris(Paths.script('$path'));
+			newScript.execute();
+			loadedScripts.push(newScript);
+		}
+
 		unspawnNotes = ChartLoader.getChart(SONG);
 		unspawnEvents = ChartLoader.getEvents(EVENTS);
-		
-		// preloading stuff
-		/*Paths.preloadPlayStuff();
-		Rating.preload(assetModifier);*/
 
 		//trace('tu ta jogando na linguagem ${openfl.system.Capabilities.language}');
 		
@@ -207,6 +221,7 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 		
 		//camGame.zoom = 0.6;
+		callScript("create");
 		
 		stageBuild = new Stage();
 		stageBuild.reloadStageFromSong(SONG.song);
@@ -466,6 +481,8 @@ class PlayState extends MusicBeatState
 		}
 		else
 			startCountdown();
+
+		callScript("createPost");
 	}
 
 	public function startCountdown()
@@ -945,6 +962,7 @@ class PlayState extends MusicBeatState
 	
 	override function update(elapsed:Float)
 	{
+		callScript("update", [elapsed]);
 		super.update(elapsed);
 		var followLerp:Float = cameraSpeed * 5 * elapsed;
 		if(followLerp > 1) followLerp = 1;
@@ -1426,6 +1444,7 @@ class PlayState extends MusicBeatState
 		camStrum.zoom = lerpCamZoom(camStrum.zoom);
 		
 		health = FlxMath.bound(health, 0, 2); // bounds the health
+		callScript("updatePost", [elapsed]);
 	}
 
 	public function updateNotes()
@@ -1697,6 +1716,8 @@ class PlayState extends MusicBeatState
 					boyfriend.char.playAnim("hey");
 				}
 		}
+
+		callScript("beatHit", [curBeat]);
 	}
 
 	override function stepHit()
@@ -1704,6 +1725,8 @@ class PlayState extends MusicBeatState
 		super.stepHit();
 		stageBuild.stepHit(curStep);
 		syncSong();
+		
+		callScript("stepHit", [curStep]);
 	}
 
 	public function syncSong():Void
@@ -1945,6 +1968,21 @@ class PlayState extends MusicBeatState
 			return [-strumPos[0], strumPos[0]];
 		else
 			return [strumPos[0] - strumPos[1], strumPos[0] + strumPos[1]];
+	}
+
+	public function callScript(fun:String, ?args:Array<Dynamic>)
+	{
+		for(script in loadedScripts) {
+			@:privateAccess {
+				var ny: Dynamic = script.interp.variables.get(fun);
+				try {
+					if(ny != null && Reflect.isFunction(ny))
+						script.call(fun, args);
+				} catch(e) {
+					trace('idk what happened lol');
+				}
+			}
+		}
 	}
 	
 	// substates also use this

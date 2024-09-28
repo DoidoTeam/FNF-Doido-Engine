@@ -122,6 +122,7 @@ class Strumline extends FlxGroup
 			case "PLAYER ONLY": if(!isPlayer) return;
 			case "OFF": return;
 		}
+		var thisStrum = strumGroup.members[note.noteData];
 		if(!isHold)
 		{
 			for(splash in splashGroup.members)
@@ -131,7 +132,8 @@ class Strumline extends FlxGroup
 				&& splash.noteData == note.noteData)
 				{
 					splash.playRandom();
-					centerSplash(splash);
+					splash.x = thisStrum.x;
+					splash.y = thisStrum.y;
 				}
 			}
 		}
@@ -140,17 +142,12 @@ class Strumline extends FlxGroup
 			if(!SaveData.data.get("Hold Splashes")) return;
 			//trace('did it work?');
 			var splash = new SplashNote(true);
+			splash.holdStrum = thisStrum;
 			splash.updateData(note);
+			splash.x = thisStrum.x;
+			splash.y = thisStrum.y;
 			coverGroup.add(splash);
-			centerSplash(splash);
 		}
-	}
-
-	public function centerSplash(splash:SplashNote)
-	{
-		var thisStrum = strumGroup.members[splash.noteData];
-		splash.x = thisStrum.x;// - splash.width / 2;
-		splash.y = thisStrum.y;// - splash.height/ 2;
 	}
 	
 	/*
