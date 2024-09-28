@@ -1,0 +1,18 @@
+import gameObjects.hud.note.Strumline;
+import gameObjects.hud.note.Note;
+
+/*
+*   WARNING, HSCRIPT SUPPORT IS MEANT FOR MODCHARTING ONLY
+*   you CAN use it to make stages, events or make characters play animations
+*   however there is no official support to those things
+*   you have been warned!!
+*/
+function create() {}
+function createPost() {}
+function update(elapsed:Float) {}
+function updatePost(elapsed:Float) {}
+
+// note functions
+function onNoteHit(note:Note, strumline:Strumline) {}
+function onNoteMiss(note:Note, strumline:Strumline, ghostTap:Bool) {}
+function onNoteHold(note:Note, strumline:Strumline) {}

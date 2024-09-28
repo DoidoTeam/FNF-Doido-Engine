@@ -679,6 +679,8 @@ class PlayState extends MusicBeatState
 
 		if(note.mustMiss) return;
 
+		callScript("onNoteHit", [note, strumline]);
+
 		thisStrum.playAnim("confirm", true);
 
 		// when the player hits notes
@@ -746,6 +748,8 @@ class PlayState extends MusicBeatState
 		if(onlyOnce)
 		{
 			vocals.volume = 0;
+
+			callScript("onNoteMiss", [note, strumline, ghostTap]);
 			
 			FlxG.sound.play(Paths.sound('miss/missnote' + FlxG.random.int(1, 3)), 0.55);
 			
@@ -773,6 +777,8 @@ class PlayState extends MusicBeatState
 		
 		vocals.volume = 1;
 		thisStrum.playAnim("confirm", true);
+
+		callScript("onNoteHold", [note, strumline]);
 		
 		// DIE!!!
 		if(note.mustMiss)
