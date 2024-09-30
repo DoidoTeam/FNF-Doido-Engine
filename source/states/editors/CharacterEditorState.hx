@@ -1,5 +1,7 @@
 package states.editors;
 
+import subStates.editors.ChooserSubState;
+import flixel.addons.ui.FlxUIButton;
 import haxe.Json;
 import flixel.FlxG;
 import flixel.FlxCamera;
@@ -197,17 +199,36 @@ class CharacterEditorState extends MusicBeatState
 
 		var charList = CoolUtil.charList();
 
-		var charDropDown = new FlxUIDropDownMenu(10, 25, FlxUIDropDownMenu.makeStrIdLabelArray(charList, true), function(character:String)
+		var charButton = new FlxUIButton(10, 25, curChar, function() {
+			openSubState(new ChooserSubState(charList, CHARACTER, function(pick:String) {
+				Main.switchState(new CharacterEditorState(pick));
+			}));
+		});
+		charButton.resize(125, 20);
+		charButton.cameras = [camHUD];
+
+		/*var charDropDown = new FlxUIDropDownMenu(10, 25, FlxUIDropDownMenu.makeStrIdLabelArray(charList, true), function(character:String)
 		{
 			var choice = charList[Std.parseInt(character)];
 			Main.switchState(new CharacterEditorState(choice));
 		});
 		charDropDown.selectedLabel = curChar;
-		charDropDown.cameras = [camHUD];
+		charDropDown.cameras = [camHUD];*/
 
 		var checkFlipGhost = new FlxUICheckBox(140, 50, null, null, "Ghost FlipX", 100);
 		var checkShowGhost = new FlxUICheckBox(140, 75, null, null, "Show Ghost", 100);
-		var ghostDropDown = new FlxUIDropDownMenu(140, 25, FlxUIDropDownMenu.makeStrIdLabelArray(charList, true), function(character:String)
+		var ghostButton = new FlxUIButton(140, 25, ghost.curChar, function() {
+			openSubState(new ChooserSubState(charList, CHARACTER, function(pick:String) {
+				ghost = reloadChar(ghost, pick, true);
+				checkFlipGhost.callback();
+				checkShowGhost.callback();
+				reloadGhostButtons();
+				setCharPos(ghost);
+			}));
+		});
+		ghostButton.resize(125, 20);
+		ghostButton.cameras = [camHUD];
+		/*var ghostDropDown = new FlxUIDropDownMenu(140, 25, FlxUIDropDownMenu.makeStrIdLabelArray(charList, true), function(character:String)
 		{
 			ghost = reloadChar(ghost, charList[Std.parseInt(character)], true);
 			checkFlipGhost.callback();
@@ -216,7 +237,7 @@ class CharacterEditorState extends MusicBeatState
 			setCharPos(ghost);
 		});
 		ghostDropDown.selectedLabel = ghost.curChar;
-		ghostDropDown.cameras = [camHUD];
+		ghostDropDown.cameras = [camHUD];*/
 
 		var checkFlipChar = new FlxUICheckBox(10, 50, null, null, "Char FlipX", 100);
 		checkFlipChar.checked = char.flipX;
@@ -317,9 +338,9 @@ class CharacterEditorState extends MusicBeatState
 		charsTab.add(checkCamFollow);
 		// adding these last
 		charsTab.add(new FlxText(10, 10,0,"Character: "));
-		charsTab.add(charDropDown);
+		charsTab.add(charButton);
 		charsTab.add(new FlxText(140,10,0,"Ghost: "));
-		charsTab.add(ghostDropDown);
+		charsTab.add(ghostButton);
 	}
 	
 	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>)

@@ -73,6 +73,7 @@ class ChartingState extends MusicBeatState
 	public var eventsLabels:Array<String> = [];
 
 	// NOTE TYPES
+	var noteTypeButton:FlxUIButton;
 	static var curNoteType:String = 'none';
 	var allNoteTypes:Array<String> = [
 		'none',
@@ -103,7 +104,7 @@ class ChartingState extends MusicBeatState
 
 	var curSelectedEvent:Array<Dynamic> = null;
 	var curEventSprite:EventNote;
-	var eventDropDown:FlxUIDropDownMenu;
+	var eventButton:FlxUIButton;
 	var stepperEventSlot:FlxUINumericStepper;
 	var eventValueInputs:Array<FlxUIInputText> = [];
 
@@ -395,19 +396,25 @@ class ChartingState extends MusicBeatState
 
 		var characters = CoolUtil.charList();
 		
-		var player1DropDown = new FlxUIDropDownMenu(140, 115, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
-		{
-			SONG.player1 = characters[Std.parseInt(character)];
-			reloadIcons(true);
+		var player1Button:FlxUIButton = null;
+		player1Button = new FlxUIButton(140, 115, SONG.player1, function() {
+			openSubState(new ChooserSubState(characters, CHARACTER, function(pick:String) {
+				player1Button.label.text = pick;
+				SONG.player1 = pick;
+				reloadIcons(true);
+			}));
 		});
-		player1DropDown.selectedLabel = SONG.player1;
+		player1Button.resize(125, 20);
 
-		var player2DropDown = new FlxUIDropDownMenu(10, 115, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
-		{
-			SONG.player2 = characters[Std.parseInt(character)];
-			reloadIcons(true);
+		var player2Button:FlxUIButton = null;
+		player2Button = new FlxUIButton(10, 115, SONG.player2, function() {
+			openSubState(new ChooserSubState(characters, CHARACTER, function(pick:String) {
+				player2Button.label.text = pick;
+				SONG.player2 = pick;
+				reloadIcons(true);
+			}));
 		});
-		player2DropDown.selectedLabel = SONG.player2;
+		player2Button.resize(125, 20);
 		
 		var playTicksBf = new FlxUICheckBox(10, 210, null, null, 'BF Hitsounds', 100);
 		playTicksBf.name = "bf_hitsounds";
@@ -498,10 +505,10 @@ class ChartingState extends MusicBeatState
 		tabSong.add(clearNotesButton);
 		tabSong.add(clearSongButton);
 
-		tabSong.add(new FlxText(player1DropDown.x, player1DropDown.y - 15, 0, 'Boyfriend:'));
-		tabSong.add(new FlxText(player2DropDown.x, player2DropDown.y - 15, 0, 'Opponent:'));
-		tabSong.add(player1DropDown);
-		tabSong.add(player2DropDown);
+		tabSong.add(new FlxText(player1Button.x, player1Button.y - 15, 0, 'Boyfriend:'));
+		tabSong.add(new FlxText(player2Button.x, player2Button.y - 15, 0, 'Opponent:'));
+		tabSong.add(player1Button);
+		tabSong.add(player2Button);
 
 
 		/*
@@ -727,24 +734,25 @@ class ChartingState extends MusicBeatState
 		addTypingShit(stepperSusLength);
 		updateCurNote();
 		
-		var noteTypeDropDown = new FlxUIDropDownMenu(10, 60, FlxUIDropDownMenu.makeStrIdLabelArray(allNoteTypes, true), function(daType:String)
-		{
-			curNoteType = allNoteTypes[Std.parseInt(daType)];
-			reloadSection(curSection, false);
+		noteTypeButton = new FlxUIButton(10, 60, curNoteType, function() {
+			openSubState(new ChooserSubState(allNoteTypes, NOTETYPE, function(pick:String) {
+				noteTypeButton.label.text = pick;
+				curNoteType = pick;
+				reloadSection(curSection, false);
+			}));
 		});
-		noteTypeDropDown.name = "dropdown_noteType";
-		noteTypeDropDown.selectedLabel = curNoteType;
+		noteTypeButton.resize(125, 20);
 		
 		var convertSide:String = 'ALL';
 		var convertOptions:Array<String> = ['ALL', 'DAD NOTES', 'BF NOTES'];
-		var convertDropDown = new FlxUIDropDownMenu(noteTypeDropDown.x, 100,
+		var convertDropDown = new FlxUIDropDownMenu(noteTypeButton.x, 100,
 		FlxUIDropDownMenu.makeStrIdLabelArray(convertOptions, true), function(value:String)
 		{
 			convertSide = convertOptions[Std.parseInt(value)];
 		});
 		convertDropDown.selectedLabel = convertSide;
 		
-		var convertButton:FlxButton = new FlxButton(10 + noteTypeDropDown.width + 10, convertDropDown.y, "Convert Notes", function()
+		var convertButton:FlxButton = new FlxButton(10 + noteTypeButton.width + 10, convertDropDown.y, "Convert Notes", function()
 		{
 			for(note in getSection(curSection).sectionNotes)
 			{
@@ -755,7 +763,7 @@ class ChartingState extends MusicBeatState
 				if(isPlayer && convertSide == 'DAD NOTES') continue;
 				if(!isPlayer && convertSide == 'BF NOTES') continue;
 
-				note[3] = noteTypeDropDown.selectedLabel;
+				note[3] = noteTypeButton.label.text;
 			}
 			reloadSection(curSection, false);
 		});
@@ -765,8 +773,8 @@ class ChartingState extends MusicBeatState
 		tabNote.add(convertButton);
 		tabNote.add(new FlxText(convertDropDown.x,  convertDropDown.y  - 15, 0, 'Convert Note Types:'));
 		tabNote.add(convertDropDown);
-		tabNote.add(new FlxText(noteTypeDropDown.x, noteTypeDropDown.y - 15, 0, 'Note Type:'));
-		tabNote.add(noteTypeDropDown);
+		tabNote.add(new FlxText(noteTypeButton.x, noteTypeButton.y - 15, 0, 'Note Type:'));
+		tabNote.add(noteTypeButton);
 
 		/*
 		*
@@ -780,7 +788,7 @@ class ChartingState extends MusicBeatState
 		//tabEvent.add(new FlxText(10, 10, 0, 'W.I.P!!\nWill add stuff soon...'));
 		for(i in possibleEvents)
 			eventsLabels.push(i[0]);
-		eventDropDown = new FlxUIDropDownMenu(10, 110, FlxUIDropDownMenu.makeStrIdLabelArray(eventsLabels, true), function(daType:String)
+		/*eventDropDown = new FlxUIDropDownMenu(10, 110, FlxUIDropDownMenu.makeStrIdLabelArray(eventsLabels, true), function(daType:String)
 		{
 			//changeEventName(Std.parseInt(daType));
 			//updateEventLabel();
@@ -788,7 +796,15 @@ class ChartingState extends MusicBeatState
 			updateCurEventData();
 		});
 		eventDropDown.name = "dropdown_event";
-		eventDropDown.selectedLabel = 'none';
+		eventDropDown.selectedLabel = 'none';*/
+		eventButton = new FlxUIButton(10, 110, 'none', function() {
+			openSubState(new ChooserSubState(eventsLabels, EVENT, function(pick:String) {
+				eventButton.label.text = pick;
+				updateEventInfo();
+				updateCurEventData();
+			}));
+		});
+		eventButton.resize(125, 20);
 
 		eventValueInputs[0] = new FlxUIInputText(10, 30, 180, "", 8);
 		eventValueInputs[0].name = "event_value_1";
@@ -829,8 +845,8 @@ class ChartingState extends MusicBeatState
 		tabEvent.add(new FlxText(stepperEventSlot.x - 25, stepperEventSlot.y, 0, "Slot:"));
 		tabEvent.add(stepperEventSlot);
 		tabEvent.add(eventInfo = new FlxText(10, 135, 290, ""));
-		tabEvent.add(new FlxText(eventDropDown.x + eventDropDown.width + 2, eventDropDown.y + 3, ":Event"));
-		tabEvent.add(eventDropDown);
+		tabEvent.add(new FlxText(eventButton.x + eventButton.width + 2, eventButton.y + 3, ":Event"));
+		tabEvent.add(eventButton);
 
 		
 		/*
@@ -909,7 +925,7 @@ class ChartingState extends MusicBeatState
 	
 	function clearEventLabel(resetSlot:Bool = false)
 	{
-		eventDropDown.selectedLabel = 'none';
+		eventButton.label.text = 'none';
 		for(i in eventValueInputs)
 			i.text = '';
 		
@@ -919,7 +935,7 @@ class ChartingState extends MusicBeatState
 	function updateEventInfo()
 	{
 		eventInfo.graphic.dump();
-		eventInfo.text = possibleEvents[eventsLabels.indexOf(eventDropDown.selectedLabel)][1];
+		eventInfo.text = possibleEvents[eventsLabels.indexOf(eventButton.label.text)][1];
 	}
 	function updateEventLabel()
 	{
@@ -927,7 +943,7 @@ class ChartingState extends MusicBeatState
 		{
 			var daEvent:Array<Dynamic> = curSelectedEvent[2][Math.floor(stepperEventSlot.value)];
 			try{
-				eventDropDown.selectedLabel = daEvent[0];
+				eventButton.label.text = daEvent[0];
 				updateEventInfo();
 				for(i in 0...eventValueInputs.length)
 					eventValueInputs[i].text = daEvent[i + 1];
@@ -943,7 +959,7 @@ class ChartingState extends MusicBeatState
 		if(curSelectedEvent == null) return;
 
 		curSelectedEvent[2][Math.floor(stepperEventSlot.value)] = [
-			eventDropDown.selectedLabel,
+			eventButton.label.text,
 			eventValueInputs[0].text,
 			eventValueInputs[1].text,
 			eventValueInputs[2].text
@@ -1048,13 +1064,19 @@ class ChartingState extends MusicBeatState
 	{
 		if(curSelectedNote == null) return;
 
+		// updating notetype label
+		curNoteType = curSelectedNote[3];
+		if(!allNoteTypes.contains(curNoteType))
+			curNoteType = 'none';
+		noteTypeButton.label.text = curNoteType;
+
 		for(group in UI_box.members)
 		if(group is FlxUI)
 		{
 			var daGroup:FlxUI = cast group;
 			for(item in daGroup.members)
 			{
-				if(item is FlxUIDropDownMenu)
+				/*if(item is FlxUIDropDownMenu)
 				{
 					var dropdown:FlxUIDropDownMenu = cast item;
 					switch(dropdown.name)
@@ -1064,9 +1086,9 @@ class ChartingState extends MusicBeatState
 							if(!allNoteTypes.contains(curNoteType))
 								curNoteType = 'none';
 
-							dropdown.selectedLabel = curNoteType;
+							noteTypeButton.label.text = curNoteType;
 					}
-				}
+				}*/
 				if(item is FlxUINumericStepper)
 				{
 					var stepper:FlxUINumericStepper = cast item;

@@ -83,14 +83,10 @@ class SongData
 			songs: [
 				["blam", 			"pico"],
 				["-debug", 			"bf-pixel"],
-				["defeat", 			"black-impostor"],
-				["madness", 		"tricky"],
-				["expurgation", 	"tricky"],
-				["exploitation", 	"true-expunged"],
+				["useless",			"dad"],
 				["collision", 		"gemamugen"], // CU PINTO BOSTA
 				["lunar-odyssey",	"luano-day"],
 				["beep-power", 		"dad"],
-				["escape-from-california",	"moldygh"],
 			],
 			freeplayOnly: true,
 		},

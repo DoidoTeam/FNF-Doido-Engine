@@ -3,9 +3,9 @@ package data;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxState;
-import flixel.FlxSubState;
 import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIState;
+import flixel.addons.ui.FlxUISubState;
 import flixel.group.FlxGroup;
 //import data.Conductor.BPMChangeEvent;
 
@@ -86,7 +86,7 @@ class MusicBeatState extends FlxUIState
 	}
 }
 
-class MusicBeatSubState extends FlxSubState
+class MusicBeatSubState extends FlxUISubState
 {
 	var subParent:FlxState;
 
