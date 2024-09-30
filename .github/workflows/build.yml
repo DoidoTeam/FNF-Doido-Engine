@@ -2,6 +2,13 @@
 name: Build Doido Engine
 on:
   push:
+    paths-ignore:
+      - '.vscode/**'
+      - 'art/**'
+      - '.gitattributes'
+      - '.gitignore'
+      - 'README.md'
+      - 'ver.txt'
   workflow_dispatch:
 jobs:
   build-windows:
