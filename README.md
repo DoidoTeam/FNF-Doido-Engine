@@ -46,10 +46,5 @@ hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ## Songs used to test the engine
 #### Base FNF' Songs - Kawai Sprite
 #### [Blam](https://youtu.be/0ig_WF-YAp8?t=1417), [-Debug](https://youtu.be/0ig_WF-YAp8?t=1824) - Yoisabo
-#### [Defeat](https://youtu.be/WMjytiClUzw) - Rareblin
-#### [Madness](https://youtu.be/GZmoHrq0mEY) - Rozebud
-#### [Expurgation](https://youtu.be/WmXn3L5bQy4) - JADS
-#### [Exploitation](https://youtu.be/s_9iYNDN_bw) - Oxygen/Cyrus
 #### [Collision](https://youtu.be/Q6x0ylzN7L0), [Lunar Odyssey](https://youtu.be/N0HzDRY38js) - BeastlyChip♧
-#### [Beep Power](https://youtu.be/NamGMx1xYL4) - Moodyyaser
-#### [Escape From California](https://youtu.be/X9MOPEqq-j8) - MoldyGH
+#### [Useless V2](https://youtu.be/sgSeGm0i_BI?si=0Ep-aZcZakjzU5ff) - teles ft. Pi3tr0
