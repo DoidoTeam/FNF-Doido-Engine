@@ -120,9 +120,9 @@ class SplashNote extends FlxSprite
 			// only follows the strum if its not splashing
 			if(animation.curAnim.name != "splash")
 				setPosition(holdStrum.x, holdStrum.y);
-			
+
 			var holdPercent = (holdNote.holdHitLength / holdNote.holdLength);
-			if(holdNote.gotReleased || holdPercent >= 1.0)
+			if(holdStrum.animation.curAnim.name != "confirm" || holdPercent >= 1.0)
 			{
 				if(animation.curAnim.name != "splash")
 				{
@@ -131,6 +131,7 @@ class SplashNote extends FlxSprite
 						visible = false;
 				}
 			}
+			
 			if(animation.finished)
 			{
 				switch(animation.curAnim.name)
