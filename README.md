@@ -48,3 +48,4 @@ hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 #### [Blam](https://youtu.be/0ig_WF-YAp8?t=1417), [-Debug](https://youtu.be/0ig_WF-YAp8?t=1824) - Yoisabo
 #### [Collision](https://youtu.be/Q6x0ylzN7L0), [Lunar Odyssey](https://youtu.be/N0HzDRY38js) - BeastlyChip♧
 #### [Useless V2](https://youtu.be/sgSeGm0i_BI?si=0Ep-aZcZakjzU5ff) - teles ft. Pi3tr0
+#### [Beep Power](https://youtu.be/NamGMx1xYL4) - Moodyyaser
