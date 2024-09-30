@@ -183,6 +183,12 @@ class PlayState extends MusicBeatState
 
 		// loading scripts
 		var scriptPaths:Array<String> = Paths.getScriptArray(SONG.song);
+
+		#if !sys
+		// use this to run scripts in HTML5 or other non-sys targets
+		//scriptPaths.push("songs/bopeebo/script.hxc");
+		#end
+
 		for(path in scriptPaths)
 		{
 			var newScript:Iris = new Iris(Paths.script('$path'));
