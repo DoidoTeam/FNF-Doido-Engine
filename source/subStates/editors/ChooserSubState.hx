@@ -180,7 +180,12 @@ class ChooserCard extends FlxSpriteGroup
                 icon.loadGraphicFromSprite(uhhh);
 
             case EVENT:
-                icon.loadGraphic(Paths.image('notes/event_note'));
+                var eventName:String = name.toLowerCase().replace(' ', '_');
+
+                if(!Paths.fileExists('images/notes/events/$eventName.png'))
+                    eventName = "unknown_event";
+
+                icon.loadGraphic(Paths.image('notes/events/$eventName'));
 
             case NOTETYPE:
                 var note = new Note();

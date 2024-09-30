@@ -14,7 +14,7 @@ class EventNote extends Note
 
     override public function reloadSprite():Note
     {
-        loadGraphic(Paths.image('notes/event_note'));
+        loadGraphic(Paths.image('notes/events/event_note'));
         return this;
     }
 }
