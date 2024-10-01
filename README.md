@@ -57,7 +57,7 @@ hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 
 ### [doubleonikoo](https://bsky.app/profile/doubleonikoo.bsky.social) - is gonna make an actual logo for Doido Engine soon
 
-## [Contributors](https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors)
+## [Github Contributors](https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors)
 
 ## Special Thanks
 ### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip♧](https://www.youtube.com/@beastlychip_), [Bnyu](https://twitter.com/bnyu_official), [Evandro](https://twitter.com/Evandroo__), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama <33](https://twitter.com/sama_ziero)
