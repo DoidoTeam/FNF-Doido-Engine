@@ -118,6 +118,7 @@ class ChartingState extends MusicBeatState
 	var songLine:FlxSprite;
 	var infoTxt:FlxText;
 	var eventInfo:FlxText;
+	var controlTxt:FlxText;
 
 	var iconBf:HealthIcon;
 	var iconDad:HealthIcon;
@@ -211,6 +212,33 @@ class ChartingState extends MusicBeatState
 		//infoTxt.setFormat(Main.gFont, 20, 0xFFFFFFFF, LEFT);
 		infoTxt.scrollFactor.set();
 		add(infoTxt);
+
+
+		controlTxt = new FlxText(0, 0, 0, 
+			"- LMB to select a note
+			- RMB to delete a note
+			- Scroll Wheel, W or S to move the grid bar
+			- Hold SHIFT to move the grid bar faster
+			- A, D or Scroll (HOLDING CTRL) to change sections
+			- R to reload the current section
+			- Left and Right arrows to change grid snapping
+			- Z and X to change grid zoom
+			- SHIFT + R to return to the start of the song
+			- SPACE to play/pause the song
+			- ESC to test chart
+			- ENTER to play chart",
+		20);
+
+		controlTxt.size = 12;
+
+		var controlFormat:FlxTextFormat = new FlxTextFormat();
+		controlFormat.leading = -5;
+		controlTxt.addFormat(controlFormat);
+
+		controlTxt.scrollFactor.set();
+		controlTxt.y = FlxG.height - controlTxt.height + 110;
+		controlTxt.visible = true;
+		add(controlTxt);
 
 		var tabs = [
 			{name: "Song", 	  label: 'Song'},
@@ -425,11 +453,17 @@ class ChartingState extends MusicBeatState
 		playTicksDad.checked = playHitSounds[0];
 
 		var oldTimerCheck:FlxUICheckBox = null;
-		oldTimerCheck = new FlxUICheckBox(10, 250, null, null, 'Old Timer', 100, function() {
+		oldTimerCheck = new FlxUICheckBox(10, 250, null, null, 'Old Timer', 60, function() {
 			oldTimer = oldTimerCheck.checked;
 			updateInfoTxt();
 		});
 		oldTimerCheck.checked = oldTimer;
+
+		var controlsCheck:FlxUICheckBox = null;
+		controlsCheck = new FlxUICheckBox(110, 250, null, null, 'Controls', 60, function() {
+			controlTxt.visible = controlsCheck.checked;
+		});
+		controlsCheck.checked = controlTxt.visible;
 		
 		var stepperVolInst = new FlxUINumericStepper(110, 170, 0.1, 1, 0, 1.0, 2);
 		stepperVolInst.value = Conductor.bpm;
@@ -494,6 +528,7 @@ class ChartingState extends MusicBeatState
 		tabSong.add(playTicksBf);
 		tabSong.add(playTicksDad);
 		tabSong.add(oldTimerCheck);
+		tabSong.add(controlsCheck);
 		tabSong.add(new FlxText(stepperVolInst.x   + stepperVolInst.width,   stepperVolInst.y,   0, ' :Inst Volume'));
 		tabSong.add(new FlxText(stepperVolVoices.x + stepperVolVoices.width, stepperVolVoices.y, 0, ' :Voices Volume'));
 		tabSong.add(stepperVolInst);
