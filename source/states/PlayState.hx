@@ -247,17 +247,7 @@ class PlayState extends MusicBeatState
 		dad = new CharGroup(false, SONG.player2);
 		boyfriend = new CharGroup(true, SONG.player1);
 
-		for(event in unspawnEvents)
-		{
-			switch(event.eventName)
-			{
-				case 'Change Character':
-					strToChar(event.value1).addChar(event.value2);
-
-				case 'Change Stage':
-					gf.addChar(stageBuild.getGfVersion(event.value1));
-			}
-		}
+		preloadEvents(unspawnEvents);
 
 		characters.push(gf);
 		characters.push(dad);
@@ -1157,106 +1147,7 @@ class PlayState extends MusicBeatState
 				#if debug
 				trace('${daEvent.eventName} // ${daEvent.value1} // ${daEvent.value2} // ${daEvent.value3}');
 				#end
-				switch(daEvent.eventName)
-				{
-					case 'Play Animation':
-						var char = strToChar(daEvent.value1);
-						char.char.specialAnim = (CoolUtil.stringToBool(daEvent.value3) ? 2 : 1);
-						char.char.playAnim(daEvent.value2, true);
-
-					case 'Change Character':
-						var char = strToChar(daEvent.value1);
-						changeChar(char, daEvent.value2, (char != gf));
-					
-					case 'Change Stage':
-						changeStage(daEvent.value1);
-					
-					case 'Freeze Notes':
-						var affected:Array<Strumline> = [dadStrumline, bfStrumline];
-						switch(daEvent.value2) {
-							case "dad": affected.remove(bfStrumline);
-							case "bf"|"boyfriend": affected.remove(dadStrumline);
-						}
-						for(strumline in affected)
-							strumline.pauseNotes = CoolUtil.stringToBool(daEvent.value1);
-
-					case 'Change Note Speed':
-						for(strumline in strumlines)
-						{
-							if(strumline.scrollTween != null)
-								strumline.scrollTween.cancel();
-							var newSpeed:Float = CoolUtil.stringToFloat(daEvent.value1, 2);
-							var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 4);
-							if(duration <= 0)
-								strumline.scrollSpeed = newSpeed;
-							else
-							{
-								strumline.scrollTween = FlxTween.tween(
-									strumline, {scrollSpeed: Std.parseFloat(daEvent.value1)},
-									Std.parseFloat(daEvent.value2) * Conductor.stepCrochet / 1000,
-									{
-										ease: CoolUtil.stringToEase(daEvent.value3),
-									}
-								);
-							}
-						}
-
-					case 'Change Cam Zoom':
-						if(camZoomTween != null) camZoomTween.cancel();
-						var newZoom:Float  = CoolUtil.stringToFloat(daEvent.value1, 1);
-						var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 4);
-						if(duration <= 0)
-							defaultCamZoom = newZoom;
-						else
-						{
-							camZoomTween = FlxTween.tween(
-								PlayState, {defaultCamZoom: newZoom},
-								duration * Conductor.stepCrochet / 1000,
-								{
-									ease: CoolUtil.stringToEase(daEvent.value3),
-								}
-							);
-						}
-
-					case 'Change Cam Pos':
-						var x:Float = CoolUtil.stringToFloat(daEvent.value1, 0);
-						var y:Float = CoolUtil.stringToFloat(daEvent.value2, 0);
-						cameraSpeed = CoolUtil.stringToFloat(daEvent.value3, 1);
-	
-						if(daEvent.value1 == ""
-						|| daEvent.value2 == "")
-							forcedCamPos = null;
-						else {
-							forcedCamPos = new FlxPoint(
-								x,
-								y
-							);
-						}
-					
-					case 'Flash Screen':
-						CoolUtil.flash(
-							camGame,
-							Conductor.stepCrochet / 1000 * CoolUtil.stringToFloat(daEvent.value1, 2),
-							CoolUtil.stringToColor(daEvent.value2)
-						);
-
-					case 'Fade Screen':
-						camGame.fade(
-							CoolUtil.stringToColor(daEvent.value3),
-							CoolUtil.stringToFloat(daEvent.value2, 1) * Conductor.stepCrochet / 1000,
-							CoolUtil.stringToBool(daEvent.value1)
-						);
-
-					case 'Shake Screen':
-						var intensity:Float = CoolUtil.stringToFloat(daEvent.value1, 0.05);
-						var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 0.4);
-						var cam:FlxCamera = stringToCam(daEvent.value3);
-						
-						cam.shake(intensity, duration);
-					
-					case "Change Cam Section":
-						cameraSection = daEvent.value1;
-				}
+				onEventHit(daEvent);
 				eventCount++;
 			}
 		}
@@ -2018,5 +1909,121 @@ class PlayState extends MusicBeatState
 	{
 		SONG = SongData.loadFromJson(song, songDiff);
 		EVENTS = SongData.loadEventsJson(song, songDiff);
+	}
+
+	function preloadEvents(unspawnEvents:Array<EventNote>) {
+		for (event in unspawnEvents) {
+			switch(event.eventName) {
+				case 'Change Character':
+					strToChar(event.value1).addChar(event.value2);
+	
+				case 'Change Stage':
+					gf.addChar(stageBuild.getGfVersion(event.value1));
+			}
+		}
+
+	}
+
+	function onEventHit(daEvent:EventNote) {
+		switch(daEvent.eventName)
+		{
+			case 'Play Animation':
+				var char = strToChar(daEvent.value1);
+				char.char.specialAnim = (CoolUtil.stringToBool(daEvent.value3) ? 2 : 1);
+				char.char.playAnim(daEvent.value2, true);
+
+			case 'Change Character':
+				var char = strToChar(daEvent.value1);
+				changeChar(char, daEvent.value2, (char != gf));
+			
+			case 'Change Stage':
+				changeStage(daEvent.value1);
+			
+			case 'Freeze Notes':
+				var affected:Array<Strumline> = [dadStrumline, bfStrumline];
+				switch(daEvent.value2) {
+					case "dad": affected.remove(bfStrumline);
+					case "bf"|"boyfriend": affected.remove(dadStrumline);
+				}
+				for(strumline in affected)
+					strumline.pauseNotes = CoolUtil.stringToBool(daEvent.value1);
+
+			case 'Change Note Speed':
+				for(strumline in strumlines)
+				{
+					if(strumline.scrollTween != null)
+						strumline.scrollTween.cancel();
+					var newSpeed:Float = CoolUtil.stringToFloat(daEvent.value1, 2);
+					var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 4);
+					if(duration <= 0)
+						strumline.scrollSpeed = newSpeed;
+					else
+					{
+						strumline.scrollTween = FlxTween.tween(
+							strumline, {scrollSpeed: Std.parseFloat(daEvent.value1)},
+							Std.parseFloat(daEvent.value2) * Conductor.stepCrochet / 1000,
+							{
+								ease: CoolUtil.stringToEase(daEvent.value3),
+							}
+						);
+					}
+				}
+
+			case 'Change Cam Zoom':
+				if(camZoomTween != null) camZoomTween.cancel();
+				var newZoom:Float  = CoolUtil.stringToFloat(daEvent.value1, 1);
+				var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 4);
+				if(duration <= 0)
+					defaultCamZoom = newZoom;
+				else
+				{
+					camZoomTween = FlxTween.tween(
+						PlayState, {defaultCamZoom: newZoom},
+						duration * Conductor.stepCrochet / 1000,
+						{
+							ease: CoolUtil.stringToEase(daEvent.value3),
+						}
+					);
+				}
+
+			case 'Change Cam Pos':
+				var x:Float = CoolUtil.stringToFloat(daEvent.value1, 0);
+				var y:Float = CoolUtil.stringToFloat(daEvent.value2, 0);
+				cameraSpeed = CoolUtil.stringToFloat(daEvent.value3, 1);
+
+				if(daEvent.value1 == ""
+				|| daEvent.value2 == "")
+					forcedCamPos = null;
+				else {
+					forcedCamPos = new FlxPoint(
+						x,
+						y
+					);
+				}
+			
+			case 'Flash Screen':
+				CoolUtil.flash(
+					camGame,
+					Conductor.stepCrochet / 1000 * CoolUtil.stringToFloat(daEvent.value1, 2),
+					CoolUtil.stringToColor(daEvent.value2)
+				);
+
+			case 'Fade Screen':
+				camGame.fade(
+					CoolUtil.stringToColor(daEvent.value3),
+					CoolUtil.stringToFloat(daEvent.value2, 1) * Conductor.stepCrochet / 1000,
+					CoolUtil.stringToBool(daEvent.value1)
+				);
+
+			case 'Shake Screen':
+				var intensity:Float = CoolUtil.stringToFloat(daEvent.value1, 0.05);
+				var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 0.4);
+				var cam:FlxCamera = stringToCam(daEvent.value3);
+				
+				cam.shake(intensity, duration);
+			
+			case "Change Cam Section":
+				cameraSection = daEvent.value1;
+		}
 	}
 }
