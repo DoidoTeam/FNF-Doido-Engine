@@ -1,27 +1,44 @@
-# DOIDO ENGINE
+# FNF: DOIDO ENGINE
 <p align="center">
 <img src="https://www.newgrounds.com/dump/draw/27ed38c719b9761af970cac60f441e21">
 </p>
 
-## a friday night at freddys engine
+## Friday Night Funkin' Rewritten
 
-### YOU CAN ONLY COMPILE TO WINDOWS, LINUX AND HTML5 FOR NOW
-### note on html5: this is still a huge wip but you can test it out and if you find any bugs please report them
-this engine is basically the base friday night funkin' engine but rewritten entirelly from scratch in my way of codin', still uses haxeflixel btw
+FNF: Doido Engine is a rewritte of FNF's code, while still being written in HaxeFlixel and aiming to be familiar to anyone knowledged in other FNF hardcoded engines.
 
-### [Compiling and Source Guide](https://doidoteam.github.io/wiki/)
+## Features
 
+- Re-Organized Source Code
+- HScript-Iris support for softcoded Modcharts!
+- Support for spritesheet, animate atlas or Aseprite sprites
+- Erect Remix support
+- Customizable Note skins and types
+- Asset Modifier for notes, ratings, countdowns, etc...
+- New Chart Editor featuring Events
+- New Character Offset Editor
+- Optimized memory and CPU usage
+- Customizable loading screen
+- Easily customizable Options and Save data
+- In-game Crash Handler
 
-### [Haxe version is 4.3.3](https://haxe.org/download/version/4.3.3/)
-uhhh you gonna need the libraries too hold on
-### LIBRARIES
+and more!
+
+### Supports Windows, Linux and HTML5!
+
+## How to use
+For information on how to Build the engine, as well as guides for how to use it, please check out the [FNF: Doido Engine Wiki](https://doidoteam.github.io/wiki/)!
+
+### Versions
+The Engine is built in mind with the following versions in mind. Any others might not be supported.
 ```
+haxe 4.3.3
 lime 8.1.2
 openfl 9.3.3
 flixel 5.8.0
 flixel-addons 3.2.2
 flixel-ui 2.6.1
-hscript-iris 1.1.0
+hscript-iris https://github.com/crowplexus/hscript-iris
 flxanimate https://github.com/DoidoTeam/flxanimate
 hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ```
