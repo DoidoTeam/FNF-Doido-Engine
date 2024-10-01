@@ -1,5 +1,7 @@
 package subStates.editors;
 
+import flixel.util.FlxTimer;
+import gameObjects.hud.note.EventNote;
 import flixel.util.FlxColor;
 import gameObjects.hud.note.Note;
 import gameObjects.hud.HealthIcon;
@@ -38,6 +40,8 @@ class ChooserSubState extends MusicBeatSubState
         EVENT       => "",
         NOTETYPE    => "",
     ];
+
+    var chooseAlready:Bool = false;
 
     public function new(options:Array<String>, type:ChooserType, sendTo:String->Void)
     {
@@ -105,36 +109,48 @@ class ChooserSubState extends MusicBeatSubState
         super.update(elapsed);
         Controls.setSoundKeys(searchInput.hasFocus);
         // cancel
-        if(FlxG.keys.justPressed.ESCAPE)
-            close();
-
-        scrollY -= FlxG.mouse.wheel * 20;
-        scrollY = FlxMath.lerp(
-            scrollY,
-            FlxMath.bound(scrollY, minScrollY, maxScrollY),
-            elapsed * 12
-        );
-
-        for(card in cardsGrp.members)
+        if(!chooseAlready)
         {
-            card.y = FlxMath.lerp(card.y, 74 + card.yTo - scrollY, elapsed * 12);
-            if(!FlxG.mouse.overlaps(searchBG, cameras[0]))
-                card.hovered = FlxG.mouse.overlaps(card, cameras[0]);
-            else
-                card.hovered = false;
-
-            if(card.hovered)
+            if(FlxG.keys.justPressed.ESCAPE && !searchInput.hasFocus)
             {
-                card.bg.color = 0xFF777777;
-                if(FlxG.mouse.justPressed)
-                {
-                    if(sendTo != null)
-                        sendTo(card.text.text);
+                chooseAlready = true;
+                new FlxTimer().start(0.05, function(tmr) {
                     close();
-                }
+                });
+                return;
             }
-            else
-                card.bg.color = 0xFFFFFFFF;
+            
+            scrollY -= FlxG.mouse.wheel * 200 * elapsed;
+            scrollY = FlxMath.lerp(
+                scrollY,
+                FlxMath.bound(scrollY, minScrollY, maxScrollY),
+                elapsed * 12
+            );
+
+            for(card in cardsGrp.members)
+            {
+                card.y = FlxMath.lerp(card.y, 74 + card.yTo - scrollY, elapsed * 12);
+                if(!FlxG.mouse.overlaps(searchBG, cameras[0]))
+                    card.hovered = FlxG.mouse.overlaps(card, cameras[0]);
+                else
+                    card.hovered = false;
+
+                if(card.hovered)
+                {
+                    card.bg.color = 0xFF777777;
+                    if(FlxG.mouse.justPressed)
+                    {
+                        chooseAlready = true;
+                        new FlxTimer().start(0.05, function(tmr) {
+                            if(sendTo != null)
+                                sendTo(card.text.text);
+                            close();
+                        });
+                    }
+                }
+                else
+                    card.bg.color = 0xFFFFFFFF;
+            }
         }
     }
 
@@ -180,12 +196,7 @@ class ChooserCard extends FlxSpriteGroup
                 icon.loadGraphicFromSprite(uhhh);
 
             case EVENT:
-                var eventName:String = name.toLowerCase().replace(' ', '_');
-
-                if(!Paths.fileExists('images/notes/events/$eventName.png'))
-                    eventName = "unknown_event";
-
-                icon.loadGraphic(Paths.image('notes/events/$eventName'));
+                icon.loadGraphic(Paths.image(EventNote.getEventSprite(name)));
 
             case NOTETYPE:
                 var note = new Note();

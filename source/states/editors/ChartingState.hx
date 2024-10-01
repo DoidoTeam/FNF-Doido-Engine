@@ -788,15 +788,6 @@ class ChartingState extends MusicBeatState
 		//tabEvent.add(new FlxText(10, 10, 0, 'W.I.P!!\nWill add stuff soon...'));
 		for(i in possibleEvents)
 			eventsLabels.push(i[0]);
-		/*eventDropDown = new FlxUIDropDownMenu(10, 110, FlxUIDropDownMenu.makeStrIdLabelArray(eventsLabels, true), function(daType:String)
-		{
-			//changeEventName(Std.parseInt(daType));
-			//updateEventLabel();
-			updateEventInfo();
-			updateCurEventData();
-		});
-		eventDropDown.name = "dropdown_event";
-		eventDropDown.selectedLabel = 'none';*/
 		eventButton = new FlxUIButton(10, 110, 'none', function() {
 			openSubState(new ChooserSubState(eventsLabels, EVENT, function(pick:String) {
 				eventButton.label.text = pick;
@@ -818,13 +809,39 @@ class ChartingState extends MusicBeatState
 		eventValueInputs[2].name = "event_value_3";
 		addTypingShit(eventValueInputs[2]);
 
-		var clearSlots = new FlxButton(210, 250, "Clear Slots", function() {
+		var clearSingleSlot = new FlxButton(210, 220, "Clear This Slot", function() {
 			try {
 				if(curSelectedEvent != null)
 				{
-					curSelectedEvent[2] = [];
+					// dont clear the only event!!
+					if(curSelectedEvent[2].length <= 1)
+					{
+						curSelectedEvent[2][0] = ["none","","",""];
+						updateEventLabel();
+						clearEventLabel(true);
+					}
+					else
+					{
+						curSelectedEvent[2].remove(curSelectedEvent[2][Math.floor(stepperEventSlot.value)]);
+						if(stepperEventSlot.value > curSelectedEvent[2].length - 1)
+							stepperEventSlot.value -= 1;
+						updateEventLabel();
+					}
+					updateCurEventData();
+				}
+			} catch(e) {
+				trace('ja era, se lascou');
+			}
+		});
+
+		var clearSlots = new FlxButton(210, 250, "Clear All Slots", function() {
+			try {
+				if(curSelectedEvent != null)
+				{
+					curSelectedEvent[2] = [["none","","",""]];
 					updateEventLabel();
 					clearEventLabel(true);
+					updateCurEventData();
 				}
 			} catch(e) {
 				trace('ja era, se lascou');
@@ -841,6 +858,7 @@ class ChartingState extends MusicBeatState
 		tabEvent.add(eventValueInputs[1]);
 		tabEvent.add(new FlxText(10, eventValueInputs[2].y - 15, "Value 3:"));
 		tabEvent.add(eventValueInputs[2]);
+		tabEvent.add(clearSingleSlot);
 		tabEvent.add(clearSlots);
 		tabEvent.add(new FlxText(stepperEventSlot.x - 25, stepperEventSlot.y, 0, "Slot:"));
 		tabEvent.add(stepperEventSlot);
@@ -930,7 +948,10 @@ class ChartingState extends MusicBeatState
 			i.text = '';
 		
 		if(resetSlot)
+		{
 			stepperEventSlot.value = 0;
+			updateCurEventIcons();
+		}
 	}
 	function updateEventInfo()
 	{
@@ -972,6 +993,18 @@ class ChartingState extends MusicBeatState
 			{
 				event = curSelectedEvent;
 			}
+		}
+		//trace(curEventSprite.eventDataStuff);
+		updateCurEventIcons();
+	}
+
+	function updateCurEventIcons()
+	{
+		curEventSprite.eventDataStuff = [];
+		for(i in 0...curSelectedEvent[2].length)
+		{
+			curEventSprite.eventDataStuff.push(curSelectedEvent[2][i][0]);
+			curEventSprite.reloadSprites();
 		}
 	}
 
@@ -1326,6 +1359,17 @@ class ChartingState extends MusicBeatState
 						
 						if(event == curSelectedEvent)
 							curEventSprite = eventNote;
+
+						for(i in 0...event[2].length)
+						{
+							//trace(event[2][i]);
+							eventNote.eventDataStuff.push(event[2][i][0]);
+							eventNote.reloadSprites();
+							for(sprite in eventNote.eventSprites)
+								if(daSec != curSection)
+									sprite.alpha = 0.2;
+						}
+						//trace(eventNote.eventDataStuff);
 					}
 				}
 			}
@@ -1458,6 +1502,8 @@ class ChartingState extends MusicBeatState
 				} else {
 					curSelectedNote = null;
 					curSelectedEvent = event;
+					while(stepperEventSlot.value > curSelectedEvent[2].length - 1)
+						stepperEventSlot.value -= 1;
 					updateEventLabel();
 				}
 		}
@@ -1489,7 +1535,12 @@ class ChartingState extends MusicBeatState
 			if(curNoteSprite != null)
 				curNoteSprite.alpha = curAlpha;
 			if(curEventSprite != null)
+			{
 				curEventSprite.alpha = curAlpha;
+				var daSpr = curEventSprite.eventSprites[Math.floor(stepperEventSlot.value)];
+				if(daSpr != null)
+					daSpr.alpha = curAlpha;
+			}
 		}
 
 		if(!isTyping)
@@ -1617,9 +1668,13 @@ class ChartingState extends MusicBeatState
 					{
 						var lastEventData:Array<Dynamic> = [];
 						if(curSelectedEvent != null)
+						{
 							for(i in 0...curSelectedEvent[2].length)
 								lastEventData.push(curSelectedEvent[2][i]);
-
+						}
+						else
+							lastEventData = [["none", "", ""]];
+						
 						var newEvent:Array<Dynamic> = [curSection, note_time, lastEventData];
 						curSelectedEvent = newEvent;
 						EVENTS.songEvents.push(newEvent);

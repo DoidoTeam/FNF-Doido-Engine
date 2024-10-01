@@ -43,6 +43,7 @@ class TitleState extends MusicBeatState
 		}
 		
 		DiscordIO.changePresence("In Title Screen");
+		FlxG.mouse.visible = false;
 		
 		persistentUpdate = true;
 		Conductor.setBPM(102);
