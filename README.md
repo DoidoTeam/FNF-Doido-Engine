@@ -50,7 +50,7 @@ hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ### [DiogoTV](https://bsky.app/profile/diogotv.bsky.social) - Doido Engine's Owner and Main Coder
 ### [teles](https://youtube.com/@telesfnf) - Doido Engine's Additional Coder
 
-### [Anna The Fennec (GoldenFoxy)](https://twitter.com/goldenfoxy2604) - Main designer of Doido Engine's chart editor
+### [Anna The Fennec (GoldenFoxy)](https://bsky.app/profile/goldenfoxy.bsky.social) - Main designer of Doido Engine's chart editor
 ### [JulianoBeta](https://www.youtube.com/@prodjuyko) - Composed Doido Engine's offset menu music
 ### [CrowPlexus](https://github.com/crowplexus) - Creator of HScript Iris
 ### [yoisabo](https://bsky.app/profile/yoisabo.bsky.social) - Chart Editor's Event Icons Artist
@@ -60,7 +60,7 @@ hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ## [Github Contributors](https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors)
 
 ## Special Thanks
-### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip♧](https://www.youtube.com/@beastlychip_), [Bnyu](https://twitter.com/bnyu_official), [Evandro](https://twitter.com/Evandroo__), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama <33](https://twitter.com/sama_ziero)
+### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://www.youtube.com/@arturyoshi), [BeastlyChip♧](https://www.youtube.com/@beastlychip_), [Bnyu](https://twitter.com/bnyu_official), [Evandro](https://www.youtube.com/@evandrogabriel4531), [NxtVithor](https://bsky.app/profile/nxtvithor.bsky.social), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [ZieroSama <33](https://bsky.app/profile/samaziero.bsky.social)
 
 ## Songs used to test the engine
 #### Base FNF' Songs - Kawai Sprite
