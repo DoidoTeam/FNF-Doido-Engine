@@ -11,6 +11,7 @@ FNF: Doido Engine is a rewritte of FNF's code, while still being written in Haxe
 
 - Re-Organized Source Code
 - HScript-Iris support for softcoded Modcharts!
+- Full Controller Support
 - Support for spritesheet, animate atlas or Aseprite sprites
 - Erect Remix support
 - Customizable Note skins and types
