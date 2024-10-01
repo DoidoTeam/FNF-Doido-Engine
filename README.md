@@ -47,18 +47,20 @@ hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 <img src="https://www.newgrounds.com/dump/draw/5657fbf528979526e5e7da27e30cd2a7">
 </p>
 
-### [DiogoTV](https://twitter.com/DiogoTVV) - Owner and Main Coder
-### [teles](https://youtube.com/@telesfnf) - Additional Coder
+### [DiogoTV](https://bsky.app/profile/diogotv.bsky.social) - Doido Engine's Owner and Main Coder
+### [teles](https://youtube.com/@telesfnf) - Doido Engine's Additional Coder
 
-### [BeastlyNikoo](https://twitter.com/Mudoku__) - (WIP) Logo Artist
-### [Anna The Fennec (GoldenFoxy)](https://twitter.com/goldenfoxy2604) - Design help
-### [JulianoBeta](https://www.youtube.com/@prodjuyko) - Composed the offset menu music
+### [Anna The Fennec (GoldenFoxy)](https://twitter.com/goldenfoxy2604) - Main designer of Doido Engine's chart editor
+### [JulianoBeta](https://www.youtube.com/@prodjuyko) - Composed Doido Engine's offset menu music
+### [CrowPlexus](https://github.com/crowplexus) - Creator of HScript Iris
+### [yoisabo](https://bsky.app/profile/yoisabo.bsky.social) - Chart Editor's Event Icons Artist
 
-## Contributors
-### [CrowPlexus](https://twitter.com/crowplexus), [Gazozoz](https://x.com/Gazozoz_)
+### [doubleonikoo](https://bsky.app/profile/doubleonikoo.bsky.social) - is gonna make an actual logo for Doido Engine soon
+
+## [Contributors](https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors)
 
 ## Special Thanks
-### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip♧](https://www.youtube.com/@beastlychip_), [Bnyu](https://twitter.com/bnyu_official), [Evandro](https://twitter.com/Evandroo__), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama](https://twitter.com/sama_ziero)
+### [Anakim](https://www.youtube.com/@Anakim2), [ArturYoshi](https://twitter.com/yoshizitos), [BeastlyChip♧](https://www.youtube.com/@beastlychip_), [Bnyu](https://twitter.com/bnyu_official), [Evandro](https://twitter.com/Evandroo__), [NxtVithor](https://twitter.com/NxtVithor), [Pi3tr0](https://www.youtube.com/channel/UCEkf4h74pKFK9RO3FAze-7Q), [Raphalitos](https://www.youtube.com/@RaphaLitosReviews), [Yoisabo](https://twitter.com/abo_bora), [ZieroSama <33](https://twitter.com/sama_ziero)
 
 ## Songs used to test the engine
 #### Base FNF' Songs - Kawai Sprite
