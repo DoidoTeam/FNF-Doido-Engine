@@ -53,7 +53,7 @@ hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 
 ### [Anna The Fennec (GoldenFoxy)](https://bsky.app/profile/goldenfoxy.bsky.social) - Main designer of Doido Engine's chart editor
 ### [JulianoBeta](https://www.youtube.com/@prodjuyko) - Composed Doido Engine's offset menu music
-### [CrowPlexus](https://github.com/crowplexus) - Creator of HScript Iris
+### [crowplexus](https://github.com/crowplexus) - Creator of HScript Iris
 ### [yoisabo](https://bsky.app/profile/yoisabo.bsky.social) - Chart Editor's Event Icons Artist
 
 ### [doubleonikoo](https://bsky.app/profile/doubleonikoo.bsky.social) - is gonna make an actual logo for Doido Engine soon
