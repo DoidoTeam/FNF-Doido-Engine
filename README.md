@@ -51,7 +51,7 @@ hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ### [DiogoTV](https://bsky.app/profile/diogotv.bsky.social) - Doido Engine's Owner and Main Coder
 ### [teles](https://youtube.com/@telesfnf) - Doido Engine's Additional Coder
 
-### [Anna The Fennec (GoldenFoxy)](https://bsky.app/profile/goldenfoxy.bsky.social) - Main designer of Doido Engine's chart editor
+### [GoldenFoxy](https://bsky.app/profile/goldenfoxy.bsky.social) - Main designer of Doido Engine's chart editor
 ### [JulianoBeta](https://www.youtube.com/@prodjuyko) - Composed Doido Engine's offset menu music
 ### [crowplexus](https://github.com/crowplexus) - Creator of HScript Iris
 ### [yoisabo](https://bsky.app/profile/yoisabo.bsky.social) - Chart Editor's Event Icons Artist
