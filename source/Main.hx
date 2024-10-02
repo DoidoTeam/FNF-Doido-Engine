@@ -46,17 +46,15 @@ class Main extends Sprite
 			resetCamCache();
 		});
 		// Prevent flixel from listening to key inputs when switching fullscreen mode
+		// also lets you fullscreen with F11
 		// thanks @nebulazorua, @crowplexus, @diogotvv
-		FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, (e) ->
-		{
-			if (e.keyCode == FlxKey.ENTER && e.altKey)
-				e.stopImmediatePropagation();
-		}, false, 100);
-
 		FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, (e) ->
 		{
 			if (e.keyCode == FlxKey.F11)
 				FlxG.fullscreen = !FlxG.fullscreen;
+			
+			if (e.keyCode == FlxKey.ENTER && e.altKey)
+				e.stopImmediatePropagation();
 		}, false, 100);
 	}
 	
