@@ -67,9 +67,9 @@ class EventNote extends Note
     {
         var eventName:String = name.toLowerCase().replace(' ', '_');
 
-        if(!Paths.fileExists('images/notes/events/$eventName.png'))
+        if(!Paths.fileExists('images/notes/_other/events/$eventName.png'))
             eventName = "unknown_event";
 
-        return 'notes/events/$eventName';
+        return 'notes/_other/events/$eventName';
     }
 }

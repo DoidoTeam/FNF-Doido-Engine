@@ -53,8 +53,8 @@ class ControlsSubState extends MusicBeatSubState
         super();
         this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
         downMult = downscroll ? -1 : 1;
-        var bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
-        bg.color = 0xFF380038;
+        var bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuInvert'));
+        bg.color = 0xFFC500C5;
         bg.screenCenter();
         add(bg);
 

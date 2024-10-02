@@ -18,7 +18,9 @@ class Main extends Sprite
 {
 	public static var fpsCount:FPSCounter;
 
+	// Use these to customize your mod further!
 	public static final savePath:String = "DiogoTV/DoidoEngine";
+	public static var gFont:String = Paths.font("vcr.ttf");
 
 	public static var instance:Main;
 	@:unreflective
@@ -50,6 +52,12 @@ class Main extends Sprite
 			if (e.keyCode == FlxKey.ENTER && e.altKey)
 				e.stopImmediatePropagation();
 		}, false, 100);
+
+		FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, (e) ->
+		{
+			if (e.keyCode == FlxKey.F11)
+				FlxG.fullscreen = !FlxG.fullscreen;
+		}, false, 100);
 	}
 	
 	function resetCamCache()
@@ -72,7 +80,6 @@ class Main extends Sprite
 	}
 	
 	public static var activeState:FlxState;
-	public static var gFont:String = Paths.font("vcr.ttf");
 	
 	public static var skipClearMemory:Bool = false; // dont
 	public static var skipTrans:Bool = true; // starts on but it turns false inside Init

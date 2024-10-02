@@ -26,6 +26,14 @@ FNF: Doido Engine is a rewritte of FNF's code, while still being written in Haxe
 
 and more!
 
+## Planned Features
+
+These are features that are being discussed and COULD be added in the future (which doesn't mean they will be added so don't expect much).
+- GPU Caching
+- LoadSongState rewrite (LoadingState)
+- Improved Dialogue system
+- "Doido Week"
+
 ### Supports Windows, Linux and HTML5!
 
 ## How to use
@@ -70,3 +78,25 @@ hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 #### [Collision](https://youtu.be/Q6x0ylzN7L0), [Lunar Odyssey](https://youtu.be/N0HzDRY38js) - BeastlyChip♧
 #### [Useless V2](https://youtu.be/sgSeGm0i_BI?si=0Ep-aZcZakjzU5ff) - teles ft. Pi3tr0
 #### [Beep Power](https://youtu.be/NamGMx1xYL4) - Moodyyaser
+
+## Showcase
+
+<p align="center">
+<img src="https://doidoteam.github.io/img/readme/1main.png">
+</p>
+
+<p align="center">
+<img src="https://doidoteam.github.io/img/readme/6chart.png">
+</p>
+
+<p align="center">
+<img src="https://doidoteam.github.io/img/readme/7events.png">
+</p>
+
+<p align="center">
+<img src="https://doidoteam.github.io/img/readme/9character.png">
+</p>
+
+<p align="center">
+<img src="https://doidoteam.github.io/img/readme/10crash.png">
+</p>

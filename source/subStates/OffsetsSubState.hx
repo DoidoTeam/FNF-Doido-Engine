@@ -54,8 +54,8 @@ class OffsetsSubState extends MusicBeatSubState
         FlxG.sound.list.add(offsetMusic);
 
         downMult = downscroll ? -1 : 1;
-        var bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
-        bg.color = 0xFF1F0038;
+        var bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuInvert'));
+        bg.color = 0xFF7000CC;
         bg.screenCenter();
         add(bg);
 
@@ -269,6 +269,7 @@ class OffsetsSubState extends MusicBeatSubState
                         (i == 3)
                     );
                     strumline.notesGrp.add(note);
+                    note.offset.y -= 2000;
                     /*var note = new Note();
                     note.updateData(
                         (Math.floor(songPos / crochet) * crochet) + crochet * (i + 5),

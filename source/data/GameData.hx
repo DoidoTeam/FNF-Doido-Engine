@@ -41,6 +41,11 @@ class MusicBeatState extends FlxUIState
 	{
 		super.update(elapsed);
 		updateBeat();
+
+		if(FlxG.keys.justPressed.F5) {
+			Main.skipStuff();
+			Main.resetState();
+		}
 	}
 
 	private function updateBeat()
