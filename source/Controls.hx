@@ -24,7 +24,7 @@ enum DoidoKey
 	ACCEPT;
 	BACK;
 	PAUSE;
-
+	// none
 	NONE;
 }
 
@@ -202,10 +202,25 @@ class Controls
 
 	public static function load()
 	{
-		if(SaveData.saveControls.data.allControls == null
-		|| Lambda.count(allControls) != Lambda.count(SaveData.saveControls.data.allControls))
+		if(SaveData.saveControls.data.allControls == null)
 		{
 			SaveData.saveControls.data.allControls = allControls;
+		}
+
+		if(Lambda.count(allControls) != Lambda.count(SaveData.saveControls.data.allControls))
+		{
+			var oldControls:Map<String, Array<Dynamic>> = SaveData.saveControls.data.allControls;
+			
+			for(key => values in allControls) {
+				if(oldControls.get(key) == null)
+					oldControls.set(key, values);
+			}
+			for(key => values in oldControls) {
+				if(allControls.get(key) == null)
+					oldControls.remove(key);
+			}
+
+			SaveData.saveControls.data.allControls = allControls = oldControls;
 		}
 		
 		// allControls = SaveData.saveControls.data.allControls;

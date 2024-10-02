@@ -81,7 +81,7 @@ class CreditsState extends MusicBeatState
 		addCredit('teles', 				'teles', 	 0xFFFF95AC, "Doido Engine's Additional Coder",					'https://youtube.com/@telesfnf');
 		addCredit('GoldenFoxy',			'anna', 	 0xFFFFE100, "Main designer of Doido Engine's chart editor",		'https://bsky.app/profile/goldenfoxy.bsky.social');
 		addCredit('JulianoBeta', 		'juyko', 	 0xFF0BA5FF, "Composed Doido Engine's offset menu music",			'https://www.youtube.com/@prodjuyko');
-		addCredit('crowplexus',			'crowplexus',0xFF4E5357, "Creator of HScript Iris",							'https://github.com/crowplexus/hscript-iris');
+		addCredit('crowplexus',			'crowplexus',0xFF313538, "Creator of HScript Iris",							'https://github.com/crowplexus/hscript-iris');
 		addCredit('yoisabo',			'yoisabo',	 0xFF56EF19, "Chart Editor's Event Icons Artist",					'https://bsky.app/profile/yoisabo.bsky.social');
 		addCredit('doubleonikoo', 		'nikoo', 	 0xFF60458A, "is gonna make an actual logo for Doido Engine soon",	'https://bsky.app/profile/doubleonikoo.bsky.social');
 		addCredit('Github Contributors','github', 	 0xFFFFFFFF, 'Thank you\n${specialCoders}!!', 'https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors');
@@ -100,6 +100,7 @@ class CreditsState extends MusicBeatState
 			icon.loadGraphic(Paths.image('credits/${credit.icon}'));
 			grpItems.add(icon);
 
+			// big ears
 			if(credit.icon == "anna")
 				icon.offset.y = 30;
 

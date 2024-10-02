@@ -3,22 +3,20 @@ package subStates;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.sound.FlxSound;
 import data.Conductor;
 import data.GameData.MusicBeatSubState;
 import gameObjects.hud.HealthIcon;
-import gameObjects.hud.note.Strumline;
-import gameObjects.hud.note.Note;
 import gameObjects.menu.Alphabet;
 import gameObjects.menu.options.OptionSelector;
 import states.PlayState;
 
 class OffsetsSubState extends MusicBeatSubState
 {
-    var strumline:Strumline;
+    var strumline:OffsetStrumline;
 
     var downscroll:Bool = SaveData.data.get('Downscroll');
     var downMult:Int = 1;
@@ -76,11 +74,12 @@ class OffsetsSubState extends MusicBeatSubState
         changeAverageTxt('');
         add(averageTxt);
 
-        strumline = new Strumline(
+        /*strumline = new Strumline(
             FlxG.width - FlxG.width / 4, null,
             downscroll,
             true, true, PlayState.assetModifier
-        );
+        );*/
+        strumline = new OffsetStrumline(downscroll);
         add(strumline);
 
         grpOptions = new FlxTypedGroup<Alphabet>();
@@ -204,12 +203,14 @@ class OffsetsSubState extends MusicBeatSubState
             Controls.pressed(DOWN),
             Controls.pressed(UP),
             Controls.pressed(RIGHT),
+            FlxG.keys.pressed.SPACE,
         ];
         var justPressed:Array<Bool> = [
             Controls.justPressed(LEFT),
             Controls.justPressed(DOWN),
             Controls.justPressed(UP),
             Controls.justPressed(RIGHT),
+            FlxG.keys.justPressed.SPACE,
         ];
 
         cameras[0].zoom = FlxMath.lerp(cameras[0].zoom, 1.0, elapsed * 6);
@@ -263,44 +264,43 @@ class OffsetsSubState extends MusicBeatSubState
                 changeAverageTxt('');
                 for(i in 0...4)
                 {
-                    var note = new Note();
+                    var note = new OffsetNote(
+                        (Math.floor(songPos / crochet) * crochet) + crochet * (i + 5),
+                        (i == 3)
+                    );
+                    strumline.notesGrp.add(note);
+                    /*var note = new Note();
                     note.updateData(
                         (Math.floor(songPos / crochet) * crochet) + crochet * (i + 5),
                         i, (i == 3) ? "end_test" : "none", PlayState.assetModifier
                     );
                     note.reloadSprite();
                     strumline.addNote(note);
-                    note.x -= 1000;
+                    note.x -= 1000;*/
                 }
             }
         }
         else
         {
-            for(note in strumline.allNotes)
+            for(note in strumline.notesGrp)
             {
                 note.updateHitbox();
                 note.offset.x += note.frameWidth * note.scale.x / 2;
                 note.offset.y += note.frameHeight * note.scale.y / 2;
-                var thisStrum = strumline.strumGroup.members[note.noteData];
+                var thisStrum = strumline.strum;
                 
                 // follows the strum
-                var offsetX = note.noteOffset.x;
-                var offsetY = (note.songTime - songPos) * (strumline.scrollSpeed * 0.45);
-                
-                var noteAngle:Float = (note.noteAngle + thisStrum.strumAngle);
-                if(strumline.downscroll)
-                    noteAngle += 180;
+                var offsetY = (note.songTime - songPos) * (1.0 * 0.45);
                 
                 note.angle = thisStrum.angle;
-                CoolUtil.setNotePos(note, thisStrum, noteAngle, offsetX, offsetY);
+                CoolUtil.setNotePos(note, thisStrum, downscroll ? 180 : 0, 0, offsetY);
 
                 if(justPressed.contains(true))
                 {
                     if(Math.abs(note.songTime - songPos) <= 100
-                    && justPressed[note.noteData]
                     && note.visible)
                     {
-                        thisStrum.playAnim("confirm");
+                        strumline.playAnim("confirm");
                         note.visible = false;
                         notesHit++;
                         var noteDiff:Int = Math.floor(note.songTime - songPos);
@@ -308,7 +308,7 @@ class OffsetsSubState extends MusicBeatSubState
                         changeAverageTxt('${noteDiff}ms');
                     }
                 }
-                if(note.noteType == "end_test")
+                if(note.lastNote)
                 {
                     if(note.songTime - songPos <= -100 || !note.visible)
                     {
@@ -327,29 +327,81 @@ class OffsetsSubState extends MusicBeatSubState
             }
             if(!testingInput)
             {
-                for(note in strumline.allNotes)
-                    strumline.removeNote(note);
+                for(note in strumline.notesGrp)
+                    strumline.notesGrp.remove(note);
             }
         }
         
-        for(strum in strumline.strumGroup)
-		{
-            if(testingInput)
+        if(testingInput)
+        {
+            if(pressed.contains(true))
             {
-                if(pressed[strum.strumData])
-                {
-                    if(!["pressed", "confirm"].contains(strum.animation.curAnim.name))
-                        strum.playAnim("pressed");
-                }
-                else
-                    strum.playAnim("static");
+                if(!["pressed", "confirm"].contains(strumline.strum.animation.curAnim.name))
+                    strumline.playAnim("pressed");
             }
             else
-            {
-                if(strum.animation.curAnim.name != "static"
-                && strum.animation.curAnim.finished)
-                    strum.playAnim("static");
-            }
-		}
+                strumline.playAnim("static");
+        }
+        else
+        {
+            if(strumline.strum.animation.curAnim.name != "static"
+            && strumline.strum.animation.curAnim.finished)
+                strumline.playAnim("static");
+        }
+    }
+}
+class OffsetNote extends FlxSprite
+{
+    public var songTime:Float = 0.0;
+    public var lastNote:Bool = false;
+
+    public function new(songTime:Float = 0, lastNote:Bool = false)
+    {
+        super();
+        this.songTime = songTime;
+        this.lastNote = lastNote;
+        frames = Paths.getSparrowAtlas('notes/_other/offset/spacebar_note');
+        animation.addByPrefix('note', 'note', 0, false);
+        animation.play('note');
+        scale.set(0.7,0.7);
+        updateHitbox();
+    }
+}
+class OffsetStrumline extends FlxGroup
+{
+    public var strum:FlxSprite;
+    public var notesGrp:FlxTypedGroup<OffsetNote>;
+
+    public function new(downscroll:Bool)
+    {
+        super();
+        strum = new FlxSprite(FlxG.width - FlxG.width / 4, (downscroll ? FlxG.height - 110 : 110));
+        strum.frames = Paths.getSparrowAtlas('notes/_other/offset/spacebar_note');
+        for(i in ['static', 'pressed', 'confirm'])
+            strum.animation.addByPrefix(i, i, 24, false);
+        
+        strum.scale.set(0.7,0.7);
+        strum.updateHitbox();
+        playAnim('static', true);
+        add(strum);
+        add(notesGrp = new FlxTypedGroup<OffsetNote>());
+    }
+
+    override function update(elapsed:Float)
+    {
+        super.update(elapsed);
+        updateOffsets();
+    }
+
+    public function playAnim(animName:String, forced:Bool = false) {
+        strum.animation.play(animName, forced);
+        updateOffsets();
+    }
+
+    public function updateOffsets()
+    {
+        strum.updateHitbox();
+		strum.offset.x += strum.frameWidth * strum.scale.x / 2;
+		strum.offset.y += strum.frameHeight* strum.scale.y / 2;
     }
 }

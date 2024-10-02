@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="spacebar_note.png">
+	<!-- Created with Adobe Animate version 23.0.1.70 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="confirm0000" x="3" y="3" width="832" height="260" frameX="0" frameY="-2" frameWidth="832" frameHeight="264"/>
+	<SubTexture name="confirm0001" x="838" y="3" width="810" height="238" frameX="-11" frameY="-13" frameWidth="832" frameHeight="264"/>
+	<SubTexture name="confirm0002" x="3" y="266" width="814" height="264" frameX="-9" frameY="0" frameWidth="832" frameHeight="264"/>
+	<SubTexture name="confirm0003" x="820" y="266" width="814" height="264" frameX="-9" frameY="0" frameWidth="832" frameHeight="264"/>
+	<SubTexture name="note0000" x="3" y="533" width="651" height="127"/>
+	<SubTexture name="pressed0000" x="657" y="533" width="609" height="119" frameX="-7" frameY="-2" frameWidth="623" frameHeight="123"/>
+	<SubTexture name="pressed0001" x="1269" y="533" width="609" height="119" frameX="-7" frameY="-2" frameWidth="623" frameHeight="123"/>
+	<SubTexture name="pressed0002" x="3" y="663" width="623" height="123"/>
+	<SubTexture name="pressed0003" x="629" y="663" width="623" height="123"/>
+	<SubTexture name="static0000" x="1255" y="663" width="651" height="127"/>
+</TextureAtlas>
