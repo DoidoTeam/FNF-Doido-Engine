@@ -167,7 +167,7 @@ class FreeplayState extends MusicBeatState
 				PlayState.loadSong(curSong.name);
 				
 				if(!toChartEditor)
-					Main.switchState(new LoadSongState());
+					Main.switchState(new LoadingState());
 				else
 				{
 					if(ChartingState.SONG.song != PlayState.SONG.song)

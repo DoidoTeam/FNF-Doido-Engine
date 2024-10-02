@@ -34,7 +34,7 @@ import gameObjects.*;
 import gameObjects.hud.note.*;
 import gameObjects.hud.HealthIcon;
 import states.PlayState;
-import states.LoadSongState;
+import states.LoadingState;
 import subStates.editors.*;
 import haxe.Json;
 import lime.utils.Assets;
@@ -1616,7 +1616,7 @@ class ChartingState extends MusicBeatState
 				PlayState.songDiff = songDiff;
 				PlayState.SONG = SONG;
 				PlayState.EVENTS = EVENTS;
-				Main.switchState(new LoadSongState());
+				Main.switchState(new LoadingState());
 			}
 			
 			if(FlxG.keys.justPressed.ESCAPE)

@@ -1707,7 +1707,7 @@ class PlayState extends MusicBeatState
 			loadSong(playList[0]);
 			
 			//trace(playList);
-			Main.switchState(new LoadSongState());
+			Main.switchState(new LoadingState());
 		}
 	}
 

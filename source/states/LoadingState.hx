@@ -22,7 +22,7 @@ import sys.thread.Thread;
 *	preloads all the stuff before going into playstate
 *	i would advise you to put your custom preloads inside here!!
 */
-class LoadSongState extends MusicBeatState
+class LoadingState extends MusicBeatState
 {
 	var threadActive:Bool = true;
 

@@ -179,7 +179,7 @@ class StoryMenuState extends MusicBeatState
 					PlayState.playList = songList;
 					PlayState.loadSong(songList[0]);
 					
-					Main.switchState(new LoadSongState());
+					Main.switchState(new LoadingState());
 				});
 			}
 			

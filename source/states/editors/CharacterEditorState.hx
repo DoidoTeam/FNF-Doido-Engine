@@ -422,7 +422,7 @@ class CharacterEditorState extends MusicBeatState
 			CoolUtil.playMusic();
 			FlxG.mouse.visible = false;
 			if(wasPlayState)
-				Main.switchState(new LoadSongState());
+				Main.switchState(new LoadingState());
 			else
 				Main.switchState(new states.menu.MainMenuState());
 		}
