@@ -19,40 +19,45 @@ class Paths
 	public static var renderedSounds:Map<String, Sound> = [];
 
 	// idk
-	public static function getPath(key:String):String
-		return 'assets/$key';
+	public static function getPath(key:String, ?library:String):String
+	{
+		if(library == null)
+			return 'assets/$key';
+		else
+			return 'assets/$library/$key';
+	}
 	
-	public static function fileExists(filePath:String):Bool
+	public static function fileExists(filePath:String, ?library:String):Bool
 		#if desktop
-		return sys.FileSystem.exists(getPath(filePath));
+		return sys.FileSystem.exists(getPath(filePath, library));
 		#else
-		return openfl.Assets.exists(getPath(filePath));
+		return openfl.Assets.exists(getPath(filePath, library));
 		#end
 	
-	public static function getSound(key:String):Sound
+	public static function getSound(key:String, ?library:String):Sound
 	{
 		if(!renderedSounds.exists(key))
 		{
-			if(!fileExists('$key.ogg')) {
+			if(!fileExists('$key.ogg', library)) {
 				trace('$key.ogg doesnt exist');
 				key = 'sounds/beep';
 			}
 			renderedSounds.set(key,
 				#if desktop
-				Sound.fromFile(getPath('$key.ogg'))
+				Sound.fromFile(getPath('$key.ogg', library))
 				#else
-				openfl.Assets.getSound(getPath('$key.ogg'))
+				openfl.Assets.getSound(getPath('$key.ogg', library))
 				#end
 			);
 		}
 		return renderedSounds.get(key);
 	}
-	public static function getGraphic(key:String):FlxGraphic
+	public static function getGraphic(key:String, ?library:String):FlxGraphic
 	{
 		if(key.endsWith('.png'))
 			key = key.substring(0, key.lastIndexOf('.png'));
-		var path = getPath('images/$key.png');
-		if(Paths.fileExists('images/$key.png'))
+		var path = getPath('images/$key.png', library);
+		if(fileExists('images/$key.png', library))
 		{
 			if(!renderedGraphics.exists(key))
 			{
@@ -127,11 +132,11 @@ class Paths
 		}
 	}
 	
-	public static function music(key:String):Sound
-		return getSound('music/$key');
+	public static function music(key:String, ?library:String):Sound
+		return getSound('music/$key', library);
 	
-	public static function sound(key:String):Sound
-		return getSound('sounds/$key');
+	public static function sound(key:String, ?library:String):Sound
+		return getSound('sounds/$key', library);
 
 	public static function songPath(key:String, diff:String):String
 	{
@@ -148,25 +153,25 @@ class Paths
 	public static function vocals(song:String, diff:String = ''):Sound
 		return getSound(songPath('$song/Voices', diff));
 	
-	public static function image(key:String):FlxGraphic
-		return getGraphic(key);
+	public static function image(key:String, ?library:String):FlxGraphic
+		return getGraphic(key, library);
 	
-	public static function font(key:String):String
-		return getPath('fonts/$key');
+	public static function font(key:String, ?library:String):String
+		return getPath('fonts/$key', library);
 
-	public static function text(key:String):String
-		return Assets.getText(getPath('$key.txt')).trim();
+	public static function text(key:String, ?library:String):String
+		return Assets.getText(getPath('$key.txt', library)).trim();
 
-	public static function getContent(filePath:String):String
+	public static function getContent(filePath:String, ?library:String):String
 		#if desktop
-		return sys.io.File.getContent(getPath(filePath));
+		return sys.io.File.getContent(getPath(filePath, library));
 		#else
-		return openfl.Assets.getText(getPath(filePath));
+		return openfl.Assets.getText(getPath(filePath, library));
 		#end
 
-	public static function json(key:String):Dynamic
+	public static function json(key:String, ?library:String):Dynamic
 	{
-		var rawJson = getContent('$key.json').trim();
+		var rawJson = getContent('$key.json', library).trim();
 
 		while(!rawJson.endsWith("}"))
 			rawJson = rawJson.substr(0, rawJson.length - 1);
@@ -174,8 +179,8 @@ class Paths
 		return Json.parse(rawJson);
 	}
 
-	public static function script(key:String):String
-		return getContent('$key');
+	public static function script(key:String, ?library:String):String
+		return getContent('$key', library);
 
 	public static function getScriptArray(?song:String):Array<String>
 	{
@@ -189,28 +194,28 @@ class Paths
 		return arr;
 	}
 
-	public static function video(key:String):String
-		return getPath('videos/$key.mp4');
+	public static function video(key:String, ?library:String):String
+		return getPath('videos/$key.mp4', library);
 	
 	// sparrow (.xml) sheets
-	public static function getSparrowAtlas(key:String)
-		return FlxAtlasFrames.fromSparrow(getGraphic(key), getPath('images/$key.xml'));
+	public static function getSparrowAtlas(key:String, ?library:String)
+		return FlxAtlasFrames.fromSparrow(getGraphic(key, library), getPath('images/$key.xml', library));
 	
 	// packer (.txt) sheets
-	public static function getPackerAtlas(key:String)
-		return FlxAtlasFrames.fromSpriteSheetPacker(getGraphic(key), getPath('images/$key.txt'));
+	public static function getPackerAtlas(key:String, ?library:String)
+		return FlxAtlasFrames.fromSpriteSheetPacker(getGraphic(key, library), getPath('images/$key.txt', library));
 
 	// aseprite (.json) sheets
-	public static function getAsepriteAtlas(key:String)
-		return FlxAtlasFrames.fromAseprite(getGraphic(key), getPath('images/$key.json'));
+	public static function getAsepriteAtlas(key:String, ?library:String)
+		return FlxAtlasFrames.fromAseprite(getGraphic(key, library), getPath('images/$key.json', library));
 		
-	public static function readDir(dir:String, ?type:String, ?removeType:Bool = true):Array<String>
+	public static function readDir(dir:String, ?type:String, ?removeType:Bool = true, ?library:String):Array<String>
 	{
 		var theList:Array<String> = [];
 		
 		try {
 			#if desktop
-			var rawList = sys.FileSystem.readDirectory(getPath(dir));
+			var rawList = sys.FileSystem.readDirectory(getPath(dir, library));
 			for(i in 0...rawList.length)
 			{
 				if(type != null) {
@@ -268,7 +273,7 @@ class Paths
 				var countName:String = ["ready", "set", "go"][i - 1];
 				
 				var spritePath:String = PlayState.countdownModifier;
-				if(!Paths.fileExists('images/hud/$spritePath/$countName.png'))
+				if(!fileExists('images/hud/$spritePath/$countName.png'))
 					spritePath = 'base';
 				
 				preGraphics.push('hud/$spritePath/$countName');
@@ -282,20 +287,20 @@ class Paths
 			preloadSound(i);
 	}
 
-	public static function preloadGraphic(key:String)
+	public static function preloadGraphic(key:String, ?library:String)
 	{
 		// no point in preloading something already loaded duh
 		if(renderedGraphics.exists(key)) return;
 
-		var what = new FlxSprite().loadGraphic(image(key));
+		var what = new FlxSprite().loadGraphic(image(key, library));
 		FlxG.state.add(what);
 		FlxG.state.remove(what);
 	}
-	public static function preloadSound(key:String)
+	public static function preloadSound(key:String, ?library:String)
 	{
 		if(renderedSounds.exists(key)) return;
 
-		var what = new FlxSound().loadEmbedded(getSound(key), false, false);
+		var what = new FlxSound().loadEmbedded(getSound(key, library), false, false);
 		what.play();
 		what.stop();
 	}

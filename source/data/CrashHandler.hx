@@ -52,22 +52,24 @@ class CrashHandler extends Sprite
                 field.wordWrap = true;
                 field.width = _stage.stageWidth - 48;
             }
-            field.x = (_stage.stageWidth - field.width) / 2;
             field.autoSize = CENTER;
         }
+        errorField.x = (_stage.stageWidth - errorField.width) / 2;
         errorField.text = 'THE GAME HAS CRASHED\n\n${stack}';
         #if sys
         errorField.text += '\n\nCrash log created at: "${path}"';
         #end
         errorField.y = fontSize;
+
         pressField.text = 'Press ESCAPE to return to main menu\nPress ENTER to open github issues';
+        pressField.x = (_stage.stageWidth - pressField.width) - fontSize;
         pressField.y = _stage.stageHeight - pressField.height - fontSize;
 
         imgData = Assets.getBitmapData("assets/images/crash.png");
         var crashImg = new Bitmap(imgData);
         crashImg.width = crashImg.width * (windowSize / 720);
         crashImg.height = crashImg.height * (windowSize / 720);
-        crashImg.x = (_stage.stageWidth - crashImg.width) / 2;
+        crashImg.x = (_stage.stageWidth - crashImg.width) - fontSize;// / 2;
         crashImg.y = (_stage.stageHeight- crashImg.height - pressField.height - 32);
 
         if(showBuddy)
@@ -77,7 +79,7 @@ class CrashHandler extends Sprite
         addChild(pressField);
 
         if(!SaveData.saveSettings.data.muted) {
-            crashSnd = Sound.fromFile("assets/sounds/crash.ogg");
+            crashSnd = Assets.getSound("assets/sounds/crash.ogg", false);
             trans = new SoundTransform(SaveData.saveSettings.data.volume, 0);
             channel = crashSnd.play(0, 1, trans);
         }
