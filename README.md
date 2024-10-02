@@ -22,6 +22,7 @@ FNF: Doido Engine is a rewritte of FNF's code, while still being written in Haxe
 - Customizable loading screen
 - Easily customizable Options and Save data
 - In-game Crash Handler
+- Chart auto-saving
 
 and more!
 
