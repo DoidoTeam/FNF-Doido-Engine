@@ -36,7 +36,7 @@
         "name": "hscript-iris",
         "type": "git",
         "dir": null,
-        "ref": "main",
+        "ref": "master",
         "url": "https://github.com/crowplexus/hscript-iris"
       },
       {
