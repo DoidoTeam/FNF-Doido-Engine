@@ -46,7 +46,7 @@
 	<haxelib name="flixel-addons" />
 	<haxelib name="flixel-ui" />
 	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
-	<haxelib name="flxanimate"/>
+	<haxelib name="flxanimate-doido"/>
 
 	<!--Used only for flixel's debugger!-->
 	<haxelib name="hscript" if="debug" />
