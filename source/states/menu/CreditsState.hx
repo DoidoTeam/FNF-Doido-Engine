@@ -77,6 +77,7 @@ class CreditsState extends MusicBeatState
 		// :D
 		
 		// btw you dont need to credit everyone here on your mod, just credit doido engine as a whole and we're good
+		addCredit('TheUnknownKoala', 'theunknownkoala', 0x0095FEFF, "The owner of this shitty fork lol (icon by vibreee)", 'https://www.youtube.com/@TheUnknownKoala4545');
 		addCredit('DiogoTV', 			'diogotv', 	 0xFFC385FF, "Doido Engine's Owner and Main Coder", 				'https://bsky.app/profile/diogotv.bsky.social');
 		addCredit('teles', 				'teles', 	 0xFFFF95AC, "Doido Engine's Additional Coder",					'https://youtube.com/@telesfnf');
 		addCredit('GoldenFoxy',			'anna', 	 0xFFFFE100, "Main designer of Doido Engine's chart editor",		'https://bsky.app/profile/goldenfoxy.bsky.social');
