@@ -158,7 +158,7 @@ class TitleState extends MusicBeatState
 				case 14:
 					addText(['Funkin'], false);
 				case 15:
-					addText(['Doido Engine'], false);
+					addText(['Domyn Engine'], false);
 
 				case 16:
 					skipIntro();
