@@ -1,5 +1,5 @@
 name: Engine Bugs/Errors
-description: Report bugs with the engine. Any compiling issues should be put in Help
+description: Report bugs with the engine. Any compiling issues should be put in Help.
 labels: [bug]
 body:
   - type: textarea
