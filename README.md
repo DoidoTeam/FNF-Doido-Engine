@@ -49,7 +49,7 @@ flixel 5.8.0
 flixel-addons 3.2.2
 flixel-ui 2.6.1
 hscript-iris https://github.com/crowplexus/hscript-iris
-flxanimate https://github.com/DoidoTeam/flxanimate
+flxanimate-doido https://github.com/DoidoTeam/flxanimate-doido
 hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ```
 
