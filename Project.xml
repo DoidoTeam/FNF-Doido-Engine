@@ -43,9 +43,10 @@
 	<assets path="assets" />
 
 	<!-- RENAME UNDERSCORE FOLDERS -->
-	<assets path="assets/images/characters/_offsets" 	rename="assets/images/characters/offsets" if="RENAME_UNDERSCORE"/>
-	<assets path="assets/images/notes/_other" 			rename="assets/images/notes/other" 	      if="RENAME_UNDERSCORE"/>
-	
+	<section if="RENAME_UNDERSCORE">
+		<assets path="assets/images/characters/_offsets" 	rename="assets/images/characters/offsets"/>
+		<assets path="assets/images/notes/_other" 		rename="assets/images/notes/other"/>
+	</section>
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
