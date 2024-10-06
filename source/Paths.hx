@@ -21,10 +21,26 @@ class Paths
 	// idk
 	public static function getPath(key:String, ?library:String):String
 	{
+		var path:String = key;
+
+		#if RENAME_UNDERSCORE
+		var pathArray:Array<String> = key.split("/");
+		var loopCount = 0;
+		path = "";
+
+		for (folder in pathArray) {
+			if(folder.startsWith("_"))
+				folder.substr(1);
+
+			loopCount++;
+			path += folder + (loopCount == pathArray.length ? "" : "/");
+		}
+		#end
+
 		if(library == null)
-			return 'assets/$key';
+			return 'assets/$path';
 		else
-			return 'assets/$library/$key';
+			return 'assets/$library/$path';
 	}
 	
 	public static function fileExists(filePath:String, ?library:String):Bool
