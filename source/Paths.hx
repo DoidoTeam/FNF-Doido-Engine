@@ -19,28 +19,30 @@ class Paths
 	public static var renderedSounds:Map<String, Sound> = [];
 
 	// idk
-	public static function getPath(key:String, ?library:String):String
-	{
-		var path:String = key;
-
+	public static function getPath(key:String, ?library:String):String {
 		#if RENAME_UNDERSCORE
-		var pathArray:Array<String> = key.split("/");
+		var pathArray:Array<String> = key.split("/").copy();
 		var loopCount = 0;
-		path = "";
+		key = "";
 
 		for (folder in pathArray) {
+			var truFolder:String = folder;
+
 			if(folder.startsWith("_"))
-				folder.substr(1);
+				truFolder = folder.substr(1);
 
 			loopCount++;
-			path += folder + (loopCount == pathArray.length ? "" : "/");
+			key += truFolder + (loopCount == pathArray.length ? "" : "/");
 		}
+
+		if(library != null)
+			library = (library.startsWith("_") ? library.split("_")[1] : library);
 		#end
 
 		if(library == null)
-			return 'assets/$path';
+			return 'assets/$key';
 		else
-			return 'assets/$library/$path';
+			return 'assets/$library/$key';
 	}
 	
 	public static function fileExists(filePath:String, ?library:String):Bool
