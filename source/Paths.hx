@@ -68,6 +68,7 @@ class Paths
 				#end
 			);
 		}
+		trace('created new sound $key');
 		return renderedSounds.get(key);
 	}
 	public static function getGraphic(key:String, ?library:String):FlxGraphic

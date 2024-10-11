@@ -12,6 +12,7 @@ import data.SongData.SwagSong;
 import gameObjects.*;
 import gameObjects.hud.*;
 import gameObjects.hud.note.*;
+import gameObjects.Dialogue;
 
 #if PRELOAD_SONG
 import sys.thread.Mutex;
@@ -144,6 +145,15 @@ class LoadingState extends MusicBeatState
 
 			trace('preloaded music');
 			loadPercent = 0.75;
+
+			var dialData:DialogueData = data.DialogueUtil.loadFromSong(SONG.song);
+			if(dialData.pages.length > 0) {
+				var dial = new Dialogue();
+				dial.load(dialData);
+				addBehind(dial);
+			}
+
+			loadPercent = 0.85;
 			
 			// add custom preloads here!!
 			switch(SONG.song)
@@ -151,7 +161,7 @@ class LoadingState extends MusicBeatState
 				default:
 					trace('preloaded NOTHING extra lol');
 			}
-			loadPercent = 0.9;
+			loadPercent = 0.95;
 			
 			loadPercent = 1.0;
 			trace('finished loading');
