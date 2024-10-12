@@ -53,6 +53,13 @@ flxanimate-doido https://github.com/DoidoTeam/flxanimate-doido
 hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
 ```
 
+## Licenses
+
+The code in FNF': Doido Engine and it's core original assets are licensed under the Apache 2.0 license: (https://www.apache.org/licenses/LICENSE-2.0).
+Some assets, including the "Friday Night Funkin'" name and logo, are property of The Funkin' Crew Inc. and all rights are reserved to it.
+Some other assets, such as test sprites and music, are used under permission from their creators, and so, have their rights reserved to whoever created them.
+
+
 <p align="center">
 <img src="https://www.newgrounds.com/dump/draw/5657fbf528979526e5e7da27e30cd2a7">
 </p>
