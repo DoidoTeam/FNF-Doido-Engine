@@ -34,10 +34,10 @@ class DialogueUtil
 							// character
 							char: 'senpai',
 							
-							text: 'Ah, a new fair maiden has come in\nsearch of true love!',
+							text: 'Ah, a new fair maiden has come in search of true love!',
 						},
 						{
-							text: 'A serenade between gentlemen shall\ndecide where her beautiful heart shall\nreside.'
+							text: 'A serenade between gentlemen shall decide where her beautiful heart shall reside.'
 						},
 						{
 							char: 'bf-pixel',
@@ -51,7 +51,7 @@ class DialogueUtil
 					pages:[
 						{
 							boxSkin: 'school',
-							fontFamily: 'pixel.otf',
+							fontFamily: 'Alphabet',
 							fontColor: 0xFF3F2021,
 							fontScale: 0.8,
 							
@@ -64,7 +64,7 @@ class DialogueUtil
 							text: 'Not bad for an ugly worm.',
 						},
 						{
-							text: "But this time I'll rip your nuts off\nright after your girlfriend finishes\ngargling mine."
+							text: "But this time I'll rip your nuts off right after your girlfriend finishes gargling mine."
 						},
 						{
 							char: 'bf-pixel',
@@ -85,20 +85,20 @@ class DialogueUtil
 							// character
 							char:  'spirit',
 							
-							text: 'Direct contact with real humans, after\nbeing trapped in here for so long...',
+							text: 'Direct contact with real humans, after being trapped in here for so long...',
 						},
 						{
 							text: "and HER of all people."
 						},
 						{
-							text: "I'll make her father pay for what he's done\nto me and all the others...."
+							text: "I'll make her father pay for what he's done to me and all the others...."
 						},
 						{
 							text: "I'll beat you and make you take my place."
 						},
 						{
 							fontColor: 0xFFFF0000,
-							text: "You don't mind your bodies being borrowed\nright?"
+							text: "You don't mind your bodies being borrowed right?"
 						},
 						{
 							fontScale: 2.5,

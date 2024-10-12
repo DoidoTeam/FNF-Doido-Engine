@@ -28,6 +28,7 @@ typedef DialoguePage = {
 	var ?fontFamily:String;
 	var ?fontScale:Float;
 	var ?fontColor:Int;
+	var ?fontBold:Bool;
 	// text border
 	var ?fontBorderType:FlxTextBorderStyle;
 	var ?fontBorderColor:Int;
@@ -48,9 +49,8 @@ class Dialogue extends FlxGroup
 		text.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 		text.antialiasing = false;
 		
-		textAlphabet = new Alphabet(0,0,"",true);
+		textAlphabet = new Alphabet(0,0,"",false);
 		textAlphabet.visible = false;
-		add(textAlphabet);
 		
 		bg = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFF000000);
 		bg.screenCenter();
@@ -60,6 +60,7 @@ class Dialogue extends FlxGroup
 		add(grpChar);
 		add(box);
 		add(text);
+		add(textAlphabet);
 	}
 	
 	public var data:DialogueData;
@@ -84,7 +85,7 @@ class Dialogue extends FlxGroup
 		for(page in data.pages)
 		{
 			if(page.boxSkin != null)
-				box.reloadBox(page.boxSkin);
+				reloadBox(page.boxSkin);
 			//if(page.char != null)
 			//	char.reloadChar(page.char);
 			if(page.char != null)
@@ -173,7 +174,7 @@ class Dialogue extends FlxGroup
 			var swagPage = data.pages[curPage];
 			
 			if(swagPage.boxSkin != null)
-				box.reloadBox(swagPage.boxSkin);
+				reloadBox(swagPage.boxSkin);
 			
 			if(swagPage.fontFamily != null)
 			{
@@ -212,6 +213,11 @@ class Dialogue extends FlxGroup
 				text.color = swagPage.fontColor;
 				textAlphabet.color = swagPage.fontColor;
 			}
+			if(swagPage.fontBold != null)
+			{
+				text.bold = swagPage.fontBold;
+				textAlphabet.bold = swagPage.fontBold;
+			}
 			
 			if(swagPage.text != null)
 			{
@@ -242,6 +248,12 @@ class Dialogue extends FlxGroup
 		{
 			finishCallback();
 		}
+	}
+
+	function reloadBox(skin:String) {
+		box.reloadBox(skin);
+		text.fieldWidth = box.fieldWidth;
+		textAlphabet.fieldWidth = box.fieldWidth;
 	}
 }
 class DialogueChar extends FlxSprite
@@ -331,6 +343,7 @@ class DialogueBox extends FlxSprite
 	
 	public var txtPos:FlxPoint = new FlxPoint();
 	public var boxSkin:String = "default";
+	public var fieldWidth:Float = 0;
 	public function reloadBox(boxSkin:String = "default"):DialogueBox
 	{
 		this.boxSkin = boxSkin;
@@ -347,15 +360,19 @@ class DialogueBox extends FlxSprite
 				fakeAnimate([0.05, 0.15, 0.5, 0.88, 1.0], 12, false);
 				
 				txtPos.set(85,70);
+				fieldWidth = 800;
 				
 			case "school-evil":
 				makeGraphic(190 * 5, 42 * 5, 0xFF000000);
 				
 				fakeAnimate([0.05, 0.15, 0.5, 0.98, 1.0], 12, true);
+
+				fieldWidth = (190*5) - 40;
 				
 			default:
 				boxSkin = "default";
 				makeGraphic(Std.int(FlxG.width * 0.9), Std.int(FlxG.height * 0.32), 0xFF000000);
+				fieldWidth = Std.int(FlxG.width * 0.9) - 40;
 		}
 		
 		screenCenter(X);
