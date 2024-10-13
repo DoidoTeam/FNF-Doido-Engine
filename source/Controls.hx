@@ -79,6 +79,9 @@ class Controls
 	}
 
 	public static function checkMobile(bind:DoidoKey, inputState:FlxInputState) {
+		if(!SaveData.data.get("Touch Controls"))
+			return false;
+		
 		switch(bind) {
 			case UI_UP:
 				return MobileUtil.swipeUp && (inputState == JUST_PRESSED || inputState == PRESSED);
@@ -89,11 +92,9 @@ class Controls
 			case UI_RIGHT:
 				return MobileUtil.swipeRight && (inputState == JUST_PRESSED || inputState == PRESSED);
 			case ACCEPT:
-				return MobileUtil.justReleased && !MobileUtil.swipeAny && !MobileUtil.back && !MobileUtil.virtualPad.justPressed(BACK);
+				return MobileUtil.justReleased && !MobileUtil.swipeAny && !MobileUtil.back && !MobileUtil.virtualPad.pressed(BACK);
 			case BACK:
-				return MobileUtil.back || MobileUtil.virtualPad.justPressed(BACK);
-			case PAUSE:
-				return MobileUtil.back || MobileUtil.virtualPad.justPressed(PAUSE);
+				return MobileUtil.back || MobileUtil.virtualPad.justReleased(BACK);
 			default:
 				return false;
 		}

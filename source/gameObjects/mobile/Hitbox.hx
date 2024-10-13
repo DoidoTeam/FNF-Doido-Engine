@@ -29,7 +29,7 @@ class Hitbox extends FlxSpriteGroup
 
 		var hint:FlxSprite = new FlxSprite(0, 0);
 		hint.loadGraphic(Paths.image('android/hitbox/$assetModifier/hints'));
-		hint.alpha = 0.2;
+		hint.alpha = (SaveData.data.get("Hitbox Opacity") / 10) * 0.2;
 		add(hint);
 
 		add(buttonLeft = 	createhitbox(0, "left"));
@@ -54,19 +54,19 @@ class Hitbox extends FlxSpriteGroup
 		button.onDown.callback = function (){
 			if (tween != null)
 				tween.cancel();
-			tween = FlxTween.num(button.alpha, 0.75, .075, {ease: FlxEase.circInOut}, function (a:Float) { button.alpha = a; });
+			tween = FlxTween.num(button.alpha, SaveData.data.get("Hitbox Opacity") / 10, 0.075, {ease: FlxEase.circInOut}, function (a:Float) { button.alpha = a; });
 		};
 
 		button.onUp.callback = function (){
 			if (tween != null)
 				tween.cancel();
-			tween = FlxTween.num(button.alpha, 0, .15, {ease: FlxEase.circInOut}, function (a:Float) { button.alpha = a; });
+			tween = FlxTween.num(button.alpha, 0, 0.15, {ease: FlxEase.circInOut}, function (a:Float) { button.alpha = a; });
 		}
 		
 		button.onOut.callback = function (){
 			if (tween != null)
 				tween.cancel();
-			tween = FlxTween.num(button.alpha, 0, .15, {ease: FlxEase.circInOut}, function (a:Float) { button.alpha = a; });
+			tween = FlxTween.num(button.alpha, 0, 0.15, {ease: FlxEase.circInOut}, function (a:Float) { button.alpha = a; });
 		}
 
 		return button;

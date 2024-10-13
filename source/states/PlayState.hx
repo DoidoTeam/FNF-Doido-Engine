@@ -987,6 +987,9 @@ class PlayState extends MusicBeatState
 		if(Controls.justPressed(PAUSE))
 			pauseSong();
 
+		if(virtualPad.justPressed(PAUSE))
+			pauseSong();
+		
 		if(Controls.justPressed(RESET))
 			startGameOver();
 		
@@ -1002,6 +1005,10 @@ class PlayState extends MusicBeatState
 
 				DiscordIO.changePresence(presenceTxt, false);
 			}
+		}
+
+		if(!paused) {
+			virtualPad.buttonBack.alpha = (SaveData.data.get("Button Opacity") / 10);
 		}
 
 		/*if(!FlxG.mouse.visible) FlxG.mouse.visible = true;
@@ -1721,6 +1728,8 @@ class PlayState extends MusicBeatState
 		}
 		
 		weekScore += Timings.score;
+
+		playList.remove(playList[0]);
 		
 		if(playList.length <= 0)
 		{
@@ -1737,7 +1746,6 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			playList.remove(playList[0]);
 			loadSong(playList[0]);
 			
 			//trace(playList);
@@ -1754,6 +1762,8 @@ class PlayState extends MusicBeatState
 	public function pauseSong()
 	{
 		if(!startedCountdown || endedSong || paused || isDead) return;
+
+		virtualPad.buttonBack.alpha = 0;
 		
 		paused = true;
 		activateTimers(false);
