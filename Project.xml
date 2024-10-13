@@ -24,14 +24,13 @@
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" />
 
 	<!--Mobile-specific-->
-	<window if="mobile" orientation="landscape" fullscreen="true" resizable="false" />
+	<window if="mobile" orientation="landscape" fullscreen="true" resizable="false" allow-shaders="true" allow-high-dpi="true"/>
 
 	<!-- _____________________________ Custom Defines ___________________________ -->
 
 	<define name="DISCORD_RPC" 			if="desktop" unless="web || neko || air" />
 	<define name="PRELOAD_SONG" 		if="desktop" unless="debug" />
 	<define name="RENAME_UNDERSCORE" 	if="html5 || android"/>
-
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
@@ -41,6 +40,8 @@
 
 	<source path="source" />
 	<assets path="assets" />
+
+	<assets path="art/android" rename="assets"/>
 
 	<!-- RENAME UNDERSCORE FOLDERS -->
 	<section if="RENAME_UNDERSCORE">
@@ -75,8 +76,8 @@
 	<!--<haxedef name="FLX_NO_NATIVE_CURSOR" />-->
 
 	<!--Optimise inputs, be careful you will get null errors if you don't use conditionals in your game-->
-	<haxedef name="FLX_NO_MOUSE" if="mobile" />
-	<haxedef name="FLX_NO_KEYBOARD" if="mobile" />
+	<!--<haxedef name="FLX_NO_MOUSE" if="mobile" />-->
+	<!--<haxedef name="FLX_NO_KEYBOARD" if="mobile" />-->
 	<haxedef name="FLX_NO_TOUCH" if="desktop" />
 	<!--<haxedef name="FLX_NO_GAMEPAD" />-->
 

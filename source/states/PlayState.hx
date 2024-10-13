@@ -36,6 +36,7 @@ import shaders.*;
 import states.editors.*;
 import states.menu.*;
 import subStates.*;
+import gameObjects.mobile.Hitbox;
 
 using StringTools;
 
@@ -122,6 +123,8 @@ class PlayState extends MusicBeatState
 	public static var startedSong:Bool = false;
 	
 	public static var instance:PlayState;
+
+	var hitbox:Hitbox;
 	
 	// paused
 	public static var paused:Bool = false;
@@ -477,6 +480,12 @@ class PlayState extends MusicBeatState
 		}
 		else
 			startCountdown();
+
+		hitbox = new Hitbox();
+		hitbox.cameras = [camOther];
+		add(hitbox);
+		
+		data.MobileUtil.createVPad(PAUSE, this);
 
 		callScript("createPost");
 	}
@@ -1116,6 +1125,26 @@ class PlayState extends MusicBeatState
 		if(startedCountdown)
 			Conductor.songPos += elapsed * 1000;
 
+		#if mobile
+		pressed = [
+			hitbox.buttonLeft.pressed,
+			hitbox.buttonDown.pressed,
+			hitbox.buttonUp.pressed,
+			hitbox.buttonRight.pressed
+		];
+		justPressed = [
+			hitbox.buttonLeft.justPressed,
+			hitbox.buttonDown.justPressed,
+			hitbox.buttonUp.justPressed,
+			hitbox.buttonRight.justPressed
+		];
+		released = [
+			hitbox.buttonLeft.released,
+			hitbox.buttonDown.released,
+			hitbox.buttonUp.released,
+			hitbox.buttonRight.released
+		];
+		#else
 		pressed = [
 			Controls.pressed(LEFT),
 			Controls.pressed(DOWN),
@@ -1134,6 +1163,7 @@ class PlayState extends MusicBeatState
 			Controls.released(UP),
 			Controls.released(RIGHT),
 		];
+		#end
 		
 		playerSinging = false;
 

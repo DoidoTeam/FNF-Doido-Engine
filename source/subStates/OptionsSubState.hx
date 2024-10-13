@@ -38,6 +38,7 @@ class OptionsSubState extends MusicBeatSubState
             "Unfocus Freeze",
             #end
             "Countdown on Unpause",
+            "Invert Swipes",
             #if DISCORD_RPC
             "Discord RPC"
             #end
