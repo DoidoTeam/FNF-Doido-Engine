@@ -51,7 +51,7 @@ class DialogueUtil
 					pages:[
 						{
 							boxSkin: 'school',
-							fontFamily: 'pixel.otf',
+							fontFamily: 'Alphabet',
 							fontColor: 0xFF3F2021,
 							fontScale: 0.8,
 							
