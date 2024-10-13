@@ -151,6 +151,34 @@ class SaveData
 		],
 		/*
 		*
+		* MOBILE
+		* 
+		*/
+		"Invert Swipes" => [
+			"OFF",
+			SELECTOR,
+			"Inverts the direction of the swipes.",
+			["HORIZONTAL", "VERTICAL", "BOTH", "OFF"],
+		],
+		"Touch Controls" => [
+			true,
+			CHECKMARK,
+			"Decides whether to use Touch Controls. WARNING: IF YOU DISABLE YOU WILL NEED A CONTROLLER OR KEYBOARD TO ENABLE"
+		],
+		"Button Opacity" => [
+			5,
+			SELECTOR,
+			"Decides the transparency of the virtual buttons.",
+			[0, 10]
+		],
+		"Hitbox Opacity" => [
+			7,
+			SELECTOR,
+			"Decides the transparency of the playing Hitboxes.",
+			[0, 10]
+		],
+		/*
+		*
 		* EXTRA STUFF
 		* 
 		*/
@@ -248,6 +276,7 @@ class SaveData
 
 	public static function updateWindowSize()
 	{
+		#if desktop
 		if(FlxG.fullscreen) return;
 		var ws:Array<String> = data.get("Window Size").split("x");
         	var windowSize:Array<Int> = [Std.parseInt(ws[0]),Std.parseInt(ws[1])];
@@ -257,5 +286,6 @@ class SaveData
 		// centering the window
 		FlxG.stage.window.x = Math.floor(Capabilities.screenResolutionX / 2 - windowSize[0] / 2);
 		FlxG.stage.window.y = Math.floor(Capabilities.screenResolutionY / 2 - (windowSize[1] + 16) / 2);
+		#end
 	}
 }

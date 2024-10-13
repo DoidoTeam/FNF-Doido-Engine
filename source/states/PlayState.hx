@@ -36,6 +36,7 @@ import shaders.*;
 import states.editors.*;
 import states.menu.*;
 import subStates.*;
+import gameObjects.mobile.*;
 
 using StringTools;
 
@@ -122,6 +123,9 @@ class PlayState extends MusicBeatState
 	public static var startedSong:Bool = false;
 	
 	public static var instance:PlayState;
+
+	var hitbox:Hitbox;
+	var virtualPad:VPad;
 	
 	// paused
 	public static var paused:Bool = false;
@@ -161,6 +165,7 @@ class PlayState extends MusicBeatState
 			if(!['collision'].contains(SONG.song))
 				countdownModifier = "pixel";
 		}
+
 		if(FlxG.random.bool(0.01))
 			assetModifier = "doido";
 	}
@@ -477,6 +482,14 @@ class PlayState extends MusicBeatState
 		}
 		else
 			startCountdown();
+
+		hitbox = new Hitbox(assetModifier);
+		hitbox.cameras = [camOther];
+		add(hitbox);
+
+		virtualPad = new VPad(PAUSE);
+		virtualPad.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+		add(virtualPad);
 
 		callScript("createPost");
 	}
@@ -974,6 +987,9 @@ class PlayState extends MusicBeatState
 		if(Controls.justPressed(PAUSE))
 			pauseSong();
 
+		if(virtualPad.justPressed(PAUSE))
+			pauseSong();
+		
 		if(Controls.justPressed(RESET))
 			startGameOver();
 		
@@ -989,6 +1005,10 @@ class PlayState extends MusicBeatState
 
 				DiscordIO.changePresence(presenceTxt, false);
 			}
+		}
+
+		if(!paused) {
+			virtualPad.buttonBack.alpha = (SaveData.data.get("Button Opacity") / 10);
 		}
 
 		/*if(!FlxG.mouse.visible) FlxG.mouse.visible = true;
@@ -1116,6 +1136,26 @@ class PlayState extends MusicBeatState
 		if(startedCountdown)
 			Conductor.songPos += elapsed * 1000;
 
+		#if mobile
+		pressed = [
+			hitbox.buttonLeft.pressed,
+			hitbox.buttonDown.pressed,
+			hitbox.buttonUp.pressed,
+			hitbox.buttonRight.pressed
+		];
+		justPressed = [
+			hitbox.buttonLeft.justPressed,
+			hitbox.buttonDown.justPressed,
+			hitbox.buttonUp.justPressed,
+			hitbox.buttonRight.justPressed
+		];
+		released = [
+			hitbox.buttonLeft.released,
+			hitbox.buttonDown.released,
+			hitbox.buttonUp.released,
+			hitbox.buttonRight.released
+		];
+		#else
 		pressed = [
 			Controls.pressed(LEFT),
 			Controls.pressed(DOWN),
@@ -1134,6 +1174,7 @@ class PlayState extends MusicBeatState
 			Controls.released(UP),
 			Controls.released(RIGHT),
 		];
+		#end
 		
 		playerSinging = false;
 
@@ -1721,6 +1762,8 @@ class PlayState extends MusicBeatState
 	public function pauseSong()
 	{
 		if(!startedCountdown || endedSong || paused || isDead) return;
+
+		virtualPad.buttonBack.alpha = 0;
 		
 		paused = true;
 		activateTimers(false);

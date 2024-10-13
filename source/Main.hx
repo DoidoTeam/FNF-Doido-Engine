@@ -31,7 +31,7 @@ class Main extends Sprite
 		super();
 		instance = this;
 
-		addChild(game = new DoidoGame(0, 0, Init, 120, 120, true));
+		addChild(game = new DoidoGame(1280, 720, Init, 120, 120, true));
 
 		#if desktop
 		fpsCount = new FPSCounter(10, 3);
