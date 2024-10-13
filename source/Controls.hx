@@ -1,6 +1,5 @@
 package;
 
-import data.MobileUtil;
 import flixel.FlxG;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
@@ -73,32 +72,6 @@ class Controls
 				return true;
 		}
 
-		return checkMobile(rawBind, inputState);
-
-		//return false;
-	}
-
-	public static function checkMobile(bind:DoidoKey, inputState:FlxInputState) {
-		if(!SaveData.data.get("Touch Controls"))
-			return false;
-		
-		switch(bind) {
-			case UI_UP:
-				return MobileUtil.swipeUp && (inputState == JUST_PRESSED || inputState == PRESSED);
-			case UI_DOWN:
-				return MobileUtil.swipeDown && (inputState == JUST_PRESSED || inputState == PRESSED);
-			case UI_LEFT:
-				return MobileUtil.swipeLeft && (inputState == JUST_PRESSED || inputState == PRESSED);
-			case UI_RIGHT:
-				return MobileUtil.swipeRight && (inputState == JUST_PRESSED || inputState == PRESSED);
-			case ACCEPT:
-				return MobileUtil.justReleased && !MobileUtil.swipeAny && !MobileUtil.back && !MobileUtil.virtualPad.pressed(BACK);
-			case BACK:
-				return MobileUtil.back || MobileUtil.virtualPad.justReleased(BACK);
-			default:
-				return false;
-		}
-	
 		return false;
 	}
 
@@ -111,7 +84,7 @@ class Controls
 	//THIS IS A TEMP FIX!!!! CHANGE LATER!!!!
 	inline public static function stringToBind(bind:String):DoidoKey
 	{
-		#if !windows
+		#if linux
 		switch(bind) {
 			case "LEFT":
 				return LEFT;

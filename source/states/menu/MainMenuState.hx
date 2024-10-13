@@ -121,8 +121,6 @@ class MainMenuState extends MusicBeatState
 
 		changeSelection();
 		bg.y = bgPosY;
-
-		data.MobileUtil.createVPad(BACK, this);
 	}
 	
 	//var itemSin:Float = 0;

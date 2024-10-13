@@ -22,7 +22,6 @@ class OptionsSubState extends MusicBeatSubState
         "preferences",
         "gameplay",
         "appearance",
-        "mobile",
         "adjust offsets",
         "controls",
     ];
@@ -65,19 +64,11 @@ class OptionsSubState extends MusicBeatSubState
 			"Ratings on HUD",
 			"Song Timer",
 		],
-        "mobile" => [
-            "Invert Swipes",
-            "Button Opacity",
-            "Hitbox Opacity"
-        ]
 	];
     
     var restartTimer:Float = 0;
     var forceRestartOptions:Array<String> = [ // options that you gotta restart the song for them to reload sorry
         "Ghost Tapping", // you can't cheat >:]
-
-        // im lazy dude
-        "Hitbox Opacity"
     ];
     var reloadOptions:Array<String> = [ // options that need some manual reloading on playstate when changed
         "Antialiasing",
@@ -161,8 +152,6 @@ class OptionsSubState extends MusicBeatSubState
         add(infoTxt);
 
         spawnItems('main');
-
-        data.MobileUtil.createVPad(BACK, this);
     }
 
     var inputDelay:Float = 0.1;

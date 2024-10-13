@@ -41,7 +41,7 @@ class ControlsSubState extends MusicBeatSubState
     var curSelected:Int = 0;
     var optionShit:Array<String> = [
         'edit binds',
-        'clear binds'
+        'clear binds',
     ];
 
     var bindArrows:FlxTypedGroup<FlxText>;
@@ -57,10 +57,6 @@ class ControlsSubState extends MusicBeatSubState
         bg.color = 0xFFC500C5;
         bg.screenCenter();
         add(bg);
-
-        //#if mobile
-        optionShit.push("back");
-        //#end
 
         strumline = new Strumline(FlxG.width / 2, null, false, true, true, PlayState.assetModifier);
         strumline.downscroll = downscroll;
@@ -481,8 +477,6 @@ class ControlsSubState extends MusicBeatSubState
                     }
                     Controls.save();
                     spawnBinds();
-                case 'back':
-                    close();
             }
         }
 

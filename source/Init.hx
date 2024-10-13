@@ -13,10 +13,6 @@ class Init extends MusicBeatState
 		super.create();
 		SaveData.init();
 		data.Discord.DiscordIO.initialize();
-
-		#if android
-		FlxG.android.preventDefaultKeys = [BACK];
-		#end
 				
 		FlxG.fixedTimestep = false;
 		FlxG.mouse.useSystemCursor = true;
@@ -25,8 +21,6 @@ class Init extends MusicBeatState
 		
 		for(i in 0...Paths.dumpExclusions.length)
 			Paths.preloadGraphic(Paths.dumpExclusions[i].replace('.png', ''));
-
-		data.MobileUtil.createVPad(BLANK, null);
 
 		firstState();
 	}

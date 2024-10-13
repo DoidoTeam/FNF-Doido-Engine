@@ -53,10 +53,6 @@ class OffsetsSubState extends MusicBeatSubState
         offsetMusic.play();
         FlxG.sound.list.add(offsetMusic);
 
-        #if mobile
-        optionShit.push("Back");
-        #end
-
         downMult = downscroll ? -1 : 1;
         var bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuInvert'));
         bg.color = 0xFF7000CC;
@@ -235,7 +231,7 @@ class OffsetsSubState extends MusicBeatSubState
             if(Controls.justPressed(UI_DOWN))
                 changeOption(1);
         
-            if(curSelected < 2)
+            if(curSelected != 2)
             {
                 if(Controls.justPressed(UI_LEFT)) {
                     holdTimer = 0;
@@ -259,42 +255,30 @@ class OffsetsSubState extends MusicBeatSubState
             }
             else if(Controls.justPressed(ACCEPT))
             {
-                switch(optionShit[curSelected])
+                trace('started testing!!');
+                testingInput = true;
+                changeOption();
+                countdown = 0;
+                notesHit = 0;
+                offsetAverage = 0;
+                changeAverageTxt('');
+                for(i in 0...4)
                 {
-                    case "Test Input":
-                        trace('started testing!!');
-                        testingInput = true;
-                        changeOption();
-                        countdown = 0;
-                        notesHit = 0;
-                        offsetAverage = 0;
-                        changeAverageTxt('');
-                        for(i in 0...4)
-                        {
-                            var note = new OffsetNote(
-                                (Math.floor(songPos / crochet) * crochet) + crochet * (i + 5),
-                                (i == 3)
-                            );
-                            strumline.notesGrp.add(note);
-                            note.offset.y -= 2000;
-                            /*var note = new Note();
-                            note.updateData(
-                                (Math.floor(songPos / crochet) * crochet) + crochet * (i + 5),
-                                i, (i == 3) ? "end_test" : "none", PlayState.assetModifier
-                            );
-                            note.reloadSprite();
-                            strumline.addNote(note);
-                            note.x -= 1000;*/
-                        }
-
-                    case "Back":
-                        cameras[0].zoom = 1.0;
-                        offsetMusic.stop();
-                        if(FlxG.sound.music != null)
-                            FlxG.sound.music.play();
-                        close();
+                    var note = new OffsetNote(
+                        (Math.floor(songPos / crochet) * crochet) + crochet * (i + 5),
+                        (i == 3)
+                    );
+                    strumline.notesGrp.add(note);
+                    note.offset.y -= 2000;
+                    /*var note = new Note();
+                    note.updateData(
+                        (Math.floor(songPos / crochet) * crochet) + crochet * (i + 5),
+                        i, (i == 3) ? "end_test" : "none", PlayState.assetModifier
+                    );
+                    note.reloadSprite();
+                    strumline.addNote(note);
+                    note.x -= 1000;*/
                 }
-
             }
         }
         else

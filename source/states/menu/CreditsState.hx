@@ -117,8 +117,6 @@ class CreditsState extends MusicBeatState
 			//item.x = FlxG.width + 200;
 		}
 		changeSelection();
-
-		data.MobileUtil.createVPad(BACK, this);
 	}
 
 	function changeSelection(change:Int = 0)

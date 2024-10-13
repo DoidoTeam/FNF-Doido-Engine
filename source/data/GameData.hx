@@ -31,8 +31,6 @@ class MusicBeatState extends FlxUIState
 		Main.skipStuff(false);
 		curStep = _curStep = Conductor.calcStateStep();
 		curBeat = Math.floor(curStep / 4);
-
-		data.MobileUtil.createVPad(BLANK, null);
 	}
 
 	private var _curStep = 0; // actual curStep
