@@ -33,8 +33,8 @@ class OptionsSubState extends MusicBeatSubState
             #end
             "Flashing Lights",
             "Cutscenes",
-            #if desktop
             "FPS Counter",
+            #if desktop
             "Unfocus Freeze",
             #end
             "Countdown on Unpause",
@@ -47,18 +47,14 @@ class OptionsSubState extends MusicBeatSubState
 			"Ghost Tapping",
 			"Downscroll",
 			"Middlescroll",
-            #if desktop
             "Framerate Cap",
-            #end
             "Hitsounds",
             "Hitsound Volume",
 		],
 		"appearance" => [
             "Note Splashes",
             "Hold Splashes",
-            #if desktop
 			"Antialiasing",
-            #end
             "Split Holds",
             "Static Hold Anim",
             "Single Rating",
