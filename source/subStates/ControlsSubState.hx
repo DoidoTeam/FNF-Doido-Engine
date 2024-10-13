@@ -437,7 +437,7 @@ class ControlsSubState extends MusicBeatSubState
         if(Controls.justPressed(BACK))
         {
             if(changinBinds == 0)
-                close();
+                FlxG.resetState()();
             if(changinBinds == 1)
             {
                 changinBinds = 0;
@@ -482,7 +482,7 @@ class ControlsSubState extends MusicBeatSubState
                     Controls.save();
                     spawnBinds();
                 case 'back':
-                    close();
+                    FlxG.resetState()();
             }
         }
 
