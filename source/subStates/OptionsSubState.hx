@@ -194,7 +194,7 @@ class OptionsSubState extends MusicBeatSubState
                 else
                 {
                     CoolUtil.playMusic();
-                    close();
+                    FlxG.resetState();
                 }
             }
             else
