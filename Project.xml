@@ -28,7 +28,7 @@
 
 	<!-- _____________________________ Custom Defines ___________________________ -->
 
-	<define name="DISCORD_RPC" 			if="desktop" unless="web || neko || air" />
+	<define name="DISCORD_RPC" 			if="cpp" unless="android" />
 	<define name="PRELOAD_SONG" 		if="desktop" unless="debug" />
 	<define name="RENAME_UNDERSCORE" 	if="html5 || android"/>
 

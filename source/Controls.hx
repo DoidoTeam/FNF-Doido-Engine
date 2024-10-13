@@ -89,9 +89,11 @@ class Controls
 			case UI_RIGHT:
 				return MobileUtil.swipeRight && (inputState == JUST_PRESSED || inputState == PRESSED);
 			case ACCEPT:
-				return MobileUtil.justReleased && !MobileUtil.swipeAny && !MobileUtil.back;
-			case BACK | PAUSE:
+				return MobileUtil.justReleased && !MobileUtil.swipeAny && !MobileUtil.back && !MobileUtil.virtualPad.justPressed(BACK);
+			case BACK:
 				return MobileUtil.back || MobileUtil.virtualPad.justPressed(BACK);
+			case PAUSE:
+				return MobileUtil.back || MobileUtil.virtualPad.justPressed(PAUSE);
 			default:
 				return false;
 		}

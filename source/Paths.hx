@@ -227,6 +227,9 @@ class Paths
 	// aseprite (.json) sheets
 	public static function getAsepriteAtlas(key:String, ?library:String)
 		return FlxAtlasFrames.fromAseprite(getGraphic(key, library), getPath('images/$key.json', library));
+
+	public static function getFrame(key:String, frame:String, ?library:String):FlxGraphic
+		return FlxGraphic.fromFrame(getSparrowAtlas(key).getByName(frame));
 		
 	public static function readDir(dir:String, ?type:String, ?removeType:Bool = true, ?library:String):Array<String>
 	{

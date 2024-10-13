@@ -153,6 +153,8 @@ class OptionsSubState extends MusicBeatSubState
         add(infoTxt);
 
         spawnItems('main');
+
+        data.MobileUtil.createVPad(BACK, this);
     }
 
     var inputDelay:Float = 0.1;
