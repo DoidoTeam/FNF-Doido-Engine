@@ -1687,6 +1687,8 @@ class PlayState extends MusicBeatState
 		}
 		
 		weekScore += Timings.score;
+
+		playList.remove(playList[0]);
 		
 		if(playList.length <= 0)
 		{
@@ -1703,7 +1705,6 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			playList.remove(playList[0]);
 			loadSong(playList[0]);
 			
 			//trace(playList);
