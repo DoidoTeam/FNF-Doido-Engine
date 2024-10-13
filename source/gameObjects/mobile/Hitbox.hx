@@ -15,64 +15,36 @@ import flixel.tweens.FlxEase;
 
 class Hitbox extends FlxSpriteGroup
 {
-	public var hitbox:FlxSpriteGroup;
-
-	var sizex:Float = 320;
-
-	var screensizey:Int = 720;
-
 	public var buttonLeft:FlxButton;
 	public var buttonDown:FlxButton;
 	public var buttonUp:FlxButton;
 	public var buttonRight:FlxButton;
+
+	var assetModifier:String = "base";
 	
-	public function new(?widghtScreen:Float)
+	public function new(assetModifier:String = "base")
 	{
 		super();
+		this.assetModifier = assetModifier;
 
-		if (widghtScreen == null)
-			widghtScreen = FlxG.width;
+		var hint:FlxSprite = new FlxSprite(0, 0);
+		hint.loadGraphic(Paths.image('android/hitbox/$assetModifier/hints'));
+		hint.alpha = 0.2;
+		add(hint);
 
-		sizex = widghtScreen != null ? widghtScreen / 4 : 320;
-
-		
-		//add graphic
-		hitbox = new FlxSpriteGroup();
-		hitbox.scrollFactor.set();
-
-		var hitbox_hint:FlxSprite = new FlxSprite(0, 0).loadGraphic('assets/images/hud/android/hitbox_hint.png');
-
-		hitbox_hint.alpha = 0.2;
-
-		if (sizex != 320)
-		{
-		hitbox_hint.setGraphicSize(FlxG.width);
-		hitbox_hint.updateHitbox();
-		}
-			
-		add(hitbox_hint);
-
-
-		hitbox.add(add(buttonLeft = createhitbox(0, "left")));
-
-		hitbox.add(add(buttonDown = createhitbox(sizex, "down")));
-
-		hitbox.add(add(buttonUp = createhitbox(sizex * 2, "up")));
-
-		hitbox.add(add(buttonRight = createhitbox(sizex * 3, "right")));
+		add(buttonLeft = 	createhitbox(0, "left"));
+		add(buttonDown = 	createhitbox(320, "down"));
+		add(buttonUp = 		createhitbox(320 * 2, "up"));
+		add(buttonRight = 	createhitbox(320 * 3, "right"));
 	}
 
-	public function createhitbox(X:Float, framestring:String) {
-		var button = new FlxButton(X, 0);
-		var frames = FlxAtlasFrames.fromSparrow('assets/images/android/hitbox.png', 'assets/images/android/hitbox.xml');
-		
-		var graphic:FlxGraphic = FlxGraphic.fromFrame(frames.getByName(framestring));
-
-		button.loadGraphic(graphic);
+	public function createhitbox(x:Float, frame:String) {
+		var button = new FlxButton(x, 0);
+		button.loadGraphic(Paths.getFrame('android/hitbox/$assetModifier/hitbox', frame));
 
 		/*button.width = sizex;
 		button.height = FlxG.height;*/
-		button.setGraphicSize(Std.int(sizex), FlxG.height);
+		button.setGraphicSize(Std.int(320), FlxG.height);
 		button.updateHitbox();
 
 		button.alpha = 0;

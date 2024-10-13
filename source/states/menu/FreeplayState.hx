@@ -131,6 +131,8 @@ class FreeplayState extends MusicBeatState
 		add(resetTxt);
 
 		changeSelection();
+
+		data.MobileUtil.createVPad(BACK, this);
 	}
 
 	override function update(elapsed:Float)

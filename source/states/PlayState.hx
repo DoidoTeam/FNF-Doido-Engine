@@ -36,7 +36,7 @@ import shaders.*;
 import states.editors.*;
 import states.menu.*;
 import subStates.*;
-import gameObjects.mobile.Hitbox;
+import gameObjects.mobile.*;
 
 using StringTools;
 
@@ -125,6 +125,7 @@ class PlayState extends MusicBeatState
 	public static var instance:PlayState;
 
 	var hitbox:Hitbox;
+	var virtualPad:VPad;
 	
 	// paused
 	public static var paused:Bool = false;
@@ -164,6 +165,7 @@ class PlayState extends MusicBeatState
 			if(!['collision'].contains(SONG.song))
 				countdownModifier = "pixel";
 		}
+
 		if(FlxG.random.bool(0.01))
 			assetModifier = "doido";
 	}
@@ -481,11 +483,13 @@ class PlayState extends MusicBeatState
 		else
 			startCountdown();
 
-		hitbox = new Hitbox();
+		hitbox = new Hitbox(assetModifier);
 		hitbox.cameras = [camOther];
 		add(hitbox);
-		
-		data.MobileUtil.createVPad(PAUSE, this);
+
+		virtualPad = new VPad(PAUSE);
+		virtualPad.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+		add(virtualPad);
 
 		callScript("createPost");
 	}

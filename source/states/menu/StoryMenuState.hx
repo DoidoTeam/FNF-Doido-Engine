@@ -124,6 +124,8 @@ class StoryMenuState extends MusicBeatState
 		}
 		
 		changeWeek();
+
+		data.MobileUtil.createVPad(BACK, this);
 	}
 		
 	var canSelect:Bool = true;

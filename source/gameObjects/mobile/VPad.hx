@@ -27,6 +27,7 @@ enum VButton
 	C;
 	D;
 	BACK;
+	PAUSE;
 }
 
 /**
@@ -83,6 +84,8 @@ class VPad extends FlxSpriteGroup
 	 */
 	override public function destroy():Void
 	{
+		//Dont destroy?
+		/*
 		super.destroy();
 
 		buttonLeft = FlxDestroyUtil.destroy(buttonLeft);
@@ -94,27 +97,28 @@ class VPad extends FlxSpriteGroup
 		buttonC = FlxDestroyUtil.destroy(buttonC);
 		buttonD = FlxDestroyUtil.destroy(buttonD);
 		buttonBack = FlxDestroyUtil.destroy(buttonBack);
+		*/
 	}
 
-	private function createButton(X:Float, Y:Float, Graphic:String, alpha:Float = 0.5, scale:Float = 1):FlxButton
+	private function createButton(x:Float, y:Float, path:String, alpha:Float = 0.5, scale:Float = 1):FlxButton
 	{
-		var graphic:FlxGraphic;
-
-		if (Paths.fileExists('images/android/buttons/${Graphic}.png'))
-			graphic = FlxG.bitmap.add('assets/images/android/buttons/${Graphic}.png');
-		else
-			graphic = FlxG.bitmap.add('assets/images/android/buttons/default.png');
-
 		var button:FlxButton = new FlxButton();
-		button.frames = FlxTileFrames.fromGraphic(graphic, FlxPoint.get(Std.int(graphic.width), graphic.height));
+
+		if (Paths.fileExists('images/android/buttons/${path}.png'))
+			button.loadGraphic(Paths.getGraphic('android/buttons/$path'));
+		else
+			button.loadGraphic(Paths.getGraphic('android/buttons/default.png'));
+
 		button.solid = false;
 		button.immovable = true;
+
 		button.scale.set(scale, scale);
 		button.updateHitbox();
-		button.scrollFactor.set();
-		button.x = X;
-		button.y = Y;
+
+		button.x = x;
+		button.y = y;
 		button.alpha = alpha;
+
 		return button;
 	}
 
@@ -139,6 +143,8 @@ class VPad extends FlxSpriteGroup
 			case D:
 				buttonState = buttonD.justPressed;
 			case BACK:
+				buttonState = buttonBack.justPressed;
+			case PAUSE:
 				buttonState = buttonBack.justPressed;
 		}
 
@@ -169,6 +175,8 @@ class VPad extends FlxSpriteGroup
 				buttonState = buttonD.pressed;
 			case BACK:
 				buttonState = buttonBack.pressed;
+			case PAUSE:
+				buttonState = buttonBack.pressed;
 		}
 
 		if(buttonState == null)
@@ -198,6 +206,8 @@ class VPad extends FlxSpriteGroup
 				buttonState = buttonD.justReleased;
 			case BACK:
 				buttonState = buttonBack.justReleased;
+			case PAUSE:
+				buttonState = buttonBack.pressed;
 		}
 
 		if(buttonState == null)
