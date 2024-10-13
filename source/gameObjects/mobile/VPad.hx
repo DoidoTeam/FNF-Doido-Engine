@@ -57,11 +57,11 @@ class VPad extends FlxSpriteGroup
 		switch (Mode)
 		{
 			case PAUSE:
-				add(buttonBack = createButton(FlxG.width - 105, 0, 'util/pause', 0.3, 0.8));
+				add(buttonBack = createButton(FlxG.width - 105, 0, 'util/pause', 0.8));
 			case SKIP:
-				add(buttonBack = createButton(FlxG.width - 105, 0, 'util/skip', 0.5, 0.8));
+				add(buttonBack = createButton(FlxG.width - 105, 0, 'util/skip', 0.8));
 			case BACK:
-				add(buttonBack = createButton(FlxG.width - 105, 0, 'util/back', 0.5, 0.8));
+				add(buttonBack = createButton(FlxG.width - 105, 0, 'util/back', 0.8));
 
 
 			/* -- REFERENCE POSITIONS FOR FACE BUTTONS
@@ -77,17 +77,16 @@ class VPad extends FlxSpriteGroup
 		}
 
 		scrollFactor.set();
+
+		padActive = true;
 	}
 
-	/**
-	 * Clean up memory.
-	 */
+	// buttons get manually destroyed when changing states
 	override public function destroy():Void
 	{
-		//Dont destroy?
-		/*
 		super.destroy();
-
+		padActive = false;
+		
 		buttonLeft = FlxDestroyUtil.destroy(buttonLeft);
 		buttonUp = FlxDestroyUtil.destroy(buttonUp);
 		buttonDown = FlxDestroyUtil.destroy(buttonDown);
@@ -97,10 +96,9 @@ class VPad extends FlxSpriteGroup
 		buttonC = FlxDestroyUtil.destroy(buttonC);
 		buttonD = FlxDestroyUtil.destroy(buttonD);
 		buttonBack = FlxDestroyUtil.destroy(buttonBack);
-		*/
 	}
 
-	private function createButton(x:Float, y:Float, path:String, alpha:Float = 0.5, scale:Float = 1):FlxButton
+	private function createButton(x:Float, y:Float, path:String, scale:Float = 1, forcedAlpha:Float = 1):FlxButton
 	{
 		var button:FlxButton = new FlxButton();
 
@@ -117,12 +115,15 @@ class VPad extends FlxSpriteGroup
 
 		button.x = x;
 		button.y = y;
-		button.alpha = alpha;
+		button.alpha = forcedAlpha * (SaveData.data.get("Button Opacity") / 10);
 
 		return button;
 	}
 
 	public function justPressed(Button:VButton):Bool {
+		if(!padActive)
+			return false;
+
 		var buttonState:Null<Bool> = false;
 		switch (Button)
 		{
@@ -154,6 +155,9 @@ class VPad extends FlxSpriteGroup
 	}
 
 	public function pressed(Button:VButton):Bool {
+		if(!padActive)
+			return false;
+
 		var buttonState:Null<Bool> = false;
 		switch (Button)
 		{
@@ -185,6 +189,9 @@ class VPad extends FlxSpriteGroup
 	}
 
 	public function justReleased(Button:VButton):Bool {
+		if(!padActive)
+			return false;
+
 		var buttonState:Null<Bool> = false;
 		switch (Button)
 		{
@@ -212,6 +219,7 @@ class VPad extends FlxSpriteGroup
 
 		if(buttonState == null)
 			buttonState = false;
+
 		return buttonState;
 	}
 }

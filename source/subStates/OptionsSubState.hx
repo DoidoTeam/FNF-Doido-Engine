@@ -22,6 +22,7 @@ class OptionsSubState extends MusicBeatSubState
         "preferences",
         "gameplay",
         "appearance",
+        "mobile",
         "adjust offsets",
         "controls",
     ];
@@ -38,7 +39,6 @@ class OptionsSubState extends MusicBeatSubState
             "Unfocus Freeze",
             #end
             "Countdown on Unpause",
-            "Invert Swipes",
             #if DISCORD_RPC
             "Discord RPC"
             #end
@@ -65,11 +65,19 @@ class OptionsSubState extends MusicBeatSubState
 			"Ratings on HUD",
 			"Song Timer",
 		],
+        "mobile" => [
+            "Invert Swipes",
+            "Button Opacity",
+            "Hitbox Opacity"
+        ]
 	];
     
     var restartTimer:Float = 0;
     var forceRestartOptions:Array<String> = [ // options that you gotta restart the song for them to reload sorry
         "Ghost Tapping", // you can't cheat >:]
+
+        // im lazy dude
+        "Hitbox Opacity"
     ];
     var reloadOptions:Array<String> = [ // options that need some manual reloading on playstate when changed
         "Antialiasing",
