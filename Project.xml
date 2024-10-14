@@ -64,6 +64,14 @@
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->
 
+  <section if="android">
+	<config:android gradle-version="7.5.1" />
+  <config:android gradle-plugin="7.3.1" />
+	<android permission="android.permission.CAPTURE_AUDIO_OUTPUT"/>
+	<android target-sdk-version="29" if="android"/>
+	<android min-sdk-version="19" if="android"/>
+  </section>
+
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
 	<!--Enable the Flixel core recording system-->
