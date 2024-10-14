@@ -485,6 +485,7 @@ class PlayState extends MusicBeatState
 
 		hitbox = new Hitbox(assetModifier);
 		hitbox.cameras = [camOther];
+		hitbox.visible = false;
 		add(hitbox);
 
 		virtualPad = new VPad(PAUSE);
@@ -496,6 +497,7 @@ class PlayState extends MusicBeatState
 
 	public function startCountdown()
 	{
+	  hitbox.visible = true;
 		var daCount:Int = 0;
 		
 		var countTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
@@ -1714,6 +1716,7 @@ class PlayState extends MusicBeatState
 	var endedSong:Bool = false;
 	public function endSong()
 	{
+	  hitbox.visible = false;
 		if(endedSong) return;
 		endedSong = true;
 		resetSongStatics();
