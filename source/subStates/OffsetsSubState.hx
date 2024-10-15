@@ -117,6 +117,7 @@ class OffsetsSubState extends MusicBeatSubState
 
         changeOption();
         offsetBeatHit();
+        data.MobileUtil.createVPad(BACK, this);
     }
 
     function changeAverageTxt(newText:String)
@@ -227,7 +228,11 @@ class OffsetsSubState extends MusicBeatSubState
                 offsetMusic.stop();
                 if(FlxG.sound.music != null)
                     FlxG.sound.music.play();
+                #if mobile
+                FlxG.resetState();
+                #else
                 close();
+                #end
             }
         
             if(Controls.justPressed(UI_UP))

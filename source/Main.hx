@@ -31,9 +31,13 @@ class Main extends Sprite
 		super();
 		instance = this;
 
+    #if mobile
+		addChild(game = new DoidoGame(1280, 720, Init, 60, 60, true));
+		#else
 		addChild(game = new DoidoGame(1280, 720, Init, 120, 120, true));
+		#end
 
-		#if desktop
+		#if (desktop || mobile)
 		fpsCount = new FPSCounter(10, 3);
 		addChild(fpsCount);
 		#end
