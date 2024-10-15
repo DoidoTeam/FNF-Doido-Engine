@@ -437,7 +437,11 @@ class ControlsSubState extends MusicBeatSubState
         if(Controls.justPressed(BACK))
         {
             if(changinBinds == 0)
-                FlxG.resetState()();
+                #if mobile
+                FlxG.resetState();
+                #else
+                close();
+                #end
             if(changinBinds == 1)
             {
                 changinBinds = 0;
@@ -482,7 +486,11 @@ class ControlsSubState extends MusicBeatSubState
                     Controls.save();
                     spawnBinds();
                 case 'back':
-                    FlxG.resetState()();
+                    #if desktop
+                    FlxG.resetState();
+                    #else
+                    close();
+                    #end
             }
         }
 
