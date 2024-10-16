@@ -265,4 +265,28 @@ class CoolUtil
 		}
 		camera.flash(color, duration, null, true);
 	}
+
+	// Let's hope the game never has to calculate anything above gigabytes!
+	// I'm not even gonna lie the petabytes are here just for lolz
+	public static var byteUnits:Array<String> = ["MB", "GB", "TB", "PB"];
+
+	public static function formatBytes(bytes:Float):String
+	{
+		var unitCount:Int = 0;
+
+		// Love me some recursion up in here
+		function format()
+		{
+			if(bytes >= 1024) {
+				unitCount++;
+				bytes /= 1024;
+				format();
+			}
+		}
+		format();
+
+		bytes = Math.floor(bytes * 100) / 100;
+		
+		return '$bytes ${byteUnits[unitCount]}';
+	}
 }

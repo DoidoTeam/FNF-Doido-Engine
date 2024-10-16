@@ -3,7 +3,7 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="FNF: Doido Engine" file="Funkin Doido" main="Main" version="3.3.0" company="DiogoTV" />
+	<app title="FNF: Doido Engine" file="Funkin Doido" main="Main" version="3.3.1beta" company="DiogoTV" />
 	
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->

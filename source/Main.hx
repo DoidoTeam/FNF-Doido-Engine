@@ -34,7 +34,7 @@ class Main extends Sprite
 		addChild(game = new DoidoGame(0, 0, Init, 120, 120, true));
 
 		#if desktop
-		fpsCount = new FPSCounter(10, 3);
+		fpsCount = new FPSCounter(5, 3);
 		addChild(fpsCount);
 		#end
 
