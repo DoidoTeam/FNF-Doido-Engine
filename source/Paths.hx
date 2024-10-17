@@ -5,11 +5,11 @@ import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.sound.FlxSound;
-import haxe.Json;
 import lime.utils.Assets;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
 import states.PlayState;
+import tjson.TJSON;
 
 using StringTools;
 
@@ -189,14 +189,7 @@ class Paths
 		#end
 
 	public static function json(key:String, ?library:String):Dynamic
-	{
-		var rawJson = getContent('$key.json', library).trim();
-
-		while(!rawJson.endsWith("}"))
-			rawJson = rawJson.substr(0, rawJson.length - 1);
-
-		return Json.parse(rawJson);
-	}
+		return TJSON.parse(getContent('$key.json', library).trim());
 
 	public static function script(key:String, ?library:String):String
 		return getContent('$key', library);

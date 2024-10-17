@@ -1,7 +1,5 @@
 package gameObjects;
 
-//import haxe.Json;
-//import flixel.FlxG;
 import states.PlayState;
 import gameObjects.hud.note.Note;
 import flxanimate.animate.FlxAnim;

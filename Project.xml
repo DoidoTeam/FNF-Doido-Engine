@@ -52,13 +52,16 @@
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
 	<haxelib name="flixel-ui" />
-	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
+
 	<haxelib name="flxanimate-doido"/>
+	<haxelib name="tjson"/>
+	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
+
+	<haxelib name="hscript-iris" />
+	<haxedef name="hscriptPos" />
 
 	<!--Used only for flixel's debugger!-->
 	<haxelib name="hscript" if="debug" />
-	<haxelib name="hscript-iris" />
-	<haxedef name="hscriptPos" />
 
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->
