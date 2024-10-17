@@ -1,20 +1,50 @@
 package data;
 
 import flixel.text.FlxText.FlxTextBorderStyle;
-import gameObjects.Dialogue.DialogueData;
-import gameObjects.Dialogue.DialoguePage;
+
+typedef DialogueData = {
+	var pages:Array<DialoguePage>;
+}
+typedef DialoguePage = {
+	// box
+	var ?boxSkin:String;
+	// character
+	var ?char:String;
+	var ?charAnim:String;
+	// dialogue text
+	var ?text:String;
+	// text settings
+	var ?fontFamily:String;
+	var ?fontScale:Float;
+	var ?fontColor:Int;
+	var ?fontBold:Bool;
+	// text border
+	var ?fontBorderType:FlxTextBorderStyle;
+	var ?fontBorderColor:Int;
+	var ?fontBorderSize:Float;
+}
 
 class DialogueUtil
 {
-	public static function loadFromJson(jsonPath:String):DialogueData
+	public static function loadDialogue(song:String):DialogueData
 	{
-		return cast Paths.json('images/dialogue/data/' + jsonPath);
+		switch(song)
+		{
+			case 'senpai' | 'roses' | 'thorns':
+				return loadCode(song);
+			default:
+				if(Paths.fileExists('images/dialogue/data/$song.json'))
+					return cast Paths.json('images/dialogue/data/$song');
+				else
+					return defaultDialogue();
+		};
 	}
-	
-	/*
-	*	senpai week stuff
-	*/
-	public static function loadFromSong(song:String):DialogueData
+
+	inline public static function defaultDialogue():DialogueData
+		return{pages: []};
+
+	// Hardcoded DialogueData
+	public static function loadCode(song:String):DialogueData
 	{
 		return switch(song)
 		{
@@ -108,9 +138,7 @@ class DialogueUtil
 				}
 			
 			default:
-				{
-					pages: [],
-				}
+				defaultDialogue();
 		}
 	}
 }

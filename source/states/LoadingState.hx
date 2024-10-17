@@ -9,10 +9,11 @@ import flixel.math.FlxMath;
 import data.ChartLoader;
 import data.GameData.MusicBeatState;
 import data.SongData.SwagSong;
+import data.DialogueUtil;
 import gameObjects.*;
 import gameObjects.hud.*;
 import gameObjects.hud.note.*;
-import gameObjects.Dialogue;
+import gameObjects.dialogue.Dialogue;
 
 #if PRELOAD_SONG
 import sys.thread.Mutex;
@@ -146,7 +147,7 @@ class LoadingState extends MusicBeatState
 			trace('preloaded music');
 			loadPercent = 0.75;
 
-			var dialData:DialogueData = data.DialogueUtil.loadFromSong(SONG.song);
+			var dialData:DialogueData = DialogueUtil.loadDialogue(SONG.song);
 			if(dialData.pages.length > 0) {
 				var dial = new Dialogue();
 				dial.load(dialData);

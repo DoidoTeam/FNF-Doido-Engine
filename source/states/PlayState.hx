@@ -24,6 +24,7 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
 import data.*;
+import data.DialogueUtil;
 import data.SongData.SwagSong;
 import data.SongData.SwagSection;
 import data.chart.*;
@@ -31,7 +32,7 @@ import data.GameData.MusicBeatState;
 import gameObjects.*;
 import gameObjects.hud.*;
 import gameObjects.hud.note.*;
-import gameObjects.Dialogue.DialogueData;
+import gameObjects.dialogue.Dialogue;
 import shaders.*;
 import states.editors.*;
 import states.menu.*;
@@ -422,7 +423,7 @@ class PlayState extends MusicBeatState
 			{
 				case 'senpai'|'roses':
 					CoolUtil.playMusic('dialogue/lunchbox');
-					startDialogue(DialogueUtil.loadFromSong(SONG.song));
+					startDialogue(DialogueUtil.loadDialogue(SONG.song));
 					
 					if(SONG.song == 'roses')
 						FlxG.sound.play(Paths.sound('dialogue/senpai/roses_sfx'));
@@ -466,13 +467,13 @@ class PlayState extends MusicBeatState
 							
 							new FlxTimer().start(0.8, function(tmr:FlxTimer)
 							{
-								startDialogue(DialogueUtil.loadFromSong('thorns'));
+								startDialogue(DialogueUtil.loadDialogue('thorns'));
 							});
 						});
 					});
 					
 				default:
-					startCountdown();
+					startDialogue(DialogueUtil.loadDialogue(SONG.song));
 			}
 		}
 		else
@@ -569,18 +570,26 @@ class PlayState extends MusicBeatState
 	
 	public function startDialogue(dialData:DialogueData)
 	{
-		new FlxTimer().start(0.45, function(tmr:FlxTimer)
-		{
-			var dial = new Dialogue();
-			dial.finishCallback = function() {
-				CoolUtil.playMusic();
-				startCountdown();
-				remove(dial);
-			};
-			dial.cameras = [camHUD];
-			dial.load(dialData);
-			add(dial);
-		});
+		if(dialData.pages.length > 0) {
+			trace('song ${SONG.song} has found dialogue!');
+			new FlxTimer().start(0.45, function(tmr:FlxTimer)
+			{
+				var dial = new Dialogue();
+				dial.finishCallback = function() {
+					CoolUtil.playMusic();
+					startCountdown();
+					remove(dial);
+				};
+				dial.cameras = [camHUD];
+				dial.load(dialData);
+				add(dial);
+			});
+		}
+		else {
+			trace('song ${SONG.song} has not found dialogue :(');
+			startCountdown();
+		}
+
 	}
 	
 	public function hasCutscene():Bool

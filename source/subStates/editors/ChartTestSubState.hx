@@ -29,7 +29,7 @@ import data.GameData.MusicBeatSubState;
 import gameObjects.*;
 import gameObjects.hud.*;
 import gameObjects.hud.note.*;
-import gameObjects.Dialogue.DialogueData;
+import data.DialogueUtil;
 import shaders.*;
 import states.PlayState;
 import states.editors.ChartingState;
