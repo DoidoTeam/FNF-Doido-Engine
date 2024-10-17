@@ -2026,5 +2026,7 @@ class PlayState extends MusicBeatState
 			case "Change Cam Section":
 				cameraSection = daEvent.value1;
 		}
+
+		callScript("onEventHit", [daEvent.eventName, daEvent.value1, daEvent.value2, daEvent.value3]);
 	}
 }
