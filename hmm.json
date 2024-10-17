@@ -33,6 +33,13 @@
         "version": "2.6.1"
       },
       {
+        "name": "tjson",
+        "type": "git",
+        "dir": null,
+        "ref": "master",
+        "url": "https://github.com/DoidoTeam/TJSON"
+      },
+      {
         "name": "hscript-iris",
         "type": "git",
         "dir": null,
