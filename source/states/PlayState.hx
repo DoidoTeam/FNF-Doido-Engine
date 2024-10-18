@@ -422,7 +422,6 @@ class PlayState extends MusicBeatState
 			switch(SONG.song)
 			{
 				case 'senpai'|'roses':
-					CoolUtil.playMusic('dialogue/lunchbox');
 					startDialogue(DialogueUtil.loadDialogue(SONG.song));
 					
 					if(SONG.song == 'roses')

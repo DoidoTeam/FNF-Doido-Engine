@@ -22,6 +22,10 @@ typedef DialoguePage = {
 	var ?fontBorderType:FlxTextBorderStyle;
 	var ?fontBorderColor:Int;
 	var ?fontBorderSize:Float;
+	// music and sound
+	var ?music:String;
+	var ?clickSfx:String;
+	var ?scrollSfx:Array<String>;
 }
 
 class DialogueUtil
@@ -60,6 +64,10 @@ class DialogueUtil
 							fontBorderType: SHADOW,
 							fontBorderColor: 0xFFD89494,
 							fontBorderSize: 4,
+
+							music: 'dialogue/lunchbox',
+							clickSfx: 'dialogue/clickText',
+							scrollSfx: ['dialogue/talking'],
 							
 							// character
 							char: 'senpai',
@@ -88,6 +96,11 @@ class DialogueUtil
 							fontBorderType: SHADOW,
 							fontBorderColor: 0xFFD89494,
 							fontBorderSize: 4,
+
+							music: 'dialogue/lunchbox',
+							clickSfx: 'dialogue/clickText',
+							scrollSfx: ['dialogue/talking'],
+
 							// character
 							char: 'senpai-angry',
 							
@@ -112,8 +125,12 @@ class DialogueUtil
 							fontColor: 0xFFFFFFFF,
 							fontScale: 0.8,
 							fontBorderSize: 0,
+
+							clickSfx: 'dialogue/clickText',
+							scrollSfx: ['dialogue/talking'],
+
 							// character
-							char:  'spirit',
+							char: 'spirit',
 							
 							text: 'Direct contact with real humans, after being trapped in here for so long...',
 						},

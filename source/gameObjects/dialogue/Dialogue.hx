@@ -56,8 +56,11 @@ class Dialogue extends FlxGroup
 	var fontBorderSize:Float = 1.5;
 	var fontBorderColor:Int = 0xFF000000;
 	var fontBorderType:FlxTextBorderStyle = OUTLINE;
+
+	var scrollSfx:Array<String> = [];
+	var clickSfx:String = '';
 	
-	public function load(data:DialogueData)
+	public function load(data:DialogueData, preload:Bool = false)
 	{
 		this.data = data;
 		// preloading
@@ -77,9 +80,21 @@ class Dialogue extends FlxGroup
 					grpChar.add(char);
 				}
 			}
+
+			if(page.music != null)
+				Paths.preloadSound('music/${page.music}');
+
+			if(page.clickSfx != null)
+				Paths.preloadSound('sounds/${page.clickSfx}');
+
+			if(page.scrollSfx != null) {
+				for (sound in page.scrollSfx) {
+					Paths.preloadSound('sounds/${sound}');
+				}
+			}
 		}
 		// first page
-		changePage(false);
+		changePage(false, preload);
 	}
 	
 	override function update(elapsed:Float)
@@ -103,8 +118,9 @@ class Dialogue extends FlxGroup
 			if(typeTimer >= 0.04)
 			{
 				//if(typeLoop % 2 == 0)
-				FlxG.sound.play(Paths.sound('dialogue/talking'));
-				
+				if(scrollSfx.length > 0)
+					FlxG.sound.play(Paths.sound(scrollSfx[FlxG.random.int(0, scrollSfx.length - 1)]));
+
 				typeTimer = 0;
 				typeLoop++;
 			}
@@ -141,17 +157,24 @@ class Dialogue extends FlxGroup
 	public var curPage:Int = 0;
 	public var activeChar:DialogueChar;
 	
-	public function changePage(change:Bool = true):Void
+	public function changePage(change:Bool = true, preload:Bool = false):Void
 	{
 		if(change) curPage++;
 		if(curPage >= data.pages.length)
 			return finishCallback();
 		
-		if(change)
-			FlxG.sound.play(Paths.sound('dialogue/clickText'), 0.5);
-		
 		try{
 			var swagPage = data.pages[curPage];
+
+			if(swagPage.music != null && !preload)
+				CoolUtil.playMusic(swagPage.music);
+			if(swagPage.clickSfx != null)
+				clickSfx = swagPage.clickSfx;
+			if(swagPage.scrollSfx != null)
+				scrollSfx = swagPage.scrollSfx;
+
+			if(change)
+				FlxG.sound.play(Paths.sound(clickSfx), 0.5);
 			
 			if(swagPage.boxSkin != null)
 				reloadBox(swagPage.boxSkin);

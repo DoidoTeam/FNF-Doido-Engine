@@ -150,7 +150,7 @@ class LoadingState extends MusicBeatState
 			var dialData:DialogueData = DialogueUtil.loadDialogue(SONG.song);
 			if(dialData.pages.length > 0) {
 				var dial = new Dialogue();
-				dial.load(dialData);
+				dial.load(dialData, true);
 				addBehind(dial);
 			}
 
