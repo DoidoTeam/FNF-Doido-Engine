@@ -282,7 +282,7 @@ class Dialogue extends FlxGroup
 				for(bg in grpBg.members)
 				{
 					bg.isActive = false;
-					if(bg.imgName == swagPage.background.image)
+					if(bg.sprName == swagPage.background.name)
 						bg.isActive = true;
 				}
 			}
@@ -292,7 +292,7 @@ class Dialogue extends FlxGroup
 				for(fg in grpFg.members)
 				{
 					fg.isActive = false;
-					if(fg.imgName == swagPage.foreground.image)
+					if(fg.sprName == swagPage.foreground.name)
 						fg.isActive = true;
 				}
 			}

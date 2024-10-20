@@ -179,6 +179,7 @@ class DialogueBox extends FlxSprite
 class DialogueImg extends FlxSprite
 {
 	public var imgName:String = "";
+	public var sprName:String = "";
 	public var isActive:Bool = false;
 	public var fakeAlpha:Float = 1;
 
@@ -218,6 +219,7 @@ class DialogueImg extends FlxSprite
 			fakeAlpha = imgData.alpha;
 
 		imgName = imgData.image;
+		sprName = imgData.name;
 		alpha = 0;
 	}
 

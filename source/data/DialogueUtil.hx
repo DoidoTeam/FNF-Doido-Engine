@@ -32,6 +32,7 @@ typedef DialoguePage = {
 }
 
 typedef DialogueSprite = {
+	var name:String;
 	var image:String;
 	// position
 	var ?x:Float;
