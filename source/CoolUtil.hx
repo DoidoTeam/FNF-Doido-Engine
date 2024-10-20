@@ -8,6 +8,7 @@ import flixel.util.FlxSort;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
+import flixel.util.FlxAxes;
 import flixel.FlxCamera;
 import gameObjects.hud.note.Note;
 
@@ -174,6 +175,17 @@ class CoolUtil
 		if(!Std.isOfType(num, Int))
 			num = backup;
 		return num;
+	}
+
+	public static function stringToAxes(str:String):FlxAxes
+	{
+		return switch (str.toLowerCase())
+		{
+			case "x": X;
+			case "y": Y;
+			case "xy" | "yx" | "both": XY;
+			default : NONE;
+		}
 	}
 
 	public static function stringToBorder(str:String = 'none'):FlxTextBorderStyle

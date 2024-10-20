@@ -94,28 +94,18 @@ class Dialogue extends FlxGroup
 			}
 
 			if(page.background != null) {
-				if(!spawnedBgs.contains(page.background) && Paths.fileExists('images/${page.background}.png'))
-				{
-					var bg = new DialogueImg();
-					bg.loadGraphic(Paths.image(page.background));
-					bg.imgName = page.background;
-					bg.screenCenter();
+				if(!spawnedBgs.contains(page.background.image) && Paths.fileExists('images/${page.background.image}.png')) {
+					var bg = new DialogueImg(page.background);
 					grpBg.add(bg);
-
-					spawnedBgs.push(page.background);
+					spawnedBgs.push(page.background.image);
 				}
 			}
 
 			if(page.foreground != null) {
-				if(!spawnedFgs.contains(page.foreground) && Paths.fileExists('images/${page.foreground}.png'))
-				{
-					var fg = new DialogueImg();
-					fg.loadGraphic(Paths.image(page.foreground));
-					fg.imgName = page.foreground;
-					fg.screenCenter();
+				if(!spawnedFgs.contains(page.foreground.image) && Paths.fileExists('images/${page.foreground.image}.png')) {
+					var fg = new DialogueImg(page.foreground);
 					grpFg.add(fg);
-
-					spawnedFgs.push(page.foreground);
+					spawnedFgs.push(page.foreground.image);
 				}
 			}
 
@@ -292,7 +282,7 @@ class Dialogue extends FlxGroup
 				for(bg in grpBg.members)
 				{
 					bg.isActive = false;
-					if(bg.imgName == swagPage.background)
+					if(bg.imgName == swagPage.background.image)
 						bg.isActive = true;
 				}
 			}
@@ -302,7 +292,7 @@ class Dialogue extends FlxGroup
 				for(fg in grpFg.members)
 				{
 					fg.isActive = false;
-					if(fg.imgName == swagPage.foreground)
+					if(fg.imgName == swagPage.foreground.image)
 						fg.isActive = true;
 				}
 			}

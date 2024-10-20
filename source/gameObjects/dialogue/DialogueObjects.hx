@@ -1,9 +1,11 @@
 package gameObjects.dialogue;
 
+import flixel.util.FlxAxes;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.math.FlxMath;
 import flixel.math.FlxRect;
+import data.DialogueUtil;
 
 class DialogueChar extends FlxSprite
 {
@@ -180,10 +182,42 @@ class DialogueImg extends FlxSprite
 	public var isActive:Bool = false;
 	public var fakeAlpha:Float = 1;
 
-	public function new()
+	public function new(imgData:DialogueSprite)
 	{
 		super();
 
+		if(imgData.animations != null) {
+			frames = Paths.getSparrowAtlas(imgData.image);
+			for (anim in imgData.animations) {
+				animation.addByPrefix(anim.name, anim.prefix, anim.framerate, anim.looped);
+			}
+			animation.play('idle');
+		}
+		else
+			loadGraphic(Paths.image(imgData.image));
+		
+		if (imgData.scale != null)
+			scale.set(imgData.scale, imgData.scale);
+
+		updateHitbox();
+
+		if(imgData.screenCenter != null)
+			screenCenter(CoolUtil.stringToAxes(imgData.screenCenter));
+
+		if(imgData.x != null)
+			x += imgData.x;
+		if(imgData.y != null)
+			y += imgData.y;
+
+		if(imgData.flipX != null)
+			flipX = imgData.flipX;
+		if(imgData.flipY != null)
+			flipY = imgData.flipY;
+
+		if (imgData.alpha != null)
+			fakeAlpha = imgData.alpha;
+
+		imgName = imgData.image;
 		alpha = 0;
 	}
 

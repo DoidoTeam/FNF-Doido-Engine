@@ -11,8 +11,8 @@ typedef DialoguePage = {
 	var ?charAnim:String;
 	// images
 	var ?underlayAlpha:Float;
-	var ?background:String;
-	var ?foreground:String;
+	var ?background:DialogueSprite;
+	var ?foreground:DialogueSprite;
 	// dialogue text
 	var ?text:String;
 	// text settings
@@ -29,6 +29,29 @@ typedef DialoguePage = {
 	var ?music:String;
 	var ?clickSfx:String;
 	var ?scrollSfx:Array<String>;
+}
+
+typedef DialogueSprite = {
+	var image:String;
+	// position
+	var ?x:Float;
+	var ?y:Float;
+	var ?screenCenter:String;
+	// other sprite stuff
+	var ?scale:Float;
+	var ?alpha:Float;
+	// flipping
+	var ?flipX:Bool;
+	var ?flipY:Bool;
+	// animation array
+	var ?animations:Array<Animation>;
+}
+
+typedef Animation = {
+	var name:String;
+	var prefix:String;
+	var framerate:Int;
+	var looped:Bool;
 }
 
 class DialogueUtil
