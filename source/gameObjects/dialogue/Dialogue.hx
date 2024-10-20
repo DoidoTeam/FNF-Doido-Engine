@@ -237,7 +237,7 @@ class Dialogue extends FlxGroup
 			
 			//text.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 			if(swagPage.fontBorderType != null)
-				fontBorderType = swagPage.fontBorderType;
+				fontBorderType = CoolUtil.stringToBorder(swagPage.fontBorderType);
 			if(swagPage.fontBorderColor != null)
 				fontBorderColor = swagPage.fontBorderColor;
 			if(swagPage.fontBorderSize != null)

@@ -1,7 +1,5 @@
 package data;
 
-import flixel.text.FlxText.FlxTextBorderStyle;
-
 typedef DialogueData = {
 	var pages:Array<DialoguePage>;
 }
@@ -24,7 +22,7 @@ typedef DialoguePage = {
 	var ?fontColor:Int;
 	var ?fontBold:Bool;
 	// text border
-	var ?fontBorderType:FlxTextBorderStyle;
+	var ?fontBorderType:String;
 	var ?fontBorderColor:Int;
 	var ?fontBorderSize:Float;
 	// music and sound
@@ -66,7 +64,7 @@ class DialogueUtil
 							fontColor: 0xFF3F2021,
 							fontScale: 0.8,
 							
-							fontBorderType: SHADOW,
+							fontBorderType: 'shadow',
 							fontBorderColor: 0xFFD89494,
 							fontBorderSize: 4,
 
@@ -77,19 +75,14 @@ class DialogueUtil
 							// character
 							char: 'senpai',
 							
-							text: 'Ah, a new fair maiden has come in search of true love!',
-
-							background: 'backgrounds/stage/stageback'
+							text: 'Ah, a new fair maiden has come in search of true love!'
 						},
 						{
-							text: 'A serenade between gentlemen shall decide where her beautiful heart shall reside.',
-							foreground: 'herobrine'
+							text: 'A serenade between gentlemen shall decide where her beautiful heart shall reside.'
 						},
 						{
 							char: 'bf-pixel',
-							text: 'Beep bo bop',
-							background: 'backgrounds/mugen/mugen',
-							foreground: ''
+							text: 'Beep bo bop'
 						}
 					]
 				}
@@ -103,7 +96,7 @@ class DialogueUtil
 							fontColor: 0xFF3F2021,
 							fontScale: 0.8,
 							
-							fontBorderType: SHADOW,
+							fontBorderType: 'shadow',
 							fontBorderColor: 0xFFD89494,
 							fontBorderSize: 4,
 

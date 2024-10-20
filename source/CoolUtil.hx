@@ -1,5 +1,6 @@
 package;
 
+import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.tweens.FlxEase;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -173,6 +174,18 @@ class CoolUtil
 		if(!Std.isOfType(num, Int))
 			num = backup;
 		return num;
+	}
+
+	public static function stringToBorder(str:String = 'none'):FlxTextBorderStyle
+	{
+		return switch(str.toLowerCase())
+		{
+			case 'shadow': 			FlxTextBorderStyle.SHADOW;
+			case 'outline': 		FlxTextBorderStyle.OUTLINE;
+			case 'outline_fast': 	FlxTextBorderStyle.OUTLINE_FAST;
+
+			default: 				FlxTextBorderStyle.NONE;
+		}
 	}
 
 	public static function stringToEase(str:String = 'linear'):EaseFunction
