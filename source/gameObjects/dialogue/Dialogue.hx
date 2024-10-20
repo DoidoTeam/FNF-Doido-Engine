@@ -22,6 +22,8 @@ class Dialogue extends FlxGroup
 	{
 		super();
 		grpChar = new FlxTypedGroup<DialogueChar>();
+		grpBg = new FlxTypedGroup<DialogueImg>();
+		grpFg = new FlxTypedGroup<DialogueImg>();
 		box = new DialogueBox();
 		
 		text = new FlxText(0, 0, 0, "");
@@ -32,12 +34,15 @@ class Dialogue extends FlxGroup
 		textAlphabet = new Alphabet(0,0,"",false);
 		textAlphabet.visible = false;
 		
-		bg = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFF000000);
-		bg.screenCenter();
-		bg.alpha = 0.3;
-		add(bg);
+		underlay = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFF000000);
+		underlay.screenCenter();
+		underlay.alpha = 0.3;
+		add(underlay);
 		
+		add(grpBg);
 		add(grpChar);
+		add(grpFg);
+
 		add(box);
 		add(text);
 		add(textAlphabet);
@@ -45,9 +50,11 @@ class Dialogue extends FlxGroup
 	
 	public var data:DialogueData;
 	
-	public var bg:FlxSprite;
+	public var underlay:FlxSprite;
 	public var box:DialogueBox;
 	public var grpChar:FlxTypedGroup<DialogueChar>;
+	public var grpBg:FlxTypedGroup<DialogueImg>;
+	public var grpFg:FlxTypedGroup<DialogueImg>;
 	public var text:FlxText;
 	public var textAlphabet:Alphabet;
 	
@@ -66,6 +73,8 @@ class Dialogue extends FlxGroup
 		this.data = data;
 		// preloading
 		var spawnedChars:Array<String> = [];
+		var spawnedBgs:Array<String> = [];
+		var spawnedFgs:Array<String> = [];
 		for(page in data.pages)
 		{
 			if(page.boxSkin != null)
@@ -79,6 +88,34 @@ class Dialogue extends FlxGroup
 					var char = new DialogueChar();
 					char.reloadChar(page.char);
 					grpChar.add(char);
+
+					spawnedChars.push(page.char);
+				}
+			}
+
+			if(page.background != null) {
+				if(!spawnedBgs.contains(page.background) && Paths.fileExists('images/${page.background}.png'))
+				{
+					var bg = new DialogueImg();
+					bg.loadGraphic(Paths.image(page.background));
+					bg.imgName = page.background;
+					bg.screenCenter();
+					grpBg.add(bg);
+
+					spawnedBgs.push(page.background);
+				}
+			}
+
+			if(page.foreground != null) {
+				if(!spawnedFgs.contains(page.foreground) && Paths.fileExists('images/${page.foreground}.png'))
+				{
+					var fg = new DialogueImg();
+					fg.loadGraphic(Paths.image(page.foreground));
+					fg.imgName = page.foreground;
+					fg.screenCenter();
+					grpFg.add(fg);
+
+					spawnedFgs.push(page.foreground);
 				}
 			}
 
@@ -233,6 +270,9 @@ class Dialogue extends FlxGroup
 				//text.text = swagPage.text;
 				startTyping(swagPage.text);
 			}
+
+			if(swagPage.underlayAlpha != null)
+				underlay.alpha = swagPage.underlayAlpha;
 			
 			if(swagPage.char != null)
 			{
@@ -244,6 +284,26 @@ class Dialogue extends FlxGroup
 						char.isActive = true;
 						activeChar = char;
 					}
+				}
+			}
+
+			if(swagPage.background != null)
+			{
+				for(bg in grpBg.members)
+				{
+					bg.isActive = false;
+					if(bg.imgName == swagPage.background)
+						bg.isActive = true;
+				}
+			}
+
+			if(swagPage.foreground != null)
+			{
+				for(fg in grpFg.members)
+				{
+					fg.isActive = false;
+					if(fg.imgName == swagPage.foreground)
+						fg.isActive = true;
 				}
 			}
 			

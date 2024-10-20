@@ -173,3 +173,25 @@ class DialogueBox extends FlxSprite
 		}
 	}
 }
+
+class DialogueImg extends FlxSprite
+{
+	public var imgName:String = "";
+	public var isActive:Bool = false;
+	public var fakeAlpha:Float = 1;
+
+	public function new()
+	{
+		super();
+
+		alpha = 0;
+	}
+
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		alpha = FlxMath.lerp(alpha, fakeAlpha * (isActive ? 1 : 0), elapsed * 10);
+	}
+}
+

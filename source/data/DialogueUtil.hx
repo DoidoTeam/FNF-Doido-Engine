@@ -11,6 +11,10 @@ typedef DialoguePage = {
 	// character
 	var ?char:String;
 	var ?charAnim:String;
+	// images
+	var ?underlayAlpha:Float;
+	var ?background:String;
+	var ?foreground:String;
 	// dialogue text
 	var ?text:String;
 	// text settings
@@ -74,13 +78,18 @@ class DialogueUtil
 							char: 'senpai',
 							
 							text: 'Ah, a new fair maiden has come in search of true love!',
+
+							background: 'backgrounds/stage/stageback'
 						},
 						{
-							text: 'A serenade between gentlemen shall decide where her beautiful heart shall reside.'
+							text: 'A serenade between gentlemen shall decide where her beautiful heart shall reside.',
+							foreground: 'herobrine'
 						},
 						{
 							char: 'bf-pixel',
 							text: 'Beep bo bop',
+							background: 'backgrounds/mugen/mugen',
+							foreground: ''
 						}
 					]
 				}
