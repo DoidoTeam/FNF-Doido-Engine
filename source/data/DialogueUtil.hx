@@ -16,7 +16,7 @@ typedef DialoguePage = {
 	// dialogue text
 	var ?text:String;
 	// text settings
-	var ?textSpeed:Float;
+	var ?textDelay:Float;
 	var ?fontFamily:String;
 	var ?fontScale:Float;
 	var ?fontColor:Int;
@@ -160,7 +160,7 @@ class DialogueUtil
 							char: 'spirit',
 							
 							text: 'Direct contact with real humans, after being trapped in here for so long...',
-							textSpeed: 5
+							textDelay: 5
 						},
 						{
 							text: "and HER of all people."
@@ -174,12 +174,12 @@ class DialogueUtil
 						{
 							fontColor: 0xFFFF0000,
 							text: "You don't mind your bodies being borrowed right?",
-							textSpeed: 3.4
+							textDelay: 3.4
 						},
 						{
 							fontScale: 2.5,
 							text: "It's only fair...",
-							textSpeed: 16
+							textDelay: 16
 						},
 					]
 				}

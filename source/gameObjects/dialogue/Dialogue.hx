@@ -64,7 +64,7 @@ class Dialogue extends FlxGroup
 	var fontBorderColor:Int = 0xFF000000;
 	var fontBorderType:FlxTextBorderStyle = OUTLINE;
 
-	var textSpeed:Float = 4;
+	var textDelay:Float = 4;
 	var scrollSfx:Array<String> = [];
 	var clickSfx:String = '';
 	
@@ -143,9 +143,9 @@ class Dialogue extends FlxGroup
 		{
 			text.text = typeTxt.substring(0, typeLoop);
 			typeTimer += elapsed;
-			if(typeTimer >= (textSpeed / 100))
+			if(typeTimer >= (textDelay / 100))
 			{
-				if(textSpeed > 2.5 || (typeLoop % 2 == 0)) {
+				if(textDelay > 2.5 || (typeLoop % 2 == 0)) {
 					if(scrollSfx.length > 0)
 						FlxG.sound.play(Paths.sound(scrollSfx[FlxG.random.int(0, scrollSfx.length - 1)]));
 				}
@@ -222,8 +222,8 @@ class Dialogue extends FlxGroup
 				}
 			}
 
-			if(swagPage.textSpeed != null)
-				textSpeed = swagPage.textSpeed;
+			if(swagPage.textDelay != null)
+				textDelay = swagPage.textDelay;
 			
 			//text.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 			if(swagPage.fontBorderType != null)
