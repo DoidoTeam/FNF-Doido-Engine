@@ -100,18 +100,22 @@ class CoolUtil
 	}
 	
 	// custom camera follow because default lerp is broken :(
-	public static function dumbCamPosLerp(cam:flixel.FlxCamera, target:flixel.FlxObject, lerp:Float = 1)
+	// REMINDER! despite renaming the function from "dumbCamPosLerp" to "camPosLerp" it's still dumb!
+	public static function camPosLerp(cam:flixel.FlxCamera, target:flixel.FlxObject, lerp:Float = 1)
 	{
 		cam.scroll.x = FlxMath.lerp(cam.scroll.x, target.x - FlxG.width / 2, lerp);
 		cam.scroll.y = FlxMath.lerp(cam.scroll.y, target.y - FlxG.height/ 2, lerp);
 	}
+
+	public static function camZoomLerp(start:Float, target:Float = 1.0, speed:Int = 6):Float
+		return FlxMath.lerp(start, target, FlxG.elapsed * speed);
 	
 	// NOTE STUFF
 	inline public static function getDirection(i:Int)
 		return ["left", "down", "up", "right"][i];
 	
 	inline public static function noteWidth()
-		return (160 * 0.7); // 112
+		return 160 * 0.7; // 112
 	
 	public static function setNotePos(note:FlxSprite, target:FlxSprite, angle:Float, offsetX:Float, offsetY:Float, usesLerp:Bool = false)
 	{

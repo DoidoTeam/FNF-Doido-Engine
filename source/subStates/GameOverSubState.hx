@@ -63,7 +63,7 @@ class GameOverSubState extends MusicBeatSubState
 	{
 		super.update(elapsed);
 		if(bfFollow != null)
-			CoolUtil.dumbCamPosLerp(FlxG.camera, bfFollow, elapsed * 2);
+			CoolUtil.camPosLerp(FlxG.camera, bfFollow, elapsed * 2);
 
 		if(!ended)
 		{
