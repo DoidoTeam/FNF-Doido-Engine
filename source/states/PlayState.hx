@@ -1339,7 +1339,7 @@ class PlayState extends MusicBeatState
 				followCamSection(curSect);
 
 				if(SONG.song == "tutorial")
-					extraCamZoom = lerpCamZoom(extraCamZoom, curSect.mustHitSection ? 0 : 0.5, 3);
+					extraCamZoom = CoolUtil.camZoomLerp(extraCamZoom, curSect.mustHitSection ? 0 : 0.5, 3);
 			}
 		}
 		// stuff
@@ -1350,9 +1350,9 @@ class PlayState extends MusicBeatState
 			startGameOver();
 		
 		camGame.zoom = defaultCamZoom + beatCamZoom + extraCamZoom;
-		beatCamZoom = lerpCamZoom(beatCamZoom, 0);
-		camHUD.zoom = lerpCamZoom(camHUD.zoom);
-		camStrum.zoom = lerpCamZoom(camStrum.zoom);
+		beatCamZoom = CoolUtil.camZoomLerp(beatCamZoom, 0);
+		camHUD.zoom = CoolUtil.camZoomLerp(camHUD.zoom);
+		camStrum.zoom = CoolUtil.camZoomLerp(camStrum.zoom);
 		
 		health = FlxMath.bound(health, 0, 2); // bounds the health
 		callScript("updatePost", [elapsed]);
