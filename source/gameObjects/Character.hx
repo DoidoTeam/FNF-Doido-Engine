@@ -501,7 +501,7 @@ class Character extends FlxAnimate
 			return anim.finished;
 	}
 
-	public function invertDirections(axes:FlxAxes)
+	public function invertDirections(axes:FlxAxes = NONE)
 	{
 		switch(axes) {
 			case X:
