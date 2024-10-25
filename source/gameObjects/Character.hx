@@ -6,6 +6,7 @@ import flxanimate.animate.FlxAnim;
 import flxanimate.FlxAnimate;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
+import flixel.util.FlxAxes;
 import data.CharacterData;
 import data.CharacterData.*;
 
@@ -134,6 +135,9 @@ class Character extends FlxAnimate
 				antialiasing = false;
 				isPixelSprite = true;
 				scale.set(6,6);
+
+				if(!isPlayer)
+					invertDirections(X);
 
 			case "bf-pixel-dead":
 				deathChar = "bf-pixel-dead";
@@ -495,5 +499,19 @@ class Character extends FlxAnimate
 			return animation.curAnim.finished;
 		else
 			return anim.finished;
+	}
+
+	public function invertDirections(axes:FlxAxes)
+	{
+		switch(axes) {
+			case X:
+				singAnims = ['singRIGHT', 'singDOWN', 'singUP', 'singLEFT'];
+			case Y:
+				singAnims = ['singLEFT', 'singUP', 'singDOWN', 'singRIGHT'];
+			case XY:
+				singAnims = ['singRIGHT', 'singUP', 'singDOWN', 'singLEFT'];
+			default:
+				singAnims = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
+		}
 	}
 }
