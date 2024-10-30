@@ -3,6 +3,7 @@ package data;
 typedef DialogueData = {
 	var pages:Array<DialoguePage>;
 }
+
 typedef DialoguePage = {
 	// box
 	var ?boxSkin:String;

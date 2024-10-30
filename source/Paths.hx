@@ -1,5 +1,6 @@
 package;
 
+import flixel.graphics.frames.FlxFramesCollection;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
@@ -220,6 +221,22 @@ class Paths
 	// aseprite (.json) sheets
 	public static function getAsepriteAtlas(key:String, ?library:String)
 		return FlxAtlasFrames.fromAseprite(getGraphic(key, library), getPath('images/$key.json', library));
+
+	// sparrow (.xml) sheets but split into multiple graphics
+	public static function getMultiSparrowAtlas(baseSheet:String, otherSheets:Array<String>, ?library:String) {
+		var frames:FlxFramesCollection = getSparrowAtlas(baseSheet);
+
+		if(otherSheets.length > 0) {
+			for(i in 0...otherSheets.length) {
+				var newFrames:FlxFramesCollection = getSparrowAtlas(otherSheets[i]);
+				for(frame in newFrames.frames) {
+					frames.pushFrame(frame);
+				}
+			}
+		}
+
+		return frames;
+	}
 		
 	public static function readDir(dir:String, ?type:String, ?removeType:Bool = true, ?library:String):Array<String>
 	{

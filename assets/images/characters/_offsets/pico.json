@@ -5,14 +5,14 @@
 	],
 	"animOffsets": [
 		[
-			"singRIGHTmiss",
-			-80,
-			25
-		],
-		[
 			"singDOWN",
 			-42,
 			-84
+		],
+		[
+			"singRIGHTmiss",
+			-80,
+			25
 		],
 		[
 			"singLEFTmiss",
@@ -36,18 +36,18 @@
 		],
 		[
 			"singDOWNmiss",
-			-44,
+			186,
 			-36
-		],
-		[
-			"singLEFT",
-			57,
-			2
 		],
 		[
 			"singUPmiss",
 			-27,
 			68
+		],
+		[
+			"singLEFT",
+			57,
+			2
 		]
 	],
 	"ratingsOffset": [

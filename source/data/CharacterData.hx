@@ -9,6 +9,16 @@ typedef DoidoOffsets = {
 typedef DoidoCharacter = {
 	var spritesheet:String;
 	var anims:Array<Dynamic>;
+	var ?extrasheets:Array<String>;
+}
+
+enum SpriteType
+{
+	SPARROW;
+	PACKER;
+	ASEPRITE;
+	ATLAS;
+	MULTISPARROW;
 }
 
 class CharacterData
