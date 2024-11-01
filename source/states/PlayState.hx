@@ -291,7 +291,7 @@ class PlayState extends MusicBeatState
 
 		var noteskins:Array<String> = [];
 
-		for(character in [dad.char.curChar, boyfriend.char.curChar]) {
+		for(character in [dad.curChar, boyfriend.curChar]) {
 			switch(character) {
 				case 'bf-pixel':
 					noteskins.push("pixel");
