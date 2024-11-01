@@ -12,6 +12,10 @@ import sys.FileSystem;
 import sys.io.File;
 #end
 
+#if desktop
+import data.ALSoftConfig;
+#end
+
 using StringTools;
 
 class Main extends Sprite

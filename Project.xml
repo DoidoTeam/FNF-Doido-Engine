@@ -45,8 +45,15 @@
 	<!-- RENAME UNDERSCORE FOLDERS -->
 	<section if="RENAME_UNDERSCORE">
 		<assets path="assets/images/characters/_offsets" 	rename="assets/images/characters/offsets"/>
-		<assets path="assets/images/notes/_other" 		rename="assets/images/notes/other"/>
+		<assets path="assets/images/notes/_other" 			rename="assets/images/notes/other"/>
 	</section>
+
+	<!-- OpenAL config -->
+	<section if="desktop">
+		<assets path="alsoft.txt" rename="alsoft.ini" 	type="text" if=	"windows"/>
+		<assets path="alsoft.txt" rename="alsoft.conf" 	type="text" unless="windows"/>
+	</section>
+
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
