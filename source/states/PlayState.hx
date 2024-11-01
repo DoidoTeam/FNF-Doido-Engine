@@ -288,12 +288,23 @@ class PlayState extends MusicBeatState
 
 		ghostTapping = SaveData.data.get('Ghost Tapping');
 		var downscroll:Bool = SaveData.data.get("Downscroll");
-		
-		dadStrumline = new Strumline(0, dad, downscroll, false, true, assetModifier);
+
+		var noteskins:Array<String> = [];
+
+		for(character in [dad.char.curChar, boyfriend.char.curChar]) {
+			switch(character) {
+				case 'bf-pixel':
+					noteskins.push("pixel");
+				default:
+					noteskins.push(assetModifier);
+			}
+		}
+
+		dadStrumline = new Strumline(0, dad, downscroll, false, true, noteskins[0]);
 		dadStrumline.ID = 0;
 		strumlines.add(dadStrumline);
 		
-		bfStrumline = new Strumline(0, boyfriend, downscroll, true, false, assetModifier);
+		bfStrumline = new Strumline(0, boyfriend, downscroll, true, false, noteskins[1]);
 		bfStrumline.ID = 1;
 		strumlines.add(bfStrumline);
 		
@@ -381,7 +392,10 @@ class PlayState extends MusicBeatState
 				if(note.strumlineID == strumline.ID)
 					thisStrumline = strumline;
 			
-			var noteAssetMod:String = assetModifier;
+			var noteAssetMod:String = noteskins[1];
+
+			if(thisStrumline == dadStrumline)
+				noteAssetMod = noteskins[0];
 			
 			// the funny
 			/*noteAssetMod = ["base", "pixel"][FlxG.random.int(0, 1)];
