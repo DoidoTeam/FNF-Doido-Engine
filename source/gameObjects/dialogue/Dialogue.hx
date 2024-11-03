@@ -141,6 +141,11 @@ class Dialogue extends FlxGroup
 					Paths.preloadSound('sounds/${sound}');
 				}
 			}
+
+			if(page.events != null) {
+				for (event in page.events)
+					preloadEvent(event);
+			}
 		}
 		// first page
 		changePage(false, preload);
@@ -331,6 +336,11 @@ class Dialogue extends FlxGroup
 					activeChar.playAnim(swagPage.charAnim);
 			}
 
+			if(swagPage.events != null && !preload) {
+				for (event in swagPage.events)
+					onEventHit(event);
+			}
+
 			pastData.pages.push(swagPage);
 		}
 		catch(e)
@@ -343,5 +353,35 @@ class Dialogue extends FlxGroup
 		box.reloadBox(skin);
 		text.fieldWidth = box.fieldWidth;
 		textAlphabet.fieldWidth = box.fieldWidth;
+	}
+
+	function preloadEvent(event:DialogueEvent) {
+		switch(event.name) {
+			case 'Play SFX':
+				Paths.preloadSound('sounds/${event.value1}');
+		}
+	}
+
+	function onEventHit(event:DialogueEvent) {
+		switch(event.name)
+		{
+			case 'Play SFX':
+				FlxG.sound.play(Paths.sound(event.value1), CoolUtil.stringToFloat(event.value2, 1));
+
+			/* - WIP, NOT WORKING
+			case 'Flash Screen':
+				CoolUtil.flash(
+					FlxG.cameras.list[FlxG.cameras.list.length - 1],
+					CoolUtil.stringToFloat(event.value1, 2),
+					CoolUtil.stringToColor(event.value2)
+				);
+
+			case 'Shake Screen':
+				var intensity:Float = CoolUtil.stringToFloat(event.value1, 0.5);
+				var duration:Float = CoolUtil.stringToFloat(event.value2, 1);
+				
+				FlxG.cameras.list[FlxG.cameras.list.length - 1].shake(intensity, duration);
+			*/
+		}
 	}
 }

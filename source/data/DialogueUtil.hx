@@ -30,6 +30,8 @@ typedef DialoguePage = {
 	var ?music:String;
 	var ?clickSfx:String;
 	var ?scrollSfx:Array<String>;
+	// event
+	var ?events:Array<DialogueEvent>;
 }
 
 typedef DialogueSprite = {
@@ -54,6 +56,13 @@ typedef Animation = {
 	var prefix:String;
 	var framerate:Int;
 	var looped:Bool;
+}
+
+typedef DialogueEvent = {
+	var name:String;
+	var ?value1:String;
+	var ?value2:String;
+	var ?value3:String;
 }
 
 class DialogueUtil
@@ -128,6 +137,14 @@ class DialogueUtil
 							music: 'dialogue/lunchbox',
 							clickSfx: 'dialogue/clickText',
 							scrollSfx: ['dialogue/talking'],
+
+							events: [
+								{
+									name: "Play SFX",
+									value1: 'dialogue/senpai/roses_sfx',
+									value2: '0.6'
+								}
+							],
 
 							// character
 							char: 'senpai-angry',

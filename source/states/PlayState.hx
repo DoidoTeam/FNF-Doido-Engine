@@ -438,8 +438,8 @@ class PlayState extends MusicBeatState
 				case 'senpai'|'roses':
 					startDialogue(DialogueUtil.loadDialogue(SONG.song));
 					
-					if(SONG.song == 'roses')
-						FlxG.sound.play(Paths.sound('dialogue/senpai/roses_sfx'));
+					//if(SONG.song == 'roses')
+						//FlxG.sound.play(Paths.sound('dialogue/senpai/roses_sfx'));
 				
 				case 'thorns':
 					CoolUtil.playMusic('dialogue/lunchbox-scary');
