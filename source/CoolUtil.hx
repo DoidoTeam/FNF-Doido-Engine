@@ -1,7 +1,9 @@
 package;
 
 import flixel.text.FlxText.FlxTextBorderStyle;
+import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxSort;
@@ -317,5 +319,21 @@ class CoolUtil
 		bytes = Math.floor(bytes * 100) / 100;
 		
 		return '$bytes ${byteUnits[unitCount]}';
+	}
+
+	// for pausing timers and tweens
+	public static function activateTimers(apple:Bool = true)
+	{
+		FlxTimer.globalManager.forEach(function(tmr:FlxTimer)
+		{
+			if(!tmr.finished)
+				tmr.active = apple;
+		});
+
+		FlxTween.globalManager.forEach(function(twn:FlxTween)
+		{
+			if(!twn.finished)
+				twn.active = apple;
+		});
 	}
 }

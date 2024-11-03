@@ -643,7 +643,7 @@ class PlayState extends MusicBeatState
 
 	override function closeSubState()
 	{
-		activateTimers(true);
+		CoolUtil.activateTimers(true);
 		super.closeSubState();
 		if(startedSong)
 		{
@@ -653,22 +653,6 @@ class PlayState extends MusicBeatState
 			}
 			syncSong();
 		}
-	}
-
-	// for pausing timers and tweens
-	function activateTimers(apple:Bool = true)
-	{
-		FlxTimer.globalManager.forEach(function(tmr:FlxTimer)
-		{
-			if(!tmr.finished)
-				tmr.active = apple;
-		});
-
-		FlxTween.globalManager.forEach(function(twn:FlxTween)
-		{
-			if(!twn.finished)
-				twn.active = apple;
-		});
 	}
 
 	// check if you actually hit it
@@ -1737,7 +1721,7 @@ class PlayState extends MusicBeatState
 		if(!startedCountdown || endedSong || paused || isDead) return;
 		
 		paused = true;
-		activateTimers(false);
+		CoolUtil.activateTimers(false);
 		discordUpdateTime = 0.0;
 		openSubState(new PauseSubState());
 	}
@@ -1751,7 +1735,7 @@ class PlayState extends MusicBeatState
 		health = 0;
 		isDead = true;
 		blueballed++;
-		activateTimers(false);
+		CoolUtil.activateTimers(false);
 		persistentDraw = false;
 		openSubState(new GameOverSubState(bfStrumline.character));
 	}

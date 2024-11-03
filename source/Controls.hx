@@ -24,6 +24,7 @@ enum DoidoKey
 	ACCEPT;
 	BACK;
 	PAUSE;
+	TEXT_LOG;
 	// none
 	NONE;
 }
@@ -110,6 +111,8 @@ class Controls
 				return BACK;
 			case "PAUSE":
 				return PAUSE;
+			case "TEXT_LOG":
+				return TEXT_LOG;
 			default:
 				return NONE;
 		}
@@ -197,6 +200,10 @@ class Controls
 		'PAUSE' => [
 			[FlxKey.ENTER, FlxKey.ESCAPE],
 			[FlxPad.START],
+		],
+		'TEXT_LOG' => [
+			[FlxKey.TAB],
+			[FlxPad.Y],
 		],
 	];
 

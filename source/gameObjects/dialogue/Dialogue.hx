@@ -12,6 +12,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import gameObjects.menu.Alphabet;
 import data.DialogueUtil;
+import data.GameData;
 import gameObjects.dialogue.DialogueObjects;
 
 class Dialogue extends FlxGroup
@@ -46,9 +47,29 @@ class Dialogue extends FlxGroup
 		add(box);
 		add(text);
 		add(textAlphabet);
+
+		var controlGuide = new FlxText(0,0,0,"Press BACK to skip.\nPress TAB/Y to open Text Log.");
+        controlGuide.setFormat(Main.gFont, 22, 0xFFFFFFFF, CENTER);
+		controlGuide.setBorderStyle(OUTLINE, 0xFF000000, 1);
+		controlGuide.screenCenter(X);
+		controlGuide.y = FlxG.height - controlGuide.height - 5;
+		controlGuide.alpha = 0;
+        add(controlGuide);
+
+		FlxTween.tween(controlGuide, {alpha: 1}, 0.3, {
+			startDelay: 0.3,
+			onComplete: function(twn:FlxTween)
+			{
+				FlxTween.tween(controlGuide, {alpha: 0}, 1.5, {startDelay: 4});
+			}
+		});
+
+
+		pastData = {pages: []};
 	}
 	
 	public var data:DialogueData;
+	public var pastData:DialogueData;
 	
 	public var underlay:FlxSprite;
 	public var box:DialogueBox;
@@ -136,8 +157,15 @@ class Dialogue extends FlxGroup
 			else
 				changePage();
 		}
+
 		if(Controls.justPressed(BACK))
 			finishCallback();
+
+		if(Controls.justPressed(TEXT_LOG)) {
+			CoolUtil.activateTimers(false);
+			FlxG.state.openSubState(new subStates.TextLogSubstate(pastData));
+		}
+
 		
 		if(isTyping)
 		{
@@ -302,6 +330,8 @@ class Dialogue extends FlxGroup
 				if(activeChar != null)
 					activeChar.playAnim(swagPage.charAnim);
 			}
+
+			pastData.pages.push(swagPage);
 		}
 		catch(e)
 		{

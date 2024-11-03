@@ -92,13 +92,19 @@ class DialogueBox extends FlxSprite
 		super();
 	}
 	
+	public var boxPos:FlxPoint = new FlxPoint();
 	public var txtPos:FlxPoint = new FlxPoint();
 	public var boxSkin:String = "default";
 	public var fieldWidth:Float = 0;
-	public function reloadBox(boxSkin:String = "default"):DialogueBox
+	public var isLog:Bool = false;
+	public function reloadBox(boxSkin:String = "default", isLog:Bool = false):DialogueBox
 	{
 		this.boxSkin = boxSkin;
+		this.isLog = isLog;
+
+		boxPos.set(0,0);
 		txtPos.set(20,20);
+
 		_update = null;
 		switch(boxSkin)
 		{
@@ -120,6 +126,7 @@ class DialogueBox extends FlxSprite
 
 				fieldWidth = (190*5) - 40;
 				
+				boxPos.y = -35;
 			default:
 				boxSkin = "default";
 				makeGraphic(Std.int(FlxG.width * 0.9), Std.int(FlxG.height * 0.32), 0xFF000000);
@@ -127,13 +134,11 @@ class DialogueBox extends FlxSprite
 		}
 		
 		screenCenter(X);
+
 		y = FlxG.height - height - 30;
-		// adjust the pos
-		switch(boxSkin)
-		{
-			case "school-evil":
-				y -= 35;
-		}
+		
+		x += boxPos.x;
+		y += boxPos.y;
 		
 		return this;
 	}
@@ -144,6 +149,9 @@ class DialogueBox extends FlxSprite
 	*/
 	function fakeAnimate(fakeFrames:Array<Float>, framerate:Int = 12, isWidth:Bool = false)
 	{
+		if(isLog)
+			return;
+
 		clipRect = new FlxRect(0,0,0,0);
 		
 		var senpaiTime:Float = 0;
