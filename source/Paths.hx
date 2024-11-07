@@ -61,6 +61,7 @@ class Paths
 				trace('$key.ogg doesnt exist');
 				key = 'sounds/beep';
 			}
+			trace('created new sound $key');
 			renderedSounds.set(key,
 				#if desktop
 				Sound.fromFile(getPath('$key.ogg', library))
@@ -69,7 +70,6 @@ class Paths
 				#end
 			);
 		}
-		trace('created new sound $key');
 		return renderedSounds.get(key);
 	}
 	public static function getGraphic(key:String, ?library:String):FlxGraphic
