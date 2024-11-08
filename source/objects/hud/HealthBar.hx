@@ -1,10 +1,9 @@
 package objects.hud;
 
-import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxRect;
-import flixel.group.FlxGroup;
 import states.PlayState;
 
 class HealthBar extends FlxGroup

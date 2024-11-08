@@ -1,13 +1,12 @@
 package objects.hud;
 
-import backend.song.Conductor;
-import flixel.math.FlxPoint;
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxPoint;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import backend.song.Conductor;
 
 using StringTools;
 

@@ -1,7 +1,5 @@
 package backend.game;
 
-import flixel.FlxG;
-import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;

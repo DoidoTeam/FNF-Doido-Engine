@@ -1,6 +1,6 @@
 package backend.utils;
 
-import flixel.FlxG;
+import flixel.FlxCamera;
 import flixel.FlxSprite;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
@@ -11,7 +11,6 @@ import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
-import flixel.FlxCamera;
 import objects.note.Note;
 import subStates.menu.WebsiteSubState;
 

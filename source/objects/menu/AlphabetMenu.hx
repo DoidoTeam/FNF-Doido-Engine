@@ -1,9 +1,7 @@
 package objects.menu;
 
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
-import objects.hud.HealthIcon;
 
 /*
 **	instead of it being all mashed into one place

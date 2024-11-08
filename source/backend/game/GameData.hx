@@ -1,13 +1,12 @@
 package backend.game;
 
-import backend.song.Conductor;
-import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIState;
 import flixel.addons.ui.FlxUISubState;
 import flixel.group.FlxGroup;
+import backend.song.Conductor;
 
 class MusicBeatState extends FlxUIState
 {

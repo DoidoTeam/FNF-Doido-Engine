@@ -1,6 +1,5 @@
 package objects.menu.options;
 
-import flixel.FlxG;
 import flixel.FlxSprite;
 
 class OptionCheckmark extends FlxSprite

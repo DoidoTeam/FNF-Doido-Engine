@@ -1,12 +1,10 @@
 package backend.game;
 
-import backend.song.Conductor;
-import backend.song.Highscore;
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxSave;
-import flixel.input.keyboard.FlxKey;
 import openfl.system.Capabilities;
+import backend.song.Conductor;
+import backend.song.Highscore;
 
 enum SettingType
 {

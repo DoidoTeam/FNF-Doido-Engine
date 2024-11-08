@@ -1,8 +1,5 @@
 package objects.hud;
 
-import backend.song.Conductor;
-import backend.song.Timings;
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
@@ -10,6 +7,8 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import backend.song.Conductor;
+import backend.song.Timings;
 import states.PlayState;
 
 class HudClass extends FlxGroup

@@ -1,19 +1,13 @@
 package objects.dialogue;
 
-import backend.game.GameData;
-import backend.utils.DialogueUtil;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
-import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
-import flixel.math.FlxRect;
 import flixel.text.FlxText;
-import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import flixel.util.FlxTimer;
-import objects.menu.Alphabet;
+import backend.utils.DialogueUtil;
 import objects.dialogue.DialogueObjects;
+import objects.menu.Alphabet;
 
 class Dialogue extends FlxGroup
 {

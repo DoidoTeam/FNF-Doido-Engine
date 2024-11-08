@@ -1,9 +1,7 @@
 package objects.note;
 
-import flixel.tweens.FlxTween;
-import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.tweens.FlxTween;
 import objects.CharGroup;
 
 class Strumline extends FlxGroup

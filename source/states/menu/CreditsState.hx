@@ -1,10 +1,5 @@
 package states.menu;
 
-import backend.game.GameData.MusicBeatState;
-import backend.song.Highscore;
-import backend.song.Highscore.ScoreData;
-import backend.song.SongData;
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxObject;
 import flixel.group.FlxGroup;
@@ -12,6 +7,10 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import backend.game.GameData.MusicBeatState;
+import backend.song.Highscore;
+import backend.song.Highscore.ScoreData;
+import backend.song.SongData;
 import objects.menu.AlphabetMenu;
 import objects.hud.HealthIcon;
 import states.*;

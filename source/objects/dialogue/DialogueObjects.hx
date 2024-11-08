@@ -1,11 +1,11 @@
 package objects.dialogue;
 
-import backend.utils.DialogueUtil;
-import flixel.util.FlxAxes;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.math.FlxMath;
 import flixel.math.FlxRect;
+import flixel.util.FlxAxes;
+import backend.utils.DialogueUtil;
 
 class DialogueChar extends FlxSprite
 {

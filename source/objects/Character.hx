@@ -1,14 +1,12 @@
 package objects;
 
-import backend.utils.CharacterUtil;
-import backend.utils.CharacterUtil.*;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.util.FlxAxes;
 import flxanimate.FlxAnimate;
-import flxanimate.animate.FlxAnim;
+import backend.utils.CharacterUtil;
+import backend.utils.CharacterUtil.*;
 import objects.note.Note;
-import states.PlayState;
 
 using StringTools;
 
@@ -30,7 +28,7 @@ class Character extends FlxAnimate
 	public var specialAnim:Int = 0;
 
 	public var curAnimFrame(get, never):Int;
-	public var curAnimFinished(get, never):Int;
+	public var curAnimFinished(get, never):Bool;
 
 	// warning, only uses this
 	// if the current character doesnt have game over anims

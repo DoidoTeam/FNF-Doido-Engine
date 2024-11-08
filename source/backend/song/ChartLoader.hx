@@ -3,7 +3,6 @@ package backend.song;
 import backend.song.SongData.EventSong;
 import backend.song.SongData.SwagSection;
 import backend.song.SongData.SwagSong;
-import flixel.util.FlxSort;
 import objects.note.EventNote;
 import objects.note.Note;
 

@@ -1,6 +1,5 @@
 package backend.game;
 
-import flixel.FlxG;
 import flixel.FlxGame;
 import haxe.CallStack;
 import haxe.io.Path;

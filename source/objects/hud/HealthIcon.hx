@@ -1,6 +1,5 @@
 package objects.hud;
 
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import backend.utils.CharacterUtil;

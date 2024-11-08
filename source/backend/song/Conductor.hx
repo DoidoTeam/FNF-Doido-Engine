@@ -1,7 +1,6 @@
 package backend.song;
 
 import backend.song.SongData.SwagSong;
-import flixel.FlxG;
 
 typedef BPMChangeEvent =
 {

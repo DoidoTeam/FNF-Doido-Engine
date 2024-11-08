@@ -1,9 +1,7 @@
 package objects.note;
 
-import backend.song.Timings;
-import flixel.FlxG;
 import flixel.FlxSprite;
-import states.PlayState;
+import backend.song.Timings;
 
 class SplashNote extends FlxSprite
 {

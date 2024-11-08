@@ -1,7 +1,5 @@
 package backend.song;
 
-import flixel.math.FlxMath;
-
 class Timings
 {
 	public static var timingsArray:Array<Array<Dynamic>> = [

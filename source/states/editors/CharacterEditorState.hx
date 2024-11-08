@@ -1,8 +1,5 @@
 package states.editors;
 
-import backend.game.GameData.MusicBeatState;
-import backend.utils.CharacterUtil;
-import flixel.FlxG;
 import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -15,14 +12,15 @@ import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUITabMenu;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxSpriteGroup;
-import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import haxe.Json;
+import openfl.net.FileReference;
+import backend.game.GameData.MusicBeatState;
+import backend.utils.CharacterUtil;
 import objects.Character;
 import objects.hud.Rating;
-import openfl.net.FileReference;
 import states.*;
 import subStates.editors.ChooserSubState;
 

@@ -1,6 +1,5 @@
 package objects.note;
 
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import backend.song.Conductor;
@@ -141,7 +140,7 @@ class Note extends FlxSprite
 		songTime = initialSongTime + Conductor.musicOffset;
 
 	public function noteDiff():Float
-		return (songTime + Conductor.inputOffset - Conductor.songPos);
+		return songTime + Conductor.inputOffset - Conductor.songPos;
 
 	// in case you want to avoid notes this will do
 	public var mustMiss:Bool = false;
