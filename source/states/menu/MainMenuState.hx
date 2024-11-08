@@ -1,6 +1,7 @@
 package states.menu;
 
-import data.Discord.DiscordIO;
+import backend.game.GameData.MusicBeatState;
+import backend.song.SongData;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -9,8 +10,6 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
-import data.GameData.MusicBeatState;
-import data.SongData;
 
 using StringTools;
 

@@ -1,7 +1,9 @@
 package subStates.editors;
 
-import data.SongData;
-import data.SongData.EventSong;
+import backend.game.GameData.MusicBeatSubState;
+import backend.song.SongData;
+import backend.song.SongData.EventSong;
+import backend.song.SongData.SwagSong;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxObject;
@@ -11,9 +13,7 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxSave;
-import data.GameData.MusicBeatSubState;
-import data.SongData.SwagSong;
-import gameObjects.hud.HealthIcon;
+import objects.hud.HealthIcon;
 import states.editors.ChartingState;
 
 typedef AutoSaveData = {

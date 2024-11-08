@@ -1,18 +1,18 @@
 package subStates.editors;
 
-import flixel.util.FlxTimer;
-import gameObjects.hud.note.EventNote;
-import flixel.util.FlxColor;
-import gameObjects.hud.note.Note;
-import gameObjects.hud.HealthIcon;
+import backend.game.GameData.MusicBeatSubState;
+import flixel.FlxSprite;
+import flixel.addons.ui.FlxUIInputText;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import data.GameData.MusicBeatSubState;
-import flixel.addons.ui.FlxUIInputText;
-import flixel.group.FlxSpriteGroup;
 import flixel.tweens.FlxTween;
-import flixel.FlxSprite;
+import flixel.util.FlxTimer;
+import flixel.util.FlxColor;
+import objects.note.EventNote;
+import objects.note.Note;
+import objects.hud.HealthIcon;
 
 enum ChooserType{
     NONE;

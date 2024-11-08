@@ -1,11 +1,11 @@
 package states;
 
+import backend.game.GameData.MusicBeatState;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.util.FlxColor;
-import data.GameData.MusicBeatState;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
-import flixel.system.FlxSound;
+import flixel.util.FlxColor;
 
 class WarningState extends MusicBeatState
 {

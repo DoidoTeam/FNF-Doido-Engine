@@ -1,16 +1,15 @@
 package states;
 
-import data.Discord.DiscordIO;
-import data.GameData.MusicBeatState;
-import data.SongData;
-import data.Conductor;
+import backend.game.GameData.MusicBeatState;
+import backend.song.Conductor;
+import backend.song.SongData;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import gameObjects.menu.Alphabet;
+import objects.menu.Alphabet;
 import states.menu.MainMenuState;
 
 using StringTools;

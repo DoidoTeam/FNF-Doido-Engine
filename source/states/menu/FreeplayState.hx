@@ -1,6 +1,9 @@
 package states.menu;
 
-import data.Discord.DiscordIO;
+import backend.game.GameData.MusicBeatState;
+import backend.song.Highscore;
+import backend.song.Highscore.ScoreData;
+import backend.song.SongData;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxObject;
@@ -9,15 +12,11 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import data.Highscore;
-import data.Highscore.ScoreData;
-import data.GameData.MusicBeatState;
-import data.SongData;
-import gameObjects.menu.AlphabetMenu;
-import gameObjects.hud.HealthIcon;
+import objects.menu.AlphabetMenu;
+import objects.hud.HealthIcon;
 import states.*;
-import subStates.DeleteScoreSubState;
 import states.editors.ChartingState;
+import subStates.menu.DeleteScoreSubState;
 
 using StringTools;
 

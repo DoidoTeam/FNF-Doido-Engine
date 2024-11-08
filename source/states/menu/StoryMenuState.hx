@@ -1,8 +1,8 @@
 package states.menu;
 
-import data.Discord.DiscordIO;
-import subStates.DeleteScoreSubState;
-import flixel.FlxG;
+import backend.game.GameData.MusicBeatState;
+import backend.song.Highscore;
+import backend.song.SongData;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
@@ -12,20 +12,9 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
-import data.GameData.MusicBeatState;
-import data.Highscore;
-import data.SongData;
-import gameObjects.menu.Alphabet;
+import objects.menu.Alphabet;
+import subStates.menu.DeleteScoreSubState;
 
-/*typedef WeekData =
-{
-	var fileName:String;
-	var weekName:String;
-	var songList:Array<String>;
-	var dad:String;
-	var bf:String;
-	var gf:String;
-}*/
 class StoryMenuState extends MusicBeatState
 {
 	var weekList:Array<FunkyWeek> = [];

@@ -1,30 +1,30 @@
 package states.editors;
 
-import subStates.editors.ChooserSubState;
-import flixel.addons.ui.FlxUIButton;
-import haxe.Json;
+import backend.game.GameData.MusicBeatState;
+import backend.objects.CharacterData;
 import flixel.FlxG;
 import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.group.FlxSpriteGroup;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxPoint;
-import flixel.text.FlxText;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.ui.FlxUI;
+import flixel.addons.ui.FlxUIButton;
 import flixel.addons.ui.FlxUICheckBox;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUITabMenu;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxPoint;
+import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
-import gameObjects.Character;
-import gameObjects.hud.Rating;
-import data.CharacterData;
-import data.GameData.MusicBeatState;
+import haxe.Json;
+import objects.Character;
+import objects.hud.Rating;
 import openfl.net.FileReference;
 import states.*;
+import subStates.editors.ChooserSubState;
 
 class CharacterEditorState extends MusicBeatState
 {

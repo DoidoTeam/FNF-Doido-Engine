@@ -1,7 +1,8 @@
 package states.menu;
 
-import subStates.OptionsSubState;
-import data.GameData.MusicBeatState;
+import backend.game.GameData.MusicBeatState;
+import backend.game.GameTransition;
+import subStates.options.OptionsSubState;
 
 class OptionsState extends MusicBeatState
 {
@@ -13,6 +14,6 @@ class OptionsState extends MusicBeatState
         
         openSubState(options);
         
-        options.openSubState(new data.GameTransition(true));
+        options.openSubState(new GameTransition(true));
     }
 }

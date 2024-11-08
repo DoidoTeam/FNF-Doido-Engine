@@ -1,19 +1,19 @@
 package states;
 
+import backend.game.GameData.MusicBeatState;
+import backend.objects.DialogueUtil;
+import backend.song.ChartLoader;
+import backend.song.SongData.SwagSong;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
-import data.ChartLoader;
-import data.GameData.MusicBeatState;
-import data.SongData.SwagSong;
-import data.DialogueUtil;
-import gameObjects.*;
-import gameObjects.hud.*;
-import gameObjects.hud.note.*;
-import gameObjects.dialogue.Dialogue;
+import objects.*;
+import objects.hud.*;
+import objects.note.*;
+import objects.dialogue.Dialogue;
 
 #if PRELOAD_SONG
 import sys.thread.Mutex;

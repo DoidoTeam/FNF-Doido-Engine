@@ -1,6 +1,7 @@
 package subStates;
 
-import data.Discord.DiscordIO;
+import backend.game.GameData.MusicBeatSubState;
+import backend.song.Conductor;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
@@ -11,11 +12,10 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import flixel.sound.FlxSound;
-import data.Conductor;
-import data.GameData.MusicBeatSubState;
-import gameObjects.menu.Alphabet;
-import gameObjects.menu.AlphabetMenu;
+import objects.menu.Alphabet;
+import objects.menu.AlphabetMenu;
 import states.*;
+import subStates.options.OptionsSubState;
 
 class PauseSubState extends MusicBeatSubState
 {
