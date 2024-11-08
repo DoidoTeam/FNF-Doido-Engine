@@ -1,4 +1,4 @@
-package backend.game;
+package backend.utils;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -19,37 +19,8 @@ using StringTools;
 
 class CoolUtil
 {
-	// general things
-	inline public static function formatChar(char:String):String
-	{
-		return char.substring(0, char.lastIndexOf('-'));
-	}
-
 	inline public static function displayName(song:String):String
 		return song.toUpperCase().replace("-", " ");
-
-	public static function charList():Array<String>
-	{
-		return [
-			"face",
-			"dad",
-			"gf",
-			"bf",
-			"bf-dead",
-			"bf-pixel",
-			"bf-pixel-dead",
-			"gf-pixel",
-			"spooky",
-			"spooky-player",
-			"luano-day",
-			"luano-night",
-			"senpai",
-			"senpai-angry",
-			"spirit",
-			"gemamugen",
-			"zero"
-		];
-	}
 	
 	public static function coolTextFile(key:String):Array<String>
 	{

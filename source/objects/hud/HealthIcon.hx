@@ -3,6 +3,7 @@ package objects.hud;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
+import backend.utils.CharacterUtil;
 
 class HealthIcon extends FlxSprite
 {
@@ -21,7 +22,7 @@ class HealthIcon extends FlxSprite
 		if(!Paths.fileExists('images/icons/icon-${curIcon}.png'))
 		{
 			if(curIcon.contains('-'))
-				return setIcon(CoolUtil.formatChar(curIcon), isPlayer);
+				return setIcon(CharacterUtil.formatChar(curIcon), isPlayer);
 			else
 				return setIcon("face", isPlayer);
 		}
@@ -91,7 +92,7 @@ class HealthIcon extends FlxSprite
 			{
 				if(char.contains('-'))
 				{
-					char = CoolUtil.formatChar(char);
+					char = CharacterUtil.formatChar(char);
 					loopMap();
 				}
 				else

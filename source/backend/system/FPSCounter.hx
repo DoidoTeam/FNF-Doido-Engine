@@ -1,4 +1,4 @@
-package backend.game;
+package backend.system;
 
 import haxe.Timer;
 import openfl.system.System;

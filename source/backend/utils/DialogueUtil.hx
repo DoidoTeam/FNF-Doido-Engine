@@ -1,4 +1,4 @@
-package backend.objects;
+package backend.utils;
 
 typedef DialogueData = {
 	var pages:Array<DialoguePage>;

@@ -1,7 +1,7 @@
 package states.editors;
 
 import backend.game.GameData.MusicBeatState;
-import backend.objects.CharacterData;
+import backend.utils.CharacterUtil;
 import flixel.FlxG;
 import flixel.FlxCamera;
 import flixel.FlxObject;
@@ -197,7 +197,7 @@ class CharacterEditorState extends MusicBeatState
 		charsTab.name = "chars";
 		charsHud.addGroup(charsTab);
 
-		var charList = CoolUtil.charList();
+		var charList = CharacterUtil.charList();
 
 		var charButton = new FlxUIButton(10, 25, curChar, function() {
 			openSubState(new ChooserSubState(charList, CHARACTER, function(pick:String) {
@@ -586,7 +586,7 @@ class CharacterEditorState extends MusicBeatState
 
 	function saveOffsets()
 	{
-		var exportData = CharacterData.defaultOffsets();
+		var exportData = CharacterUtil.defaultOffsets();
 		
 		exportData.globalOffset = [char.globalOffset.x, char.globalOffset.y];
 		exportData.cameraOffset = [char.cameraOffset.x, char.cameraOffset.y];

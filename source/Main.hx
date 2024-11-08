@@ -1,14 +1,14 @@
 package;
 
 import backend.game.*;
-import backend.game.FPSCounter;
+import backend.system.FPSCounter;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.input.keyboard.FlxKey;
 import openfl.display.Sprite;
 
 #if desktop
-import backend.game.ALSoftConfig;
+import backend.system.ALSoftConfig;
 #end
 
 #if !html5

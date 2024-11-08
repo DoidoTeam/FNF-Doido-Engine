@@ -424,7 +424,7 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.name = 'song_speed';	
 		addTypingShit(stepperSpeed);
 
-		var characters = CoolUtil.charList();
+		var characters = CharacterUtil.charList();
 		
 		var player1Button:FlxUIButton = null;
 		player1Button = new FlxUIButton(140, 115, SONG.player1, function() {

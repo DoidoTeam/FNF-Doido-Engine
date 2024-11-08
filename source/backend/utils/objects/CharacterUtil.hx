@@ -1,4 +1,4 @@
-package backend.objects;
+package backend.utils;
 
 typedef DoidoOffsets = {
 	var animOffsets:Array<Array<Dynamic>>;
@@ -21,7 +21,7 @@ enum SpriteType
 	MULTISPARROW;
 }
 
-class CharacterData
+class CharacterUtil
 {
 	inline public static function defaultOffsets():DoidoOffsets
 	{
@@ -34,11 +34,38 @@ class CharacterData
 			ratingsOffset:[0,0]
 		};
 	}
+
 	inline public static function defaultChar():DoidoCharacter
 	{
 		return {
 			spritesheet: 'characters/',
 			anims: [],
 		};
+	}
+
+	inline public static function formatChar(char:String):String
+		return char.substring(0, char.lastIndexOf('-'));
+
+	public static function charList():Array<String>
+	{
+		return [
+			"face",
+			"dad",
+			"gf",
+			"bf",
+			"bf-dead",
+			"bf-pixel",
+			"bf-pixel-dead",
+			"gf-pixel",
+			"spooky",
+			"spooky-player",
+			"luano-day",
+			"luano-night",
+			"senpai",
+			"senpai-angry",
+			"spirit",
+			"gemamugen",
+			"zero"
+		];
 	}
 }

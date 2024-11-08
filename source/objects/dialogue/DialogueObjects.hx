@@ -1,6 +1,6 @@
 package objects.dialogue;
 
-import backend.objects.DialogueUtil;
+import backend.utils.DialogueUtil;
 import flixel.util.FlxAxes;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;

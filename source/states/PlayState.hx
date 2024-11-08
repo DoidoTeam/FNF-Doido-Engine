@@ -5,7 +5,7 @@ import crowplexus.hscript.Parser;
 import crowplexus.hscript.Printer;
 import crowplexus.hscript.Bytes;
 import backend.game.GameData.MusicBeatState;
-import backend.objects.DialogueUtil;
+import backend.utils.DialogueUtil;
 import backend.song.*;
 import backend.song.SongData.EventSong;
 import backend.song.SongData.SwagSong;

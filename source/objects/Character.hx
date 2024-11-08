@@ -1,7 +1,7 @@
 package objects;
 
-import backend.objects.CharacterData;
-import backend.objects.CharacterData.*;
+import backend.utils.CharacterUtil;
+import backend.utils.CharacterUtil.*;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.util.FlxAxes;
@@ -51,7 +51,7 @@ class Character extends FlxAnimate
 		antialiasing = FlxSprite.defaultAntialiasing;
 		isPixelSprite = false;
 		
-		var doidoChar = CharacterData.defaultChar();
+		var doidoChar = CharacterUtil.defaultChar();
 		// what
 		switch(curChar)
 		{

@@ -1,7 +1,7 @@
 package objects.dialogue;
 
 import backend.game.GameData;
-import backend.objects.DialogueUtil;
+import backend.utils.DialogueUtil;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
