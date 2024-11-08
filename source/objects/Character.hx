@@ -29,6 +29,9 @@ class Character extends FlxAnimate
 	public var quickDancer:Bool = false;
 	public var specialAnim:Int = 0;
 
+	public var curAnimFrame(get, never):Int;
+	public var curAnimFinished(get, never):Int;
+
 	// warning, only uses this
 	// if the current character doesnt have game over anims
 	public var deathChar:String = "bf-dead";
@@ -435,10 +438,10 @@ class Character extends FlxAnimate
 		super.update(elapsed);
 		if(!onEditor)
 		{
-			if(animExists(curAnimName + '-loop') && curAnimFinished())
+			if(animExists(curAnimName + '-loop') && curAnimFinished)
 				playAnim(curAnimName + '-loop');
 	
-			if(specialAnim > 0 && specialAnim != 3 && curAnimFinished())
+			if(specialAnim > 0 && specialAnim != 3 && curAnimFinished)
 			{
 				specialAnim = 0;
 				dance();
@@ -492,30 +495,6 @@ class Character extends FlxAnimate
 		offset.y += scaleOffset.y;
 	}
 
-	public function animExists(animName:String):Bool
-	{
-		if(spriteType != ATLAS)
-			return animation.getByName(animName) != null;
-		else
-			return anim.getByName(animName) != null;
-	}
-
-	public function curAnimFrame():Int
-	{
-		if(spriteType != ATLAS)
-			return animation.curAnim.curFrame;
-		else
-			return anim.curSymbol.curFrame;
-	}
-
-	public function curAnimFinished():Bool
-	{
-		if(spriteType != ATLAS)
-			return animation.curAnim.finished;
-		else
-			return anim.finished;
-	}
-
 	public function invertDirections(axes:FlxAxes = NONE)
 	{
 		switch(axes) {
@@ -528,5 +507,29 @@ class Character extends FlxAnimate
 			default:
 				singAnims = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
 		}
+	}
+
+	public function animExists(animName:String):Bool
+	{
+		if(spriteType != ATLAS)
+			return animation.getByName(animName) != null;
+		else
+			return anim.getByName(animName) != null;
+	}
+
+	public function get_curAnimFrame():Int
+	{
+		if(spriteType != ATLAS)
+			return animation.curAnim.curFrame;
+		else
+			return anim.curSymbol.curFrame;
+	}
+
+	public function get_curAnimFinished():Bool
+	{
+		if(spriteType != ATLAS)
+			return animation.curAnim.finished;
+		else
+			return anim.finished;
 	}
 }

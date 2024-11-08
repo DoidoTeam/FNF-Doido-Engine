@@ -788,7 +788,7 @@ class PlayState extends MusicBeatState
 		
 		if(note.noteType != "no animation" && thisChar.specialAnim != 2)
 		{
-			if(thisChar.curAnimFrame() == thisChar.holdLoop
+			if(thisChar.curAnimFrame == thisChar.holdLoop
 			|| SaveData.data.get("Static Hold Anim"))
 			{
 				/*thisChar.specialAnim = 0;
