@@ -12,6 +12,9 @@ import haxe.io.Path;
 		var configPath:String = Path.directory(Path.withoutExtension(origin));
 		#if windows
 		configPath += "/alsoft.ini";
+		#elseif mac
+		configPath = Path.directory(configPath) + "/Resources/alsoft.conf";
+		#else
 		#else
 		configPath += "/alsoft.conf";
 		#end
