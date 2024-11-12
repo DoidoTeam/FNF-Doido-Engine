@@ -83,7 +83,6 @@ class Controls
 	//THIS IS A TEMP FIX!!!! CHANGE LATER!!!!
 	inline public static function stringToBind(bind:String):DoidoKey
 	{
-		#if linux
 		switch(bind) {
 			case "LEFT":
 				return LEFT;
@@ -114,9 +113,9 @@ class Controls
 			default:
 				return NONE;
 		}
-		#else
-		return cast DoidoKey.getConstructors().indexOf(Std.string(bind));
-		#end
+
+		// NOTE: This does not work on Linux or macOS
+		//return cast DoidoKey.getConstructors().indexOf(Std.string(bind));
 	}
 	
 	public static function setSoundKeys(?empty:Bool = false)
