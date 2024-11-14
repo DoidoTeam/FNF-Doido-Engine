@@ -73,7 +73,7 @@ class MainMenuState extends MusicBeatState
 				optionSize -= 0.04;
 		}
 		
-		//trace('optionSize: ' + optionSize);
+		//Logs.print('optionSize: ' + optionSize);
 		
 		for(i in 0...optionShit.length)
 		{

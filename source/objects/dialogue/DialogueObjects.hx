@@ -162,7 +162,7 @@ class DialogueBox extends FlxSprite
 			if(senpaiTime >= 1)
 			{
 				senpaiTime = 0;
-				//trace('frame: $senpaiLoop');
+				//Logs.print('frame: $senpaiLoop');
 				
 				var daWidth:Float = frameWidth;
 				var daHeight:Float = frameHeight;

@@ -103,15 +103,6 @@ class DoidoGame extends FlxGame {
 	 * very cool person for real they don't get enough credit for their work
 	 */
 
-	function println(str:Dynamic) {
-		#if sys Sys.println(str); #else
-		var traceStr = "Unsupported stack call.";
-		if(Std.isOfType(str, String))
-			traceStr = str;
-		trace(traceStr);
-		#end
-	}
-
 	private function exceptionCaught(e:haxe.Exception, func:String = null) {
 		if (_viewingCrash)
 			return;
@@ -120,7 +111,6 @@ class DoidoGame extends FlxGame {
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
 		var fileStack:Array<String> = [];
 		var dateNow:String = Date.now().toString();
-		//var println = #if sys Sys.println #else traceThis #end;
 
 		dateNow = StringTools.replace(dateNow, " ", "_");
 		dateNow = StringTools.replace(dateNow, ":", "'");
@@ -145,7 +135,7 @@ class DoidoGame extends FlxGame {
 				case LocalFunction(name):
 					fileStack.push('Local Function (${name})');
 				default:
-					println(stackItem);
+					Logs.print(stackItem, ERROR, true, true, false, false);
 			}
 		}
 
@@ -161,9 +151,9 @@ class DoidoGame extends FlxGame {
 
 		final funcThrew:String = '${func != null ? ' thrown at "${func}" function' : ""}';
 
-		println(msg + funcThrew);
-		println(e.message);
-		println('Crash dump saved in ${Path.normalize(path)}');
+		Logs.print(msg + funcThrew, ERROR, true, true, false, false);
+		Logs.print(e.message, ERROR, true, true, false, false);
+		Logs.print('Crash dump saved in ${Path.normalize(path)}', WARNING, true, true, false, false);
 
 		// make sure to not do ANYTHING flixel related as much as possible from this point onwards.
 

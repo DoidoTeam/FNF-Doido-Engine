@@ -58,10 +58,10 @@ class Paths
 		if(!renderedSounds.exists(key))
 		{
 			if(!fileExists('$key.ogg', library)) {
-				trace('$key.ogg doesnt exist');
+				Logs.print('$key.ogg doesnt exist', WARNING);
 				key = 'sounds/beep';
 			}
-			trace('created new sound $key');
+			Logs.print('created new sound $key');
 			renderedSounds.set(key,
 				#if desktop
 				Sound.fromFile(getPath('$key.ogg', library))
@@ -88,14 +88,14 @@ class Paths
 				#end
 				
 				var newGraphic = FlxGraphic.fromBitmapData(bitmap, false, key, false);
-				trace('created new image $key');
+				Logs.print('created new image $key');
 				
 				renderedGraphics.set(key, newGraphic);
 			}
 			
 			return renderedGraphics.get(key);
 		}
-		trace('$key.png doesnt exist, fuck');
+		Logs.print('$key.png doesnt exist, fuck', WARNING);
 		return null;
 	}
 	
@@ -125,8 +125,9 @@ class Paths
 			graphic.dump();
 			graphic.destroy();
 		}
-		trace('cleared $clearCount');
-		trace('cleared ${clearCount.length} assets');
+
+		Logs.print('cleared $clearCount');
+		Logs.print('cleared ${clearCount.length} assets');
 
 		// uhhhh
 		@:privateAccess
@@ -265,7 +266,7 @@ class Paths
 		} catch(e) {}
 		
 		
-		trace(theList);
+		Logs.print(theList);
 		return theList;
 	}
 

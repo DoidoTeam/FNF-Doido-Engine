@@ -14,7 +14,7 @@ class MusicBeatState extends FlxUIState
 	{
 		super.create();
 		Main.activeState = this;
-		trace('switched to ${Type.getClassName(Type.getClass(this))}');
+		Logs.print('switched to ${Type.getClassName(Type.getClass(this))}');
 		persistentDraw = true;
 		persistentUpdate = false;
 		

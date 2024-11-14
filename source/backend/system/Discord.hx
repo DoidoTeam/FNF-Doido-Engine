@@ -43,7 +43,7 @@ class DiscordIO
 				DiscordAPI.shutdown();
 			});
 
-			trace("initialized Discord RPC");
+			Logs.print("initialized Discord RPC");
 		}
 		#end
 	}
@@ -52,7 +52,7 @@ class DiscordIO
 	{
 		#if DISCORD_RPC
 		DiscordAPI.shutdown();
-		trace("shutdown Discord RPC");
+		Logs.print("shutdown Discord RPC");
 		#end
 	}
 
@@ -61,7 +61,7 @@ class DiscordIO
 		#if DISCORD_RPC
 		DiscordAPI.changePresence(details, state);
 		if(log)
-			trace("changed RPC to " + details);
+			Logs.print("changed RPC to " + details);
 		lastDetails = details;
 		#end
 	}
@@ -95,19 +95,19 @@ class DiscordAPI
 		var requestPtr:cpp.Star<DiscordUser> = cpp.ConstPointer.fromRaw(request).ptr;
 
 		if (Std.parseInt(cast(requestPtr.discriminator, String)) != 0) //New Discord IDs/Discriminator system
-			trace('(Discord) Connected to User (${cast(requestPtr.username, String)}#${cast(requestPtr.discriminator, String)})');
+			Logs.print('(Discord) Connected to User (${cast(requestPtr.username, String)}#${cast(requestPtr.discriminator, String)})');
 		else //Old discriminators
-			trace('(Discord) Connected to User (${cast(requestPtr.username, String)})');
+			Logs.print('(Discord) Connected to User (${cast(requestPtr.username, String)})');
 
 		changePresence(DiscordIO.lastDetails);
 	}
 
 	private static function onError(errorCode:Int, message:cpp.ConstCharStar):Void {
-		trace('Discord: Error ($errorCode: ${cast(message, String)})');
+		Logs.print('Discord: Error ($errorCode: ${cast(message, String)})', ERROR);
 	}
 
 	private static function onDisconnected(errorCode:Int, message:cpp.ConstCharStar):Void {
-		trace('Discord: Disconnected ($errorCode: ${cast(message, String)})');
+		Logs.print('Discord: Disconnected ($errorCode: ${cast(message, String)})');
 	}
 
 	public static function initialize()
@@ -121,7 +121,7 @@ class DiscordAPI
 		discordHandlers.errored = cpp.Function.fromStaticFunction(onError);
 		Discord.Initialize(clientID, cpp.RawPointer.addressOf(discordHandlers), 1, null);
 
-		trace("Discord Client initialized");
+		Logs.print("Discord Client initialized");
 
 		sys.thread.Thread.create(() ->
 		{
@@ -155,7 +155,7 @@ class DiscordAPI
 		presence.startTimestamp = Std.int(startTimestamp / 1000);
 		presence.endTimestamp = Std.int(endTimestamp / 1000);
 		updatePresence();
-		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
+		//Logs.print('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
 
 	public static function updatePresence() {

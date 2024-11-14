@@ -111,7 +111,7 @@ class LoadingState extends MusicBeatState
 						charList.push(stageBuild.gfVersion);
 				}
 			}
-			trace('preloaded stage and hud');
+			Logs.print('preloaded stage and hud');
 			loadPercent = 0.2;
 			for(i in charList)
 			{
@@ -125,7 +125,7 @@ class LoadingState extends MusicBeatState
 					addBehind(dead);
 				}
 				
-				//trace('preloaded char $i');
+				//Logs.print('preloaded char $i');
 				
 				if(i != stageBuild.gfVersion)
 				{
@@ -136,7 +136,7 @@ class LoadingState extends MusicBeatState
 				loadPercent += (0.6 - 0.2) / charList.length;
 			}
 			
-			trace('preloaded characters');
+			Logs.print('preloaded characters');
 			loadPercent = 0.6;
 			
 			var songDiff:String = PlayState.songDiff;
@@ -144,7 +144,7 @@ class LoadingState extends MusicBeatState
 			if(SONG.needsVoices)
 				Paths.preloadSound(Paths.songPath('${SONG.song}/Voices', songDiff));
 
-			trace('preloaded music');
+			Logs.print('preloaded music');
 			loadPercent = 0.75;
 
 			var dialData:DialogueData = DialogueUtil.loadDialogue(SONG.song);
@@ -160,12 +160,12 @@ class LoadingState extends MusicBeatState
 			switch(SONG.song)
 			{
 				default:
-					trace('preloaded NOTHING extra lol');
+					Logs.print('preloaded NOTHING extra lol');
 			}
 			loadPercent = 0.95;
 			
 			loadPercent = 1.0;
-			trace('finished loading');
+			Logs.print('finished loading');
 			threadActive = false;
 			FlxSprite.defaultAntialiasing = oldAnti;
 		#if PRELOAD_SONG

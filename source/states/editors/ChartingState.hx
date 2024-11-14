@@ -595,7 +595,7 @@ class ChartingState extends MusicBeatState
 			var daCrochet:Float = Conductor.calcStep(Conductor.bpm);
 			for(i in daNums[0]...daNums[1])
 			{
-				//trace('looped $i');
+				//Logs.printprint('looped $i');
 				var section = getSection(i);
 				if(section.changeBPM)
 					daCrochet = Conductor.calcStep(section.bpm);
@@ -697,7 +697,7 @@ class ChartingState extends MusicBeatState
 					continue;
 				else
 				{
-					//trace('created new note');
+					//Logs.printprint('created new note');
 					var newNote:Array<Dynamic> = [];
 					for(n in 0...note.length)
 						newNote[n] = note[n];
@@ -868,7 +868,7 @@ class ChartingState extends MusicBeatState
 					updateCurEventData();
 				}
 			} catch(e) {
-				trace('ja era, se lascou');
+				Logs.print('error clearing single slot: ' + e, ERROR);
 			}
 		});
 
@@ -882,7 +882,7 @@ class ChartingState extends MusicBeatState
 					updateCurEventData();
 				}
 			} catch(e) {
-				trace('ja era, se lascou');
+				Logs.print('error clearing all slots: ' + e, ERROR);
 			}
 		});
 		dangerButton(clearSlots);
@@ -976,7 +976,7 @@ class ChartingState extends MusicBeatState
 		
 		snapDropDown.selectedLabel = formatSnaps[allSnaps.indexOf(GRID_SNAP)];
 		reloadSection(curSection, false);
-		//trace('curSnap: ' + GRID_SNAP);
+		//Logs.printprint('curSnap: ' + GRID_SNAP);
 	}
 	
 	function clearEventLabel(resetSlot:Bool = false)
@@ -1009,7 +1009,7 @@ class ChartingState extends MusicBeatState
 			} catch(e) {
 				clearEventLabel();
 				updateEventInfo();
-				trace('created new slot idk');
+				Logs.print('created new slot');
 			}
 		}
 	}
@@ -1032,7 +1032,7 @@ class ChartingState extends MusicBeatState
 				event = curSelectedEvent;
 			}
 		}
-		//trace(curEventSprite.eventDataStuff);
+		//Logs.print(curEventSprite.eventDataStuff);
 		updateCurEventIcons();
 	}
 
@@ -1362,7 +1362,7 @@ class ChartingState extends MusicBeatState
 						swagNote.ID = 1;
 						if(allNoteTypes.contains(swagNote.noteType) && swagNote.noteType != "none")
 						{
-							//trace(swagNote.noteType);
+							//Logs.print(swagNote.noteType);
 							var numTxt:String = Std.string(allNoteTypes.indexOf(swagNote.noteType));
 
 							var typeTxt = new FlxText(0,0,0,numTxt,16);
@@ -1400,14 +1400,14 @@ class ChartingState extends MusicBeatState
 
 						for(i in 0...event[2].length)
 						{
-							//trace(event[2][i]);
+							//Logs.print(event[2][i]);
 							eventNote.eventDataStuff.push(event[2][i][0]);
 							eventNote.reloadSprites();
 							for(sprite in eventNote.eventSprites)
 								if(daSec != curSection)
 									sprite.alpha = 0.2;
 						}
-						//trace(eventNote.eventDataStuff);
+						//Logs.printprint(eventNote.eventDataStuff);
 					}
 				}
 			}
@@ -1561,7 +1561,7 @@ class ChartingState extends MusicBeatState
 		autosavetimer += elapsed;
 		if(autosavetimer >= 60 * 5)
 		{
-			trace('autosaved');
+			Logs.print('chart autosaved');
 			autosavetimer = 0;
 			addAutoSave();
 		}
@@ -1746,7 +1746,7 @@ class ChartingState extends MusicBeatState
 					newNote[0] += FlxMath.remapToRange(selectSquare.y, 0, GRID_SIZE * GRID_ZOOM, 0, Conductor.stepCrochet);
 					newNote[1] = Math.floor((FlxG.mouse.x - mainGrid.x) / GRID_SIZE);
 
-					//trace(newNote);
+					//Logs.print(newNote);
 					curSelectedNote = newNote;
 					updateCurNote();
 					getSection(curSection).sectionNotes.push(newNote);
@@ -1797,7 +1797,7 @@ class ChartingState extends MusicBeatState
 
 				reloadSection(curSection, false);
 				updateCurNote();
-				trace(curSelectedNote[2]);
+				Logs.print('curSelectedNote:' + curSelectedNote[2]);
 			}
 		}
 
@@ -1947,7 +1947,7 @@ class ChartGrid extends FlxGroup
 		this.zoom = zoom;
 
 		//if(i == 1)
-		//	trace('sucessfully reloaded');
+		//	Logs.print('sucessfully reloaded');
 
 		clear();
 		var GRID_SIZE = ChartingState.GRID_SIZE;

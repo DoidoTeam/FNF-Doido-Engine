@@ -168,7 +168,7 @@ class OffsetsSubState extends MusicBeatSubState
     function offsetBeatHit()
     {
         cameras[0].zoom = 1.025; // 1.05, 1.025
-        //trace("hello " + offsetCurBeat);
+        //Logs.print("hello " + offsetCurBeat);
         if(testingInput && countdown <= 4)
         {
             countdownSpr.text = ["3","2","1","GO",""][countdown];
@@ -179,7 +179,7 @@ class OffsetsSubState extends MusicBeatSubState
         var realOffsetMusicTime:Float = rawOffsetMusicTime + Conductor.musicOffset;
         if(Math.abs(songPos - realOffsetMusicTime) >= 20)
         {
-            trace('synced $songPos to $realOffsetMusicTime');
+            Logs.print('synced $songPos to $realOffsetMusicTime');
             songPos = realOffsetMusicTime;
         }
     }
@@ -255,7 +255,7 @@ class OffsetsSubState extends MusicBeatSubState
             }
             else if(Controls.justPressed(ACCEPT))
             {
-                trace('started testing!!');
+                Logs.print('started testing!!');
                 testingInput = true;
                 changeOption();
                 countdown = 0;
@@ -313,7 +313,7 @@ class OffsetsSubState extends MusicBeatSubState
                 {
                     if(note.songTime - songPos <= -100 || !note.visible)
                     {
-                        trace('ended');
+                        Logs.print('ended');
                         testingInput = false;
                         if(notesHit != 0) {
                             offsetAverage = Math.floor(offsetAverage / notesHit);

@@ -259,7 +259,7 @@ class ChartTestSubState extends MusicBeatSubState
 
 	public function onEventHit(daEvent:EventNote, preload:Bool = false)
 	{
-		//trace('event ${daEvent.eventName} // $preload');
+		//Logs.print('event ${daEvent.eventName} // $preload');
 		switch(daEvent.eventName)
 		{
 			case 'Freeze Notes':
@@ -378,7 +378,7 @@ class ChartTestSubState extends MusicBeatSubState
 		}
 		
 		//if(!['default', 'none'].contains(note.noteType))
-		//	trace('noteType: ${note.noteType}');
+		//	Logs.print('noteType: ${note.noteType}');
 
 		if(!note.isHold)
 		{

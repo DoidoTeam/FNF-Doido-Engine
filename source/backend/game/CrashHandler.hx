@@ -32,7 +32,7 @@ class CrashHandler extends Sprite
         var windowSize:Int = CoolUtil.stringToInt((SaveData.data.get("Window Size").split("x")[1]));
 
         fontSize = Std.int((windowSize / 30));
-        trace(fontSize);
+        Logs.print("crash handler font size " + fontSize);
 
         final _matrix = new flixel.math.FlxMatrix().rotateByPositive90();
 		graphics.beginGradientFill(LINEAR, [0xFF38173F, 0xFF733A8D], [0.6, 1], [125, 255], _matrix);

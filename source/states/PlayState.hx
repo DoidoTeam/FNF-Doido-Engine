@@ -198,7 +198,7 @@ class PlayState extends MusicBeatState
 		unspawnNotes = ChartLoader.getChart(SONG);
 		unspawnEvents = ChartLoader.getEvents(EVENTS);
 
-		//trace('tu ta jogando na linguagem ${openfl.system.Capabilities.language}');
+		//Logs.print('tu ta jogando na linguagem ${openfl.system.Capabilities.language}');
 		
 		// adjusting the conductor
 		Conductor.setBPM(SONG.bpm);
@@ -573,7 +573,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			//trace(daCount);
+			//Logs.print(daCount);
 
 			daCount++;
 		}, 5);
@@ -582,7 +582,7 @@ class PlayState extends MusicBeatState
 	public function startDialogue(dialData:DialogueData)
 	{
 		if(dialData.pages.length > 0) {
-			trace('song ${SONG.song} has found dialogue!');
+			Logs.print('song ${SONG.song} has found dialogue!');
 			new FlxTimer().start(0.45, function(tmr:FlxTimer)
 			{
 				var dial = new Dialogue();
@@ -597,7 +597,7 @@ class PlayState extends MusicBeatState
 			});
 		}
 		else {
-			trace('song ${SONG.song} has not found dialogue :(');
+			Logs.print('song ${SONG.song} has not found dialogue :(', WARNING);
 			startCountdown();
 		}
 
@@ -693,7 +693,7 @@ class PlayState extends MusicBeatState
 		}
 		
 		//if(!['default', 'none'].contains(note.noteType))
-		//	trace('noteType: ${note.noteType}');
+		//	Logs.print('noteType: ${note.noteType}');
 		switch(note.noteType)
 		{
 			case "warn note":
@@ -1149,7 +1149,7 @@ class PlayState extends MusicBeatState
 			if(daEvent.songTime <= Conductor.songPos)
 			{
 				#if debug
-				trace('${daEvent.eventName} // ${daEvent.value1} // ${daEvent.value2} // ${daEvent.value3}');
+				Logs.print('${daEvent.eventName} // ${daEvent.value1} // ${daEvent.value2} // ${daEvent.value3}');
 				#end
 				onEventHit(daEvent);
 				eventCount++;
@@ -1158,7 +1158,7 @@ class PlayState extends MusicBeatState
 
 		/*if(FlxG.keys.justPressed.SPACE)
 		{
-			trace('${gf.width}, ${gf.height}');
+			Logs.print('${gf.width}, ${gf.height}');
 		}*/
 		
 		// adding notes to strumlines
@@ -1640,7 +1640,7 @@ class PlayState extends MusicBeatState
 			// syncs the conductor
 			if(Math.abs(Conductor.songPos - inst.time) >= 20 && Conductor.songPos - inst.time <= 5000)
 			{
-				trace('synced song ${Conductor.songPos} to ${inst.time}');
+				Logs.print('synced song ${Conductor.songPos} to ${inst.time}');
 				Conductor.songPos = inst.time;
 			}
 			
@@ -1703,7 +1703,7 @@ class PlayState extends MusicBeatState
 		{
 			loadSong(playList[0]);
 			
-			//trace(playList);
+			//Logs.print(playList);
 			Main.switchState(new LoadingState());
 		}
 	}
@@ -1879,7 +1879,7 @@ class PlayState extends MusicBeatState
 					if(ny != null && Reflect.isFunction(ny))
 						script.call(fun, args);
 				} catch(e) {
-					trace('idk what happened lol');
+					Logs.print('error parsing script: ' + e, ERROR);
 				}
 			}
 		}

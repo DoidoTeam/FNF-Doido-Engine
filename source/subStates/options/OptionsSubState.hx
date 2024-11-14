@@ -208,7 +208,7 @@ class OptionsSubState extends MusicBeatSubState
                 {
                     case "controls":
                         /*FlxG.sound.play(Paths.sound('METAL-BAR'));
-                        trace('FUCK YOU!!');*/
+                        Logs.print('FUCK YOU!!', WARNING);*/
                         persistentDraw = false;
                         openSubState(new ControlsSubState());
                     case "adjust offsets":

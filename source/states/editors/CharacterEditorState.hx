@@ -570,7 +570,7 @@ class CharacterEditorState extends MusicBeatState
 				changeInputY.text = Std.string(char.cameraOffset.y);
 		
 			case "animation":
-				trace(char.curAnimName);
+				Logs.print(char.curAnimName);
 				var daAnim = char.animOffsets.get(char.curAnimName);
 				
 				changeInputX.text = Std.string(daAnim[0]);

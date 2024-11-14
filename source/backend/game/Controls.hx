@@ -49,7 +49,7 @@ class Controls
 		var bind = bindToString(rawBind);
 		if(!allControls.exists(bind))
 		{
-			trace("that bind does not exist dummy");
+			Logs.print('Bind $bind not found', WARNING);
 			return false;
 		}
 

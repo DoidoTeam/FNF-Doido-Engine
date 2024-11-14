@@ -391,7 +391,7 @@ class Character extends FlxAnimate
 					cameraOffset.set(charData.cameraOffset[0], charData.cameraOffset[1]);
 					ratingsOffset.set(charData.ratingsOffset[0], charData.ratingsOffset[1]);
 				} catch(e) {
-					trace('$curChar offsets not found');
+					Logs.print('$curChar offsets not found', WARNING);
 				}
 		}
 		
