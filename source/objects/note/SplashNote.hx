@@ -9,10 +9,13 @@ class SplashNote extends FlxSprite
 	public var holdNote:Note = null;
 	public var holdStrum:StrumNote = null;
 
+	public var startAlpha:Float = 1.0;
+	public final endAlpha:Float = 0.0001;
+
 	public function new(?isHold:Bool = false)
 	{
 		super();
-		visible = false;
+		alpha = endAlpha;
 		this.isHold = isHold;
 	}
 
@@ -76,7 +79,7 @@ class SplashNote extends FlxSprite
 			antialiasing = false;
 
 		playRandom();
-		visible = false;
+		alpha = endAlpha;
 	}
 	
 	public function reloadHoldSplash()
@@ -103,7 +106,7 @@ class SplashNote extends FlxSprite
 			antialiasing = false;
 
 		playAnim("start");
-		visible = true;
+		alpha = startAlpha;
 	}
 
 	override function update(elapsed:Float)
@@ -112,7 +115,7 @@ class SplashNote extends FlxSprite
 		if(!isHold)
 		{
 			if(animation.finished)
-				visible = false;
+				alpha = endAlpha;
 		}
 		else
 		{
@@ -127,7 +130,7 @@ class SplashNote extends FlxSprite
 				{
 					playAnim("splash");
 					if(holdPercent < Timings.holdTimings[0][0])
-						visible = false;
+						alpha = endAlpha;
 				}
 			}
 			
@@ -136,10 +139,10 @@ class SplashNote extends FlxSprite
 				switch(animation.curAnim.name)
 				{
 					case "start": playAnim('loop');
-					case "splash": visible = false;
+					case "splash": alpha = endAlpha;
 				}
 			}
-			if(!visible)
+			if(alpha <= endAlpha)
 				destroy();
 		}
 	}
@@ -147,7 +150,7 @@ class SplashNote extends FlxSprite
 	// plays a random animation, useful for common splashes
 	public function playRandom()
 	{
-		visible = true;
+		alpha = startAlpha;
 		var animList = animation.getNameList();
 		playAnim(animList[FlxG.random.int(0, animList.length - 1)], true);
 	}
