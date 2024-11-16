@@ -44,7 +44,7 @@ class Main extends Sprite
 		#end
 
 		#if ENABLE_PRINTING
-
+		Logs.init();
 		#end
 
 		// shader coords fix
