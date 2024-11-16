@@ -44,10 +44,7 @@ class Main extends Sprite
 		#end
 
 		#if ENABLE_PRINTING
-		// Even though we don't actually use this, we convert regular traces into our custom print func
-		Log.trace = function(v:Dynamic, ?infos:Null<haxe.PosInfos>) {
-			Logs.print(Std.string(v), TRACE, true, true, true, infos);
-		};
+
 		#end
 
 		// shader coords fix

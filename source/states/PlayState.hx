@@ -1,6 +1,7 @@
 package states;
 
 import crowplexus.iris.Iris;
+import crowplexus.iris.IrisConfig;
 import crowplexus.hscript.Parser;
 import crowplexus.hscript.Printer;
 import crowplexus.hscript.Bytes;
@@ -190,8 +191,8 @@ class PlayState extends MusicBeatState
 
 		for(path in scriptPaths)
 		{
-			var newScript:Iris = new Iris(Paths.script('$path'));
-			newScript.execute();
+			var scriptConfig:IrisConfig = new IrisConfig(path, true, true);
+			var newScript:Iris = new Iris(Paths.script('$path'), scriptConfig);
 			loadedScripts.push(newScript);
 		}
 

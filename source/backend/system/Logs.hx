@@ -33,6 +33,18 @@ class Logs {
         HSCRIPT  => [94, "0000FF"],
     ];
 
+    public static function init()
+    {
+        // Even though we don't actually use this, we convert regular traces into our custom print func
+		Log.trace = function(v:Dynamic, ?infos:Null<haxe.PosInfos>) {
+			Logs.print(Std.string(v), TRACE, true, true, true, infos);
+		};
+
+		crowplexus.iris.Iris.logLevel = function (level:crowplexus.iris.ErrorSeverity, v:Dynamic, ?pos:haxe.PosInfos) {
+			Logs.print(v, HSCRIPT, true, true, true, true, pos);
+		};
+    }
+
     public static function print(v:Dynamic, type:ErrorType = TRACE, printType:Bool = true, printTime:Bool = true, printClass:Bool = true, allowDebugger:Bool = true, ?infos:Null<haxe.PosInfos>) {
         #if !ENABLE_PRINTING
         return;
@@ -55,6 +67,7 @@ class Logs {
 
     public static function formatType(type:ErrorType = TRACE) {
         return switch(type) {
+            case HSCRIPT: "[HSCRIPT]";
             case WARNING: "[WARNING]";
             case ERROR: "[ ERROR ]";
             default: "[ TRACE ]";
@@ -75,7 +88,7 @@ class Logs {
             str += Date.now().toString().split(' ')[1] + separator;
 
         if(printClass)
-            str += infos.className + ':' + infos.lineNumber + separator;
+            str += (type == HSCRIPT ? infos.fileName : infos.className) + ':' + infos.lineNumber + separator;
 
         str += Std.string(v);
 

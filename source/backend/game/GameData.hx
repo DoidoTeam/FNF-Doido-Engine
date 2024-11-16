@@ -7,6 +7,7 @@ import flixel.addons.ui.FlxUIState;
 import flixel.addons.ui.FlxUISubState;
 import flixel.group.FlxGroup;
 import backend.song.Conductor;
+import crowplexus.iris.Iris;
 
 class MusicBeatState extends FlxUIState
 {
@@ -25,6 +26,8 @@ class MusicBeatState extends FlxUIState
 		
 		if(!Main.skipTrans)
 			openSubState(new GameTransition(true));
+
+		Iris.destroyAll();
 
 		// go back to default automatically i dont want to do it
 		Main.skipStuff(false);
