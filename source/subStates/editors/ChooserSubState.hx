@@ -120,7 +120,7 @@ class ChooserSubState extends MusicBeatSubState
                 return;
             }
             
-            scrollY -= FlxG.mouse.wheel * 200 * elapsed;
+            scrollY -= FlxG.mouse.wheel * 5000 * elapsed;
             scrollY = FlxMath.lerp(
                 scrollY,
                 FlxMath.bound(scrollY, minScrollY, maxScrollY),
