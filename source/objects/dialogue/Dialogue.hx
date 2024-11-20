@@ -352,7 +352,7 @@ class Dialogue extends FlxGroup
 	function preloadEvent(event:DialogueEvent) {
 		switch(event.name) {
 			case 'Play SFX':
-				Paths.preloadSound('sounds/${event.value1}');
+				Paths.preloadSound('sounds/${event.values[0]}');
 		}
 	}
 
@@ -360,22 +360,15 @@ class Dialogue extends FlxGroup
 		switch(event.name)
 		{
 			case 'Play SFX':
-				FlxG.sound.play(Paths.sound(event.value1), CoolUtil.stringToFloat(event.value2, 1));
+				FlxG.sound.play(Paths.sound(event.values[0]), CoolUtil.stringToFloat(event.values[1], 1));
 
-			/* - WIP, NOT WORKING
+
 			case 'Flash Screen':
 				CoolUtil.flash(
 					FlxG.cameras.list[FlxG.cameras.list.length - 1],
-					CoolUtil.stringToFloat(event.value1, 2),
-					CoolUtil.stringToColor(event.value2)
+					CoolUtil.stringToFloat(event.values[0], 2),
+					CoolUtil.stringToColor(event.values[1])
 				);
-
-			case 'Shake Screen':
-				var intensity:Float = CoolUtil.stringToFloat(event.value1, 0.5);
-				var duration:Float = CoolUtil.stringToFloat(event.value2, 1);
-				
-				FlxG.cameras.list[FlxG.cameras.list.length - 1].shake(intensity, duration);
-			*/
 		}
 	}
 }

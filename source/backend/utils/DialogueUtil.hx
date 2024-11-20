@@ -60,9 +60,7 @@ typedef Animation = {
 
 typedef DialogueEvent = {
 	var name:String;
-	var ?value1:String;
-	var ?value2:String;
-	var ?value3:String;
+	var ?values:Array<String>;
 }
 
 class DialogueUtil
@@ -141,8 +139,7 @@ class DialogueUtil
 							events: [
 								{
 									name: "Play SFX",
-									value1: 'dialogue/senpai/roses_sfx',
-									value2: '0.6'
+									values: ['dialogue/senpai/roses_sfx', '0.6']
 								}
 							],
 
