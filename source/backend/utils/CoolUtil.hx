@@ -141,7 +141,7 @@ class CoolUtil
 	public static function stringToFloat(str:String, ?backup:Float = 0):Float
 	{
 		var num:Float = Std.parseFloat(str);
-		if(!Std.isOfType(num, Float))
+		if(!Std.isOfType(num, Float) || Math.isNaN(num))
 			num = backup;
 		return num;
 	}

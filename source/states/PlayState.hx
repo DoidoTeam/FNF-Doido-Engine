@@ -126,6 +126,11 @@ class PlayState extends MusicBeatState
 	// paused
 	public static var paused:Bool = false;
 
+	// these are variables that are used to support old style FNF camera zoom instead of tweens
+	// to use simply set isClassicZoom to true and make an event to change zoom with no duration
+	var isClassicZoom:Bool = false;
+	var classicZoom:Float = 1.0;
+
 	public static function resetStatics()
 	{
 		health = 1;
@@ -232,6 +237,8 @@ class PlayState extends MusicBeatState
 		stageBuild = new Stage();
 		stageBuild.reloadStageFromSong(SONG.song);
 		add(stageBuild);
+
+		classicZoom = defaultCamZoom;
 		
 		camGame.zoom = defaultCamZoom;
 		hudBuild = new HudClass();
@@ -1345,8 +1352,11 @@ class PlayState extends MusicBeatState
 
 		if(health <= 0)
 			startGameOver();
+
+		if(isClassicZoom)
+			classicZoom = CoolUtil.camZoomLerp(classicZoom, defaultCamZoom);
 		
-		camGame.zoom = defaultCamZoom + beatCamZoom + extraCamZoom;
+		camGame.zoom = (isClassicZoom ? classicZoom : defaultCamZoom) + beatCamZoom + extraCamZoom;
 		beatCamZoom = CoolUtil.camZoomLerp(beatCamZoom, 0);
 		camHUD.zoom = CoolUtil.camZoomLerp(camHUD.zoom);
 		camStrum.zoom = CoolUtil.camZoomLerp(camStrum.zoom);
@@ -1970,7 +1980,7 @@ class PlayState extends MusicBeatState
 			case 'Change Cam Zoom':
 				if(camZoomTween != null) camZoomTween.cancel();
 				var newZoom:Float  = CoolUtil.stringToFloat(daEvent.value1, 1);
-				var duration:Float = CoolUtil.stringToFloat(daEvent.value2, 4);
+				var duration:Float = CoolUtil.stringToFloat(daEvent.value2, (isClassicZoom ? 0 : 4));
 				if(duration <= 0)
 					defaultCamZoom = newZoom;
 				else
