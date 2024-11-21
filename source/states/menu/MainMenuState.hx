@@ -131,7 +131,7 @@ class MainMenuState extends MusicBeatState
 		if(FlxG.keys.justPressed.V)
 		{
 			persistentUpdate = false;
-			openSubState(new subStates.VideoPlayerSubState("test.mp4"));
+			openSubState(new subStates.VideoPlayerSubState("test"));
 		}
 		/*if(FlxG.keys.justPressed.R)
 		{

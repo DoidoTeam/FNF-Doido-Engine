@@ -214,7 +214,7 @@ class Paths
 	}
 
 	public static function video(key:String, ?library:String):String
-		return getPath('videos/$key', library);
+		return getPath('videos/$key.mp4', library);
 	
 	// sparrow (.xml) sheets
 	public static function getSparrowAtlas(key:String, ?library:String)
