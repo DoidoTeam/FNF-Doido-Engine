@@ -453,7 +453,7 @@ class PlayState extends MusicBeatState
 			{
 				#if VIDEOS_ALLOWED
 				case 'useless':
-					startVideo("test.mp4");
+					startVideo("test");
 				#end
 
 				case 'senpai'|'roses':
@@ -1721,7 +1721,7 @@ class PlayState extends MusicBeatState
 			switch(SONG.song)
 			{
 				case "useless":
-					startVideo("test.mp4", true);
+					startVideo("test", true);
 					return;
 			}
 		}
