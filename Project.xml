@@ -15,7 +15,7 @@
 	<!-- ____________________________ Window Settings ___________________________ -->
 
 	<!--These window settings apply to all targets-->
-	<window width="1280" height="720" fps="" background="#000000" hardware="true" vsync="false" />
+	<window width="1280" height="720" fps="144" background="#000000" hardware="true" vsync="false" />
 
 	<!--HTML5-specific-->
 	<window if="html5" resizable="false" />
@@ -32,6 +32,8 @@
 	<define name="PRELOAD_SONG" 		if="cpp" unless="debug" />
 	<define name="RENAME_UNDERSCORE" 	if="html5 || android"/>
 	<define name="ENABLE_PRINTING" 		if="cpp || hl || html5"/>
+	<!--Uncomment-this-to-use-videos-in-your-mod!!-->
+	<!--<define name="VIDEOS_ALLOWED" if="desktop" />-->
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
@@ -40,7 +42,8 @@
 	<set name="BUILD_DIR" value="export/release" unless="debug" />
 
 	<source path="source" />
-	<assets path="assets" />
+	<assets path="assets" if="VIDEOS_ALLOWED" />
+	<assets path="assets" exclude="videos" unless="VIDEOS_ALLOWED" />
 
 	<!-- RENAME UNDERSCORE FOLDERS -->
 	<section if="RENAME_UNDERSCORE">
@@ -63,6 +66,7 @@
 	<haxelib name="hscript-iris" />
 	<haxedef name="hscriptPos" />
 	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
+	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" />
 	
 	<!-- ______ Custom Doido Libraries ______ -->
 	<haxelib name="flxanimate-doido"/>

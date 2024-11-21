@@ -48,6 +48,7 @@ class PlayState extends MusicBeatState
 	// more song stuff
 	public var inst:FlxSound;
 	public var vocals:FlxSound;
+	public var vocalsOpp:FlxSound;
 	public var musicList:Array<FlxSound> = [];
 
 	public static var songLength:Float = 0;
@@ -358,7 +359,7 @@ class PlayState extends MusicBeatState
 
 		vocals = new FlxSound();
 		if(SONG.needsVoices)
-			vocals.loadEmbedded(Paths.vocals(daSong, songDiff), false, false);
+			vocals.loadEmbedded(Paths.vocals(daSong, songDiff, "-player"), false, false);
 
 		songLength = inst.length;
 		function addMusic(music:FlxSound):Void
@@ -379,6 +380,15 @@ class PlayState extends MusicBeatState
 
 		addMusic(inst);
 		addMusic(vocals);
+
+		// adding opponent vocals
+		if(SONG.needsVoices
+		&& Paths.songPath('$daSong/Voices', songDiff, '-opp').endsWith('-opp'))
+		{
+			vocalsOpp = new FlxSound();
+			vocalsOpp.loadEmbedded(Paths.vocals(daSong, songDiff, '-opp'), false, false);
+			addMusic(vocalsOpp);
+		}
 
 		//Conductor.setBPM(160);
 		Conductor.songPos = -Conductor.crochet * 5;
@@ -441,6 +451,11 @@ class PlayState extends MusicBeatState
 			playedCutscene = true;
 			switch(SONG.song)
 			{
+				#if VIDEOS_ALLOWED
+				case 'useless':
+					startVideo("test.mp4");
+				#end
+
 				case 'senpai'|'roses':
 					startDialogue(DialogueUtil.loadDialogue(SONG.song));
 					
@@ -608,8 +623,19 @@ class PlayState extends MusicBeatState
 			Logs.print('song ${SONG.song} has not found dialogue :(', WARNING);
 			startCountdown();
 		}
-
 	}
+
+	#if VIDEOS_ALLOWED
+	public function startVideo(key:String, onEnd:Bool = false):Void
+	{
+		openSubState(new VideoPlayerSubState(key, function() {
+			if(onEnd)
+				endSong();
+			else
+				startCountdown();
+		}));
+	}
+	#end
 	
 	public function hasCutscene():Bool
 	{
@@ -692,12 +718,17 @@ class PlayState extends MusicBeatState
 		thisStrum.playAnim("confirm", true);
 
 		// when the player hits notes
-		vocals.volume = 1;
 		if(strumline.isPlayer)
 		{
+			vocals.volume = 1;
 			popUpRating(note, strumline, false);
 			if(!note.isHold)
 				CoolUtil.playHitSound();
+		}
+		else
+		{
+			if(vocalsOpp == null)
+				vocals.volume = 1;
 		}
 		
 		//if(!['default', 'none'].contains(note.noteType))
@@ -755,7 +786,8 @@ class PlayState extends MusicBeatState
 		// onlyOnce is to prevent the game punishing you for missing a bunch of hold notes pieces
 		if(onlyOnce)
 		{
-			vocals.volume = 0;
+			if((strumline.isPlayer || vocalsOpp == null) && !ghostTap)
+				vocals.volume = 0;
 
 			callScript("onNoteMiss", [note, strumline, ghostTap]);
 			
@@ -783,7 +815,8 @@ class PlayState extends MusicBeatState
 		var thisStrum = strumline.strumGroup.members[note.noteData];
 		var thisChar = strumline.character.char;
 		
-		vocals.volume = 1;
+		if(strumline.isPlayer || vocalsOpp == null)
+			vocals.volume = 1;
 		thisStrum.playAnim("confirm", true);
 
 		callScript("onNoteHold", [note, strumline]);
@@ -1677,9 +1710,23 @@ class PlayState extends MusicBeatState
 	}
 	
 	// ends it all
+	var playedVideo:Bool = false;
 	var endedSong:Bool = false;
 	public function endSong()
 	{
+		#if VIDEOS_ALLOWED
+		if(!playedVideo)
+		{
+			playedVideo = true;
+			switch(SONG.song)
+			{
+				case "useless":
+					startVideo("test.mp4", true);
+					return;
+			}
+		}
+		#end
+
 		if(endedSong) return;
 		endedSong = true;
 		resetSongStatics();

@@ -159,20 +159,25 @@ class Paths
 	public static function sound(key:String, ?library:String):Sound
 		return getSound('sounds/$key', library);
 
-	public static function songPath(key:String, diff:String):String
+	public static function songPath(key:String, diff:String, prefix:String = ''):String
 	{
 		var song:String = 'songs/$key';
+		var diffPref:String = '';
+		
 		// erect
 		if(['erect', 'nightmare'].contains(diff))
-			song += '-erect';
+			diffPref = '-erect';
 		
-		return song;
+		if(fileExists('$song$diffPref$prefix.ogg'))
+			return '$song$diffPref$prefix';
+		else
+			return '$song$diffPref';
 	}
 	public static function inst(song:String, diff:String = ''):Sound
 		return getSound(songPath('$song/Inst', diff));
 
-	public static function vocals(song:String, diff:String = ''):Sound
-		return getSound(songPath('$song/Voices', diff));
+	public static function vocals(song:String, diff:String = '', ?prefix:String = ''):Sound
+		return getSound(songPath('$song/Voices', diff, prefix));
 	
 	public static function image(key:String, ?library:String):FlxGraphic
 		return getGraphic(key, library);
@@ -209,7 +214,7 @@ class Paths
 	}
 
 	public static function video(key:String, ?library:String):String
-		return getPath('videos/$key.mp4', library);
+		return getPath('videos/$key', library);
 	
 	// sparrow (.xml) sheets
 	public static function getSparrowAtlas(key:String, ?library:String)

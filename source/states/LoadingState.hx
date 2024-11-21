@@ -142,7 +142,13 @@ class LoadingState extends MusicBeatState
 			var songDiff:String = PlayState.songDiff;
 			Paths.preloadSound(Paths.songPath('${SONG.song}/Inst', songDiff));
 			if(SONG.needsVoices)
-				Paths.preloadSound(Paths.songPath('${SONG.song}/Voices', songDiff));
+			{
+				Paths.preloadSound(Paths.songPath('${SONG.song}/Voices', songDiff, '-player'));
+				// opponent voices
+				var oppPath:String = Paths.songPath('${SONG.song}/Voices', songDiff, '-opp');
+				if(oppPath.endsWith('-opp'))
+					Paths.preloadSound(oppPath);
+			}
 
 			Logs.print('preloaded music');
 			loadPercent = 0.75;
