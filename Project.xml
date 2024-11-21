@@ -33,7 +33,7 @@
 	<define name="RENAME_UNDERSCORE" 	if="html5 || android"/>
 	<define name="ENABLE_PRINTING" 		if="cpp || hl || html5"/>
 	<!--Uncomment-this-to-use-videos-in-your-mod!!-->
-	<define name="VIDEOS_ALLOWED" if="desktop" />
+	<!--<define name="VIDEOS_ALLOWED" if="desktop" />-->
 	<define name="HXVLC_NO_SHARE_DIRECTORY" if="VIDEOS_ALLOWED" />
 
 	<!-- _____________________________ Path Settings ____________________________ -->
