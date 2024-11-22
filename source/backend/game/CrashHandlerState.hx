@@ -18,8 +18,15 @@ class CrashHandlerState extends MusicBeatState
     override function create()
     {
         super.create();
-        var bg = FlxGradient.createGradientFlxSprite(FlxG.width, FlxG.height, [0xFF38173F, 0xFF733A8D]);
+
+        var bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuInvert'));
+        bg.screenCenter();
+        bg.alpha = 0.5;
         add(bg);
+
+        var gradient = FlxGradient.createGradientFlxSprite(FlxG.width, FlxG.height, [0xFF38173F, 0xFF924DB2]);
+        gradient.blend = ADD;
+        add(gradient);
 
         var titleTxt = new FlxText(0, 16, 0, "THE GAME HAS CRASHED!!");
         titleTxt.setFormat(Main.gFont, 36, 0xFFFFFFFF, CENTER);
