@@ -230,8 +230,8 @@ class SaveData
 	{
 		Main.changeFramerate(data.get("Framerate Cap"));
 		
-		if(Main.fpsCount != null)
-			Main.fpsCount.visible = data.get("FPS Counter");
+		if(Main.fpsCounter != null)
+			Main.fpsCounter.visible = data.get("FPS Counter");
 
 		FlxSprite.defaultAntialiasing = data.get("Antialiasing");
 

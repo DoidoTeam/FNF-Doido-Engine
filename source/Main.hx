@@ -1,6 +1,5 @@
 package;
 
-import openfl.Lib;
 import backend.game.*;
 import backend.system.FPSCounter;
 import flixel.FlxG;
@@ -9,6 +8,7 @@ import flixel.FlxState;
 import flixel.input.keyboard.FlxKey;
 import haxe.CallStack;
 import haxe.io.Path;
+import openfl.Lib;
 import openfl.display.Sprite;
 import openfl.events.UncaughtErrorEvent;
 
@@ -25,7 +25,7 @@ using StringTools;
 
 class Main extends Sprite
 {
-	public static var fpsCount:FPSCounter;
+	public static var fpsCounter:FPSCounter;
 
 	// Use these to customize your mod further!
 	public static final savePath:String = "DiogoTV/DoidoEngine";
@@ -40,8 +40,7 @@ class Main extends Sprite
 		addChild(new FlxGame(0, 0, Init, 120, 120, true));
 
 		#if desktop
-		fpsCount = new FPSCounter(5, 3);
-		addChild(fpsCount);
+		addChild(fpsCounter = new FPSCounter(5, 3));
 		#end
 
 		#if ENABLE_PRINTING
