@@ -204,7 +204,7 @@ class Paths
 	public static function getScriptArray(?song:String):Array<String>
 	{
 		var arr:Array<String> = [];
-		for(folder in ["scripts", 'songs/scripts/$song'])
+		for(folder in ["scripts", 'songs/$song/scripts'])
 		{
 			for(file in readDir(folder, ".hxc", false))
 				arr.push('$folder/$file');
