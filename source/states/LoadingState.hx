@@ -153,7 +153,7 @@ class LoadingState extends MusicBeatState
 			Logs.print('preloaded music');
 			loadPercent = 0.75;
 
-			var dialData:DialogueData = DialogueUtil.loadDialogue(SONG.song);
+			var dialData:DialogueData = DialogueUtil.loadDialogue(SONG.song, songDiff);
 			if(dialData.pages.length > 0) {
 				var dial = new Dialogue();
 				dial.load(dialData, true);

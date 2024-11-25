@@ -65,15 +65,17 @@ typedef DialogueEvent = {
 
 class DialogueUtil
 {
-	public static function loadDialogue(song:String):DialogueData
+	public static function loadDialogue(song:String, diff:String = "normal"):DialogueData
 	{
 		switch(song)
 		{
 			case 'senpai' | 'roses' | 'thorns':
 				return loadCode(song);
 			default:
-				if(Paths.fileExists('images/dialogue/data/$song.json'))
-					return cast Paths.json('images/dialogue/data/$song');
+				if(Paths.fileExists('songs/$song/dialogue/dialogue-$diff.json'))
+					return cast Paths.json('songs/$song/dialogue/dialogue-$diff');
+				else if (Paths.fileExists('songs/$song/dialogue/dialogue.json'))
+					return cast Paths.json('songs/$song/dialogue/dialogue');
 				else
 					return defaultDialogue();
 		};

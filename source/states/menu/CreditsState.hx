@@ -70,7 +70,7 @@ class CreditsState extends MusicBeatState
         add(infoTxt);
 
 		final specialPeople = 'Anakim, ArturYoshi, BeastlyChip♧, Bnyu, Evandro, NxtVithor, Pi3tr0, Raphalitos, ZieroSama <33';
-		final specialCoders = 'Teles, Crowplexus, Gazozoz';
+		final specialCoders = 'Crowplexus, Gazozoz, Joalor64GH, soushimiya';
 		// yes, this implies coders aren't people
 		// :D
 		

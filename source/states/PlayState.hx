@@ -457,7 +457,7 @@ class PlayState extends MusicBeatState
 				#end
 
 				case 'senpai'|'roses':
-					startDialogue(DialogueUtil.loadDialogue(SONG.song));
+					startDialogue(DialogueUtil.loadDialogue(SONG.song, songDiff));
 					
 					//if(SONG.song == 'roses')
 						//FlxG.sound.play(Paths.sound('dialogue/senpai/roses_sfx'));
@@ -501,13 +501,13 @@ class PlayState extends MusicBeatState
 							
 							new FlxTimer().start(0.8, function(tmr:FlxTimer)
 							{
-								startDialogue(DialogueUtil.loadDialogue('thorns'));
+								startDialogue(DialogueUtil.loadDialogue('thorns', songDiff));
 							});
 						});
 					});
 					
 				default:
-					startDialogue(DialogueUtil.loadDialogue(SONG.song));
+					startDialogue(DialogueUtil.loadDialogue(SONG.song, songDiff));
 			}
 		}
 		else

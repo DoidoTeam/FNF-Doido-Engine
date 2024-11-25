@@ -30,5 +30,20 @@
             "target": "linux",
             "args": ["-debug", "-DFREEPLAY"]
         },
+        {
+            "label": "macOS / Debug",
+            "target": "mac",
+            "args": ["-debug"]
+        },
+        {
+            "label": "macOS / Debug (MENU)",
+            "target": "mac",
+            "args": ["-debug", "-DMENU"]
+        },
+        {
+            "label": "macOS / Debug (FREEPLAY)",
+            "target": "mac",
+            "args": ["-debug", "-DFREEPLAY"]
+        },
     ]
 }
