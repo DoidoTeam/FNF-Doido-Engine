@@ -354,7 +354,7 @@ class ChartingState extends MusicBeatState
 			if(data != null && data.length > 0)
 			{
 				var _file = new FileReference();
-				_file.save(data.trim(), '${SONG.song.toLowerCase()}-$songDiff.json');
+				_file.save(data.trim(), '$songDiff.json');
 			}
 		});
 
