@@ -1272,7 +1272,7 @@ class ChartingState extends MusicBeatState
 			addMusic(vocals);
 
 			// opponent vocals
-			if(Paths.songPath('$daSong/Voices', songDiff, '-opp').endsWith('-opp'))
+			if(Paths.songPath(daSong, 'Voices', songDiff, '-opp').endsWith('-opp'))
 			{
 				var vocalsOpp = new FlxSound();
 				vocalsOpp.loadEmbedded(Paths.vocals(daSong, songDiff, '-opp'), false, false);

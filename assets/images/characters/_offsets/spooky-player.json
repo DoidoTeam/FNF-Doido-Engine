@@ -5,34 +5,34 @@
 	],
 	"animOffsets": [
 		[
+			"singRIGHT",
+			98,
+			-12
+		],
+		[
+			"singDOWN",
+			-1,
+			-144
+		],
+		[
 			"danceRight",
 			0,
 			0
 		],
 		[
-			"singDOWN",
-			-1,
-			-142
+			"singLEFT",
+			-52,
+			-16
 		],
 		[
-			"singRIGHT",
-			-62,
-			-14
+			"singUP",
+			-64,
+			26
 		],
 		[
 			"danceLeft",
 			0,
 			0
-		],
-		[
-			"singUP",
-			-64,
-			29
-		],
-		[
-			"singLEFT",
-			98,
-			-10
 		]
 	],
 	"ratingsOffset": [
