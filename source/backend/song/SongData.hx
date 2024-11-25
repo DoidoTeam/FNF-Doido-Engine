@@ -143,15 +143,10 @@ class SongData
 
 	// stuff from fnf
 	inline public static function loadFromJson(jsonInput:String, ?diff:String = "normal"):SwagSong
-	{
-		var formatPath = '$jsonInput-$diff';
+	{		
+		Logs.print('Chart Loaded: ' + '$jsonInput/$diff');
 		
-		if(!Paths.fileExists('songs/$jsonInput/$formatPath.json'))
-			formatPath = '$jsonInput';
-			
-		Logs.print('Chart Loaded: ' + '$jsonInput/$formatPath');
-		
-		var daSong:SwagSong = cast Paths.json('songs/$jsonInput/$formatPath').song;
+		var daSong:SwagSong = cast Paths.json('songs/$jsonInput/chart/$diff').song;
 		
 		// no need for SONG.song.toLowerCase() every time
 		// the game auto-lowercases it now
@@ -206,7 +201,7 @@ class SongData
 		var formatPath = 'events-$diff';
 
 		function checkFile():Bool {
-			return Paths.fileExists('songs/$jsonInput/$formatPath.json');
+			return Paths.fileExists('songs/chart/$jsonInput/$formatPath.json');
 		}
 		if(!checkFile())
 			formatPath = 'events';
@@ -217,7 +212,7 @@ class SongData
 
 		Logs.print('Events Loaded: ' + '$jsonInput/$formatPath');
 
-		var daEvents:EventSong = cast Paths.json('songs/$jsonInput/$formatPath');
+		var daEvents:EventSong = cast Paths.json('songs/chart/$jsonInput/$formatPath');
 		return daEvents;
 	}
 }

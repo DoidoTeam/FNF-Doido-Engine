@@ -383,7 +383,7 @@ class PlayState extends MusicBeatState
 
 		// adding opponent vocals
 		if(SONG.needsVoices
-		&& Paths.songPath('$daSong/Voices', songDiff, '-opp').endsWith('-opp'))
+		&& Paths.songPath(daSong, 'Voices', songDiff, '-opp').endsWith('-opp'))
 		{
 			vocalsOpp = new FlxSound();
 			vocalsOpp.loadEmbedded(Paths.vocals(daSong, songDiff, '-opp'), false, false);

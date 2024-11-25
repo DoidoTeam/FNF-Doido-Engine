@@ -159,9 +159,9 @@ class Paths
 	public static function sound(key:String, ?library:String):Sound
 		return getSound('sounds/$key', library);
 
-	public static function songPath(key:String, diff:String, prefix:String = ''):String
+	public static function songPath(song:String, key:String, diff:String, prefix:String = ''):String
 	{
-		var song:String = 'songs/$key';
+		var song:String = 'songs/$song/audio/$key';
 		var diffPref:String = '';
 		
 		// erect
@@ -174,10 +174,10 @@ class Paths
 			return '$song$diffPref';
 	}
 	public static function inst(song:String, diff:String = ''):Sound
-		return getSound(songPath('$song/Inst', diff));
+		return getSound(songPath(song, 'Inst', diff));
 
 	public static function vocals(song:String, diff:String = '', ?prefix:String = ''):Sound
-		return getSound(songPath('$song/Voices', diff, prefix));
+		return getSound(songPath(song, 'Voices', diff, prefix));
 	
 	public static function image(key:String, ?library:String):FlxGraphic
 		return getGraphic(key, library);
@@ -204,7 +204,7 @@ class Paths
 	public static function getScriptArray(?song:String):Array<String>
 	{
 		var arr:Array<String> = [];
-		for(folder in ["scripts", 'songs/$song'])
+		for(folder in ["scripts", 'songs/scripts/$song'])
 		{
 			for(file in readDir(folder, ".hxc", false))
 				arr.push('$folder/$file');
