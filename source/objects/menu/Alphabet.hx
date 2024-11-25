@@ -3,6 +3,7 @@ package objects.menu;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
+import flixel.graphics.frames.FlxAtlasFrames;
 
 using StringTools;
 
@@ -19,6 +20,9 @@ class Alphabet extends FlxSpriteGroup
 	public function new(x:Float = 0, y:Float = 0, ?text:String = "", bold:Bool = false)
 	{
 		super(x, y);
+		
+		atlasFrames = Paths.getSparrowAtlas("menu/alphabet/default");
+
 		this.bold = bold;
 		this.text = text;
 	}
@@ -29,6 +33,8 @@ class Alphabet extends FlxSpriteGroup
 	public var fieldWidth:Float = 0;
 
 	public final boxHeight:Float = 70;
+
+	var atlasFrames:FlxAtlasFrames;
 
 	public function set_text(v:String):String
 	{
@@ -71,6 +77,7 @@ class Alphabet extends FlxSpriteGroup
 			}
 
 			var letter = new AlphaLetter();
+			letter.frames = atlasFrames;
 			letter.row = daRow;
 
 			letter.ID = i; // using this for typing
@@ -149,8 +156,6 @@ class AlphaLetter extends FlxSprite
 	public function new()
 	{
 		super();
-		//makeGraphic(30, 50, 0xFFFFFFFF);
-		frames = Paths.getSparrowAtlas("menu/alphabet/default");
 	}
 
 	function addAnim(animName:String, animXml:String)
