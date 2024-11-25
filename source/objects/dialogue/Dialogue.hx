@@ -356,6 +356,9 @@ class Dialogue extends FlxGroup
 		}
 	}
 
+	var shakeGrp:Array<FlxTween> = [];
+	var shaking:Bool = false;
+
 	function onEventHit(event:DialogueEvent) {
 		switch(event.name)
 		{
@@ -369,6 +372,45 @@ class Dialogue extends FlxGroup
 					CoolUtil.stringToFloat(event.values[0], 2),
 					CoolUtil.stringToColor(event.values[1])
 				);
+
+			case 'Shake Screen':
+				var duration:Float = CoolUtil.stringToFloat(event.values[0], 1);
+				var intensity:Float = CoolUtil.stringToFloat(event.values[1], 0.05);
+				var isAll:Bool = CoolUtil.stringToBool(event.values[2]);
+
+				if(shaking) {
+					cancelShaking();
+
+					if(duration == 0)
+						return;
+				}
+
+				var objects:Array<DialogueObj> = [];
+				var groups:Array<FlxTypedGroup<Dynamic>> = [grpChar, grpBg, grpFg];
+
+				for (group in groups) {
+					for (obj in group.members) {
+						if (obj.isActive || isAll)
+							objects.push(obj);
+					}
+				}
+
+				for (obj in objects) {
+					if(duration != 0)
+						shakeGrp.push(FlxTween.shake(obj, intensity, duration, XY));
+					else
+						shakeGrp.push(FlxTween.shake(obj, intensity, 1, XY, {type: LOOPING}));
+				}
+
+				shaking = true;
 		}
+	}
+	
+	function cancelShaking() {
+		for(shake in shakeGrp)
+			if(shake != null)
+				shake.cancel();
+
+		shaking = false;
 	}
 }

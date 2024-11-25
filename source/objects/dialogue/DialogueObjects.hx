@@ -7,7 +7,7 @@ import flixel.math.FlxRect;
 import flixel.util.FlxAxes;
 import backend.utils.DialogueUtil;
 
-class DialogueChar extends FlxSprite
+class DialogueChar extends DialogueObj
 {
 	public function new()
 	{
@@ -16,7 +16,6 @@ class DialogueChar extends FlxSprite
 	
 	public var startPos:FlxPoint = new FlxPoint();
 	public var activePos:FlxPoint = new FlxPoint();
-	public var isActive:Bool = false;
 	
 	public var curChar:String = '';
 	public function reloadChar(curChar:String):DialogueChar
@@ -82,10 +81,9 @@ class DialogueChar extends FlxSprite
 		
 		x = FlxMath.lerp(x, daPos.x, elapsed * 8);
 		y = FlxMath.lerp(y, daPos.y, elapsed * 8);
-		alpha = FlxMath.lerp(alpha, isActive ? 1 : 0, elapsed * 10);
 	}
 }
-class DialogueBox extends FlxSprite
+class DialogueBox extends DialogueObj
 {
 	public function new()
 	{
@@ -101,6 +99,8 @@ class DialogueBox extends FlxSprite
 	{
 		this.boxSkin = boxSkin;
 		this.isLog = isLog;
+
+		isActive = true;
 
 		boxPos.set(0,0);
 		txtPos.set(20,20);
@@ -184,12 +184,10 @@ class DialogueBox extends FlxSprite
 	}
 }
 
-class DialogueImg extends FlxSprite
+class DialogueImg extends DialogueObj
 {
 	public var imgName:String = "";
 	public var sprName:String = "";
-	public var isActive:Bool = false;
-	public var fakeAlpha:Float = 1;
 
 	public function new(imgData:DialogueSprite)
 	{
@@ -229,6 +227,17 @@ class DialogueImg extends FlxSprite
 		imgName = imgData.image;
 		sprName = imgData.name;
 		alpha = 0;
+	}
+}
+
+class DialogueObj extends FlxSprite
+{
+	public var isActive:Bool = false;
+	public var fakeAlpha:Float = 1;
+
+	public function new()
+	{
+		super();
 	}
 
 	override function update(elapsed:Float)
