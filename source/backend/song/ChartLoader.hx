@@ -61,8 +61,8 @@ class ChartLoader
 					swagNote.noteCrochet = noteCrochet;
 					
 					var rawLoop:Float = (susLength / noteCrochet);
-					var holdLoop:Int =(
-						(rawLoop - Math.floor(rawLoop) <= 0.5) ?
+					var holdLoop:Int = (
+						(rawLoop - Math.floor(rawLoop) <= 0.8) ?
 						Math.floor(rawLoop) : Math.round(rawLoop)
 					);
 					if (holdLoop <= 0)

@@ -77,6 +77,7 @@ class SongData
 		},
 		{
 			songs: [
+				["bittersweet", 	"spooky"],
 				["blam", 			"pico"],
 				["-debug", 			"bf-pixel"],
 				["useless",			"dad"],
