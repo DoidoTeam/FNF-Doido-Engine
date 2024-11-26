@@ -169,9 +169,9 @@ class SaveData
 	public static var saveControls:FlxSave = new FlxSave();
 	public static function init()
 	{
-		saveSettings.bind("settings",	Main.savePath); // use these for settings
-		saveControls.bind("controls", 	Main.savePath); // controls :D
-		FlxG.save.bind("save-data", 	Main.savePath); // these are for other stuff
+		saveSettings.bind("settings"); // use these for settings
+		saveControls.bind("controls"); // controls :D
+		FlxG.save.bind("save-data"); // these are for other stuff, not recquiring to access the SaveData class
 		
 		load();
 		Controls.load();
