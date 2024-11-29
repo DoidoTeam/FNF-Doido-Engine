@@ -49,6 +49,7 @@
 
 	<!-- RENAME UNDERSCORE FOLDERS -->
 	<section if="RENAME_UNDERSCORE">
+		<assets path="assets/images/backgrounds/_scripts" 	rename="assets/images/backgrounds/scripts"/>
 		<assets path="assets/images/characters/_offsets" 	rename="assets/images/characters/offsets"/>
 		<assets path="assets/images/notes/_other" 			rename="assets/images/notes/other"/>
 	</section>

@@ -199,6 +199,7 @@ class PlayState extends MusicBeatState
 		{
 			var scriptConfig:IrisConfig = new IrisConfig(path, true, true);
 			var newScript:Iris = new Iris(Paths.script('$path'), scriptConfig);
+			newScript.set("this", instance);
 			loadedScripts.push(newScript);
 		}
 
@@ -1585,6 +1586,7 @@ class PlayState extends MusicBeatState
 	public function followCamSection(sect:SwagSection):Void
 	{
 		var char:Character = dadStrumline.character.char;
+		var offset:FlxPoint = stageBuild.dadCam;
 
 		if(sect != null)
 		{
@@ -1594,7 +1596,13 @@ class PlayState extends MusicBeatState
 				char = bfStrumline.character.char;
 		}
 
-		followCamera(char);
+		if(char == boyfriend.char)
+			offset = stageBuild.bfCam;
+		else if(char == gf.char)
+			offset = stageBuild.gfCam;
+
+
+		followCamera(char, offset.x, offset.y);
 	}
 
 	public function followCamera(?char:Character, ?offsetX:Float = 0, ?offsetY:Float = 0)
