@@ -146,6 +146,9 @@ class SongData
 	inline public static function loadFromJson(jsonInput:String, ?diff:String = "normal"):SwagSong
 	{		
 		Logs.print('Chart Loaded: ' + '$jsonInput/$diff');
+
+		if(!Paths.fileExists('songs/$jsonInput/chart/$diff.json'))
+			diff = "normal";
 		
 		var daSong:SwagSong = cast Paths.json('songs/$jsonInput/chart/$diff').song;
 		
