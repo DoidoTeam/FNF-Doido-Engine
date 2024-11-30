@@ -1,0 +1,10 @@
+function create() {
+    dadPos.x -= 100;
+    dadCam.y += 150;
+
+    this.gfVersion = "no-gf";
+    this.camZoom = 0.7;
+
+    var bg = new FlxSprite(-640, -1000).loadGraphic(Paths.image("stages/mugen/mugen"));
+    add(bg);
+}
