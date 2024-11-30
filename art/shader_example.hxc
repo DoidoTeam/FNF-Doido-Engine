@@ -1,0 +1,19 @@
+import openfl.filters.ShaderFilter;
+
+var shader:ShaderFilter;
+
+function createPost()
+{
+    // creating the shader
+    shader = this.getCamShader('pixelate.frag');
+    
+    // modifying the "uAmount" uniform variable inside the shader
+    shader.shader.data.uAmount.value = [256];
+
+    // making the note's camera pixelated
+    this.setCamShader([shader], "camStrum");
+
+    // uncomment this to make all the cameras pixelated!!
+    /*for(i in ["camGame", "camHUD", "camStrum"])
+        this.setCamShader([shader], i);*/
+}
