@@ -37,8 +37,9 @@ class OptionsSubState extends MusicBeatSubState
             #end
             "Countdown on Unpause",
             #if DISCORD_RPC
-            "Discord RPC"
+            "Discord RPC",
             #end
+            "Shaders"
         ],
 		"gameplay" => [
 			"Ghost Tapping",
@@ -60,7 +61,7 @@ class OptionsSubState extends MusicBeatSubState
             "Static Hold Anim",
             "Single Rating",
 			"Ratings on HUD",
-			"Song Timer",
+			"Song Timer"
 		],
 	];
     
@@ -71,6 +72,7 @@ class OptionsSubState extends MusicBeatSubState
     var reloadOptions:Array<String> = [ // options that need some manual reloading on playstate when changed
         "Antialiasing",
         "Song Timer",
+        "Shaders"
     ];
     // anything else already updates automatically
     var playState:PlayState = null;

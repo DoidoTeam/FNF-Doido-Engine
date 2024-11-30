@@ -146,6 +146,11 @@ class SaveData
 			CHECKMARK,
 			"Makes the song timer visible"
 		],
+		"Shaders" => [
+			true,
+			CHECKMARK,
+			"Fancy graphical effects. Disable this if you get GPU related crashes."
+		],
 		/*
 		*
 		* EXTRA STUFF

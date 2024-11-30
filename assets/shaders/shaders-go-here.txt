@@ -1,0 +1,3 @@
+everything here will run on every song
+if you want to do a song specific script, put it at its folder
+also the file extension is .hxc not .hx

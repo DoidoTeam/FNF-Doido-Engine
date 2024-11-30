@@ -1,5 +1,6 @@
 package states;
 
+import openfl.filters.BitmapFilter;
 import crowplexus.iris.Iris;
 import crowplexus.iris.IrisConfig;
 import crowplexus.hscript.Parser;
@@ -28,6 +29,8 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
+import flixel.addons.display.FlxRuntimeShader;
+import openfl.filters.ShaderFilter;
 import objects.*;
 import objects.hud.*;
 import objects.note.*;
@@ -132,6 +135,13 @@ class PlayState extends MusicBeatState
 	// to use simply set isClassicZoom to true and make an event to change zoom with no duration
 	var isClassicZoom:Bool = false;
 	var classicZoom:Float = 1.0;
+
+	// This map holds which shaders are loaded, to help with disabling and enabling them in the options!
+	var tempShaders:Map<String,Array<BitmapFilter>> = [
+		"camGame" => [],
+		"camHUD" => [],
+		"camStrum" => []
+	];
 
 	public static function resetStatics()
 	{
@@ -1890,6 +1900,18 @@ class PlayState extends MusicBeatState
 
 		switch(option)
 		{
+			case 'Shaders':
+				if(SaveData.data.get("Shaders")) {
+					camGame.filters = tempShaders.get("camGame");
+					camHUD.filters = tempShaders.get("camHUD");
+					camStrum.filters = tempShaders.get("camStrum");
+				}
+				else {
+					camGame.filters = [];
+					camHUD.filters = [];
+					camStrum.filters = [];
+				}
+
 			case 'Song Offset':
 				for(note in unspawnNotes)
 					note.setSongOffset();
@@ -1973,6 +1995,18 @@ class PlayState extends MusicBeatState
 	{
 		SONG = SongData.loadFromJson(song, songDiff);
 		EVENTS = SongData.loadEventsJson(song, songDiff);
+	}
+
+	public function getCamShader(?frag:String, ?vert:String):ShaderFilter {
+		var runtime:FlxRuntimeShader = new FlxRuntimeShader(Paths.shader(frag), Paths.shader(vert));
+		return new ShaderFilter(runtime);
+	}
+
+	public function setCamShader(shaders:Array<BitmapFilter>, cam:String = "camGame") {
+		if(SaveData.data.get("Shaders"))
+			stringToCam(cam).filters = shaders;
+
+		tempShaders.set(cam, shaders);
 	}
 
 	function preloadEvents(unspawnEvents:Array<EventNote>) {
