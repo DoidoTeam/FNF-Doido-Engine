@@ -1,6 +1,5 @@
 package states;
 
-import openfl.filters.BitmapFilter;
 import crowplexus.iris.Iris;
 import crowplexus.iris.IrisConfig;
 import crowplexus.hscript.Parser;
@@ -30,6 +29,7 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
 import flixel.addons.display.FlxRuntimeShader;
+import openfl.filters.BitmapFilter;
 import openfl.filters.ShaderFilter;
 import objects.*;
 import objects.hud.*;
@@ -1901,16 +1901,8 @@ class PlayState extends MusicBeatState
 		switch(option)
 		{
 			case 'Shaders':
-				if(SaveData.data.get("Shaders")) {
-					camGame.filters = tempShaders.get("camGame");
-					camHUD.filters = tempShaders.get("camHUD");
-					camStrum.filters = tempShaders.get("camStrum");
-				}
-				else {
-					camGame.filters = [];
-					camHUD.filters = [];
-					camStrum.filters = [];
-				}
+				for(i in ["camGame", "camHUD", "camStrum"])
+					stringToCam(i).filters = (SaveData.data.get("Shaders") ? tempShaders.get(i) : []);
 
 			case 'Song Offset':
 				for(note in unspawnNotes)
@@ -1997,8 +1989,12 @@ class PlayState extends MusicBeatState
 		EVENTS = SongData.loadEventsJson(song, songDiff);
 	}
 
-	public function getCamShader(?frag:String, ?vert:String):ShaderFilter {
-		var runtime:FlxRuntimeShader = new FlxRuntimeShader(Paths.shader(frag), Paths.shader(vert));
+	public function getCamShader(key:String):ShaderFilter
+	{
+		var shaderArr:Array<String> = [null, null];
+		shaderArr[key.endsWith('.frag') ? 0 : 1] = Paths.shader(key);
+
+		var runtime:FlxRuntimeShader = new FlxRuntimeShader(shaderArr[0], shaderArr[1]);
 		return new ShaderFilter(runtime);
 	}
 

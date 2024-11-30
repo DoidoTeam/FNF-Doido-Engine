@@ -201,8 +201,8 @@ class Paths
 	public static function script(key:String, ?library:String):String
 		return getContent('$key', library);
 
-	public static function shader(?key:String, ?library:String):Null<String>
-			return (key == null) ? null : getContent('shaders/$key', library);
+	public static function shader(key:String, ?library:String):Null<String>
+		return getContent('shaders/$key', library);
 
 	public static function getScriptArray(?song:String):Array<String>
 	{
