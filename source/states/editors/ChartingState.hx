@@ -55,21 +55,21 @@ class ChartingState extends MusicBeatState
 	public static final colorDesc:String = "Colors: white/black/silver/gray/red/purple/pink/\ngreen/lime/yellow/blue/aqua";
 	public static final possibleEvents:Array<Array<String>> = [
 		['none', 				''],
-
-		//CAMERA
+		// CAMERA (permanent)
 		['Change Cam Zoom', 	'Value 1: New Zoom \nValue 2: Duration (in steps)\nValue 3: $easeDesc'],
 		['Change Cam Pos', 		'Value 1: New X \nValue 2: New Y\nValue 3: Camera Speed (Default: 1)\n(Leave Value 1 or 2 empty to revert back to normal camera)'],
-		['Change Cam Section', 	'Value 1: Character to change (dad/gf/bf/none) \nChoosing NONE returns camera to focusing on mustHitSections'],
+		['Change Cam Section', 	'Value 1: Character to focus (dad/gf/bf/none) \nChoosing NONE returns camera to focusing on mustHitSections'],
+		['Change Cam Angle', 	'Value 1: New Angle \nValue 2: Duration (in steps)\nValue 3: $easeDesc'],
+		// CAMERA (temporary)
 		['Flash Screen',		'Value 1: Duration (in steps)\nValue 2: Color\n$colorDesc'],
 		['Fade Screen',			'Value 1: Fade Out (true/false)\nValue 2: Duration (in steps)\nValue 3: Color\n$colorDesc'],
 		['Shake Screen',		'Value 1: Intensity\nValue 2: Duration (in steps)\nValue 3: Camera? (camGame, camHUD, camStrum)'],
-		
-		//GAME
+		// game objects
 		['Change Character', 	'Value 1: Character to change (dad/gf/bf)\nValue 2: New Character (dad/pico/senpai-angry)'],
 		['Change Stage',		'Value 1: New Stage'],
+		// animation
 		['Play Animation',		'Value 1: Character (dad/gf/bf)\nValue 2: Animation to play\nValue 3: Override singing? (true/false)\n(if the character presses a note, does the animation stop?)'],
-
-		//PLAY
+		// notes
 		['Freeze Notes',		'Value 1: Freeze? (true/false)\nValue 2: Strumline? (dad/bf/both)'],
 		['Change Note Speed', 	'Value 1: New Speed\nValue 2: Duration (in steps)\nValue 3: $easeDesc'],
 	];

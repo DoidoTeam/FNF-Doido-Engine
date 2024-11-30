@@ -211,7 +211,7 @@ class SaveData
 			saveSettings.data.settings = data;
 		}
 		
-		for(hitsound in Paths.readDir('sounds/hitsounds', ".ogg", true))
+		for(hitsound in Paths.readDir('sounds/hitsounds', [".ogg"], true))
 			if(!displaySettings.get("Hitsounds")[3].contains(hitsound))
 				displaySettings.get("Hitsounds")[3].insert(1, hitsound);
 		

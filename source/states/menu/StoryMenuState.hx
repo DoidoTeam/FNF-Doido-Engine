@@ -276,7 +276,7 @@ class StoryMenuState extends MusicBeatState
 		function doShit(daFile:String)
 		{
 			var path:String = 'menu/story/$daFile/';
-			for(item in Paths.readDir('images/' + path, ".png"))
+			for(item in Paths.readDir('images/' + path, [".png"]))
 				Paths.preloadGraphic(path + item);
 		}
 		

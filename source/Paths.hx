@@ -206,7 +206,7 @@ class Paths
 		var arr:Array<String> = [];
 		for(folder in ["scripts", 'songs/$song/scripts'])
 		{
-			for(file in readDir(folder, ".hxc", false))
+			for(file in readDir(folder, [".hx", ".hxc"], false))
 				arr.push('$folder/$file');
 		}
 		//trace(arr);
@@ -244,35 +244,34 @@ class Paths
 		return frames;
 	}
 		
-	public static function readDir(dir:String, ?type:String, ?removeType:Bool = true, ?library:String):Array<String>
+	public static function readDir(dir:String, ?typeArr:Array<String>, ?removeType:Bool = true, ?library:String):Array<String>
 	{
-		var theList:Array<String> = [];
+		var swagList:Array<String> = [];
 		
 		try {
 			#if desktop
 			var rawList = sys.FileSystem.readDirectory(getPath(dir, library));
 			for(i in 0...rawList.length)
 			{
-				if(type != null) {
-					// 
-					if(!rawList[i].endsWith(type))
-						rawList[i] = "";
-					
-					// cleans it
-					if(removeType)
-						rawList[i] = rawList[i].replace(type, "");
+				if(typeArr?.length > 1)
+				{
+					for(type in typeArr) {
+						if(rawList[i].endsWith(type)) {
+							// cleans it
+							if(removeType)
+								rawList[i] = rawList[i].replace(type, "");
+							swagList.push(rawList[i]);
+						}
+					}
 				}
-				
-				// adds it to the real list if its not empty
-				if(rawList[i] != "")
-					theList.push(rawList[i]);
+				else
+					swagList.push(rawList[i]);
 			}
 			#end
 		} catch(e) {}
 		
-		
-		Logs.print(theList);
-		return theList;
+		Logs.print('read dir ${(swagList.length > 1) ? '$swagList' : 'EMPTY'} at ${getPath(dir, library)}');
+		return swagList;
 	}
 
 	// preload stuff for playstate

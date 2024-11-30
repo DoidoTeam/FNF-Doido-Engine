@@ -113,8 +113,9 @@ class PlayState extends MusicBeatState
 	public static var beatCamZoom:Float = 0.0;
 	public static var extraCamZoom:Float = 0.0;
 	public static var forcedCamPos:Null<FlxPoint>;
-	public static var cameraSection:String = "none";
+	public static var forcedCamSection:String = "none";
 	public var camZoomTween:FlxTween;
+	public var curSection:SwagSection;
 
 	public static var camFollow:FlxObject = new FlxObject();
 
@@ -140,7 +141,7 @@ class PlayState extends MusicBeatState
 		beatCamZoom = 0.0;
 		extraCamZoom = 0.0;
 		forcedCamPos = null;
-		cameraSection = "none";
+		forcedCamSection = "none";
 		paused = false;
 		
 		hasModchart = false;
@@ -211,6 +212,7 @@ class PlayState extends MusicBeatState
 		// adjusting the conductor
 		Conductor.setBPM(SONG.bpm);
 		Conductor.mapBPMChanges(SONG);
+		curSection = SONG.notes[0];
 		
 		// setting up the cameras
 		camGame = new FlxCamera();
@@ -1002,9 +1004,9 @@ class PlayState extends MusicBeatState
 		return switch(str.toLowerCase())
 		{
 			default: camGame;
-			case 'camhud': camHUD;
-			case 'camstrum': camStrum;
-			case 'camother': camOther;
+			case 'camhud'|'hud': camHUD;
+			case 'camstrum'|'strum': camStrum;
+			//case 'camother'|'other': camOther; // meant for transitions only
 		}
 	}
 	
@@ -1364,20 +1366,19 @@ class PlayState extends MusicBeatState
 		if(startedCountdown)
 		{
 			var lastSteps:Int = 0;
-			var curSect:SwagSection = null;
 			for(section in SONG.notes)
 			{
 				if(curStep >= lastSteps)
-					curSect = section;
+					curSection = section;
 
 				lastSteps += section.lengthInSteps;
 			}
-			if(curSect != null)
+			if(curSection != null)
 			{
-				followCamSection(curSect);
+				followCamSection(curSection);
 
 				if(SONG.song == "tutorial")
-					extraCamZoom = CoolUtil.camZoomLerp(extraCamZoom, curSect.mustHitSection ? 0 : 0.5, 3);
+					extraCamZoom = CoolUtil.camZoomLerp(extraCamZoom, curSection.mustHitSection ? 0 : 0.5, 3);
 			}
 		}
 		// stuff
@@ -1590,8 +1591,8 @@ class PlayState extends MusicBeatState
 
 		if(sect != null)
 		{
-			if(cameraSection != "none")
-				char = strToChar(cameraSection).char;
+			if(forcedCamSection != "none")
+				char = strToChar(forcedCamSection).char;
 			else if(sect.mustHitSection)
 				char = bfStrumline.character.char;
 		}
@@ -2086,7 +2087,25 @@ class PlayState extends MusicBeatState
 				cam.shake(intensity, duration);
 			
 			case "Change Cam Section":
-				cameraSection = daEvent.value1;
+				forcedCamSection = daEvent.value1;
+			
+			case "Change Cam Angle":
+				var cam:FlxCamera = camGame;
+				var newAngle:Float = CoolUtil.stringToFloat(daEvent.value1);
+				var duration:Float = CoolUtil.stringToFloat(daEvent.value2);
+				
+				if(cam._dynamic.get("angleTween") != null)
+					cast(cam._dynamic.get("angleTween"), FlxTween).cancel();
+
+				if(duration > 0.0)
+					cam._dynamic.set("angleTween", FlxTween.tween(
+						cam, {angle: newAngle},
+						duration * Conductor.stepCrochet / 1000, {
+							ease: CoolUtil.stringToEase(daEvent.value3),
+						}
+					));
+				else
+					cam.angle = newAngle;
 		}
 
 		callScript("onEventHit", [daEvent.eventName, daEvent.value1, daEvent.value2, daEvent.value3]);
