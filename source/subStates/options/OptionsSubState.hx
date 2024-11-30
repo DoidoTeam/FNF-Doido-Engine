@@ -33,7 +33,7 @@ class OptionsSubState extends MusicBeatSubState
             "Cutscenes",
             #if desktop
             "FPS Counter",
-            "Unfocus Freeze",
+            "Unfocus Pause",
             #end
             "Countdown on Unpause",
             #if DISCORD_RPC

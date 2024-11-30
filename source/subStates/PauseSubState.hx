@@ -126,6 +126,7 @@ class PauseSubState extends MusicBeatSubState
 		pauseSong.stop();
 		PlayState.paused = false;
 		PlayState.instance.updateOption('Song Offset');
+		PlayState.instance.callScript('onUnpause');
 		super.close();
 	}
 

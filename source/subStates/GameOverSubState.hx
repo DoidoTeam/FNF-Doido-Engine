@@ -32,6 +32,7 @@ class GameOverSubState extends MusicBeatSubState
 	override function create()
 	{
 		super.create();
+		callScript("gameOverCreate");
 		add(bf);
 		// the game loads the deathChar you set in Character.hx (default is "bf-dead")
 		bf.reload();
@@ -57,11 +58,13 @@ class GameOverSubState extends MusicBeatSubState
 			bf.char.playAnim("deathLoop");
 			CoolUtil.playMusic("death/deathMusic");
 		});
+		callScript("gameOverCreatePost");
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		callScript("gameOverUpdate", [elapsed]);
 		if(bfFollow != null)
 			CoolUtil.camPosLerp(FlxG.camera, bfFollow, elapsed * 2);
 
@@ -78,6 +81,7 @@ class GameOverSubState extends MusicBeatSubState
 			if(Controls.justPressed(ACCEPT))
 				endBullshit();
 		}
+		callScript("gameOverUpdatePost", [elapsed]);
 	}
 
 	public var ended:Bool = false;
@@ -102,5 +106,9 @@ class GameOverSubState extends MusicBeatSubState
 				Main.resetState();
 			});
 		});
+	}
+
+	function callScript(fun:String, ?args:Array<Dynamic>) {
+		PlayState.instance.callScript(fun, args);
 	}
 }

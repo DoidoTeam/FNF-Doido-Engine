@@ -43,10 +43,10 @@ class SaveData
 			CHECKMARK,
 			"Whether you want a counter showing your framerate and memory usage counter in the corner of the game",
 		],
-		'Unfocus Freeze' => [
+		'Unfocus Pause' => [
 			true,
 			CHECKMARK,
-			"Freezes the game when unfocusing the window",
+			"Pauses the game when the window is unfocused",
 		],
 		"Countdown on Unpause" => [
 			true,
@@ -199,6 +199,14 @@ class SaveData
 			
 			saveSettings.data.settings = data;
 		}
+		else
+		{
+			var freeze:Null<Bool> = saveSettings.data.settings.get("Unfocus Freeze");
+			if(freeze != null) {
+				saveSettings.data.settings.set("Unfocus Pause", freeze);
+				saveSettings.data.settings.remove("Unfocus Freeze");
+			}
+		}
 		
 		if(Lambda.count(displaySettings) != Lambda.count(saveSettings.data.settings)) {
 			data = saveSettings.data.settings;
@@ -240,7 +248,7 @@ class SaveData
 
 		FlxSprite.defaultAntialiasing = data.get("Antialiasing");
 
-		FlxG.autoPause = data.get('Unfocus Freeze');
+		FlxG.autoPause = data.get('Unfocus Pause');
 
 		Conductor.musicOffset = data.get('Song Offset');
 		Conductor.inputOffset = data.get('Input Offset');

@@ -1787,7 +1787,8 @@ class PlayState extends MusicBeatState
 
 	override function onFocusLost():Void
 	{
-		pauseSong();
+		if(SaveData.data.get("Unfocus Pause"))
+			pauseSong();
 		super.onFocusLost();
 	}
 
@@ -1799,6 +1800,7 @@ class PlayState extends MusicBeatState
 		CoolUtil.activateTimers(false);
 		discordUpdateTime = 0.0;
 		openSubState(new PauseSubState());
+		callScript("onPause");
 	}
 	
 	public var isDead:Bool = false;
@@ -1949,21 +1951,6 @@ class PlayState extends MusicBeatState
 			return [-strumPos[0], strumPos[0]];
 		else
 			return [strumPos[0] - strumPos[1], strumPos[0] + strumPos[1]];
-	}
-
-	public function callScript(fun:String, ?args:Array<Dynamic>)
-	{
-		for(script in loadedScripts) {
-			@:privateAccess {
-				var ny: Dynamic = script.interp.variables.get(fun);
-				try {
-					if(ny != null && Reflect.isFunction(ny))
-						script.call(fun, args);
-				} catch(e) {
-					Logs.print('error parsing script: ' + e, ERROR);
-				}
-			}
-		}
 	}
 	
 	// substates also use this
@@ -2139,5 +2126,20 @@ class PlayState extends MusicBeatState
 		}
 
 		callScript("onEventHit", [daEvent.eventName, daEvent.value1, daEvent.value2, daEvent.value3]);
+	}
+
+	public function callScript(fun:String, ?args:Array<Dynamic>)
+	{
+		for(script in loadedScripts) {
+			@:privateAccess {
+				var ny: Dynamic = script.interp.variables.get(fun);
+				try {
+					if(ny != null && Reflect.isFunction(ny))
+						script.call(fun, args);
+				} catch(e) {
+					Logs.print('error parsing script: ' + e, ERROR);
+				}
+			}
+		}
 	}
 }

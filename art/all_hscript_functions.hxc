@@ -12,6 +12,13 @@ function createPost() {}
 function update(elapsed:Float) {}
 function updatePost(elapsed:Float) {}
 
+function onPause() {}
+function onUnpause() {}
+function gameOverCreate() {}
+function gameOverCreatePost() {}
+function gameOverUpdate() {}
+function gameOverUpdatePost() {}
+
 // note functions
 function onNoteHit(note:Note, strumline:Strumline) {}
 function onNoteMiss(note:Note, strumline:Strumline, ghostTap:Bool) {}
