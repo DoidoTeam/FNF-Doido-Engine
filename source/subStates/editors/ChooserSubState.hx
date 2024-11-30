@@ -81,16 +81,29 @@ class ChooserSubState extends MusicBeatSubState
 
     function reloadOptions()
     {
-        var daOptions:Array<String> = [];
+        var daOptions:Array<Array<String>> = [];
         for(i in options)
             if(i.toLowerCase().contains(searchInput.text.toLowerCase()))
-                daOptions.push(i);
+                daOptions.push([i, "false"]);
+
+        if(searchInput.text != "") {
+            var addCustom:Bool = true;
+            for(i in options)
+                if(i.toLowerCase() == searchInput.text.toLowerCase()) {
+                    addCustom = false;
+                    break;
+                }
+
+        
+            if(addCustom)
+                daOptions.push([searchInput.text, "true"]);
+        }
 
         cardsGrp.clear();
 
         for(i in 0...daOptions.length)
         {
-            var card = new ChooserCard(daOptions[i], type, i);
+            var card = new ChooserCard(daOptions[i][0], type, i, daOptions[i][1] == "true");
             card.x = 10 + ((20 + 140) * (i % 8));
             card.yTo = Math.floor(i / 8) * (10 + 140);
             cardsGrp.add(card);
@@ -179,7 +192,7 @@ class ChooserCard extends FlxSpriteGroup
 
     public var hovered:Bool = false;
 
-    public function new(name:String, type:ChooserType, gradID:Int)
+    public function new(name:String, type:ChooserType, gradID:Int, searched:Bool = false)
     {
         super();
         bg = new FlxSprite().makeGraphic(140, 140,
@@ -187,20 +200,25 @@ class ChooserCard extends FlxSpriteGroup
         );
         add(bg);
 
+        var graphicName:String = (searched && type == NOTETYPE) ? "Event Note" : name;
+
+        if(graphicName == "Event Note")
+            type = EVENT;
+
         icon = new FlxSprite();
         switch(type)
         {
             case CHARACTER:
                 var uhhh = new HealthIcon();
-                uhhh.setIcon(name, false);
+                uhhh.setIcon(graphicName, false);
                 icon.loadGraphicFromSprite(uhhh);
 
             case EVENT:
-                icon.loadGraphic(Paths.image(EventNote.getEventSprite(name)));
+                icon.loadGraphic(Paths.image(EventNote.getEventSprite(graphicName)));
 
             case NOTETYPE:
                 var note = new Note();
-                note.updateData(0, FlxG.random.int(0, 3), name, "base");
+                note.updateData(0, FlxG.random.int(0, 3), graphicName, "base");
                 note.reloadSprite();
                 icon.loadGraphicFromSprite(note);
 
