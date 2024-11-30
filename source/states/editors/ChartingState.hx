@@ -1014,7 +1014,11 @@ class ChartingState extends MusicBeatState
 	function updateEventInfo()
 	{
 		eventInfo.graphic.dump();
-		eventInfo.text = possibleEvents[eventsLabels.indexOf(eventButton.label.text)][1];
+		var daIndex = eventsLabels.indexOf(eventButton.label.text);
+		if(daIndex == -1)
+			eventInfo.text = "event info not found!!";
+		else
+			eventInfo.text = possibleEvents[daIndex][1];
 	}
 	function updateEventLabel()
 	{
