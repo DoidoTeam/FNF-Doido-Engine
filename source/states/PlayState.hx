@@ -210,9 +210,9 @@ class PlayState extends MusicBeatState
 		{
 			var scriptConfig:IrisConfig = new IrisConfig(path, true, true);
 			var newScript:Iris = new Iris(Paths.script('$path'), scriptConfig);
-			newScript.set("this", instance);
 			loadedScripts.push(newScript);
 		}
+		setScript("this", instance);
 
 		unspawnNotes = ChartLoader.getChart(SONG);
 		unspawnEvents = ChartLoader.getEvents(EVENTS);
@@ -2141,5 +2141,10 @@ class PlayState extends MusicBeatState
 				}
 			}
 		}
+	}
+	public function setScript(name:String, value:Dynamic, allowOverride:Bool = true)
+	{
+		for(script in loadedScripts)
+			script.set(name, value, allowOverride);
 	}
 }

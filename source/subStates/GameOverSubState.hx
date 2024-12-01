@@ -1,5 +1,6 @@
 package subStates;
 
+import flixel.FlxCamera;
 import backend.game.GameData.MusicBeatSubState;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -32,6 +33,7 @@ class GameOverSubState extends MusicBeatSubState
 	override function create()
 	{
 		super.create();
+		PlayState.instance.setScript("this", this);
 		callScript("gameOverCreate");
 		add(bf);
 		// the game loads the deathChar you set in Character.hx (default is "bf-dead")
@@ -61,6 +63,10 @@ class GameOverSubState extends MusicBeatSubState
 		callScript("gameOverCreatePost");
 	}
 
+	function fadeCamera():FlxCamera {
+		return FlxG.cameras.list[FlxG.cameras.list.length - 1];
+	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -72,7 +78,7 @@ class GameOverSubState extends MusicBeatSubState
 		{
 			if(Controls.justPressed(BACK))
 			{
-				FlxG.camera.fade(FlxColor.BLACK, 0.2, false, function()
+				fadeCamera().fade(FlxColor.BLACK, 0.2, false, function()
 				{
 					PlayState.sendToMenu();
 				}, true);
@@ -98,7 +104,7 @@ class GameOverSubState extends MusicBeatSubState
 
 		new FlxTimer().start(1.0, function(tmr:FlxTimer)
 		{
-			FlxG.camera.fade(FlxColor.BLACK, 1.0, false, null, true);
+			fadeCamera().fade(FlxColor.BLACK, 1.0, false, null, true);
 
 			new FlxTimer().start(2.0, function(tmr:FlxTimer)
 			{
