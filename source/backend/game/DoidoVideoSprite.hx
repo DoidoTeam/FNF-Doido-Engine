@@ -1,6 +1,6 @@
 package backend.game;
 
-#if VIDEOS_ALLOWED
+#if flixel
 import flixel.graphics.FlxGraphic;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
@@ -17,6 +17,31 @@ import sys.FileSystem;
 
 using StringTools;
 
+/**
+ * This class extends FlxSprite to display video files in HaxeFlixel.
+ *
+ * ```haxe
+ * var video:FlxVideoSprite = new FlxVideoSprite(0, 0);
+ * video.antialiasing = true;
+ * video.bitmap.onFormatSetup.add(function():Void
+ * {
+ * 	if (video.bitmap != null && video.bitmap.bitmapData != null)
+ * 	{
+ * 		final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);
+ *
+ * 		video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
+ * 		video.updateHitbox();
+ * 		video.screenCenter();
+ * 	}
+ * });
+ * video.bitmap.onEndReached.add(video.destroy);
+ * add(video);
+ *
+ * if (video.load('assets/videos/video.mp4'))
+ * 	FlxTimer.wait(0.001, () -> video.play());
+ * ```
+ */
+@:nullSafety
 class DoidoVideoSprite extends FlxSprite
 {
 	/**
@@ -25,7 +50,6 @@ class DoidoVideoSprite extends FlxSprite
 	 * Must be set before loading a video.
 	 */
 	public var autoPause:Bool = FlxG.autoPause;
-	public var forcePause:Bool = false;
 
 	#if FLX_SOUND_SYSTEM
 	/**
@@ -38,6 +62,12 @@ class DoidoVideoSprite extends FlxSprite
 	 * The video bitmap object.
 	 */
 	public var bitmap(default, null):Null<Video>;
+
+	/**
+	 * Internal tracker for whether the video is paused or not.
+	 */
+	@:noCompletion
+	private var alreadyPaused:Bool = false;
 
 	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
@@ -63,14 +93,17 @@ class DoidoVideoSprite extends FlxSprite
 
 				#if FLX_SOUND_SYSTEM
 				if (autoVolumeHandle)
-					bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+					bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 				#end
 			}
 		});
 		bitmap.onFormatSetup.add(function():Void
 		{
-			if (bitmap != null && bitmap.bitmapData != null)
-				loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
+			if (bitmap != null)
+			{
+				if (bitmap.bitmapData != null)
+					loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
+			}
 		});
 		bitmap.visible = false;
 		FlxG.game.addChild(bitmap);
@@ -92,11 +125,11 @@ class DoidoVideoSprite extends FlxSprite
 
 		if (autoPause)
 		{
-			if (!FlxG.signals.focusGained.has(resume))
-				FlxG.signals.focusGained.add(resume);
+			if (!FlxG.signals.focusGained.has(onFocusGained))
+				FlxG.signals.focusGained.add(onFocusGained);
 
-			if (!FlxG.signals.focusLost.has(pause))
-				FlxG.signals.focusLost.add(pause);
+			if (!FlxG.signals.focusLost.has(onFocusLost))
+				FlxG.signals.focusLost.add(onFocusLost);
 		}
 
 		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
@@ -212,8 +245,7 @@ class DoidoVideoSprite extends FlxSprite
 	 */
 	public inline function resume():Void
 	{
-		if(!forcePause)
-			bitmap?.resume();
+		bitmap?.resume();
 	}
 
 	/**
@@ -228,7 +260,7 @@ class DoidoVideoSprite extends FlxSprite
 	/**
 	 * Calculates and returns the current volume based on Flixel's sound settings by default.
 	 *
-	 * The volume is automatically clamped between `0` and `1` by the calling code. If the sound is muted, the volume is `0`.
+	 * The volume is automatically clamped between `0` and `2.55` by the calling code. If the sound is muted, the volume is `0`.
 	 *
 	 * @return The calculated volume.
 	 */
@@ -240,11 +272,11 @@ class DoidoVideoSprite extends FlxSprite
 
 	public override function destroy():Void
 	{
-		if (FlxG.signals.focusGained.has(resume))
-			FlxG.signals.focusGained.remove(resume);
+		if (FlxG.signals.focusGained.has(onFocusGained))
+			FlxG.signals.focusGained.remove(onFocusGained);
 
-		if (FlxG.signals.focusLost.has(pause))
-			FlxG.signals.focusLost.remove(pause);
+		if (FlxG.signals.focusLost.has(onFocusLost))
+			FlxG.signals.focusLost.remove(onFocusLost);
 
 		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
@@ -255,10 +287,8 @@ class DoidoVideoSprite extends FlxSprite
 
 		if (bitmap != null)
 		{
-			bitmap.dispose();
-
 			FlxG.removeChild(bitmap);
-
+			bitmap.dispose();
 			bitmap = null;
 		}
 	}
@@ -280,19 +310,40 @@ class DoidoVideoSprite extends FlxSprite
 	public override function update(elapsed:Float):Void
 	{
 		#if (FLX_SOUND_SYSTEM && flixel < "5.9.0")
-		if (bitmap != null && autoVolumeHandle)
-			bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		if (bitmap != null)
+		{
+			if (autoVolumeHandle)
+				bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		}
 		#end
 
 		super.update(elapsed);
+	}
+
+	@:noCompletion
+	private function onFocusGained():Void
+	{
+		if (!alreadyPaused)
+			resume();
+	}
+
+	@:noCompletion
+	private function onFocusLost():Void
+	{
+		alreadyPaused = bitmap == null ? false : !bitmap.isPlaying;
+		
+		pause();
 	}
 
 	#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 	@:noCompletion
 	private function onVolumeChange(_):Void
 	{
-		if (bitmap != null && autoVolumeHandle)
-			bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		if (bitmap != null)
+		{
+			if (autoVolumeHandle)
+				bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		}
 	}
 	#end
 

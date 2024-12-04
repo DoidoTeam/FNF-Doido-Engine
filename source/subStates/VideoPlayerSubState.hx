@@ -121,7 +121,6 @@ class VideoPlayerSubState extends MusicBeatSubState
     public function pauseVideo(isPause:Bool)
     {
         lockControls = true;
-        video.forcePause = isPause;
         FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
         if(isPause)
             video.pause();
