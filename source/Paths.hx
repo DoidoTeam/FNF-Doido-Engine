@@ -273,7 +273,7 @@ class Paths
 			#end
 		} catch(e) {}
 		
-		Logs.print('read dir ${(swagList.length > 1) ? '$swagList' : 'EMPTY'} at ${getPath(dir, library)}');
+		Logs.print('read dir ${(swagList.length > 0) ? '$swagList' : 'EMPTY'} at ${getPath(dir, library)}');
 		return swagList;
 	}
 
