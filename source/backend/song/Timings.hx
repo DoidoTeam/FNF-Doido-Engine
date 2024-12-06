@@ -110,8 +110,9 @@ class Timings
 		calc("A", 95, 80);
 		calc("S", 100,95);
 		// pluses for your rank
-		if(misses == 0 && hasPlus) {
-			result += "+";
+		if(misses == 0) {
+			if(hasPlus)
+				result += "+";
 			if(accuracy == 100.0)
 				result = "P";
 		}
