@@ -3,4 +3,6 @@
 export/
 .vscode/launch.json
 RECOVER_*.fla
-*.DS_Store
+.DS_Store
+.AppleDouble
+.LSOverride

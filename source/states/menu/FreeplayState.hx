@@ -16,6 +16,7 @@ import objects.hud.HealthIcon;
 import states.*;
 import states.editors.ChartingState;
 import subStates.menu.DeleteScoreSubState;
+import backend.song.Timings;
 
 using StringTools;
 
@@ -262,6 +263,7 @@ class ScoreCounter extends FlxGroup
 
 	public var realValues:ScoreData;
 	public var lerpValues:ScoreData;
+	var rank:String = "N/A";
 
 	public function new()
 	{
@@ -291,12 +293,19 @@ class ScoreCounter extends FlxGroup
 		text.text = "";
 
 		text.text +=   "HIGHSCORE: " + Math.floor(lerpValues.score);
-		text.text += "\nACCURACY:  " +(Math.floor(lerpValues.accuracy * 100) / 100) + "%";
+		text.text += "\nACCURACY:  " +(Math.floor(lerpValues.accuracy * 100) / 100) + "%" + ' [$rank]';
 		text.text += "\nMISSES:    " + Math.floor(lerpValues.misses);
 
 		lerpValues.score 	= FlxMath.lerp(lerpValues.score, 	realValues.score, 	 elapsed * 8);
 		lerpValues.accuracy = FlxMath.lerp(lerpValues.accuracy, realValues.accuracy, elapsed * 8);
 		lerpValues.misses 	= FlxMath.lerp(lerpValues.misses, 	realValues.misses, 	 elapsed * 8);
+
+		rank = Timings.getRank(
+			lerpValues.accuracy,
+			Math.floor(lerpValues.misses),
+			false,
+			lerpValues.accuracy == realValues.accuracy
+		);
 
 		if(Math.abs(lerpValues.score - realValues.score) <= 10)
 			lerpValues.score = realValues.score;
