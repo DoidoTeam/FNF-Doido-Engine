@@ -53,6 +53,7 @@ class Rating extends FlxGroup
 		else
 		{
 			jumpTween(daRating);
+			numOffset.x -= 2;
 		}
 		deathTween(daRating, 0.3);
 		for(item in daNum)
