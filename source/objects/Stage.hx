@@ -82,9 +82,13 @@ class Stage extends FlxGroup
 
 	public function preloadScript(stage:String = "")
 	{
-		var path:String = 'images/stages/_scripts/$stage.hxc';
+		var path:String = 'images/stages/_scripts/$stage';
 		
-		if(!Paths.fileExists(path))
+		if(Paths.fileExists('$path.hxc'))
+			path += '.hxc';
+		else if(Paths.fileExists('$path.hx'))
+			path += '.hx';
+		else
 			return;
 
 		var scriptConfig:IrisConfig = new IrisConfig(path, false, true);
