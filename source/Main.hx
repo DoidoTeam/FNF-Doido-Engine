@@ -121,9 +121,11 @@ class Main extends Sprite
 	
 	public static var skipClearMemory:Bool = false; // dont
 	public static var skipTrans:Bool = true; // starts on but it turns false inside Init
-	public static function switchState(?target:FlxState):Void
+	public static var lastTransition:String = '';
+	public static function switchState(?target:FlxState, transition:String = 'funkin'):Void
 	{
-		var trans = new GameTransition(false);
+		lastTransition = transition;
+		var trans = new GameTransition(false, transition);
 		trans.finishCallback = function()
 		{
 			if(target != null)		
@@ -141,8 +143,8 @@ class Main extends Sprite
 	}
 	
 	// you could just do Main.switchState() but whatever
-	public static function resetState():Void
-		return switchState();
+	public static function resetState(transition:String = 'funkin'):Void
+		return switchState(null, transition);
 
 	// so you dont have to type it every time
 	public static function skipStuff(?ohreally:Bool = true):Void

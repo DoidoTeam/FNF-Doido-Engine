@@ -25,7 +25,7 @@ class MusicBeatState extends FlxUIState
 			Paths.clearMemory();
 		
 		if(!Main.skipTrans)
-			openSubState(new GameTransition(true));
+			openSubState(new GameTransition(true, Main.lastTransition));
 
 		Iris.destroyAll();
 
