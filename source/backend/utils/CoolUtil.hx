@@ -235,24 +235,22 @@ class CoolUtil
 	}
 	public static function stringToColor(str:String):Int
 	{
-		if(str.startsWith('#') || str.startsWith('0x'))
-			return FlxColor.fromString(str);
-		else
-			return switch(str.toLowerCase())
-			{
-				case 'black': 	0xFF000000;
-				case 'silver':  0xFFC0C0C0;
-				case 'gray': 	0xFF808080;
-				case 'red': 	0xFFFF0000;
-				case 'purple':  0xFF800080;
-				case 'pink': 	0xFFFF00FF;
-				case 'green': 	0xFF008000;
-				case 'lime': 	0xFF00FF00;
-				case 'yellow':  0xFFFFFF00;
-				case 'blue': 	0xFF0000FF;
-				case 'aqua': 	0xFF00FFFF;
-				default: 		0xFFFFFFFF;
-			}
+		return switch(str.toLowerCase())
+		{
+			case 'black': 	0xFF000000;
+			case 'silver':  0xFFC0C0C0;
+			case 'gray': 	0xFF808080;
+			case 'red': 	0xFFFF0000;
+			case 'purple':  0xFF800080;
+			case 'pink': 	0xFFFF00FF;
+			case 'green': 	0xFF008000;
+			case 'lime': 	0xFF00FF00;
+			case 'yellow':  0xFFFFFF00;
+			case 'blue': 	0xFF0000FF;
+			case 'aqua': 	0xFF00FFFF;
+			case 'white': 	0xFFFFFFFF;
+			default: 		FlxColor.fromString(str) == null ? 0xFFFFFFFF : FlxColor.fromString(str);
+		}
 	}
 
 	public static function openURL(url:String)
