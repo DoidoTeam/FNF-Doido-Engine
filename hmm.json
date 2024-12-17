@@ -43,21 +43,21 @@
         "name": "hscript-iris",
         "type": "git",
         "dir": null,
-        "ref": "master",
+        "ref": "d9dc99526d51e63cbab86122624625aebe5349c2",
         "url": "https://github.com/crowplexus/hscript-iris"
       },
       {
         "name": "hxdiscord_rpc",
         "type": "git",
         "dir": null,
-        "ref": "main",
+        "ref": "19518713cbd59fc5705f899144fffdbf9ae6695c",
         "url": "https://github.com/MAJigsaw77/hxdiscord_rpc"
       },
       {
         "name": "hxvlc",
         "type": "git",
         "dir": null,
-        "ref": "main",
+        "ref": "243593311edcc7a8424d73806cda13bd1317bfdd",
         "url": "https://github.com/MAJigsaw77/hxvlc"
       }
     ]
