@@ -106,7 +106,7 @@ class SongData
 		return week;
 	}
 
-	// fallback song. if you plan on removing -debugg you should consider changing this to a song that does exist
+	// fallback song. if you plan on removing -debug you should consider changing this to a song that does exist
 	inline public static function defaultSong():SwagSong
 	{
 		return
