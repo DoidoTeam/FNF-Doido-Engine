@@ -290,10 +290,10 @@ class CoolUtil
 		
 		if(!forced)
 		{
-			if(SaveData.data.get("Flashing Lights") == "OFF") return;
-
-			if(SaveData.data.get("Flashing Lights") == "REDUCED")
-				color.alphaFloat = 0.4;
+			switch(SaveData.data.get("Flashing Lights").toUpperCase()) {
+				case "OFF": return;
+				case "REDUCED": color.alphaFloat = 0.4;
+			}
 		}
 		camera.flash(color, duration, null, true);
 	}
