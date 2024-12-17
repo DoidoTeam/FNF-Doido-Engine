@@ -12,7 +12,6 @@ typedef SwagSong =
 
 	var player1:String;
 	var player2:String;
-	//var assetModifier:String;
 }
 typedef SwagSection =
 {
@@ -21,8 +20,6 @@ typedef SwagSection =
 	var mustHitSection:Bool;
 	var bpm:Float;
 	var changeBPM:Bool;
-	//var typeOfSection:Int;
-	//var altAnim:Bool;
 	
 	// psych suport
 	var ?sectionBeats:Float;
@@ -88,6 +85,7 @@ class SongData
 			freeplayOnly: true,
 		},
 	];
+
 	inline public static function getWeek(index:Int):FunkyWeek
 	{
 		var week = weeks[index];
@@ -108,7 +106,7 @@ class SongData
 		return week;
 	}
 
-	// use these to whatever
+	// fallback song. if you plan on removing -debugg you should consider changing this to a song that does exist
 	inline public static function defaultSong():SwagSong
 	{
 		return
@@ -123,6 +121,7 @@ class SongData
 			player2: "dad",
 		};
 	}
+
 	inline public static function defaultSection():SwagSection
 	{
 		return
@@ -136,13 +135,13 @@ class SongData
 	}
 	inline public static function defaultSongEvents():EventSong
 		return {songEvents: []};
+
 	// [0] = section // [1] = strumTime // [2] events
 	inline public static function defaultEventNote():Array<Dynamic>
 		return [0, 0, []];
 	inline public static function defaultEvent():Array<Dynamic>
 		return ["name", "value1", "value2", "value3"];
 
-	// stuff from fnf
 	inline public static function loadFromJson(jsonInput:String, ?diff:String = "normal"):SwagSong
 	{		
 		Logs.print('Chart Loaded: ' + '$jsonInput/$diff');
@@ -163,8 +162,28 @@ class SongData
 		
 		return daSong;
 	}
+
+	inline public static function loadEventsJson(jsonInput:String, diff:String = "normal"):EventSong
+	{
+		var formatPath = 'events-$diff';
+
+		function checkFile():Bool {
+			return Paths.fileExists('songs/$jsonInput/chart/$formatPath.json');
+		}
+		if(!checkFile())
+			formatPath = 'events';
+		if(!checkFile()) {
+			Logs.print('No Events Loaded');
+			return {songEvents: []};
+		}
+
+		Logs.print('Events Loaded: ' + '$jsonInput/chart/$formatPath');
+
+		var daEvents:EventSong = cast Paths.json('songs/$jsonInput/chart/$formatPath');
+		return daEvents;
+	}
 	
-	// 
+	// Removes duplicated notes from a chart.
 	inline public static function formatSong(SONG:SwagSong):SwagSong
 	{
 		// cleaning multiple notes at the same place
@@ -198,25 +217,5 @@ class SongData
 			Logs.print('removed $removed duplicated notes');
 		
 		return SONG;
-	}
-
-	inline public static function loadEventsJson(jsonInput:String, diff:String = "normal"):EventSong
-	{
-		var formatPath = 'events-$diff';
-
-		function checkFile():Bool {
-			return Paths.fileExists('songs/$jsonInput/chart/$formatPath.json');
-		}
-		if(!checkFile())
-			formatPath = 'events';
-		if(!checkFile()) {
-			Logs.print('No Events Loaded');
-			return {songEvents: []};
-		}
-
-		Logs.print('Events Loaded: ' + '$jsonInput/chart/$formatPath');
-
-		var daEvents:EventSong = cast Paths.json('songs/$jsonInput/chart/$formatPath');
-		return daEvents;
 	}
 }

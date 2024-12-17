@@ -17,30 +17,11 @@ import sys.FileSystem;
 
 using StringTools;
 
-/**
- * This class extends FlxSprite to display video files in HaxeFlixel.
- *
- * ```haxe
- * var video:FlxVideoSprite = new FlxVideoSprite(0, 0);
- * video.antialiasing = true;
- * video.bitmap.onFormatSetup.add(function():Void
- * {
- * 	if (video.bitmap != null && video.bitmap.bitmapData != null)
- * 	{
- * 		final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);
- *
- * 		video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
- * 		video.updateHitbox();
- * 		video.screenCenter();
- * 	}
- * });
- * video.bitmap.onEndReached.add(video.destroy);
- * add(video);
- *
- * if (video.load('assets/videos/video.mp4'))
- * 	FlxTimer.wait(0.001, () -> video.play());
- * ```
- */
+/*
+	This class extends FlxSprite to display video files in HaxeFlixel. But in a DOIDO kind of way...
+	There's hardly gonna be a need for you to use this so please refer to VideoPlayerSubstate to find out how videos work
+*/
+
 @:nullSafety
 class DoidoVideoSprite extends FlxSprite
 {

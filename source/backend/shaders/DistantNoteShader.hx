@@ -4,6 +4,19 @@ import flixel.system.FlxAssets.FlxShader;
 
 // basically same shit as haxeflixel demo
 // but i made some changes to the variables
+
+/**
+ * Simple shader from the HaxeFlixel demos but with some variables changed.
+ * 
+ * Usage:
+ * 
+ * ```haxe
+ *  var guitar = new backend.shaders.DistantNoteShader();
+ *  guitar.downscroll = downscroll;
+ *  setCamShader([new openfl.filters.ShaderFilter(cast guitar.shader)], "strum");
+ * ```
+ * NOTE: You should force middlescroll when this is enabled.
+ */
 class DistantNoteShader
 {
    public var shader(default, null):DistantNoteShaderData = new DistantNoteShaderData();

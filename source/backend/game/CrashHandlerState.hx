@@ -5,6 +5,10 @@ import backend.game.GameData.MusicBeatState;
 import flixel.FlxSprite;
 import flixel.util.FlxGradient;
 
+/*
+	State that is displayed when the game crashes
+*/
+
 class CrashHandlerState extends MusicBeatState
 {
     var errorMsg:String = "";

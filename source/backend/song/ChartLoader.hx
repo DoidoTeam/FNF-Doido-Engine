@@ -8,6 +8,10 @@ import objects.note.Note;
 
 using StringTools;
 
+/*
+	Class that loads a chart from a SwagSong into an array of Notes
+*/
+
 class ChartLoader
 {
 	public static function getChart(SONG:SwagSong):Array<Note>

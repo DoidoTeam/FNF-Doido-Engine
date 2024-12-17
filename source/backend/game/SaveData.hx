@@ -6,6 +6,10 @@ import openfl.system.Capabilities;
 import backend.song.Conductor;
 import backend.song.Highscore;
 
+/*
+	Save data such as options and other things.
+*/
+
 enum SettingType
 {
 	CHECKMARK;

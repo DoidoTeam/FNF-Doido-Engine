@@ -16,20 +16,18 @@ import subStates.menu.WebsiteSubState;
 
 using StringTools;
 
+/*
+	Random utility functions that are used by the game
+*/
+
 class CoolUtil
 {
+	/*
+	* GAME UTILS
+	*/
+
 	inline public static function displayName(song:String):String
 		return song.toUpperCase().replace("-", " ");
-	
-	public static function coolTextFile(key:String):Array<String>
-	{
-		var daList:Array<String> = Paths.text(key).split('\n');
-
-		for(i in 0...daList.length)
-			daList[i] = daList[i].trim();
-
-		return daList;
-	}
 	
 	public static function posToTimer(mil:Float = 0, hasMil:Bool = false):String
 	{
@@ -48,7 +46,6 @@ class CoolUtil
 		var disSec:String = '${sec % 60}';
 		var disMin:String = '$min';
 		disSec = forceZero(disSec);
-		//disMin = forceZero(disMin);
 		
 		if(!hasMil)
 			return '$disMin:$disSec';
@@ -73,7 +70,7 @@ class CoolUtil
 	}
 	
 	// custom camera follow because default lerp is broken :(
-	// REMINDER! despite renaming the function from "dumbCamPosLerp" to "camPosLerp" it's still dumb!
+	// REMINDER! despite renaming the function from "dumbCamPosLerp" to "camPosLerp" this function is still dumb!
 	public static function camPosLerp(cam:flixel.FlxCamera, target:flixel.FlxObject, lerp:Float = 1)
 	{
 		cam.scroll.x = FlxMath.lerp(cam.scroll.x, target.x - FlxG.width / 2, lerp);
@@ -83,7 +80,10 @@ class CoolUtil
 	public static function camZoomLerp(start:Float, target:Float = 1.0, speed:Int = 6):Float
 		return FlxMath.lerp(start, target, FlxG.elapsed * speed);
 	
-	// NOTE STUFF
+	/*
+	* NOTE UTILS
+	*/
+
 	inline public static function getDirection(i:Int)
 		return ["left", "down", "up", "right"][i];
 	
@@ -104,7 +104,10 @@ class CoolUtil
 	public static function sortByShit(Obj1:Note, Obj2:Note):Int
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.songTime, Obj2.songTime);
 
-	// music management stuff
+	/*
+	* SOUND UTILS
+	*/
+
 	public static var curMusic:String = "none";
 	public static function playMusic(?key:String, ?forceRestart:Bool = false, ?vol:Float = 0.5)
 	{
@@ -129,6 +132,19 @@ class CoolUtil
 			}
 		}
 	}
+
+	public static function playHitSound(?sound:String, ?volume:Float)
+	{
+		if(sound == null) sound = SaveData.data.get("Hitsounds");
+		if(sound == "OFF") return;
+		
+		if(volume == null) volume = SaveData.data.get("Hitsound Volume") / 100;
+		FlxG.sound.play(Paths.sound('hitsounds/${sound}'), volume);
+	}
+
+	/*
+	* STRING CONVERSION UTILS
+	*/
 
 	public static function stringToBool(str:String):Bool
 	{
@@ -253,22 +269,18 @@ class CoolUtil
 		}
 	}
 
+	/*
+	* MISC
+	*/
+
 	public static function openURL(url:String)
 	{
 		if(Main.activeState != null)
 			Main.activeState.openSubState(new WebsiteSubState(url));
 	}
 
-	public static function playHitSound(?sound:String, ?volume:Float)
-	{
-		if(sound == null) sound = SaveData.data.get("Hitsounds");
-		if(sound == "OFF") return;
-		
-		if(volume == null) volume = SaveData.data.get("Hitsound Volume") / 100;
-		FlxG.sound.play(Paths.sound('hitsounds/${sound}'), volume);
-	}
-
-	// ONLY USE FORCED IF REALLY NEEDED
+	// Flash function to handle the Flashing Lights option
+	// Do not use forced unless you REALLY have to
 	public static function flash(?camera:FlxCamera, ?duration:Float = 0.5, ?color:FlxColor, ?forced:Bool = false)
 	{
 		if(camera == null)
@@ -324,5 +336,16 @@ class CoolUtil
 			if(!twn.finished)
 				twn.active = apple;
 		});
+	}
+
+	// Parse data from a .txt file to an array of strings.
+	public static function parseTxt(key:String):Array<String>
+	{
+		var daList:Array<String> = Paths.text(key).split('\n');
+
+		for(i in 0...daList.length)
+			daList[i] = daList[i].trim();
+
+		return daList;
 	}
 }

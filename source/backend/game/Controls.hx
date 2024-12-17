@@ -6,6 +6,10 @@ import flixel.input.FlxInput.FlxInputState;
 
 using haxe.EnumTools;
 
+/*
+	Custom input and controller handler
+*/
+
 enum DoidoKey
 {
 	// gameplay

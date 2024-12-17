@@ -328,21 +328,6 @@ class PlayState extends MusicBeatState
 		bfStrumline.ID = 1;
 		strumlines.add(bfStrumline);
 		
-		/*if(SaveData.data.get("Middlescroll"))
-		{
-			dadStrumline.x -= strumPos[0]; // goes offscreen
-			bfStrumline.x  -= strumPos[1]; // goes to the middle
-			
-			// the best thing ever
-			var guitar = new DistantNoteShader();
-			guitar.downscroll = downscroll;
-			camStrum.setFilters([new openfl.filters.ShaderFilter(cast guitar.shader)]);
-			for(strumline in strumlines.members)
-				if(!strumline.isPlayer)
-					for(strum in strumline.strumGroup)
-						strum.visible = false;
-		}*/
-		
 		for(strumline in strumlines.members)
 		{
 			if(strumline.customData) continue;
@@ -352,18 +337,6 @@ class PlayState extends MusicBeatState
 		}
 
 		hudBuild.updateHitbox(bfStrumline.downscroll);
-		
-		/*for(strumline in strumlines.members)
-		{
-			strumline.isPlayer = !strumline.isPlayer;
-			strumline.botplay = !strumline.botplay;
-			if(!strumline.isPlayer)
-			{
-				strumline.downscroll = !strumline.downscroll;
-				strumline.scrollSpeed = 1.0;
-			}
-			strumline.updateHitbox();
-		}*/
 
 		var daSong:String = SONG.song.toLowerCase();
 

@@ -37,7 +37,7 @@ class TitleState extends MusicBeatState
 				CoolUtil.playMusic("freakyMenu");
 			});
 			
-			var allTexts:Array<String> = CoolUtil.coolTextFile('introText');
+			var allTexts:Array<String> = CoolUtil.parseTxt('introText');
 			curWacky = allTexts[FlxG.random.int(0, allTexts.length - 1)].split('--');
 		}
 		

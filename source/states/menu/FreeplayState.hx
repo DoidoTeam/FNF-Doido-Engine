@@ -71,7 +71,7 @@ class FreeplayState extends MusicBeatState
 				addSong(song[0], song[1], week.diffs);
 		}
 
-		var extraSongs = CoolUtil.coolTextFile('extra-songs');
+		var extraSongs = CoolUtil.parseTxt('extra-songs');
 		for(line in extraSongs)
 		{
 			if(line.startsWith("//")) continue;

@@ -53,7 +53,6 @@ class Conductor
 			totalSteps += deltaSteps;
 			totalPos += calcStep(curBPM) * deltaSteps;
 		}
-		//Logs.print("new BPM map BUDDY " + bpmChangeMap);
 	}
 
 	public static function calcBeat(bpm:Float):Float

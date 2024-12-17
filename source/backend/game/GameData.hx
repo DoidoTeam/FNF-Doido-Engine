@@ -9,6 +9,10 @@ import flixel.group.FlxGroup;
 import backend.song.Conductor;
 import crowplexus.iris.Iris;
 
+/*
+	Custom state and substate classes. Use them instead of FlxState or FlxSubstate
+*/
+
 class MusicBeatState extends FlxUIState
 {
 	override function create()
