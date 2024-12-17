@@ -39,7 +39,8 @@ class OptionsSubState extends MusicBeatSubState
             #if DISCORD_RPC
             "Discord RPC",
             #end
-            "Shaders"
+            "Shaders",
+            "Low Quality"
         ],
 		"gameplay" => [
 			"Ghost Tapping",
@@ -68,6 +69,7 @@ class OptionsSubState extends MusicBeatSubState
     var restartTimer:Float = 0;
     var forceRestartOptions:Array<String> = [ // options that you gotta restart the song for them to reload sorry
         "Ghost Tapping", // you can't cheat >:]
+        "Low Quality"
     ];
     var reloadOptions:Array<String> = [ // options that need some manual reloading on playstate when changed
         "Antialiasing",

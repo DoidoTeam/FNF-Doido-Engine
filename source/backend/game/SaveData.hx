@@ -62,6 +62,16 @@ class SaveData
 			CHECKMARK,
 			"Whether to use Discord's game activity.",
 		],
+		"Shaders" => [
+			true,
+			CHECKMARK,
+			"Fancy graphical effects. Disable this if you get GPU related crashes."
+		],
+		"Low Quality" => [
+			false,
+			CHECKMARK,
+			"Disables extra assets that might make very low end computers lag."
+		],
 		/*
 		*
 		* GAMEPLAY
@@ -145,11 +155,6 @@ class SaveData
 			true,
 			CHECKMARK,
 			"Makes the song timer visible"
-		],
-		"Shaders" => [
-			true,
-			CHECKMARK,
-			"Fancy graphical effects. Disable this if you get GPU related crashes."
 		],
 		/*
 		*

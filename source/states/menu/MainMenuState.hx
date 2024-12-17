@@ -37,7 +37,6 @@ class MainMenuState extends MusicBeatState
 		#end
 		
 		DiscordIO.changePresence("In the Main Menu");
-		//persistentUpdate = true;
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuBG'));
 		bg.scale.set(1.2,1.2);
@@ -72,8 +71,6 @@ class MainMenuState extends MusicBeatState
 			for(i in 0...(optionShit.length - 4))
 				optionSize -= 0.04;
 		}
-		
-		//Logs.print('optionSize: ' + optionSize);
 		
 		for(i in 0...optionShit.length)
 		{
@@ -122,7 +119,6 @@ class MainMenuState extends MusicBeatState
 		bg.y = bgPosY;
 	}
 	
-	//var itemSin:Float = 0;
 	var selectedSum:Bool = false;
 
 	override function update(elapsed:Float)
@@ -133,33 +129,7 @@ class MainMenuState extends MusicBeatState
 			persistentUpdate = false;
 			openSubState(new subStates.VideoPlayerSubState("test"));
 		}
-		/*if(FlxG.keys.justPressed.R)
-		{
-			// crash handler test
-			null.draw();
-		}*/
-		/*if(FlxG.keys.justPressed.R)
-		{
-			Main.skipStuff();
-			Main.resetState();
-		}*/
-		/*if(FlxG.keys.justPressed.J)
-		{
-			optionShit.remove('options');
-			Main.skipStuff();
-			Main.switchState();
-		}
-		if(FlxG.keys.justPressed.K)
-		{
-			optionShit.push('options');
-			Main.skipStuff();
-			Main.switchState();
-		}
-		itemSin += elapsed * Math.PI;
-		for(item in grpOptions.members)
-		{
-			item.x = (FlxG.width / 2) + (Math.sin(itemSin + item.ID) * FlxG.width / 4);
-		}*/
+
 		if(FlxG.keys.justPressed.EIGHT)
 		{
 			FlxG.sound.play(Paths.sound("menu/cancelMenu"));

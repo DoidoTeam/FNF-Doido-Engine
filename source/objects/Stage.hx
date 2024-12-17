@@ -29,6 +29,8 @@ class Stage extends FlxGroup
 	var loadedScripts:Array<Iris> = [];
 	var scripted:Array<String> = [];
 
+	var lowQuality:Bool = false;
+
 	public function new() {
 		super();
 		foreground = new FlxGroup();
@@ -50,6 +52,9 @@ class Stage extends FlxGroup
 			
 			//case "template": ["preload1", "preload2", "starting-stage"];
 		};
+
+		//this stops you from fucking stuff up by changing this mid song
+		lowQuality = SaveData.data.get("Low Quality");
 		
 		/*
 		*	makes changing stages easier by preloading
@@ -110,6 +115,8 @@ class Stage extends FlxGroup
 		newScript.set("dadCam", dadCam);
 		newScript.set("gfCam", gfCam);
 
+		newScript.set("lowQuality", lowQuality);
+
 		newScript.execute();
 
 		loadedScripts.push(newScript);
@@ -135,9 +142,11 @@ class Stage extends FlxGroup
 				front.loadGraphic(Paths.image("stages/stage/stagefront"));
 				add(front);
 				
-				var curtains = new FlxSprite(-600, -400).loadGraphic(Paths.image("stages/stage/stagecurtains"));
-				curtains.scrollFactor.set(1.4,1.4);
-				foreground.add(curtains);
+				if(!lowQuality) {
+					var curtains = new FlxSprite(-600, -400).loadGraphic(Paths.image("stages/stage/stagecurtains"));
+					curtains.scrollFactor.set(1.4,1.4);
+					foreground.add(curtains);
+				}
 				
 			case "school":
 				bfPos.x -= 70;
@@ -167,36 +176,38 @@ class Stage extends FlxGroup
 				bgTrees.animation.play('treeLoop');
 				bgTrees.scrollFactor.set(0.85, 0.85);
 				add(bgTrees);
-				
-				var treeLeaves:FlxSprite = new FlxSprite(-200, -40);
-				treeLeaves.frames = Paths.getSparrowAtlas('stages/school/petals');
-				treeLeaves.animation.addByPrefix('leaves', 'PETALS ALL', 24, true);
-				treeLeaves.animation.play('leaves');
-				treeLeaves.scrollFactor.set(0.85, 0.85);
-				add(treeLeaves);
-				
-				var bgGirls = new FlxSprite(-100, 175); // 190
-				bgGirls.frames = Paths.getSparrowAtlas('stages/school/bgFreaks');
-				bgGirls.scrollFactor.set(0.9, 0.9);
-				
-				var girlAnim:String = "girls group";
-				if(PlayState.SONG.song == 'roses')
-					girlAnim = 'fangirls dissuaded';
-				
-				bgGirls.animation.addByIndices('danceLeft',  'BG $girlAnim', CoolUtil.intArray(14),		"", 24, false);
-				bgGirls.animation.addByIndices('danceRight', 'BG $girlAnim', CoolUtil.intArray(30, 15), "", 24, false);
-				bgGirls.animation.play('danceLeft');
-				bgGirls._stepHit = function(curStep:Int)
-				{
-					if(curStep % 4 == 0)
+
+				if(!lowQuality) {
+					var treeLeaves:FlxSprite = new FlxSprite(-200, -40);
+					treeLeaves.frames = Paths.getSparrowAtlas('stages/school/petals');
+					treeLeaves.animation.addByPrefix('leaves', 'PETALS ALL', 24, true);
+					treeLeaves.animation.play('leaves');
+					treeLeaves.scrollFactor.set(0.85, 0.85);
+					add(treeLeaves);
+					
+					var bgGirls = new FlxSprite(-100, 175); // 190
+					bgGirls.frames = Paths.getSparrowAtlas('stages/school/bgFreaks');
+					bgGirls.scrollFactor.set(0.9, 0.9);
+					
+					var girlAnim:String = "girls group";
+					if(PlayState.SONG.song == 'roses')
+						girlAnim = 'fangirls dissuaded';
+					
+					bgGirls.animation.addByIndices('danceLeft',  'BG $girlAnim', CoolUtil.intArray(14),		"", 24, false);
+					bgGirls.animation.addByIndices('danceRight', 'BG $girlAnim', CoolUtil.intArray(30, 15), "", 24, false);
+					bgGirls.animation.play('danceLeft');
+					bgGirls._stepHit = function(curStep:Int)
 					{
-						if(bgGirls.animation.curAnim.name == 'danceLeft')
-							bgGirls.animation.play('danceRight', true);
-						else
-							bgGirls.animation.play('danceLeft', true);
+						if(curStep % 4 == 0)
+						{
+							if(bgGirls.animation.curAnim.name == 'danceLeft')
+								bgGirls.animation.play('danceRight', true);
+							else
+								bgGirls.animation.play('danceLeft', true);
+						}
 					}
+					add(bgGirls);
 				}
-				add(bgGirls);
 				
 				// easier to manage
 				for(rawItem in members)
@@ -251,10 +262,7 @@ class Stage extends FlxGroup
 		// put your song stuff here
 		
 		// beat hit
-		if(curStep % 4 == 0)
-		{
-			
-		}
+		// if(curStep % 4 == 0)
 
 		callScript("stepHit", [curStep]);
 	}
