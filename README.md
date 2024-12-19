@@ -1,6 +1,6 @@
 # FNF: DOIDO ENGINE
 <p align="center">
-<img src="https://www.newgrounds.com/dump/draw/27ed38c719b9761af970cac60f441e21">
+<img src="https://www.newgrounds.com/dump/draw/a7487bb1dcc15a499c00a5c5d4be5eb3">
 </p>
 
 ## Friday Night Funkin' Rewritten

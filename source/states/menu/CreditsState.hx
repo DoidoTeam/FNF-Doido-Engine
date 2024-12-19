@@ -69,7 +69,7 @@ class CreditsState extends MusicBeatState
         infoTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
         add(infoTxt);
 
-		final specialPeople = 'Anakim, ArturYoshi, BeastlyChip♧, Bnyu, Evandro, NxtVithor, Pi3tr0, Raphalitos, ZieroSama <33';
+		final specialPeople = 'Anakim, ArturYoshi, BeastlyChip♧, Bnyu, Evandro, NxtVithor, Pi3tr0, Raphalitos, ZieroSama';
 		final specialCoders = 'Crowplexus, Gazozoz, Joalor64GH, soushimiya';
 		// yes, this implies coders aren't people
 		// :D
@@ -81,9 +81,9 @@ class CreditsState extends MusicBeatState
 		addCredit('JulianoBeta', 		'juyko', 	 0xFF0BA5FF, "Composed Doido Engine's offset menu music",			'https://www.youtube.com/@prodjuyko');
 		addCredit('crowplexus',			'crowplexus',0xFF313538, "Creator of HScript Iris",							'https://github.com/crowplexus/hscript-iris');
 		addCredit('yoisabo',			'yoisabo',	 0xFF56EF19, "Chart Editor's Event Icons Artist",					'https://bsky.app/profile/yoisabo.bsky.social');
-		addCredit('doubleonikoo', 		'nikoo', 	 0xFF60458A, "is gonna make an actual logo for Doido Engine soon",	'https://bsky.app/profile/doubleonikoo.bsky.social');
-		addCredit('Github Contributors','github', 	 0xFFFFFFFF, 'Thank you\n${specialCoders}!!', 'https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors');
-		addCredit('Special Thanks', 	'heart', 	 0xFFC01B42, 'Thank you\n${specialPeople}!!', "https://youtu.be/rnr8Oo2RV_c");
+		addCredit('doubleonikoo', 		'nikoo', 	 0xFF60458A, "didn't really do much but i already made this icon so you can stay... for now\n-DiogoTV",	'https://bsky.app/profile/doubleonikoo.bsky.social');
+		addCredit('Github Contributors','github', 	 0xFFFFFFFF, 'Thank you\n${specialCoders}!!', 		'https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors');
+		addCredit('Special Thanks', 	'heart', 	 0xFFC01B42, 'Thank you\n${specialPeople}!!\n<33', "https://youtu.be/rnr8Oo2RV_c");
 		
 		for(i in 0...creditList.length)
 		{
