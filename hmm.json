@@ -1,64 +1,64 @@
 {
-    "dependencies": [
-      {
-        "name": "lime",
-        "type": "haxelib",
-        "version": "8.1.2"
-      },
-      {
-        "name": "flxanimate-doido",
-        "type": "git",
-        "dir": null,
-        "ref": "master",
-        "url": "https://github.com/DoidoTeam/flxanimate-doido"
-      },
-      {
-        "name": "openfl",
-        "type": "haxelib",
-        "version": "9.3.3"
-      },
-      {
-        "name": "flixel",
-        "type": "haxelib",
-        "version": "5.8.0"
-      },
-      {
-        "name": "flixel-addons",
-        "type": "haxelib",
-        "version": "3.2.2"
-      },
-      {
-        "name": "flixel-ui",
-        "type": "haxelib",
-        "version": "2.6.1"
-      },
-      {
-        "name": "tjson",
-        "type": "git",
-        "dir": null,
-        "ref": "master",
-        "url": "https://github.com/DoidoTeam/TJSON"
-      },
-      {
-        "name": "hscript-iris",
-        "type": "git",
-        "dir": null,
-        "ref": "d9dc99526d51e63cbab86122624625aebe5349c2",
-        "url": "https://github.com/crowplexus/hscript-iris"
-      },
-      {
-        "name": "hxdiscord_rpc",
-        "type": "git",
-        "dir": null,
-        "ref": "19518713cbd59fc5705f899144fffdbf9ae6695c",
-        "url": "https://github.com/MAJigsaw77/hxdiscord_rpc"
-      },
-      {
-        "name": "hxvlc",
-        "type": "git",
-        "dir": null,
-        "ref": "243593311edcc7a8424d73806cda13bd1317bfdd",
-        "url": "https://github.com/MAJigsaw77/hxvlc"
-      }
-    ]
-  }
+  "dependencies": [
+    {
+      "name": "lime",
+      "type": "haxelib",
+      "version": "8.2.1"
+    },
+    {
+      "name": "openfl",
+      "type": "haxelib",
+      "version": "9.4.0"
+    },
+    {
+      "name": "flixel",
+      "type": "haxelib",
+      "version": "5.8.0"
+    },
+    {
+      "name": "flixel-addons",
+      "type": "haxelib",
+      "version": "3.2.3"
+    },
+    {
+      "name": "flixel-ui",
+      "type": "haxelib",
+      "version": "2.6.1"
+    },
+    {
+      "name": "flxanimate-doido",
+      "type": "git",
+      "dir": null,
+      "ref": "master",
+      "url": "https://github.com/DoidoTeam/flxanimate-doido"
+    },
+    {
+      "name": "tjson",
+      "type": "git",
+      "dir": null,
+      "ref": "master",
+      "url": "https://github.com/DoidoTeam/TJSON"
+    },
+    {
+      "name": "hscript-iris",
+      "type": "git",
+      "dir": null,
+      "ref": "d9dc99526d51e63cbab86122624625aebe5349c2",
+      "url": "https://github.com/crowplexus/hscript-iris"
+    },
+    {
+      "name": "hxdiscord_rpc",
+      "type": "git",
+      "dir": null,
+      "ref": "19518713cbd59fc5705f899144fffdbf9ae6695c",
+      "url": "https://github.com/MAJigsaw77/hxdiscord_rpc"
+    },
+    {
+      "name": "hxvlc",
+      "type": "git",
+      "dir": null,
+      "ref": "243593311edcc7a8424d73806cda13bd1317bfdd",
+      "url": "https://github.com/MAJigsaw77/hxvlc"
+    }
+  ]
+}

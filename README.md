@@ -26,32 +26,28 @@ FNF: Doido Engine is a rewritte of FNF's code, while still being written in Haxe
 
 and more!
 
-## Planned Features
-
-These are features that are being discussed and COULD be added in the future (which doesn't mean they will be added so don't expect much).
-- GPU Caching
-- LoadSongState rewrite (LoadingState)
-- Improved Dialogue system
-- "Doido Week"
-
 ### Supports Windows, Linux and HTML5!
 
 ## How to use
 For information on how to Build the engine, as well as guides for how to use it, please check out the [FNF: Doido Engine Wiki](https://doidoteam.github.io/wiki/)!
 
-### Versions
-The Engine is built in mind with the following versions in mind. Any others might not be supported.
+### Libraries
+The Engine is built in mind with the following libraries in mind. Any others might not be supported.
 ```
 haxe 4.3.3
-lime 8.1.2
-openfl 9.3.3
+lime 8.2.1
+openfl 9.4.0
 flixel 5.8.0
 flixel-addons 3.2.2
 flixel-ui 2.6.1
-tjson https://github.com/DoidoTeam/TJSON
-hscript-iris https://github.com/crowplexus/hscript-iris
 flxanimate-doido https://github.com/DoidoTeam/flxanimate-doido
-hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc
+tjson https://github.com/DoidoTeam/TJSON
+hscript-iris https://github.com/crowplexus/hscript-iris d9dc99526d51e63cbab86122624625aebe5349c2
+hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc 19518713cbd59fc5705f899144fffdbf9ae6695c
+```
+And optionally, video support is done through the following. These are only required if you need video playback.
+```
+hxvlc https://github.com/MAJigsaw77/hxvlc 243593311edcc7a8424d73806cda13bd1317bfdd
 ```
 
 ## Licenses
