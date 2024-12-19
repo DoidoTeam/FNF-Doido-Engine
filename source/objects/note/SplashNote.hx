@@ -88,17 +88,28 @@ class SplashNote extends FlxSprite
 		switch(assetModifier)
 		{
 			default:
-				frames = Paths.getSparrowAtlas("notes/base/holdSplashes");
-				
+				switch(assetModifier)
+				{
+					case "doido":
+						frames = Paths.getSparrowAtlas('notes/doido/holdSplashes');
+						scale.set(0.95,0.95);
+					default:
+						frames = Paths.getSparrowAtlas('notes/base/holdSplashes');
+						scale.set(0.7,0.7);
+				}
 				direction = direction.toUpperCase();
 				animation.addByPrefix("start", 	'holdCoverStart$direction', 24, false);
 				animation.addByPrefix("loop",  	'holdCover$direction', 		24, true);
 				animation.addByPrefix("splash",	'holdCoverEnd$direction', 	24, false);
 
-				for(anim in ["start", "loop", "splash"])
-					addOffset(anim, 6, -28);
+				if(assetModifier == "doido")
+					addOffset("splash", -16, -10);
+				else
+				{
+					for(anim in ["start", "loop", "splash"])
+						addOffset(anim, 6, -28);
+				}
 				
-				scale.set(0.7,0.7);
 				updateHitbox();
 		}
 

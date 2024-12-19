@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TextureAtlas imagePath="strums.png">
-	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- Created with Adobe Animate version 23.0.1.70 -->
 	<!-- http://www.adobe.com/products/animate.html -->
 	<SubTexture name="strum down confirm0000" x="3" y="3" width="132" height="135"/>
 	<SubTexture name="strum down confirm0001" x="138" y="3" width="127" height="129" frameX="-3" frameY="-3" frameWidth="132" frameHeight="135"/>

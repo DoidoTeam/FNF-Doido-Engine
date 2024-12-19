@@ -115,6 +115,10 @@ class GameOverSubState extends MusicBeatSubState
 	}
 
 	function callScript(fun:String, ?args:Array<Dynamic>) {
-		PlayState.instance.callScript(fun, args);
+		try {
+			PlayState.instance.callScript(fun, args);
+		} catch(e) {
+			// avoiding the crash lol
+		}
 	}
 }

@@ -178,8 +178,6 @@ class PlayState extends MusicBeatState
 			if(!['collision'].contains(SONG.song))
 				countdownModifier = "pixel";
 		}
-		if(FlxG.random.bool(0.01))
-			assetModifier = "doido";
 	}
 	
 	public static function resetSongStatics()
@@ -308,10 +306,16 @@ class PlayState extends MusicBeatState
 
 		ghostTapping = SaveData.data.get('Ghost Tapping');
 		var downscroll:Bool = SaveData.data.get("Downscroll");
+		var doidoEasterEgg:Bool = FlxG.random.bool(0.01);
 
 		var noteskins:Array<String> = [];
 
 		for(character in [dad.curChar, boyfriend.curChar]) {
+			if(doidoEasterEgg) {
+				noteskins.push("doido");
+				continue;
+			}
+			
 			switch(character) {
 				case 'bf-pixel':
 					noteskins.push("pixel");
@@ -1393,19 +1397,17 @@ class PlayState extends MusicBeatState
 				{
 					hold.scrollSpeed = strumline.scrollSpeed;
 					
+					hold.holdClipHeight = hold.noteCrochet * (strumline.scrollSpeed * 0.45) + 2;
 					if(!hold.isHoldEnd)
 					{
-						var newHoldSize:Array<Float> = [
-							hold.frameWidth * hold.scale.x,
-							hold.noteCrochet * (strumline.scrollSpeed * 0.45) + 2
-						];
+						var holdWidth:Float = hold.frameWidth * hold.scale.x;
 						
 						if(SaveData.data.get("Split Holds"))
-							newHoldSize[1] *= 0.7;
+							hold.holdClipHeight *= 0.7;
 						
 						hold.setGraphicSize(
-							Math.floor(newHoldSize[0]),
-							Std.int(newHoldSize[1])
+							Math.floor(holdWidth),
+							Std.int(hold.holdClipHeight)
 						);
 					}
 					hold.updateHitbox();
@@ -1509,30 +1511,27 @@ class PlayState extends MusicBeatState
 						{
 							hold.gotHeld = true;
 							hold.holdHitLength = (Conductor.songPos - hold.songTime);
-								
-							var daRect = new FlxRect(
-								0, 0,
-								hold.frameWidth,
-								hold.frameHeight
-							);
-							
-							var holdID:Float = hold.ID;
-							if(hold.isHoldEnd)
-								holdID -= 0.4999; // 0.5
-							
-							if(SaveData.data.get("Split Holds"))
-								holdID -= 0.2;
 							
 							// calculating the clipping by how much you held the note
 							if(!strumline.pauseNotes)
 							{
+								var daRect = new FlxRect(0, 0,
+									hold.frameWidth,
+									hold.frameHeight
+								);
+								
+								var holdID:Float = hold.ID;
+								
+								if(SaveData.data.get("Split Holds"))
+									holdID -= 0.2;
+
 								var minSize:Float = hold.holdHitLength - (hold.noteCrochet * holdID);
 								var maxSize:Float = hold.noteCrochet;
 								if(minSize > maxSize)
 									minSize = maxSize;
 								
 								if(minSize > 0)
-									daRect.y = (minSize / maxSize) * hold.frameHeight;
+									daRect.y = (minSize / maxSize) * (hold.holdClipHeight / hold.scale.y);
 								
 								hold.clipRect = daRect;
 							}

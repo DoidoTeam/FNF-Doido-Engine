@@ -38,10 +38,10 @@ class Strumline extends FlxGroup
 		
 		allNotes = new FlxTypedGroup<Note>();
 		
-		add(holdGroup 	= new FlxTypedGroup<Note>());
 		add(strumGroup 	= new FlxTypedGroup<StrumNote>());
-		add(splashGroup = new FlxTypedGroup<SplashNote>());
+		add(holdGroup 	= new FlxTypedGroup<Note>());
 		add(coverGroup 	= new FlxTypedGroup<SplashNote>());
+		add(splashGroup = new FlxTypedGroup<SplashNote>());
 		add(noteGroup 	= new FlxTypedGroup<Note>());
 		
 		for(i in 0...4)

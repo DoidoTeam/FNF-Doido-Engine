@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="holdSplashes.png">
+	<!-- Created with Adobe Animate version 23.0.1.70 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="holdCoverDOWN0000" x="3" y="3" width="72" height="56" frameX="-9" frameY="0" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverDOWN0001" x="78" y="3" width="78" height="48" frameX="-3" frameY="-8" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverDOWN0002" x="159" y="3" width="67" height="55" frameX="0" frameY="-2" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverDOWN0003" x="229" y="3" width="70" height="39" frameX="-4" frameY="-16" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverEndDOWN0000" x="302" y="3" width="67" height="66" frameX="-10" frameY="-11" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndDOWN0001" x="372" y="3" width="86" height="97" frameX="-2" frameY="-1" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndDOWN0002" x="461" y="3" width="107" height="105" frameX="0" frameY="0" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndDOWN0003" x="571" y="3" width="114" height="106" frameX="-1" frameY="-9" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndDOWN0004" x="688" y="3" width="114" height="90" frameX="-4" frameY="-31" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndDOWN0005" x="805" y="3" width="53" height="70" frameX="-64" frameY="-53" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndDOWN0006" x="861" y="3" width="3" height="3" frameX="-106" frameY="-72" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndLEFT0000" x="867" y="3" width="67" height="66" frameX="-10" frameY="-11" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndLEFT0001" x="937" y="3" width="86" height="97" frameX="-2" frameY="-1" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndLEFT0002" x="3" y="112" width="107" height="105" frameX="0" frameY="0" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndLEFT0003" x="113" y="112" width="114" height="106" frameX="-1" frameY="-9" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndLEFT0004" x="230" y="112" width="114" height="90" frameX="-4" frameY="-31" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndLEFT0005" x="347" y="112" width="53" height="70" frameX="-64" frameY="-53" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndLEFT0006" x="403" y="112" width="3" height="3" frameX="-106" frameY="-72" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndRIGHT0000" x="409" y="112" width="67" height="66" frameX="-10" frameY="-11" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndRIGHT0001" x="479" y="112" width="86" height="97" frameX="-2" frameY="-1" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndRIGHT0002" x="568" y="112" width="107" height="105" frameX="0" frameY="0" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndRIGHT0003" x="678" y="112" width="114" height="106" frameX="-1" frameY="-9" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndRIGHT0004" x="795" y="112" width="114" height="90" frameX="-4" frameY="-31" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndRIGHT0005" x="912" y="112" width="53" height="70" frameX="-64" frameY="-53" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndRIGHT0006" x="968" y="112" width="3" height="3" frameX="-106" frameY="-72" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndUP0000" x="3" y="221" width="67" height="66" frameX="-10" frameY="-11" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndUP0001" x="73" y="221" width="86" height="97" frameX="-2" frameY="-1" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndUP0002" x="162" y="221" width="107" height="105" frameX="0" frameY="0" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndUP0003" x="272" y="221" width="114" height="106" frameX="-1" frameY="-9" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndUP0004" x="389" y="221" width="114" height="90" frameX="-4" frameY="-31" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndUP0005" x="506" y="221" width="53" height="70" frameX="-64" frameY="-53" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverEndUP0006" x="562" y="221" width="3" height="3" frameX="-106" frameY="-72" frameWidth="118" frameHeight="123"/>
+	<SubTexture name="holdCoverLEFT0000" x="568" y="221" width="72" height="56" frameX="-9" frameY="0" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverLEFT0001" x="643" y="221" width="78" height="48" frameX="-3" frameY="-8" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverLEFT0002" x="724" y="221" width="67" height="55" frameX="0" frameY="-2" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverLEFT0003" x="794" y="221" width="70" height="39" frameX="-4" frameY="-16" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverRIGHT0000" x="867" y="221" width="72" height="56" frameX="-9" frameY="0" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverRIGHT0001" x="942" y="221" width="78" height="48" frameX="-3" frameY="-8" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverRIGHT0002" x="3" y="330" width="67" height="55" frameX="0" frameY="-2" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverRIGHT0003" x="73" y="330" width="70" height="39" frameX="-4" frameY="-16" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverStartDOWN0000" x="146" y="330" width="49" height="19" frameX="-9" frameY="-12" frameWidth="71" frameHeight="33"/>
+	<SubTexture name="holdCoverStartDOWN0001" x="198" y="330" width="71" height="33"/>
+	<SubTexture name="holdCoverStartLEFT0000" x="272" y="330" width="49" height="19" frameX="-9" frameY="-12" frameWidth="71" frameHeight="33"/>
+	<SubTexture name="holdCoverStartLEFT0001" x="324" y="330" width="71" height="33"/>
+	<SubTexture name="holdCoverStartRIGHT0000" x="398" y="330" width="49" height="19" frameX="-9" frameY="-12" frameWidth="71" frameHeight="33"/>
+	<SubTexture name="holdCoverStartRIGHT0001" x="450" y="330" width="71" height="33"/>
+	<SubTexture name="holdCoverStartUP0000" x="524" y="330" width="49" height="19" frameX="-9" frameY="-12" frameWidth="71" frameHeight="33"/>
+	<SubTexture name="holdCoverStartUP0001" x="576" y="330" width="71" height="33"/>
+	<SubTexture name="holdCoverUP0000" x="650" y="330" width="72" height="56" frameX="-9" frameY="0" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverUP0001" x="725" y="330" width="78" height="48" frameX="-3" frameY="-8" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverUP0002" x="806" y="330" width="67" height="55" frameX="0" frameY="-2" frameWidth="81" frameHeight="57"/>
+	<SubTexture name="holdCoverUP0003" x="876" y="330" width="70" height="39" frameX="-4" frameY="-16" frameWidth="81" frameHeight="57"/>
+</TextureAtlas>

@@ -63,7 +63,6 @@ class Note extends FlxSprite
 						switch(assetModifier)
 						{
 							case "doido":
-								hasHoldSplash = false;
 								frames = Paths.getSparrowAtlas("notes/doido/notes");
 								noteSize = 0.95;
 							default:
@@ -154,6 +153,9 @@ class Note extends FlxSprite
 	public var isHoldEnd:Bool = false;
 	public var holdLength:Float = 0;
 	public var holdHitLength:Float = 0;
+
+	// reusing this for clipRect later
+	public var holdClipHeight:Float = 0.0;
 	
 	public var children:Array<Note> = [];
 	public var parentNote:Note = null;
