@@ -44,6 +44,7 @@ class DoidoSlider extends FlxSpriteGroup
         add(minLabel    = new FlxText(6,                16,  0, '$minValue', 8));
         add(maxLabel    = new FlxText(6 + hitbox.width,    16,  0, '$maxValue', 8));
         add(valueLabel  = new FlxText(6 + hitbox.width/2,  16,  0, '$value',    8));
+        valueLabel.color = 0xFF000000;
         for(i in [nameLabel, minLabel, maxLabel, valueLabel])
             i.x -= i.width / 2;
 
@@ -58,8 +59,10 @@ class DoidoSlider extends FlxSpriteGroup
     override function update(elapsed:Float)
     {
         super.update(elapsed);
-        if(FlxG.mouse.overlaps(hitbox, cameras[0]) && FlxG.mouse.justPressed)
-            isPressed = true;
+        if(FlxG.mouse.justPressed)
+            if(FlxG.mouse.overlaps(hitbox, cameras[0])
+            || FlxG.mouse.overlaps(handle, cameras[0]))
+                isPressed = true;
         if(FlxG.mouse.justReleased)
             isPressed = false;
         // moving the handle
