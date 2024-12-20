@@ -21,6 +21,7 @@ import backend.game.GameData.MusicBeatState;
 import backend.utils.CharacterUtil;
 import objects.Character;
 import objects.hud.Rating;
+import objects.menu.DoidoSlider;
 import states.*;
 import subStates.editors.ChooserSubState;
 
@@ -46,6 +47,7 @@ class CharacterEditorState extends MusicBeatState
 	var camFollow:FlxObject;
 	
 	var ghostAnimButtons:FlxSpriteGroup;
+	var frameSliders:Array<DoidoSlider> = [];
 	
 	function reloadGhostButtons()
 	{
@@ -59,6 +61,7 @@ class CharacterEditorState extends MusicBeatState
 					ghost.animOffsets = char.animOffsets;
 
 				ghost.playAnim(ghostAnims[i], true);
+				updateFrameSlider(1);
 			});
 			ghostAnimButtons.add(animButton);
 			animButton.cameras = [camHUD];
@@ -123,6 +126,7 @@ class CharacterEditorState extends MusicBeatState
 		FlxG.camera.follow(camFollow, LOCKON, 1);
 		//FlxG.camera.focusOn(camFollow.getPosition());
 		camMain.zoom = camZoom; // 0.7
+		camMain.followLerp = 1;
 
 		add(charGrp);
 
@@ -163,6 +167,38 @@ class CharacterEditorState extends MusicBeatState
 		animTab.name = "anims";
 		animsHud.addGroup(animTab);
 
+		for(i in 0...2)
+		{
+			var frameSlider = new DoidoSlider(
+				'${(i == 0) ? 'Char' : 'Ghost'} Frame Picker',
+				6, animsHud.height - 120 + (60 * i), -1, -1, 10, 0
+			);
+			frameSlider.minLabel.text = "OFF";
+			frameSliders.push(frameSlider);
+			animTab.add(frameSlider);
+			frameSlider.ID = i;
+			frameSlider.onChange = function()
+			{
+				//Logs.print(i + ' ' + frameSlider.value);
+				var charFrame:Character = ((i == 0) ? char : ghost);
+				var isOff:Bool = (frameSlider.value < 0.0);
+				frameSlider.valueLabel.alpha = (isOff ? 0.0 : 1.0);
+				if(isOff)
+					charFrame.playAnim(charFrame.curAnimName, true);
+				else
+				{
+					charFrame.playAnim(charFrame.curAnimName, true, false, Math.floor(frameSlider.value));
+					charFrame.pauseAnim();
+				}
+			}
+			frameSlider.valueLabel.alpha = 0.0;
+			frameSlider.cameras = [camHUD];
+			for(item in frameSlider.members)
+				item.cameras = [camHUD];
+			frameSlider.scrollFactor.set();
+			updateFrameSlider(i);
+		}
+
 		animTab.add(new FlxText(10, 10,0,"Character: "));
 		animTab.add(new FlxText(100,10,0,"Ghost: "));
 		
@@ -175,6 +211,7 @@ class CharacterEditorState extends MusicBeatState
 		{
 			var animButton = new FlxButton(10, 30 + (20 * i), animList[i], function() {
 				char.playAnim(animList[i], true);
+				updateFrameSlider(0);
 				updateInputTxt();
 				updateTxt();
 			});
@@ -340,7 +377,25 @@ class CharacterEditorState extends MusicBeatState
 		charsTab.add(new FlxText(140,10,0,"Ghost: "));
 		charsTab.add(ghostButton);
 	}
-	
+
+	function updateFrameSlider(i:Int = 0)
+	{
+		var slider = frameSliders[i];
+		var daChar:Character = (i == 0 ? char : ghost);
+		slider.maxValue = (!daChar.isAnimateAtlas ?
+			daChar.animation.curAnim.numFrames :
+			daChar.anim.curSymbol.length
+		);
+		slider.maxLabel.text = '${slider.maxValue}';
+		resetSlider(slider);
+	}
+	function resetSlider(slider:DoidoSlider)
+	{
+		slider.valueLabel.alpha = 0.0;
+		@:privateAccess
+			slider._value = -1;
+	}
+
 	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>)
 	{
 		switch(id)
@@ -431,17 +486,16 @@ class CharacterEditorState extends MusicBeatState
 			if(camZoom < 0.4)
 				camZoom = 0.4;
 			
+			camMain.zoom = Math.floor(camZoom / 0.1) * 0.1;
 			updateTxt();
 		}
-		
-		camMain.zoom = Math.floor(camZoom / 0.1) * 0.1;
 		
 		// you can drag the camera
 		if(FlxG.mouse.pressedMiddle)
 		{
 			if(FlxG.mouse.justPressedMiddle)
 			{
-				camMain.followLerp = 1;
+				//camMain.followLerp = 1;
 				checkCamFollow.checked = false;
 				dragCam = [camFollow.x, camFollow.y, FlxG.mouse.x, FlxG.mouse.y];
 			}
@@ -450,10 +504,23 @@ class CharacterEditorState extends MusicBeatState
 				dragCam[1] + (dragCam[3] - FlxG.mouse.y) * 0.8
 			);
 		}
+		else // or just use the keyboard keys ig
+		{
+			if(FlxG.keys.anyJustPressed([I, J, K, L]))
+			{
+				//camMain.followLerp = 1;
+				checkCamFollow.checked = false;
+			}
+			var speed:Float = elapsed * 400;
+			if(FlxG.keys.pressed.J) camFollow.x -= speed;
+			if(FlxG.keys.pressed.L) camFollow.x += speed;
+			if(FlxG.keys.pressed.I) camFollow.y -= speed;
+			if(FlxG.keys.pressed.K) camFollow.y += speed;
+		}
 		// follows the character
 		if(checkCamFollow.checked)
 		{
-			camMain.followLerp = elapsed * 3;
+			//camMain.followLerp = elapsed * 3;
 			var playerMult:Int = (char.isPlayer ? -1 : 1);
 
 			camFollow.setPosition(char.getMidpoint().x + (200 * playerMult), char.getMidpoint().y - 20);
@@ -475,7 +542,7 @@ class CharacterEditorState extends MusicBeatState
 		if(daChange[3]) updateOffset(0,  1);
 		
 		// just to test things out
-		if(FlxG.keys.justPressed.SPACE)
+		if(FlxG.keys.justPressed.SPACE && selectedChange == "animation")
 			updateOffset();
 	}
 	
@@ -493,6 +560,8 @@ class CharacterEditorState extends MusicBeatState
 			x*=100;
 			y*=100;
 		}
+
+		var isSpace:Bool = (x + y == 0);
 		
 		// ARROWS WASD IJKL
 		switch(selectedChange)
@@ -518,13 +587,25 @@ class CharacterEditorState extends MusicBeatState
 			case "animation":
 				char.animOffsets.get(char.curAnimName)[0] += -x;
 				char.animOffsets.get(char.curAnimName)[1] += -y;
-				char.playAnim(char.curAnimName, true);
+				if(isSpace)
+					resetSlider(frameSliders[0]);
+				if(frameSliders[0].value >= 0.0) {
+					char.playAnim(char.curAnimName, true, false, Math.floor(frameSliders[0].value));
+					char.pauseAnim();
+				} else
+					char.playAnim(char.curAnimName, true);
 				
 				if(char.curAnimName == ghost.curAnimName
 				&& char.curChar == ghost.curChar)
 				{
-					ghost.playAnim(char.curAnimName, true);
 					ghost.animOffsets = char.animOffsets;
+					if(isSpace)
+						resetSlider(frameSliders[1]);
+					if(frameSliders[1].value >= 0.0) {
+						ghost.playAnim(char.curAnimName, true, false, Math.floor(frameSliders[1].value));
+						ghost.pauseAnim();
+					} else
+						ghost.playAnim(char.curAnimName, true);
 				}
 			case "ratings":
 				char.ratingsOffset.x += x;
@@ -570,7 +651,7 @@ class CharacterEditorState extends MusicBeatState
 				changeInputY.text = Std.string(char.cameraOffset.y);
 		
 			case "animation":
-				Logs.print(char.curAnimName);
+				//Logs.print(char.curAnimName);
 				var daAnim = char.animOffsets.get(char.curAnimName);
 				
 				changeInputX.text = Std.string(daAnim[0]);

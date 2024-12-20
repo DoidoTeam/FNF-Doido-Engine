@@ -69,7 +69,7 @@ Some other assets, such as test sprites and music, are used under permission fro
 ### [crowplexus](https://github.com/crowplexus) - Creator of HScript Iris
 ### [yoisabo](https://bsky.app/profile/yoisabo.bsky.social) - Chart Editor's Event Icons Artist
 
-### [doubleonikoo](https://bsky.app/profile/doubleonikoo.bsky.social) - didn't really do much but i already made this icon so you can stay... for now (-DiogoTV)
+### [doubleonikoo](https://bsky.app/profile/doubleonikoo.bsky.social) - didn't really do much but i already made the ingame icon so you can stay... for now (-DiogoTV)
 
 ## [Github Contributors](https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors)
 
