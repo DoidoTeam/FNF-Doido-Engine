@@ -24,7 +24,7 @@ while true; do
 done
 
 while true; do
-    read -p "All versions set!! Would you like to build the game now [y/n] ?" i3
+    read -p "All versions set!! Would you like to build the game now [y/n] ? " i3
     case $i3 in
         [Yy]* ) haxelib run lime test linux;
                 break;;
