@@ -66,6 +66,8 @@ class CharacterEditorState extends MusicBeatState
 			ghostAnimButtons.add(animButton);
 			animButton.cameras = [camHUD];
 		}
+		if(frameSliders.length >= 2)
+			updateFrameSlider(1);
 	}
 
 	function reloadChar(dude:Character, newChar:String = "bf", isGhost:Bool = false):Character
