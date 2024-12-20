@@ -37,7 +37,7 @@ if "%i2%"=="y" (
 )
 
 :askBuild
-set /p i3= "All versions set!! Would you like to build the game now [y/n] ?"
+set /p i3= "All versions set!! Would you like to build the game now [y/n] ? "
 if "%i3%"=="y" (
     haxelib run lime test windows
 ) else if not "%i3%"=="n" (
