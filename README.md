@@ -32,8 +32,7 @@ and more!
 For information on how to Build the engine, as well as guides for how to use it, please check out the [FNF: Doido Engine Wiki](https://doidoteam.github.io/wiki/)!
 
 ### Libraries
-Libraries are inside "setup_libraries.bat".
-The Engine is built in mind with those libraries in mind. Any others might not be supported.
+To install the correct libraries, you can run your platform's respective script in `art/setup/`. You can also install manually by checking the `.hmm` file.
 
 ## Licenses
 
