@@ -54,11 +54,11 @@
       "url": "https://github.com/MAJigsaw77/hxdiscord_rpc"
     },
     {
-      "name": "hxvlc",
+      "name": "hxcpp",
       "type": "git",
       "dir": null,
-      "ref": "243593311edcc7a8424d73806cda13bd1317bfdd",
-      "url": "https://github.com/MAJigsaw77/hxvlc"
+      "ref": "master",
+      "url": "https://github.com/DoidoTeam/hxcpp"
     }
   ]
 }
