@@ -233,13 +233,8 @@ class ChartingState extends MusicBeatState
 		20);
 
 		controlTxt.size = 12;
-
-		var controlFormat:FlxTextFormat = new FlxTextFormat();
-		controlFormat.leading = -5;
-		controlTxt.addFormat(controlFormat);
-
 		controlTxt.scrollFactor.set();
-		controlTxt.y = FlxG.height - controlTxt.height + 110;
+		controlTxt.y = FlxG.height - controlTxt.height;
 		controlTxt.visible = true;
 		add(controlTxt);
 
@@ -1677,7 +1672,7 @@ class ChartingState extends MusicBeatState
 		}
 		if(FlxG.mouse.wheel != 0)
 		{
-			if(FlxG.keys.pressed.CONTROL)
+			if(Controls.pressed(CONTROL))
 			{
 				if(FlxG.mouse.wheel > 0)
 					reloadSection(curSection - 1);
@@ -1795,7 +1790,7 @@ class ChartingState extends MusicBeatState
 						if(note[0] == removeNote.songTime
 						&& note[1] == rawNoteData)
 						{
-							if(!FlxG.keys.pressed.CONTROL)
+							if(!Controls.pressed(CONTROL))
 							{
 								getSection(curSection).sectionNotes.remove(note);
 								curSelectedNote = null;

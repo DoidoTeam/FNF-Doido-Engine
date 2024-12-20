@@ -389,10 +389,13 @@ class CharacterEditorState extends MusicBeatState
 			daChar.anim.curSymbol.length
 		);
 		slider.maxLabel.text = '${slider.maxValue}';
-		resetSlider(slider);
+		resetSlider(slider, true);
 	}
-	function resetSlider(slider:DoidoSlider)
+	function resetSlider(slider:DoidoSlider, force:Bool = false)
 	{
+		if(FlxG.keys.pressed.SHIFT && !force)
+			return;
+		
 		slider.valueLabel.alpha = 0.0;
 		@:privateAccess
 			slider._value = -1;
@@ -558,7 +561,7 @@ class CharacterEditorState extends MusicBeatState
 		} else if(FlxG.keys.pressed.SHIFT) {
 			x*=10;
 			y*=10;
-		} else if(FlxG.keys.pressed.CONTROL) {
+		} else if(Controls.pressed(CONTROL)) {
 			x*=100;
 			y*=100;
 		}

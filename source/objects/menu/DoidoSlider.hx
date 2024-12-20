@@ -8,6 +8,7 @@ import flixel.group.FlxSpriteGroup;
 class DoidoSlider extends FlxSpriteGroup
 {
     public var bar:FlxSprite;
+    public var hitbox:FlxSprite;
     public var handle:FlxSprite;
 
     public var nameLabel:FlxText;
@@ -32,18 +33,22 @@ class DoidoSlider extends FlxSpriteGroup
         this.decimals = decimals;
         _value = value = FlxMath.roundDecimal(startValue, decimals);
 
-        bar = new FlxSprite(6, 0).makeGraphic(168, 8, 0xFFFFFFFF);
+        hitbox = new FlxSprite(6, 0).makeGraphic(168, 8, 0xFFFFFFFF);
+        hitbox.alpha = 0;
+        add(hitbox);
+
+        bar = new FlxSprite(6,2).makeGraphic(168, 4, 0xFFFFFFFF);
         add(bar);
 
-        add(nameLabel   = new FlxText(6 + bar.width/2, -20, 0, name, 8));
+        add(nameLabel   = new FlxText(6 + hitbox.width/2, -20, 0, name, 8));
         add(minLabel    = new FlxText(6,                16,  0, '$minValue', 8));
-        add(maxLabel    = new FlxText(6 + bar.width,    16,  0, '$maxValue', 8));
-        add(valueLabel  = new FlxText(6 + bar.width/2,  16,  0, '$value',    8));
+        add(maxLabel    = new FlxText(6 + hitbox.width,    16,  0, '$maxValue', 8));
+        add(valueLabel  = new FlxText(6 + hitbox.width/2,  16,  0, '$value',    8));
         for(i in [nameLabel, minLabel, maxLabel, valueLabel])
             i.x -= i.width / 2;
 
         handle = new FlxSprite().loadGraphic(Paths.image('menu/sliderHandle'));
-        handle.y = (bar.height - handle.height) / 2;
+        handle.y = (hitbox.height - handle.height) / 2;
         handle.offset.x = handle.width / 2;
         add(handle);
     }
@@ -53,7 +58,7 @@ class DoidoSlider extends FlxSpriteGroup
     override function update(elapsed:Float)
     {
         super.update(elapsed);
-        if(FlxG.mouse.overlaps(bar, cameras[0]) && FlxG.mouse.justPressed)
+        if(FlxG.mouse.overlaps(hitbox, cameras[0]) && FlxG.mouse.justPressed)
             isPressed = true;
         if(FlxG.mouse.justReleased)
             isPressed = false;
@@ -61,19 +66,19 @@ class DoidoSlider extends FlxSpriteGroup
         if(isPressed)
             handle.x = FlxG.mouse.getPositionInCameraView(cameras[0]).x;
         // capping the handle
-        if(handle.x < bar.x)
-            handle.x = bar.x;
-        if(handle.x > bar.x + bar.width)
-            handle.x = bar.x + bar.width;
+        if(handle.x < hitbox.x)
+            handle.x = hitbox.x;
+        if(handle.x > hitbox.x + hitbox.width)
+            handle.x = hitbox.x + hitbox.width;
         // updating the value
         if(isPressed)
-            _value = FlxMath.remapToRange(handle.x, bar.x, bar.x + bar.width, minValue, maxValue);
+            _value = FlxMath.remapToRange(handle.x, hitbox.x, hitbox.x + hitbox.width, minValue, maxValue);
         // instead of running on every frame, onChange() only runs when the rounded decimal updates
         if(value != FlxMath.roundDecimal(_value, decimals))
         {
             value = FlxMath.roundDecimal(_value, decimals);
             valueLabel.text = '$value';
-            valueLabel.x = bar.x + (bar.width - valueLabel.width) / 2;
+            valueLabel.x = hitbox.x + (hitbox.width - valueLabel.width) / 2;
             //Logs.print('updated!! $value');
             if(onChange != null)
                 onChange();
@@ -84,7 +89,7 @@ class DoidoSlider extends FlxSpriteGroup
     {
         _value = v;
         try {
-            handle.x = FlxMath.remapToRange(_value, minValue, maxValue, bar.x, bar.x + bar.width);
+            handle.x = FlxMath.remapToRange(_value, minValue, maxValue, hitbox.x, hitbox.x + hitbox.width);
         } catch(e) {
             // avoid crashing
         }

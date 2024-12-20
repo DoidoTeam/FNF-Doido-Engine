@@ -1065,7 +1065,7 @@ class PlayState extends MusicBeatState
 			var char = dad;
 			if(FlxG.keys.pressed.SHIFT)
 				char = boyfriend;
-			if(FlxG.keys.pressed.CONTROL)
+			if(Controls.pressed(CONTROL))
 				char = gf;
 			
 			Main.switchState(new CharacterEditorState(char.curChar, true));
@@ -1073,7 +1073,7 @@ class PlayState extends MusicBeatState
 		if(oldIconEasterEgg)
 		{
 			if(FlxG.keys.justPressed.NINE
-			&& (FlxG.keys.pressed.SHIFT || FlxG.keys.pressed.CONTROL)
+			&& (FlxG.keys.pressed.SHIFT || Controls.pressed(CONTROL))
 			&& boyfriend.curChar == "bf")
 			{
 				var changeBack:Bool = false;
@@ -1085,7 +1085,7 @@ class PlayState extends MusicBeatState
 					else
 						changeBack = true;
 				}
-				if(FlxG.keys.pressed.CONTROL)
+				if(Controls.pressed(CONTROL))
 				{
 					if(curIcon != 'bf-cool')
 						curIcon = 'bf-cool';
