@@ -210,7 +210,7 @@ class Controls
 			[FlxPad.Y],
 		],
 		'CONTROL' => [
-			[#if windows FlxKey.CONTROL #elseif mac FlxKey.WINDOWS #end],
+			[#if mac FlxKey.WINDOWS, #end FlxKey.CONTROL],
 			[],
 		],
 	];
