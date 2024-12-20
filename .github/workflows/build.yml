@@ -31,6 +31,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Install Haxelib
         run: |
+            haxelib setup ~/haxelib
             haxelib --global install hmm
             haxelib --global run hmm setup
             hmm init
