@@ -170,7 +170,7 @@ class CharacterEditorState extends MusicBeatState
 		for(i in 0...2)
 		{
 			var frameSlider = new DoidoSlider(
-				'${(i == 0) ? 'Char' : 'Ghost'} Frame Picker',
+				'${(i == 0) ? 'Character' : 'Ghost'} Frame Picker',
 				6, animsHud.height - 120 + (60 * i), -1, -1, 10, 0
 			);
 			frameSlider.minLabel.text = "OFF";
