@@ -32,24 +32,8 @@ and more!
 For information on how to Build the engine, as well as guides for how to use it, please check out the [FNF: Doido Engine Wiki](https://doidoteam.github.io/wiki/)!
 
 ### Libraries
-The Engine is built in mind with the following libraries in mind. Any others might not be supported.
-```
-haxe 4.3.3
-lime 8.2.2
-openfl 9.4.1
-flixel 5.8.0
-flixel-addons 3.2.2
-flixel-ui 2.6.1
-flxanimate-doido https://github.com/DoidoTeam/flxanimate-doido
-tjson https://github.com/DoidoTeam/TJSON
-hscript-iris https://github.com/crowplexus/hscript-iris d9dc99526d51e63cbab86122624625aebe5349c2
-hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc 19518713cbd59fc5705f899144fffdbf9ae6695c
-hxcpp https://github.com/DoidoTeam/hxcpp
-```
-Optionally, video support is done through the following. These are only required if you need video playback.
-```
-hxvlc https://github.com/MAJigsaw77/hxvlc 243593311edcc7a8424d73806cda13bd1317bfdd
-```
+Libraries are inside "setup_libraries.bat".
+The Engine is built in mind with those libraries in mind. Any others might not be supported.
 
 ## Licenses
 
