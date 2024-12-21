@@ -3,6 +3,9 @@ package backend.game;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;
+import backend.game.Mobile;
+import backend.game.GameData;
+import objects.mobile.VPad;
 
 using haxe.EnumTools;
 
@@ -76,8 +79,43 @@ class Controls
 				return true;
 		}
 
+		#if TOUCH_CONTROLS
+		return checkMobile(rawBind, inputState);
+		#else
+		return false;
+		#end
+	}
+
+	#if TOUCH_CONTROLS
+	public static function checkMobile(bind:DoidoKey, inputState:FlxInputState) {	
+		var back:Bool = false;
+
+		if(Main.activeState is MusicBeatState) {
+			var state = cast(Main.activeState, MusicBeatState);
+			var vpad:VPad = state.vPad;
+			back = vpad.justPressed(BACK);
+		}
+
+		switch(bind) {
+			case UI_UP:
+				return Mobile.swipeUp && (inputState == JUST_PRESSED || inputState == PRESSED);
+			case UI_DOWN:
+				return Mobile.swipeDown && (inputState == JUST_PRESSED || inputState == PRESSED);
+			case UI_LEFT:
+				return Mobile.swipeLeft && (inputState == JUST_PRESSED || inputState == PRESSED);
+			case UI_RIGHT:
+				return Mobile.swipeRight && (inputState == JUST_PRESSED || inputState == PRESSED);
+			case ACCEPT:
+				return Mobile.justReleased && !Mobile.swipeAny && !Mobile.back;
+			case BACK:
+				return Mobile.back || back;
+			default:
+				return false;
+		}
+	
 		return false;
 	}
+	#end
 
 	inline public static function bindToString(bind:DoidoKey):String
 	{

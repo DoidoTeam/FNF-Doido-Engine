@@ -35,6 +35,7 @@ import objects.*;
 import objects.hud.*;
 import objects.note.*;
 import objects.dialogue.Dialogue;
+import objects.mobile.Hitbox;
 import shaders.*;
 import states.editors.*;
 import states.menu.*;
@@ -142,6 +143,10 @@ class PlayState extends MusicBeatState
 		"camHUD" => [],
 		"camStrum" => []
 	];
+
+	#if TOUCH_CONTROLS
+	var hitbox:Hitbox;
+	#end
 
 	public static function resetStatics()
 	{
@@ -502,6 +507,12 @@ class PlayState extends MusicBeatState
 		}
 		else
 			startCountdown();
+
+		#if TOUCH_CONTROLS
+		hitbox = new Hitbox(noteskins[1]);
+		hitbox.cameras = [camOther];
+		add(hitbox);
+		#end
 
 		callScript("createPost");
 	}
@@ -1151,6 +1162,28 @@ class PlayState extends MusicBeatState
 		if(startedCountdown)
 			Conductor.songPos += elapsed * 1000;
 
+		// TO-DO!!! REWRITE!
+		#if TOUCH_CONTROLS
+		pressed = [
+			hitbox.buttonLeft.pressed || Controls.pressed(LEFT),
+			hitbox.buttonDown.pressed || Controls.pressed(DOWN),
+			hitbox.buttonUp.pressed || Controls.pressed(UP),
+			hitbox.buttonRight.pressed || Controls.pressed(RIGHT)
+		];
+		justPressed = [
+			hitbox.buttonLeft.justPressed || Controls.justPressed(LEFT),
+			hitbox.buttonDown.justPressed || Controls.justPressed(DOWN),
+			hitbox.buttonUp.justPressed || Controls.justPressed(UP),
+			hitbox.buttonRight.justPressed || Controls.justPressed(RIGHT)
+		];
+		released = [
+			hitbox.buttonLeft.released || Controls.released(LEFT),
+			hitbox.buttonDown.released || Controls.released(DOWN),
+			hitbox.buttonUp.released || Controls.released(UP),
+			hitbox.buttonRight.released || Controls.released(RIGHT)
+		];
+		
+		#else
 		pressed = [
 			Controls.pressed(LEFT),
 			Controls.pressed(DOWN),
@@ -1169,7 +1202,8 @@ class PlayState extends MusicBeatState
 			Controls.released(UP),
 			Controls.released(RIGHT),
 		];
-		
+		#end
+
 		playerSinging = false;
 
 		// playing events

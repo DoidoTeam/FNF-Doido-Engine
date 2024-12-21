@@ -277,6 +277,9 @@ class Paths
 		return swagList;
 	}
 
+	public static function getFrame(key:String, frame:String, ?library:String):FlxGraphic
+		return FlxGraphic.fromFrame(getSparrowAtlas(key).getByName(frame));
+
 	// preload stuff for playstate
 	// so it doesnt lag whenever it gets called out
 	public static function preloadPlayStuff():Void

@@ -20,6 +20,7 @@ class OptionsSubState extends MusicBeatSubState
         "preferences",
         "gameplay",
         "appearance",
+        #if TOUCH_CONTROLS "mobile", #end
         "adjust offsets",
         "controls",
     ];
@@ -64,6 +65,13 @@ class OptionsSubState extends MusicBeatSubState
 			"Ratings on HUD",
 			"Song Timer"
 		],
+        #if TOUCH_CONTROLS
+        "mobile" => [
+            "Invert Swipes",
+            "Button Opacity",
+            "Hitbox Opacity"
+        ]
+        #end
 	];
     
     var restartTimer:Float = 0;

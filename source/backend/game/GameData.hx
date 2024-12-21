@@ -8,6 +8,7 @@ import flixel.addons.ui.FlxUISubState;
 import flixel.group.FlxGroup;
 import backend.song.Conductor;
 import crowplexus.iris.Iris;
+import objects.mobile.*;
 
 /*
 	Custom state and substate classes. Use them instead of FlxState or FlxSubstate
@@ -15,6 +16,10 @@ import crowplexus.iris.Iris;
 
 class MusicBeatState extends FlxUIState
 {
+	#if TOUCH_CONTROLS
+	public static var vPad:VPad;
+	#end
+
 	override function create()
 	{
 		super.create();
@@ -88,6 +93,11 @@ class MusicBeatState extends FlxUIState
 			}
 		}
 		loopGroup(this);
+	}
+
+	public static function createVPad() {
+		vPad = new VPad("back");
+		add(vPad);
 	}
 
 	private function beatHit()

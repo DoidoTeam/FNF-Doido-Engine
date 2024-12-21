@@ -162,6 +162,29 @@ class SaveData
 		],
 		/*
 		*
+		* MOBILE
+		* 
+		*/
+		"Invert Swipes" => [
+			"OFF",
+			SELECTOR,
+			"Inverts the direction of the swipes.",
+			["HORIZONTAL", "VERTICAL", "BOTH", "OFF"],
+		],
+		"Button Opacity" => [
+			5,
+			SELECTOR,
+			"Decides the transparency of the virtual buttons.",
+			[0, 10]
+		],
+		"Hitbox Opacity" => [
+			7,
+			SELECTOR,
+			"Decides the transparency of the playing Hitboxes.",
+			[0, 10]
+		],
+		/*
+		*
 		* EXTRA STUFF
 		* 
 		*/
