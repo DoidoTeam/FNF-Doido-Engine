@@ -3,7 +3,7 @@ package backend.game;
 #if TOUCH_CONTROLS
 import flixel.FlxG;
 import flixel.util.FlxAxes;
-//import gameObjects.mobile.VPad;
+//import gameObjects.mobile.DoidoPad;
 import flixel.FlxState;
 import flixel.input.touch.FlxTouch;
 
@@ -24,7 +24,7 @@ class Mobile
   public static var swipeRight(get, never):Bool;
   public static var swipeAny(get, never):Bool;
 
-  //public static var virtualPad:VPad;
+  //public static var virtualPad:DoidoPad;
 
   private static function get_pressed():Bool
   {
@@ -109,8 +109,8 @@ class Mobile
   }
 
   /*
-  public static function createVPad(action:VAction, state:FlxState) {
-    virtualPad = new VPad(action);
+  public static function createPad(action:VAction, state:FlxState) {
+    virtualPad = new DoidoPad(action);
     if(state != null) {
       state.add(virtualPad);
       virtualPad.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];

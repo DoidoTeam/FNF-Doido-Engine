@@ -42,6 +42,7 @@ class Dialogue extends FlxGroup
 		add(text);
 		add(textAlphabet);
 
+		#if !TOUCH_CONTROLS
 		var controlGuide = new FlxText(0,0,0,"Press BACK to skip.\nPress TAB/Y to open Text Log.");
         controlGuide.setFormat(Main.gFont, 22, 0xFFFFFFFF, CENTER);
 		controlGuide.setBorderStyle(OUTLINE, 0xFF000000, 1);
@@ -57,7 +58,7 @@ class Dialogue extends FlxGroup
 				FlxTween.tween(controlGuide, {alpha: 0}, 1.5, {startDelay: 4});
 			}
 		});
-
+		#end
 
 		pastData = {pages: []};
 	}

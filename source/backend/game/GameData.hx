@@ -1,6 +1,8 @@
 package backend.game;
 
+import flixel.FlxSubState;
 import flixel.FlxBasic;
+import flixel.FlxCamera;
 import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIState;
@@ -17,7 +19,7 @@ import objects.mobile.*;
 class MusicBeatState extends FlxUIState
 {
 	#if TOUCH_CONTROLS
-	public static var vPad:VPad;
+	public var pad:DoidoPad;
 	#end
 
 	override function create()
@@ -42,6 +44,10 @@ class MusicBeatState extends FlxUIState
 		Main.skipStuff(false);
 		curStep = _curStep = Conductor.calcStateStep();
 		curBeat = Math.floor(curStep / 4);
+
+		#if TOUCH_CONTROLS
+		createPad("blank");
+		#end
 	}
 
 	private var _curStep = 0; // actual curStep
@@ -95,21 +101,46 @@ class MusicBeatState extends FlxUIState
 		loopGroup(this);
 	}
 
-	public static function createVPad() {
-		vPad = new VPad("back");
-		add(vPad);
-	}
-
 	private function beatHit()
 	{
 		// finally you're useful for something
 		curBeat = Math.floor(curStep / 4);
 	}
+
+	#if TOUCH_CONTROLS
+	function createPad(mode:String = "blank", ?cameras:Array<FlxCamera>)
+	{
+		remove(pad);
+		pad = new DoidoPad(mode);
+
+		if(mode != "blank") {
+			if(cameras != null)
+				pad.cameras = cameras;
+
+			add(pad);
+		}
+	}
+
+	override function openSubState(SubState:FlxSubState) {
+		if(!(SubState is GameTransition))
+			pad.togglePad(false);
+		super.openSubState(SubState);
+	}
+
+	override function closeSubState() {
+		pad.togglePad(true);
+		super.closeSubState();
+	}
+	#end
 }
 
 class MusicBeatSubState extends FlxUISubState
 {
 	var subParent:FlxState;
+
+	#if TOUCH_CONTROLS
+	public var pad:DoidoPad = new DoidoPad();
+	#end
 
 	override function create()
 	{
@@ -120,6 +151,10 @@ class MusicBeatSubState extends FlxUISubState
 		persistentUpdate = false;
 		curStep = _curStep = Conductor.calcStateStep();
 		curBeat = Math.floor(curStep / 4);
+
+		//#if TOUCH_CONTROLS
+		//createPad("blank");
+		//#end
 	}
 	
 	override function close()
@@ -179,5 +214,19 @@ class MusicBeatSubState extends FlxUISubState
 		// finally you're useful for something
 		curBeat = Math.floor(curStep / 4);
 	}
+
+	#if TOUCH_CONTROLS
+	function createPad(mode:String = "blank", ?cameras:Array<FlxCamera>)
+	{
+		pad = new DoidoPad(mode);
+
+		if(mode != "blank") {
+			if(cameras != null)
+				pad.cameras = cameras;
+
+			add(pad);
+		}
+	}
+	#end
 }
 

@@ -162,6 +162,10 @@ class OptionsSubState extends MusicBeatSubState
         add(infoTxt);
 
         spawnItems('main');
+
+        #if TOUCH_CONTROLS
+		createPad("back", [FlxG.cameras.list[FlxG.cameras.list.length - 1]]);
+		#end
     }
 
     var inputDelay:Float = 0.1;
@@ -269,6 +273,10 @@ class OptionsSubState extends MusicBeatSubState
                         // custom stuff
                         if(selec.label == "Window Size")
                             SaveData.updateWindowSize();
+                        #if TOUCH_CONTROLS
+                        else if(selec.label == "Button Opacity")
+                            pad.togglePad(true);
+                        #end
                         // only happens when youre not holding the selector
                         if(selec.holdTimer < holdMax)
                         {

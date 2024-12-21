@@ -440,6 +440,12 @@ class PlayState extends MusicBeatState
 				strum.alpha = 0.0001;
 			}
 		}
+
+		#if TOUCH_CONTROLS
+		hitbox = new Hitbox(noteskins[1]);
+		hitbox.cameras = [camOther];
+		add(hitbox);
+		#end
 		
 		if(hasCutscene() && !playedCutscene)
 		{
@@ -508,17 +514,15 @@ class PlayState extends MusicBeatState
 		else
 			startCountdown();
 
-		#if TOUCH_CONTROLS
-		hitbox = new Hitbox(noteskins[1]);
-		hitbox.cameras = [camOther];
-		add(hitbox);
-		#end
-
 		callScript("createPost");
 	}
 
 	public function startCountdown()
 	{
+		#if TOUCH_CONTROLS
+		createPad("pause", [camOther]);
+		#end
+
 		var daCount:Int = 0;
 		
 		var countTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
@@ -607,10 +611,19 @@ class PlayState extends MusicBeatState
 	{
 		if(dialData.pages.length > 0) {
 			Logs.print('song ${SONG.song} has found dialogue!');
+			
+			#if TOUCH_CONTROLS
+			createPad("dialogue", [camOther]);
+			#end
+
 			new FlxTimer().start(0.45, function(tmr:FlxTimer)
 			{
 				var dial = new Dialogue();
 				dial.finishCallback = function() {
+					#if TOUCH_CONTROLS
+					createPad("blank");
+					#end
+					
 					CoolUtil.playMusic();
 					startCountdown();
 					remove(dial);

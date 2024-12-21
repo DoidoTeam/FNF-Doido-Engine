@@ -5,7 +5,7 @@ import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;
 import backend.game.Mobile;
 import backend.game.GameData;
-import objects.mobile.VPad;
+import objects.mobile.DoidoPad;
 
 using haxe.EnumTools;
 
@@ -80,39 +80,40 @@ class Controls
 		}
 
 		#if TOUCH_CONTROLS
-		return checkMobile(rawBind, inputState);
+		return checkMobile(bind, inputState);
 		#else
 		return false;
 		#end
 	}
 
 	#if TOUCH_CONTROLS
-	public static function checkMobile(bind:DoidoKey, inputState:FlxInputState) {	
-		var back:Bool = false;
+	public static function checkMobile(bind:String, inputState:FlxInputState) {
+		// DOIDOPAD
+		if(Main.activeState is MusicBeatSubState || Main.activeState is MusicBeatState) {
+			var state = cast(Main.activeState);
+			var pad:DoidoPad = state.pad;
 
-		if(Main.activeState is MusicBeatState) {
-			var state = cast(Main.activeState, MusicBeatState);
-			var vpad:VPad = state.vPad;
-			back = vpad.justPressed(BACK);
+			if(pad.padActive)
+				if(pad.checkButton(bind, inputState))
+					return pad.checkButton(bind, inputState);
 		}
 
+		// SPECIAL BUTTONS
 		switch(bind) {
-			case UI_UP:
-				return Mobile.swipeUp && (inputState == JUST_PRESSED || inputState == PRESSED);
-			case UI_DOWN:
-				return Mobile.swipeDown && (inputState == JUST_PRESSED || inputState == PRESSED);
-			case UI_LEFT:
-				return Mobile.swipeLeft && (inputState == JUST_PRESSED || inputState == PRESSED);
-			case UI_RIGHT:
-				return Mobile.swipeRight && (inputState == JUST_PRESSED || inputState == PRESSED);
-			case ACCEPT:
+			case "UI_UP":
+				return Mobile.swipeUp && inputState != JUST_RELEASED;
+			case "UI_DOWN":
+				return Mobile.swipeDown && inputState != JUST_RELEASED;
+			case "UI_LEFT":
+				return Mobile.swipeLeft && inputState != JUST_RELEASED;
+			case "UI_RIGHT":
+				return Mobile.swipeRight && inputState != JUST_RELEASED;
+			case "ACCEPT":
 				return Mobile.justReleased && !Mobile.swipeAny && !Mobile.back;
-			case BACK:
-				return Mobile.back || back;
-			default:
-				return false;
+			case "BACK":
+				return Mobile.back;
 		}
-	
+
 		return false;
 	}
 	#end
