@@ -176,6 +176,9 @@ class TitleState extends MusicBeatState
 		if(introEnded && !force) return;
 		introEnded = true;
 		
+		if(FlxG.sound.music != null)
+			FlxG.sound.music.time = (Conductor.crochet * 16);
+		
 		addText([]);
 		ngSpr.visible = false;
 		CoolUtil.flash(FlxG.camera, Conductor.crochet * 4 / 1000, 0xFFFFFFFF);
