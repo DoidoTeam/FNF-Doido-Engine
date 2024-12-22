@@ -34,7 +34,7 @@
 	<define name="ENABLE_PRINTING" 		if="cpp || hl || html5"/>
 	<define name="ROUND_ICON" 			if="mac || mobile"/>
 	<!--Uncomment-this-to-use-videos-in-your-mod!!-->
-	<!--<define name="VIDEOS_ALLOWED" if="desktop" />-->
+	<define name="VIDEOS_ALLOWED" if="desktop" />
 	<define name="HXVLC_NO_SHARE_DIRECTORY" if="VIDEOS_ALLOWED" />
 
 	<!-- _____________________________ Path Settings ____________________________ -->

@@ -17,7 +17,7 @@ done
 while true; do
     read -p "(OPTIONAL) Install libraries required for video support [y/n] ? " i2
     case $i2 in
-        [Yy]* ) haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc 243593311edcc7a8424d73806cda13bd1317bfdd;
+        [Yy]* ) haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc bfff4207bec31ce849be7a90f0050235724da5a9;
                 break;;
         [Nn]* ) break;;
     esac

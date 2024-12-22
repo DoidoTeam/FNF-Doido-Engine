@@ -66,8 +66,13 @@ class DoidoSlider extends FlxSpriteGroup
         if(FlxG.mouse.justReleased)
             isPressed = false;
         // moving the handle
+        #if (flixel >= "5.9.0")
+        if(isPressed)
+            handle.x = FlxG.mouse.getViewPosition(cameras[0]).x;
+        #else
         if(isPressed)
             handle.x = FlxG.mouse.getPositionInCameraView(cameras[0]).x;
+        #end
         // capping the handle
         if(handle.x < hitbox.x)
             handle.x = hitbox.x;

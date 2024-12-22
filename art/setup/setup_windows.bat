@@ -31,7 +31,7 @@ set /p i2= "(OPTIONAL) Install libraries required for video support [y/n] ? "
 :: OPTIONAL VIDEO SUPPORT LIBRARY
 ::
 if "%i2%"=="y" (
-    haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc 243593311edcc7a8424d73806cda13bd1317bfdd
+    haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc bfff4207bec31ce849be7a90f0050235724da5a9
 ) else if not "%i2%"=="n" (
     goto askInstallVideo
 )

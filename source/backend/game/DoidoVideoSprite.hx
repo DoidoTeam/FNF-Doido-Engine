@@ -48,7 +48,7 @@ class DoidoVideoSprite extends FlxSprite
 	 * Internal tracker for whether the video is paused or not.
 	 */
 	@:noCompletion
-	private var alreadyPaused:Bool = false;
+	private var resumeOnFocus:Bool = false;
 
 	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
@@ -60,10 +60,6 @@ class DoidoVideoSprite extends FlxSprite
 	{
 		super(x, y);
 
-		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
-		FlxG.sound.onVolumeChange.add(onVolumeChange);
-		#end
-
 		bitmap = new Video(antialiasing);
 		bitmap.forceRendering = true;
 		bitmap.onOpening.add(function():Void
@@ -72,9 +68,16 @@ class DoidoVideoSprite extends FlxSprite
 			{
 				bitmap.role = LibVLC_Role_Game;
 
+				#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+				if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
+					FlxG.sound.onVolumeChange.add(onVolumeChange);
+				#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+				if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
+					FlxG.signals.postUpdate.add(onVolumeUpdate);
+				#end
+
 				#if FLX_SOUND_SYSTEM
-				if (autoVolumeHandle)
-					bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+				onVolumeChange(0.0);
 				#end
 			}
 		});
@@ -262,6 +265,9 @@ class DoidoVideoSprite extends FlxSprite
 		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
 			FlxG.sound.onVolumeChange.remove(onVolumeChange);
+		#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+		if (FlxG.signals.postUpdate.has(onVolumeUpdate))
+			FlxG.signals.postUpdate.remove(onVolumeUpdate);
 		#end
 
 		super.destroy();
@@ -288,37 +294,36 @@ class DoidoVideoSprite extends FlxSprite
 		bitmap?.resume();
 	}
 
-	public override function update(elapsed:Float):Void
-	{
-		#if (FLX_SOUND_SYSTEM && flixel < "5.9.0")
-		if (bitmap != null)
-		{
-			if (autoVolumeHandle)
-				bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
-		}
-		#end
-
-		super.update(elapsed);
-	}
-
 	@:noCompletion
 	private function onFocusGained():Void
 	{
-		if (!alreadyPaused)
+		if (resumeOnFocus)
+		{
+			resumeOnFocus = false;
+
 			resume();
+		}
 	}
 
 	@:noCompletion
 	private function onFocusLost():Void
 	{
-		alreadyPaused = bitmap == null ? false : !bitmap.isPlaying;
-		
+		resumeOnFocus = bitmap == null ? false : bitmap.isPlaying;
+
 		pause();
 	}
 
-	#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+	#if FLX_SOUND_SYSTEM
+	#if (flixel < "5.9.0")
 	@:noCompletion
-	private function onVolumeChange(_):Void
+	private function onVolumeUpdate():Void
+	{
+		onVolumeChange(0.0);
+	}
+	#end
+
+	@:noCompletion
+	private function onVolumeChange(vol:Float):Void
 	{
 		if (bitmap != null)
 		{
