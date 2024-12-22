@@ -434,7 +434,9 @@ class OptionsSubState extends MusicBeatSubState
         }
         changeSelection();
 
+        #if TOUCH_CONTROLS
         Controls.resetTimer();
+        #end
     }
     
     function changeSelection(change:Int = 0)
