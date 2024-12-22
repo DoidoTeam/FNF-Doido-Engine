@@ -160,6 +160,10 @@ class MusicBeatSubState extends FlxUISubState
 	
 	override function close()
 	{
+		#if TOUCH_CONTROLS
+		Controls.resetTimer();
+		#end
+		
 		Main.activeState = subParent;
 		super.close();
 	}

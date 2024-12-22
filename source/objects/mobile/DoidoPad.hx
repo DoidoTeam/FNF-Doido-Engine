@@ -91,7 +91,6 @@ class DoidoPad extends FlxSpriteGroup
 		var button = buttonMap.get(buttonID);
 		if(button != null)
 		{
-			trace("button " + buttonID + " found");
 			switch(inputState) {
 				case PRESSED:
 					return button.pressed;
