@@ -61,6 +61,10 @@ class GameOverSubState extends MusicBeatSubState
 			CoolUtil.playMusic("death/deathMusic");
 		});
 		callScript("gameOverCreatePost");
+
+		#if TOUCH_CONTROLS
+		createPad("back", [fadeCamera()]);
+		#end
 	}
 
 	function fadeCamera():FlxCamera {

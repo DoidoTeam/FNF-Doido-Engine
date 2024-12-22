@@ -107,16 +107,6 @@ class Mobile
 
     return false;
   }
-
-  /*
-  public static function createPad(action:VAction, state:FlxState) {
-    virtualPad = new DoidoPad(action);
-    if(state != null) {
-      state.add(virtualPad);
-      virtualPad.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-    }
-  }
-  */
 }
 #else
 class Mobile

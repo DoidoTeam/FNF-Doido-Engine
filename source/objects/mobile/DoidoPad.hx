@@ -28,6 +28,16 @@ class DoidoPad extends FlxSpriteGroup
 				var button:FlxButton = createButton(FlxG.width - buttonWidth, 0, 'util/back', 0.8);
 				buttonMap.set("BACK", button);
 				add(button);
+
+			case "reset":
+				var button:FlxButton = createButton(FlxG.width - buttonWidth, 0, 'util/back', 0.8);
+				buttonMap.set("BACK", button);
+				add(button);
+
+				var button:FlxButton = createButton(FlxG.width - (buttonWidth*2), 0, 'util/reset', 0.8);
+				buttonMap.set("RESET", button);
+				add(button);
+
 			case "dialogue":
 				var button:FlxButton = createButton(FlxG.width - buttonWidth, 0, 'util/skip', 0.8);
 				buttonMap.set("BACK", button);

@@ -112,6 +112,11 @@ class TextLogSubstate extends MusicBeatSubState
         add(stateTxt);
 
 		changeSelection();
+
+        #if TOUCH_CONTROLS
+        stateTxt.x = 0;
+		createPad("back", [FlxG.cameras.list[FlxG.cameras.list.length - 1]]);
+		#end
 	}
 
 	var inputDelay:Float = 0.05;

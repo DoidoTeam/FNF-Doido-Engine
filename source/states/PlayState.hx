@@ -1073,6 +1073,7 @@ class PlayState extends MusicBeatState
 		if(botplay && startedSong)
 			validScore = false;
 
+		#if !mobile
 		if(FlxG.keys.justPressed.SEVEN)
 		{
 			if(ChartingState.SONG.song != SONG.song)
@@ -1121,6 +1122,7 @@ class PlayState extends MusicBeatState
 				hudBuild.changeIcon(1, curIcon);
 			}
 		}
+		#end
 		
 		/*if(FlxG.keys.justPressed.SPACE)
 		{

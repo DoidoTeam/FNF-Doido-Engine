@@ -118,7 +118,9 @@ class MainMenuState extends MusicBeatState
 		changeSelection();
 		bg.y = bgPosY;
 
+		#if TOUCH_CONTROLS
 		createPad("back");
+		#end
 	}
 	
 	var selectedSum:Bool = false;

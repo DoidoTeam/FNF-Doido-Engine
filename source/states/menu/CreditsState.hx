@@ -115,6 +115,10 @@ class CreditsState extends MusicBeatState
 			//item.x = FlxG.width + 200;
 		}
 		changeSelection();
+
+		#if TOUCH_CONTROLS
+		createPad("back");
+		#end
 	}
 
 	function changeSelection(change:Int = 0)
