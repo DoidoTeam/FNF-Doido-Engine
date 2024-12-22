@@ -163,14 +163,12 @@ class CreditsState extends MusicBeatState
 		if(Controls.justPressed(BACK))
 			Main.switchState(new MainMenuState());
 
-		#if !mobile
 		if(Controls.justPressed(ACCEPT))
 		{
 			var daCredit = creditList[curSelected].link;
 			if(daCredit != null)
 				CoolUtil.openURL(daCredit);
 		}
-		#end
 		
 		infoTxt.y = infoTxtFocus.y + infoTxtFocus.height + 48;
 		for(rawItem in grpItems.members)

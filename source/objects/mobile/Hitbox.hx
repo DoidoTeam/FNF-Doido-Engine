@@ -26,10 +26,15 @@ class Hitbox extends FlxSpriteGroup
 		hint.alpha = (SaveData.data.get("Hitbox Opacity") / 10) * 0.2;
 		add(hint);
 
-		add(buttonLeft 	= 	createhitbox(0, "left"));
-		add(buttonDown 	= 	createhitbox(320, "down"));
-		add(buttonUp 	= 	createhitbox(320 * 2, "up"));
-		add(buttonRight = 	createhitbox(320 * 3, "right"));
+		buttonLeft 	= 	createhitbox(0, "left");
+		buttonDown 	= 	createhitbox(320, "down");
+		buttonUp 	= 	createhitbox(320 * 2, "up");
+		buttonRight = 	createhitbox(320 * 3, "right");
+		
+		add(buttonLeft);
+		add(buttonDown);
+		add(buttonUp);
+		add(buttonRight);
 	}
 
 	public function createhitbox(x:Float, frame:String) {

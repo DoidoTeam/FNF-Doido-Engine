@@ -290,6 +290,7 @@ class SaveData
 
 	public static function updateWindowSize()
 	{
+		#if desktop
 		if(FlxG.fullscreen) return;
 		var ws:Array<String> = data.get("Window Size").split("x");
         	var windowSize:Array<Int> = [Std.parseInt(ws[0]),Std.parseInt(ws[1])];
@@ -299,5 +300,6 @@ class SaveData
 		// centering the window
 		FlxG.stage.window.x = Math.floor(Capabilities.screenResolutionX / 2 - windowSize[0] / 2);
 		FlxG.stage.window.y = Math.floor(Capabilities.screenResolutionY / 2 - (windowSize[1] + 16) / 2);
+		#end
 	}
 }

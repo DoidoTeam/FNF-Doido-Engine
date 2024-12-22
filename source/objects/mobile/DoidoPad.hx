@@ -97,7 +97,11 @@ class DoidoPad extends FlxSpriteGroup
 		return button;
 	}
 
-	public function checkButton(buttonID:String, inputState:FlxInputState):Bool {
+	public function checkButton(buttonID:String, inputState:FlxInputState):Bool
+	{
+		if(!padActive)
+			return false;
+		
 		var button = buttonMap.get(buttonID);
 		if(button != null)
 		{
@@ -112,7 +116,6 @@ class DoidoPad extends FlxSpriteGroup
 					return button.justReleased;
 			}
 		}
-
 		return false;
 	}
 }

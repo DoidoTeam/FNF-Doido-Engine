@@ -1197,7 +1197,6 @@ class PlayState extends MusicBeatState
 			hitbox.buttonUp.released || Controls.released(UP),
 			hitbox.buttonRight.released || Controls.released(RIGHT)
 		];
-		
 		#else
 		pressed = [
 			Controls.pressed(LEFT),

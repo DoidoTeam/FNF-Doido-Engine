@@ -3,7 +3,6 @@ package backend.game;
 #if TOUCH_CONTROLS
 import flixel.FlxG;
 import flixel.util.FlxAxes;
-//import gameObjects.mobile.DoidoPad;
 import flixel.FlxState;
 import flixel.input.touch.FlxTouch;
 
@@ -23,8 +22,6 @@ class Mobile
   public static var swipeLeft(get, never):Bool;
   public static var swipeRight(get, never):Bool;
   public static var swipeAny(get, never):Bool;
-
-  //public static var virtualPad:DoidoPad;
 
   private static function get_pressed():Bool
   {

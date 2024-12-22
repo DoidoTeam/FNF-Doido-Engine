@@ -273,6 +273,18 @@ class CoolUtil
 	* MISC
 	*/
 
+	public static function arrayOr(a1:Array<Bool>, a2:Array<Bool>):Array<Bool>
+	{
+		var finalArray:Array<Bool> = [];
+
+		for (i in 0...a1.length)
+		{
+			finalArray.push(a1[i] || a2[i]);
+		}
+
+		return finalArray;
+	}
+
 	public static function openURL(url:String)
 	{
 		if(Main.activeState != null)
