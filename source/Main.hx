@@ -37,9 +37,14 @@ class Main extends Sprite
 		// thanks @sqirradotdev
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 
-		addChild(new FlxGame(0, 0, Init, 120, 120, true));
+		var ws:Array<String> = SaveData.displaySettings.get("Window Size")[0].split("x");
+		var windowSize:Array<Int> = [Std.parseInt(ws[0]),Std.parseInt(ws[1])];
 
-		#if desktop
+		addChild(new FlxGame(windowSize[0], windowSize[1], Init, 120, 120, true));
+
+		#if android
+		FlxG.android.preventDefaultKeys = [BACK];
+		#elseif desktop
 		addChild(fpsCounter = new FPSCounter(5, 3));
 		#end
 
