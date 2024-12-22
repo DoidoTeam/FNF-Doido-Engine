@@ -47,6 +47,7 @@ class MusicBeatState extends FlxUIState
 
 		#if TOUCH_CONTROLS
 		createPad("blank");
+		Controls.resetTimer();
 		#end
 	}
 
@@ -152,9 +153,9 @@ class MusicBeatSubState extends FlxUISubState
 		curStep = _curStep = Conductor.calcStateStep();
 		curBeat = Math.floor(curStep / 4);
 
-		//#if TOUCH_CONTROLS
-		//createPad("blank");
-		//#end
+		#if TOUCH_CONTROLS
+		Controls.resetTimer();
+		#end
 	}
 	
 	override function close()
@@ -218,6 +219,7 @@ class MusicBeatSubState extends FlxUISubState
 	#if TOUCH_CONTROLS
 	function createPad(mode:String = "blank", ?cameras:Array<FlxCamera>)
 	{
+		remove(pad);
 		pad = new DoidoPad(mode);
 
 		if(mode != "blank") {

@@ -3,6 +3,7 @@ package backend.game;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;
+import flixel.util.FlxTimer;
 import backend.game.Mobile;
 import backend.game.GameData;
 import objects.mobile.DoidoPad;
@@ -87,7 +88,20 @@ class Controls
 	}
 
 	#if TOUCH_CONTROLS
+	public static var canTouch:Bool = false;
+	public static function resetTimer() {
+		canTouch = false;
+
+		new FlxTimer().start(0.8, function(tmr:FlxTimer)
+		{
+			canTouch = true;
+		});
+	}
+
 	public static function checkMobile(bind:String, inputState:FlxInputState) {
+		if(!canTouch)
+			return false;
+		
 		// DOIDOPAD
 		if(Main.activeState is MusicBeatSubState || Main.activeState is MusicBeatState) {
 			var state = cast(Main.activeState);

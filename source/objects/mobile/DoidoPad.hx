@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
 import flixel.ui.FlxButton;
 import flixel.input.FlxInput.FlxInputState;
+import flixel.util.FlxTimer;
 
 class DoidoPad extends FlxSpriteGroup
 {
@@ -88,7 +89,6 @@ class DoidoPad extends FlxSpriteGroup
 
 	public function checkButton(buttonID:String, inputState:FlxInputState):Bool {
 		var button = buttonMap.get(buttonID);
-		
 		if(button != null)
 		{
 			trace("button " + buttonID + " found");
