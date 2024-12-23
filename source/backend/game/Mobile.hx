@@ -2,125 +2,100 @@ package backend.game;
 
 #if TOUCH_CONTROLS
 import flixel.FlxG;
-import flixel.util.FlxAxes;
-import flixel.FlxState;
 import flixel.input.touch.FlxTouch;
+import flixel.input.FlxInput.FlxInputState;
 
 class Mobile
 {
-  // Tapping screen
-  public static var pressed(get, never):Bool;
-  public static var justPressed(get, never):Bool;
-  public static var justReleased(get, never):Bool;
+    public static function getTap(inputState:FlxInputState):Bool
+    {
+        var touch:FlxTouch = FlxG.touches.list[0];
 
-  // Android BACK button
-  public static var back(get, never):Bool;
+        if(touch == null || getMouse(inputState))
+            return getMouse(inputState);
 
-  // Swiping on screen
-  public static var swipeUp(get, never):Bool;
-  public static var swipeDown(get, never):Bool;
-  public static var swipeLeft(get, never):Bool;
-  public static var swipeRight(get, never):Bool;
-  public static var swipeAny(get, never):Bool;
-
-  private static function get_pressed():Bool
-  {
-    for (touch in FlxG.touches.list)
-      if (touch.pressed) return true;
-
-    return FlxG.mouse.pressed;
-  }
-
-  private static function get_justPressed():Bool
-  {
-    for (touch in FlxG.touches.list)
-      if (touch.justPressed) return true;
-
-    return FlxG.mouse.justPressed;
-  }
-
-  private static function get_justReleased():Bool
-  {
-    for (touch in FlxG.touches.list)
-      if (touch.justReleased) return true;
-
-    return FlxG.mouse.justReleased;
-  }
-
-  private static function get_back():Bool
-  {
-    #if android
-    return FlxG.android.justReleased.BACK;
-    #else
-    return false;
-    #end
-  }
-
-  static function get_swipeUp():Bool
-    return invert(Y) ? swipe(45, 135, 20) : swipe(-135, -45, 20);
-
-  static function get_swipeDown():Bool
-    return invert(Y) ? swipe(-135, -45, 20) : swipe(45, 135, 20);
-
-  static function get_swipeRight():Bool
-    return invert(X) ? swipe(135, -135, 20, false) : swipe(-45, 45, 20);
-
-  static function get_swipeLeft():Bool
-    return invert(X) ? swipe(-45, 45, 20) : swipe(135, -135, 20, false);
-
-  static function get_swipeAny():Bool
-    return swipeRight || swipeLeft || swipeUp || swipeDown;
-
-  static function swipe(lowerBound:Int, upperBound:Int, distance:Int = 20, andOr:Bool = true) {
-    for (swipe in FlxG.swipes) {
-      if(andOr) {
-        if (
-          swipe.degrees > lowerBound &&
-          swipe.degrees < upperBound &&
-          swipe.distance > distance ) 
-          return true;
-      }
-      else {
-        if (
-          (swipe.degrees > lowerBound ||
-          swipe.degrees < upperBound) &&
-          swipe.distance > distance ) 
-          return true;
-      }
+        switch(inputState)
+        {
+            case PRESSED:
+                return touch.pressed;
+            case RELEASED:
+                return touch.released;
+            case JUST_PRESSED:
+                return touch.justPressed;
+            case JUST_RELEASED:
+                return touch.justReleased;
+        }
     }
 
-    return false;
-  }
-
-  static function invert(axes:FlxAxes):Bool {
-    switch(SaveData.data.get("Invert Swipes")) {
-      case "HORIZONTAL":
-        return axes == X;
-      case "VERTICAL":
-        return axes == Y;
-      case "BOTH":
-        return true;
+    // Used for mouse control on mobile
+    public static function getMouse(inputState:FlxInputState):Bool
+    {
+        switch(inputState)
+        {
+            case PRESSED:
+                return FlxG.mouse.pressed;
+            case RELEASED:
+                return FlxG.mouse.released;
+            case JUST_PRESSED:
+                return FlxG.mouse.justPressed;
+            case JUST_RELEASED:
+                return FlxG.mouse.justReleased;
+        }
     }
 
-    return false;
-  }
-}
-#else
-class Mobile
-{
-  // Tapping screen
-  public static var pressed:Bool = false;
-  public static var justPressed:Bool = false;
-  public static var justReleased:Bool = false;
+    public static function getSwipe(direction:String = "ANY"):Bool
+    {
+        switch (direction) {
+            case "UP" | "UI_UP":
+                return invert("Y") ? swipe(45, 135) : swipe(-135, -45);
+            case "DOWN" | "UI_DOWN":
+                return invert("Y") ? swipe(-135, -45) : swipe(45, 135);
+            case "RIGHT" | "UI_RIGHT":
+                return invert("X") ? swipe(135, -135, false) : swipe(-45, 45);
+            case "LEFT" | "UI_LEFT":
+                return invert("X") ? swipe(-45, 45) : swipe(135, -135, false);
+            default:
+                return getSwipe("UP") || getSwipe("DOWN") || getSwipe("LEFT") || getSwipe("RIGHT");
+        }
+    }
 
-  // Android BACK button
-  public static var back:Bool = false;
+    static function swipe(lower:Int, upper:Int, and:Bool = true, distance:Int = 20):Bool
+    {
+        for (swipe in FlxG.swipes)
+        {
+            return (and ?
+                ((swipe.degrees > lower && swipe.degrees < upper) && swipe.distance > distance):
+                ((swipe.degrees > lower || swipe.degrees < upper) && swipe.distance > distance)
+            );
+        }
 
-  // Swiping on screen
-  public static var swipeUp:Bool = false;
-  public static var swipeDown:Bool = false;
-  public static var swipeLeft:Bool = false;
-  public static var swipeRight:Bool = false;
-  public static var swipeAny:Bool = false;
+        return false;
+    }
+
+    static function invert(axes:String):Bool
+    {
+        switch(SaveData.data.get("Invert Swipes"))
+        {
+            case "HORIZONTAL":
+                return axes == "X";
+            case "VERTICAL":
+                return axes == "Y";
+            case "BOTH":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static var back(get, never):Bool;
+
+    private static function get_back():Bool
+    {
+        #if android
+        return FlxG.android.justReleased.BACK;
+        #else
+        return false;
+        #end
+    }
 }
 #end

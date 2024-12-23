@@ -299,33 +299,15 @@ class Controls
 		}
 
 		// SPECIAL BUTTONS
-		switch(bind) {
-			case "UI_UP":
-				return Mobile.swipeUp && inputState != JUST_RELEASED;
-			case "UI_DOWN":
-				return Mobile.swipeDown && inputState != JUST_RELEASED;
-			case "UI_LEFT":
-				return Mobile.swipeLeft && inputState != JUST_RELEASED;
-			case "UI_RIGHT":
-				return Mobile.swipeRight && inputState != JUST_RELEASED;
-			case "ACCEPT":
-				var accept:Bool = false;
-				switch(inputState) {
-					case PRESSED:
-						accept = Mobile.pressed;
-					case JUST_PRESSED:
-						accept = Mobile.justReleased;
-					case JUST_RELEASED:
-						accept = Mobile.justReleased;
-					default:
-						accept = false;
-				}
-				return accept && !Mobile.swipeAny && !Mobile.back;
-			case "BACK":
-				return Mobile.back;
+		if(bind.startsWith("UI_"))
+			return Mobile.getSwipe(bind);
+		else if(bind == "BACK")
+			return Mobile.back;
+		else if(bind == "ACCEPT") {
+			return Mobile.getTap(inputState) && !Mobile.getSwipe() && !Mobile.back;
 		}
-
-		return false;
+		else
+			return false;
 	}
 	#end
 }
