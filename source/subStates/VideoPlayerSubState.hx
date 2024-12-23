@@ -79,7 +79,8 @@ class VideoPlayerSubState extends MusicBeatSubState
             for(j in anims)
                 btn.animation.addByPrefix(j[0], '${j[0]}0', 24, j[1]);
 
-            btn.animation.finishCallback = function(name) {
+            function endAnim(name:String)
+            {
                 var finishAnim:Null<String> = null;
                 if(i == 0)
                 {
@@ -99,6 +100,13 @@ class VideoPlayerSubState extends MusicBeatSubState
                 if(finishAnim != null)
                     btn.animation.play(finishAnim);
             }
+
+            #if (flixel < "5.9.0")
+            btn.animation.finishCallback = endAnim;
+            #else
+            btn.animation.onFinish.add(endAnim);
+            #end
+
             btn.ID = i;
             btn.animation.play('idle');
             buttons.add(btn);
