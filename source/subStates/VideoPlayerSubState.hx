@@ -50,10 +50,7 @@ class VideoPlayerSubState extends MusicBeatSubState
         });
         if(finishCallBack != null)
             video.bitmap.onEndReached.add(finishCallBack);
-		/*video.bitmap.onPositionChanged.add(function(position:Single):Void
-		{
-			// coloca pra syncar o audio aqui
-		});*/
+		
         Logs.print('loaded video $key.mp4');
         video.load(Paths.video(key));
         add(video);
