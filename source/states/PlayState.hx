@@ -521,6 +521,7 @@ class PlayState extends MusicBeatState
 	{
 		#if TOUCH_CONTROLS
 		createPad("pause", [camOther]);
+		hitbox.toggleHbx(true);
 		#end
 
 		var daCount:Int = 0;
