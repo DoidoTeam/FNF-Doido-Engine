@@ -53,7 +53,6 @@ class Character extends FlxAnimate
 		isPixelSprite = false;
 		
 		var doidoChar = CharacterUtil.defaultChar();
-		// what
 		switch(curChar)
 		{
 			case "zero":
@@ -362,12 +361,14 @@ class Character extends FlxAnimate
 					anim.addBySymbol(dAnim[0], dAnim[1], dAnim[2], dAnim[3]);
 			}
 		}
+
 		// adding animations to array
 		for(i in 0...doidoChar.anims.length) {
 			var daAnim = doidoChar.anims[i][0];
 			if(animExists(daAnim) && !animList.contains(daAnim))
 				animList.push(daAnim);
 		}
+
 		// prevents crashing
 		for(i in 0...idleAnims.length)
 		{
@@ -405,11 +406,6 @@ class Character extends FlxAnimate
 
 		dance();
 	}
-
-	/*public function reloadChar(curChar:String = "bf"):Character
-	{
-		return this;
-	}*/
 
 	private var curDance:Int = 0;
 

@@ -125,8 +125,6 @@ class LoadingState extends MusicBeatState
 					addBehind(dead);
 				}
 				
-				//Logs.print('preloaded char $i');
-				
 				if(i != stageBuild.gfVersion)
 				{
 					var icon = new HealthIcon();
@@ -144,6 +142,7 @@ class LoadingState extends MusicBeatState
 			if(SONG.needsVoices)
 			{
 				Paths.preloadSound(Paths.songPath(SONG.song, 'Voices', songDiff, '-player'));
+				
 				// opponent voices
 				var oppPath:String = Paths.songPath(SONG.song, 'Voices', songDiff, '-opp');
 				if(oppPath.endsWith('-opp'))

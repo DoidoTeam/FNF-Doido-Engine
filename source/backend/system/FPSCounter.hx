@@ -45,6 +45,7 @@ class FPSCounter extends Sprite
 		final now:Float = Timer.stamp() * 1000;
 		times.push(now);
 		while (times[0] < now - 1000) times.shift();
+		
 		// prevents the overlay from updating every frame, why would you need to anyways @crowplexus
 		if (deltaTimeout < 50) {
 			deltaTimeout += deltaTime;

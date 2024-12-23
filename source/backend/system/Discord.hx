@@ -155,7 +155,6 @@ class DiscordAPI
 		presence.startTimestamp = Std.int(startTimestamp / 1000);
 		presence.endTimestamp = Std.int(endTimestamp / 1000);
 		updatePresence();
-		//Logs.print('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
 
 	public static function updatePresence() {

@@ -134,7 +134,6 @@ class TitleState extends MusicBeatState
 					addText([]);
 					
 				case 5:
-					//addText(['In association', 'with']);
 					addText(['Not associated', 'with']);
 				case 7:
 					addText(['newgrounds'], false);
@@ -149,8 +148,6 @@ class TitleState extends MusicBeatState
 					addText([curWacky[1]], false);
 				case 12:
 					addText([]);
-				
-				//case 13:
 					addText(['Friday']);
 				case 13:
 					addText(['Night'], false);
@@ -158,13 +155,13 @@ class TitleState extends MusicBeatState
 					addText(['Funkin'], false);
 				case 15:
 					addText(['Doido Engine'], false);
-
 				case 16:
 					skipIntro();
 			}
 		}
 		
 		logoBump.animation.play('bump', true);
+		
 		if(gf.animation.curAnim.name == 'danceLeft')
 			gf.animation.play('danceRight');
 		else

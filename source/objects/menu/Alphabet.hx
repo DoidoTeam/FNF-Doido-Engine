@@ -68,7 +68,6 @@ class Alphabet extends FlxSpriteGroup
 				continue;
 			}
 
-			//Logs.print('da letter ' + i);
 			if(daLetter == " ") 
 			{
 				lastWidth += 35;
@@ -87,11 +86,13 @@ class Alphabet extends FlxSpriteGroup
 			{
 				letter.makeLetter(daLetter, bold);
 			}
+
 			// numbers
 			if(numbers.contains(daLetter))
 			{
 				letter.makeNumber(daLetter, bold);
 			}
+
 			// symbols
 			if(symbols.contains(daLetter))
 			{
@@ -170,13 +171,10 @@ class AlphaLetter extends FlxSprite
 		if(!bold)
 		{
 			var captPref:String = (key == key.toUpperCase()) ? "capital" : "lowercase";
-
 			addAnim(key, '${key.toUpperCase()} ${captPref}');
 		}
 		else
-		{
 			addAnim(key, '${key.toUpperCase()} bold');
-		}
 	}
 
 	public function makeNumber(key:String, bold:Bool = false)

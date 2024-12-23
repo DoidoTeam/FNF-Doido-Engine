@@ -94,5 +94,5 @@ class OptionSelector extends FlxTypedGroup<FlxSprite>
     }
 
     public function getWidth():Float
-        return (arrowR.x + arrowR.width - arrowL.x);
+        return arrowR.x + arrowR.width - arrowL.x;
 }

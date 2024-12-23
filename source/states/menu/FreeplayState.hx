@@ -75,13 +75,17 @@ class FreeplayState extends MusicBeatState
 		for(line in extraSongs)
 		{
 			if(line.startsWith("//")) continue;
+
 			// if the line is empty then skip it
 			var diffArray:Array<String> = line.split(' ');
 			if(diffArray.length < 1) continue;
+
 			// separating the song name from the difficulties
 			var songName:String = diffArray.shift();
+
 			// if theres no difficulties, add easy normal and hard
 			if(diffArray.length < 1) diffArray = SongData.defaultDiffs;
+
 			// finally adding the song
 			addSong(songName, "face", diffArray);
 		}
@@ -254,6 +258,7 @@ class FreeplayState extends MusicBeatState
 		scoreCounter.updateDisplay(curSong.name, curSong.diffs[curDiff]);
 	}
 }
+
 /*
 *	instead of it being separate objects in FreeplayState
 *	its just a bunch of stuff inside an FlxGroup

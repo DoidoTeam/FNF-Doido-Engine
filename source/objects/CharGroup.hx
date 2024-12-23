@@ -50,6 +50,7 @@ class CharGroup extends FlxTypedGroup<Character>
             else
                 char = i;
         }
+        
         // avoids crashing ig
         if(char == null)
         {

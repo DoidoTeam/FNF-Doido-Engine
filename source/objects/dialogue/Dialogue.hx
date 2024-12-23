@@ -87,16 +87,17 @@ class Dialogue extends FlxGroup
 	public function load(data:DialogueData, preload:Bool = false)
 	{
 		this.data = data;
+
 		// preloading
 		var spawnedChars:Array<String> = [];
 		var spawnedBgs:Array<String> = [];
 		var spawnedFgs:Array<String> = [];
+
 		for(page in data.pages)
 		{
 			if(page.boxSkin != null)
 				reloadBox(page.boxSkin);
-			//if(page.char != null)
-			//	char.reloadChar(page.char);
+
 			if(page.char != null)
 			{
 				if(!spawnedChars.contains(page.char))
@@ -142,6 +143,7 @@ class Dialogue extends FlxGroup
 					preloadEvent(event);
 			}
 		}
+
 		// first page
 		changePage(false, preload);
 	}
@@ -253,7 +255,6 @@ class Dialogue extends FlxGroup
 			if(swagPage.textDelay != null)
 				textDelay = swagPage.textDelay;
 			
-			//text.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 			if(swagPage.fontBorderType != null)
 				fontBorderType = CoolUtil.stringToBorder(swagPage.fontBorderType);
 			if(swagPage.fontBorderColor != null)
@@ -284,10 +285,7 @@ class Dialogue extends FlxGroup
 			}
 			
 			if(swagPage.text != null)
-			{
-				//text.text = swagPage.text;
 				startTyping(swagPage.text);
-			}
 
 			if(swagPage.underlayAlpha != null)
 				underlay.alpha = swagPage.underlayAlpha;

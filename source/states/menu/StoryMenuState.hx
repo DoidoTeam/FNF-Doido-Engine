@@ -66,6 +66,7 @@ class StoryMenuState extends MusicBeatState
 		var blackMf = new FlxSprite(0, 0).makeGraphic(FlxG.width * 2, 60, 0xFF000000);
 		blackMf.screenCenter(X);
 		add(blackMf);
+
 		var yellowMf = new FlxSprite(0, 50).makeGraphic(FlxG.width * 2, 392, 0xFFF9CF51);
 		yellowMf.screenCenter(X);
 		add(yellowMf);
@@ -162,7 +163,6 @@ class StoryMenuState extends MusicBeatState
 				
 				new FlxTimer().start(1.9, function(tmr:FlxTimer)
 				{
-					//Main.switchState(new states.MenuState());
 					var daWeek = weekList[curWeek];
 					
 					PlayState.curWeek = daWeek.weekFile;
@@ -360,6 +360,7 @@ class StoryChar extends FlxSprite
 			default:
 				x = FlxG.width / 2 - width / 2;
 		}
+
 		// 0.8 bf
 		// 0.48 others
 		if(pos == "bf")
@@ -393,6 +394,7 @@ class StoryChar extends FlxSprite
 		offset.y += scaleOffset.y;
 	}
 }
+
 // nvm i was just sleepy
 class DiffSelector extends FlxGroup
 {

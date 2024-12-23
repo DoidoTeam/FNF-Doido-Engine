@@ -50,9 +50,7 @@ class PauseSubState extends MusicBeatSubState
 		FlxTween.tween(banana, {alpha: 0.4}, 0.1);
 
 		if(!PlayState.startedSong)
-		{
 			optionShit.remove("options");
-		}
 
 		optionsGrp = new FlxTypedGroup<AlphabetMenu>();
 		add(optionsGrp);
@@ -62,9 +60,11 @@ class PauseSubState extends MusicBeatSubState
 			var newItem = new AlphabetMenu(0, 0, optionShit[i], true);
 			newItem.ID = i;
 			newItem.focusY = i - curSelected;
+
 			// isn't as accurate to base game
 			newItem.spaceX = 25;
 			newItem.spaceY = 150; // 200
+
 			// but it looks better
 			newItem.updatePos();
 			optionsGrp.add(newItem);

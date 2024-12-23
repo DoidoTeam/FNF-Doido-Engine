@@ -61,7 +61,7 @@ class DialogueChar extends DialogueObj
 	function defaultPos()
 	{
 		screenCenter(X);
-		y = FlxG.height - height - 285; // 320
+		y = FlxG.height - height - 285;
 	}
 	
 	public function playAnim(animName:String = '')

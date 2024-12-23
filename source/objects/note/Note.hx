@@ -10,7 +10,6 @@ class Note extends FlxSprite
 	{
 		super();
 		moves = false;
-		//reloadNote(0, 0, "default");
 	}
 
 	public var noteSize:Float = 1.0;
@@ -115,9 +114,6 @@ class Note extends FlxSprite
 				animation.addByPrefix('warn', '$typeName', 0, false);
 				animation.play('warn');
 		}
-
-		//if(isHold)
-		//	antialiasing = false;
 
 		scale.set(noteSize, noteSize);
 		updateHitbox();

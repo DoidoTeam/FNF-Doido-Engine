@@ -63,8 +63,10 @@ class DoidoSlider extends FlxSpriteGroup
             if(FlxG.mouse.overlaps(hitbox, cameras[0])
             || FlxG.mouse.overlaps(handle, cameras[0]))
                 isPressed = true;
+        
         if(FlxG.mouse.justReleased)
             isPressed = false;
+
         // moving the handle
         #if (flixel >= "5.9.0")
         if(isPressed)
@@ -73,21 +75,23 @@ class DoidoSlider extends FlxSpriteGroup
         if(isPressed)
             handle.x = FlxG.mouse.getPositionInCameraView(cameras[0]).x;
         #end
+        
         // capping the handle
         if(handle.x < hitbox.x)
             handle.x = hitbox.x;
         if(handle.x > hitbox.x + hitbox.width)
             handle.x = hitbox.x + hitbox.width;
+
         // updating the value
         if(isPressed)
             _value = FlxMath.remapToRange(handle.x, hitbox.x, hitbox.x + hitbox.width, minValue, maxValue);
+
         // instead of running on every frame, onChange() only runs when the rounded decimal updates
         if(value != FlxMath.roundDecimal(_value, decimals))
         {
             value = FlxMath.roundDecimal(_value, decimals);
             valueLabel.text = '$value';
             valueLabel.x = hitbox.x + (hitbox.width - valueLabel.width) / 2;
-            //Logs.print('updated!! $value');
             if(onChange != null)
                 onChange();
         }
@@ -98,9 +102,8 @@ class DoidoSlider extends FlxSpriteGroup
         _value = v;
         try {
             handle.x = FlxMath.remapToRange(_value, minValue, maxValue, hitbox.x, hitbox.x + hitbox.width);
-        } catch(e) {
-            // avoid crashing
-        }
+        } catch(e) {}
+        
         return _value;
     }
 }

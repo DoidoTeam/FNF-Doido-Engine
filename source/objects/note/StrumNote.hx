@@ -73,7 +73,6 @@ class StrumNote extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		//angle += elapsed * 1000 * 180 / data.Conductor.crochet;
 		updateOffset();
 	}
 	

@@ -112,8 +112,6 @@ class CreditsState extends MusicBeatState
 			item.xTo = (FlxG.width / 2) - (icon.width / 2);
 			item.focusY = i - curSelected;
 			item.updatePos();
-
-			//item.x = FlxG.width + 200;
 		}
 		changeSelection();
 

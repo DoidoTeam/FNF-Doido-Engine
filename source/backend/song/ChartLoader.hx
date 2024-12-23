@@ -92,13 +92,6 @@ class ChartLoader
 						
 						unspawnNotes.push(holdNote);
 						
-						//holdNote.ID = j + 1;
-						/*holdNote.color = flixel.util.FlxColor.fromRGB(
-							FlxG.random.int(0,255),
-							FlxG.random.int(0,255),
-							FlxG.random.int(0,255)
-						);*/
-						
 						daParent = holdNote;
 						swagNote.children.push(holdNote);
 						holdID++;

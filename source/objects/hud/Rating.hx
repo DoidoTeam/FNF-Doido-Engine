@@ -141,6 +141,7 @@ class Rating extends FlxGroup
 		super.kill();
 	}
 }
+
 /*
 *	in case you want to spawn them individually for some reason
 */
@@ -185,6 +186,7 @@ class RatingFNF extends FlxSprite
 		updateHitbox();
 	}
 }
+
 class NumberFNF extends FlxSpriteGroup
 {
 	public function new(number:Int, assetModifier:String = "base")

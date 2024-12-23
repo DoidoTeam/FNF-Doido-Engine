@@ -1,7 +1,6 @@
 package objects;
 
 import crowplexus.iris.Iris;
-import crowplexus.iris.IrisConfig;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
@@ -96,8 +95,7 @@ class Stage extends FlxGroup
 		else
 			return;
 
-		var scriptConfig:IrisConfig = new IrisConfig(path, false, true);
-		var newScript:Iris = new Iris(Paths.script('$path'), scriptConfig);
+		var newScript:Iris = new Iris(Paths.script('$path'), {name: path, autoRun: false, autoPreset: true});
 
 		// variables to be used inside the scripts
 		newScript.set("FlxSprite", FlxSprite);
@@ -259,8 +257,6 @@ class Stage extends FlxGroup
 	
 	public function stepHit(curStep:Int = -1)
 	{
-		// put your song stuff here
-		
 		// beat hit
 		// if(curStep % 4 == 0)
 

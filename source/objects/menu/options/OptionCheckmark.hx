@@ -27,8 +27,6 @@ class OptionCheckmark extends FlxSprite
 	override function updateHitbox()
 	{
 		super.updateHitbox();
-		//offset.x -= 20 * scale.x;
-		//offset.y += 22 * scale.y;
 		offset.y += 18 * scale.y;
 	}
 }
