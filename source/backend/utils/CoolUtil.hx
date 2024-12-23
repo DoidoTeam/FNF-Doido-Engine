@@ -84,8 +84,9 @@ class CoolUtil
 	* NOTE UTILS
 	*/
 
+	public static var directions:Array<String> = ["left", "down", "up", "right"];
 	inline public static function getDirection(i:Int)
-		return ["left", "down", "up", "right"][i];
+		return directions[i];
 	
 	inline public static function noteWidth()
 		return 160 * 0.7; // 112
@@ -272,6 +273,18 @@ class CoolUtil
 	/*
 	* MISC
 	*/
+
+	public static function arrayOr(a1:Array<Bool>, a2:Array<Bool>):Array<Bool>
+	{
+		var finalArray:Array<Bool> = [];
+
+		for (i in 0...a1.length)
+		{
+			finalArray.push(a1[i] || a2[i]);
+		}
+
+		return finalArray;
+	}
 
 	public static function openURL(url:String)
 	{

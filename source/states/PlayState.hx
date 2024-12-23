@@ -40,6 +40,10 @@ import states.editors.*;
 import states.menu.*;
 import subStates.*;
 
+#if TOUCH_CONTROLS
+import objects.mobile.Hitbox;
+#end
+
 using StringTools;
 
 class PlayState extends MusicBeatState
@@ -142,6 +146,10 @@ class PlayState extends MusicBeatState
 		"camHUD" => [],
 		"camStrum" => []
 	];
+
+	#if TOUCH_CONTROLS
+	var hitbox:Hitbox;
+	#end
 
 	public static function resetStatics()
 	{
@@ -435,6 +443,12 @@ class PlayState extends MusicBeatState
 				strum.alpha = 0.0001;
 			}
 		}
+
+		#if TOUCH_CONTROLS
+		hitbox = new Hitbox(noteskins[1]);
+		hitbox.cameras = [camOther];
+		add(hitbox);
+		#end
 		
 		if(hasCutscene() && !playedCutscene)
 		{
@@ -508,6 +522,11 @@ class PlayState extends MusicBeatState
 
 	public function startCountdown()
 	{
+		#if TOUCH_CONTROLS
+		createPad("pause", [camOther]);
+		hitbox.toggleHbx(true);
+		#end
+
 		var daCount:Int = 0;
 		
 		var countTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
@@ -596,10 +615,19 @@ class PlayState extends MusicBeatState
 	{
 		if(dialData.pages.length > 0) {
 			Logs.print('song ${SONG.song} has found dialogue!');
+			
+			#if TOUCH_CONTROLS
+			createPad("dialogue", [camOther]);
+			#end
+
 			new FlxTimer().start(0.45, function(tmr:FlxTimer)
 			{
 				var dial = new Dialogue();
 				dial.finishCallback = function() {
+					#if TOUCH_CONTROLS
+					createPad("blank");
+					#end
+					
 					CoolUtil.playMusic();
 					startCountdown();
 					remove(dial);
@@ -1049,6 +1077,7 @@ class PlayState extends MusicBeatState
 		if(botplay && startedSong)
 			validScore = false;
 
+		#if !mobile
 		if(FlxG.keys.justPressed.SEVEN)
 		{
 			if(ChartingState.SONG.song != SONG.song)
@@ -1097,6 +1126,7 @@ class PlayState extends MusicBeatState
 				hudBuild.changeIcon(1, curIcon);
 			}
 		}
+		#end
 		
 		/*if(FlxG.keys.justPressed.SPACE)
 		{
@@ -1169,7 +1199,20 @@ class PlayState extends MusicBeatState
 			Controls.released(UP),
 			Controls.released(RIGHT),
 		];
-		
+
+		#if TOUCH_CONTROLS
+		for(i in 0...CoolUtil.directions.length) {
+			if(hitbox.checkButton(CoolUtil.directions[i], PRESSED))
+				pressed[i] = true;
+
+			if(hitbox.checkButton(CoolUtil.directions[i], JUST_PRESSED))
+				justPressed[i] = true;
+
+			if(hitbox.checkButton(CoolUtil.directions[i], RELEASED))
+				released[i] = true;
+		}
+		#end
+
 		playerSinging = false;
 
 		// playing events

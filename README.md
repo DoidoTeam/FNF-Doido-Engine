@@ -52,6 +52,7 @@ Some other assets, such as test sprites and music, are used under permission fro
 ### [JulianoBeta](https://www.youtube.com/@prodjuyko) - Composed Doido Engine's offset menu music
 ### [crowplexus](https://github.com/crowplexus) - Creator of HScript Iris
 ### [yoisabo](https://bsky.app/profile/yoisabo.bsky.social) - Chart Editor's Event Icons Artist
+### [cocopuffs](https://x.com/cocopuffswow) - Mobile Button Artist
 
 ### [doubleonikoo](https://bsky.app/profile/doubleonikoo.bsky.social) - didn't really do much but i already made the ingame icon so you can stay... for now (-DiogoTV)
 

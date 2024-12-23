@@ -70,12 +70,14 @@ class StoryMenuState extends MusicBeatState
 		yellowMf.screenCenter(X);
 		add(yellowMf);
 		
+		#if !TOUCH_CONTROLS
 		resetTxt = new FlxText(0,0,0,"PRESS RESET TO DELETE WEEK SCORE");
 		resetTxt.setFormat(Main.gFont, 18, 0xFFFFFFFF, LEFT);
 		resetTxt.x = FlxG.width - resetTxt.width - 8;
 		resetTxt.y = FlxG.height - resetTxt.height - 8;
 		resetTxt.alpha = 0.8;
 		add(resetTxt);
+		#end
 		
 		weekScoreTxt = new FlxText(8, 8, 0,"");
 		weekScoreTxt.setFormat(Main.gFont, 36, 0xFFFFFFFF, LEFT);
@@ -113,6 +115,13 @@ class StoryMenuState extends MusicBeatState
 		}
 		
 		changeWeek();
+
+		#if TOUCH_CONTROLS
+		createPad("reset");
+
+		weekNameTxt.y = FlxG.height - weekNameTxt.height - 8;
+		weekScoreTxt.y = FlxG.height - weekScoreTxt.height - 8;
+		#end
 	}
 		
 	var canSelect:Bool = true;

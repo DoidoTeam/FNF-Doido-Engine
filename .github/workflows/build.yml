@@ -109,3 +109,46 @@ jobs:
         with:
           name: DoidoEngine-macOS-${{ steps.ver.outputs.content }}-${{ github.run_id}}
           path: 'export/release/macos/bin'
+
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4.1.7
+
+      - uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.6
+
+      - name: Read Version
+        id: ver
+        uses: jaywcjlove/github-action-read-file@v2.0.0
+        with:
+          path: ver.txt
+      # Runs a set of commands using the runners shell
+      - name: Install Haxelib
+        run: |
+          haxelib setup ~/haxelib
+          haxelib install hxcpp > /dev/null --quiet
+          haxelib --global install hmm
+          haxelib --global run hmm setup
+          hmm init
+          hmm install
+          haxelib install flixel
+          haxelib install flixel-addons
+          haxelib install flixel-ui
+      - name: Configure Android
+        run: |
+          haxelib run lime config ANDROID_SDK $ANDROID_HOME
+          haxelib run lime config ANDROID_NDK_ROOT $ANDROID_NDK_LATEST_HOME
+          haxelib run lime config JAVA_HOME $JAVA_HOME_17_X64
+          haxelib run lime config ANDROID_SETUP true
+      - name: Compile
+        run:
+          haxelib run lime build android --app-version="${{ steps.ver.outputs.content }}-${{ github.run_id}}"
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: DoidoEngine-android-${{ steps.ver.outputs.content }}-${{ github.run_id}}
+          path: 'export/release/android/bin/app/build/outputs/apk/debug'

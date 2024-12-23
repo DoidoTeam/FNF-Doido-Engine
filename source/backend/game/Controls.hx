@@ -4,6 +4,13 @@ import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;
 
+#if TOUCH_CONTROLS
+import flixel.util.FlxTimer;
+import backend.game.Mobile;
+import backend.game.GameData;
+import objects.mobile.DoidoPad;
+#end
+
 using haxe.EnumTools;
 
 /*
@@ -76,7 +83,11 @@ class Controls
 				return true;
 		}
 
+		#if TOUCH_CONTROLS
+		return checkMobile(bind, inputState);
+		#else
 		return false;
+		#end
 	}
 
 	inline public static function bindToString(bind:DoidoKey):String
@@ -88,7 +99,7 @@ class Controls
 	//THIS IS A TEMP FIX!!!! CHANGE LATER!!!!
 	inline public static function stringToBind(bind:String):DoidoKey
 	{
-		switch(bind) {
+		switch(bind.toUpperCase()) {
 			case "LEFT":
 				return LEFT;
 			case "DOWN":
@@ -254,4 +265,49 @@ class Controls
 		SaveData.saveControls.data.allControls = allControls;
 		SaveData.save();
 	}
+
+	#if TOUCH_CONTROLS
+	public static var canTouch:Bool = false;
+	public static var timer:FlxTimer;
+	public static function resetTimer() {
+		canTouch = false;
+
+		if(timer != null)
+			timer.cancel();
+		timer = new FlxTimer().start(0.25, function(tmr:FlxTimer)
+		{
+			canTouch = true;
+		});
+	}
+
+	public static function checkMobile(bind:String, inputState:FlxInputState) {
+		if(!canTouch)
+			return false;
+		
+		// DOIDOPAD
+		if(Main.activeState is MusicBeatSubState || Main.activeState is MusicBeatState) {
+			var state = cast(Main.activeState);
+			var pad:DoidoPad = state.pad;
+
+			if(pad.padActive) {
+				if(pad.checkButton(bind, inputState))
+					return pad.checkButton(bind, inputState);
+
+				//if(bind == "ACCEPT" && inputState == JUST_PRESSED && (pad.checkButton(bind, PRESSED) || pad.checkButton(bind, JUST_RELEASED)))
+				//	return false;	
+			}
+		}
+
+		// SPECIAL BUTTONS
+		if(bind.startsWith("UI_"))
+			return Mobile.getSwipe(bind);
+		else if(bind == "BACK")
+			return Mobile.back;
+		else if(bind == "ACCEPT") {
+			return Mobile.getTap(inputState) && !Mobile.getSwipe() && !Mobile.back;
+		}
+		else
+			return false;
+	}
+	#end
 }

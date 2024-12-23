@@ -111,6 +111,10 @@ class OffsetsSubState extends MusicBeatSubState
         }
         add(grpSelectors);
 
+        #if TOUCH_CONTROLS
+		createPad("back", [FlxG.cameras.list[FlxG.cameras.list.length - 1]]);
+		#end
+
         changeOption();
         offsetBeatHit();
     }
@@ -203,14 +207,14 @@ class OffsetsSubState extends MusicBeatSubState
             Controls.pressed(DOWN),
             Controls.pressed(UP),
             Controls.pressed(RIGHT),
-            FlxG.keys.pressed.SPACE,
+            Controls.pressed(ACCEPT),
         ];
         var justPressed:Array<Bool> = [
             Controls.justPressed(LEFT),
             Controls.justPressed(DOWN),
             Controls.justPressed(UP),
             Controls.justPressed(RIGHT),
-            FlxG.keys.justPressed.SPACE,
+            Controls.justPressed(ACCEPT),
         ];
 
         cameras[0].zoom = FlxMath.lerp(cameras[0].zoom, 1.0, elapsed * 6);
