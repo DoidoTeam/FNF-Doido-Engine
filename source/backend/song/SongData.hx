@@ -77,7 +77,7 @@ class SongData
 				["bittersweet", 	"spooky"],
 				["blam", 			"pico"],
 				["-debug", 			"bf-pixel"],
-				["useless",			"dad"],
+				["useless",			"bf-pixel"],
 				["collision", 		"gemamugen"], // CU PINTO BOSTA
 				["lunar-odyssey",	"luano-day"],
 				["beep-power", 		"dad"],

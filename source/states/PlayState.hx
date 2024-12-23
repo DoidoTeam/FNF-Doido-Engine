@@ -719,6 +719,8 @@ class PlayState extends MusicBeatState
 	{
 		var thisStrum = strumline.strumGroup.members[note.noteData];
 		var thisChar = strumline.character.char;
+		if(note.noteType == "gf note" && gf.char != null)
+			thisChar = gf.char;
 
 		// anything else
 		note.gotHeld = true;
@@ -787,6 +789,8 @@ class PlayState extends MusicBeatState
 	{
 		var thisStrum = strumline.strumGroup.members[note.noteData];
 		var thisChar = strumline.character.char;
+		if(note.noteType == "gf note" && gf.char != null)
+			thisChar = gf.char;
 
 		note.gotHit = false;
 		note.missed = true;
@@ -832,6 +836,8 @@ class PlayState extends MusicBeatState
 		
 		var thisStrum = strumline.strumGroup.members[note.noteData];
 		var thisChar = strumline.character.char;
+		if(note.noteType == "gf note" && gf.char != null)
+			thisChar = gf.char;
 		
 		if(strumline.isPlayer || vocalsOpp == null)
 			vocals.volume = 1;

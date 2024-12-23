@@ -81,6 +81,7 @@ class ChartingState extends MusicBeatState
 	var allNoteTypes:Array<String> = [
 		'none',
 		'no animation',
+		'gf note',
 		'bomb',
 		'hurt note',
 		'warn note',
