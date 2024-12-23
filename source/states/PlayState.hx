@@ -1178,27 +1178,6 @@ class PlayState extends MusicBeatState
 		if(startedCountdown)
 			Conductor.songPos += elapsed * 1000;
 
-		// TO-DO!!! REWRITE!
-		#if TOUCH_CONTROLS
-		pressed = [
-			hitbox.buttonLeft.pressed || Controls.pressed(LEFT),
-			hitbox.buttonDown.pressed || Controls.pressed(DOWN),
-			hitbox.buttonUp.pressed || Controls.pressed(UP),
-			hitbox.buttonRight.pressed || Controls.pressed(RIGHT)
-		];
-		justPressed = [
-			hitbox.buttonLeft.justPressed || Controls.justPressed(LEFT),
-			hitbox.buttonDown.justPressed || Controls.justPressed(DOWN),
-			hitbox.buttonUp.justPressed || Controls.justPressed(UP),
-			hitbox.buttonRight.justPressed || Controls.justPressed(RIGHT)
-		];
-		released = [
-			hitbox.buttonLeft.released || Controls.released(LEFT),
-			hitbox.buttonDown.released || Controls.released(DOWN),
-			hitbox.buttonUp.released || Controls.released(UP),
-			hitbox.buttonRight.released || Controls.released(RIGHT)
-		];
-		#else
 		pressed = [
 			Controls.pressed(LEFT),
 			Controls.pressed(DOWN),
@@ -1217,6 +1196,18 @@ class PlayState extends MusicBeatState
 			Controls.released(UP),
 			Controls.released(RIGHT),
 		];
+
+		#if TOUCH_CONTROLS
+		for(i in 0...CoolUtil.directions.length) {
+			if(hitbox.checkButton(CoolUtil.directions[i], PRESSED))
+				pressed[i] = true;
+
+			if(hitbox.checkButton(CoolUtil.directions[i], JUST_PRESSED))
+				justPressed[i] = true;
+
+			if(hitbox.checkButton(CoolUtil.directions[i], RELEASED))
+				released[i] = true;
+		}
 		#end
 
 		playerSinging = false;

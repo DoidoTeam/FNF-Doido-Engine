@@ -11,7 +11,7 @@ class DoidoPad extends FlxSpriteGroup
 	public var padActive:Bool = false;
 
 	var buttonWidth:Float = 105;
-	var buttonMap:Map<String, FlxButton> = [];
+	var buttonMap:Map<String, PadButton> = [];
 
 	public function new(mode:String = "blank"):Void
 	{
@@ -21,29 +21,29 @@ class DoidoPad extends FlxSpriteGroup
 		switch (mode)
 		{
 			case "pause":
-				var button:FlxButton = createButton(FlxG.width - buttonWidth, 0, 'util/pause', 0.8);
+				var button:PadButton = new PadButton(FlxG.width - buttonWidth, 0, 'util/pause', 0.8);
 				buttonMap.set("PAUSE", button);
 				add(button);
 			case "back":
-				var button:FlxButton = createButton(FlxG.width - buttonWidth, 0, 'util/back', 0.8);
+				var button:PadButton = new PadButton(FlxG.width - buttonWidth, 0, 'util/back', 0.8);
 				buttonMap.set("BACK", button);
 				add(button);
 
 			case "reset":
-				var button:FlxButton = createButton(FlxG.width - buttonWidth, 0, 'util/back', 0.8);
+				var button:PadButton = new PadButton(FlxG.width - buttonWidth, 0, 'util/back', 0.8);
 				buttonMap.set("BACK", button);
 				add(button);
 
-				var button:FlxButton = createButton(FlxG.width - (buttonWidth*2), 0, 'util/reset', 0.8);
+				var button:PadButton = new PadButton(FlxG.width - (buttonWidth*2), 0, 'util/reset', 0.8);
 				buttonMap.set("RESET", button);
 				add(button);
 
 			case "dialogue":
-				var button:FlxButton = createButton(FlxG.width - buttonWidth, 0, 'util/skip', 0.8);
+				var button:PadButton = new PadButton(FlxG.width - buttonWidth, 0, 'util/skip', 0.8);
 				buttonMap.set("BACK", button);
 				add(button);
 
-				var button:FlxButton = createButton(FlxG.width - (buttonWidth*2), 0, 'util/log', 0.8);
+				var button:PadButton = new PadButton(FlxG.width - (buttonWidth*2), 0, 'util/log', 0.8);
 				buttonMap.set("TEXT_LOG", button);
 				add(button);
 		}
@@ -74,27 +74,8 @@ class DoidoPad extends FlxSpriteGroup
 
 		for (button in buttonMap)
 			button.destroy();
-	}
 
-	private function createButton(x:Float, y:Float, path:String, scale:Float = 1):FlxButton
-	{
-		var button:FlxButton = new FlxButton();
-
-		if (Paths.fileExists('images/mobile/buttons/${path}.png'))
-			button.loadGraphic(Paths.getGraphic('mobile/buttons/$path'));
-		else
-			button.loadGraphic(Paths.getGraphic('mobile/buttons/default.png'));
-
-		button.solid = false;
-		button.immovable = true;
-
-		button.scale.set(scale, scale);
-		button.updateHitbox();
-
-		button.x = x;
-		button.y = y;
-
-		return button;
+		buttonMap = [];
 	}
 
 	public function checkButton(buttonID:String, inputState:FlxInputState):Bool
@@ -117,5 +98,27 @@ class DoidoPad extends FlxSpriteGroup
 			}
 		}
 		return false;
+	}
+}
+
+class PadButton extends FlxButton
+{
+	public function new(x:Float, y:Float, path:String, scale:Float = 1)
+	{
+		super();
+
+		if (Paths.fileExists('images/mobile/buttons/${path}.png'))
+			loadGraphic(Paths.getGraphic('mobile/buttons/$path'));
+		else
+			loadGraphic(Paths.getGraphic('mobile/buttons/default.png'));
+
+		solid = false;
+		immovable = true;
+
+		this.scale.set(scale, scale);
+		updateHitbox();
+
+		this.x = x;
+		this.y = y;
 	}
 }

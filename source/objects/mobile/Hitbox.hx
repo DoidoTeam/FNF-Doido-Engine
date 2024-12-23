@@ -6,16 +6,13 @@ import flixel.group.FlxSpriteGroup;
 import flixel.ui.FlxButton;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+import flixel.input.FlxInput.FlxInputState;
 
 class Hitbox extends FlxSpriteGroup
 {
-	public var buttonLeft:HitboxButton;
-	public var buttonDown:HitboxButton;
-	public var buttonUp:HitboxButton;
-	public var buttonRight:HitboxButton;
-
-	var hbxWidth:Float = 320;
 	var hint:FlxSprite;
+	var hbxWidth:Float = 320;
+	var hbxMap:Map<String, HitboxButton> = [];
 
 	var assetModifier:String = "base";
 	
@@ -29,43 +26,55 @@ class Hitbox extends FlxSpriteGroup
 		hint.alpha = 0;
 		add(hint);
 
-		buttonLeft 	= 	new HitboxButton(0, 			"left", 	assetModifier);
-		buttonDown 	= 	new HitboxButton(hbxWidth, 		"down", 	assetModifier);
-		buttonUp 	= 	new HitboxButton(hbxWidth * 2, 	"up", 		assetModifier);
-		buttonRight = 	new HitboxButton(hbxWidth * 3, 	"right", 	assetModifier);
-		
-		add(buttonLeft);
-		add(buttonDown);
-		add(buttonUp);
-		add(buttonRight);
+		var directions = CoolUtil.directions;
+		for (i in 0...directions.length) {
+			var button = new HitboxButton(hbxWidth*i, directions[i], assetModifier);
+			hbxMap.set(directions[i], button);
+			add(button);
+		}
 	}
 
 	public function toggleHbx(active)
 	{
 		hint.alpha = (active ? (SaveData.data.get("Hitbox Opacity") / 10) * 0.2 : 0);
 
-		buttonLeft.isActive = active;
-		buttonLeft.setAlpha(false);
-
-		buttonDown.isActive = active;
-		buttonDown.setAlpha(false);
-
-		buttonUp.isActive = active;
-		buttonUp.setAlpha(false);
-
-		buttonRight.isActive = active;
-		buttonRight.setAlpha(false);
+		for(button in hbxMap) {
+			button.isActive = active;
+			button.setAlpha(false);
+		}
 	}
 
 	override public function destroy():Void
     {
         super.destroy();
 
-        buttonLeft = null;
-        buttonDown = null;
-        buttonUp = null;
-        buttonRight = null;
+		for(button in hbxMap)
+			button.destroy();
+
+		hbxMap = [];
     }
+
+	public function checkButton(buttonID:String, inputState:FlxInputState):Bool
+	{		
+		var button = hbxMap.get(buttonID);
+		if(button != null)
+		{
+			if(!button.isActive)
+				return false;
+
+			switch(inputState) {
+				case PRESSED:
+					return button.pressed;
+				case JUST_PRESSED:
+					return button.justPressed;
+				case RELEASED | JUST_RELEASED:
+					return button.justReleased;
+				default:
+					return false;
+			}
+		}
+		return false;
+	}
 }
 
 class HitboxButton extends FlxButton

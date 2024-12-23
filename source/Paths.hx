@@ -246,6 +246,10 @@ class Paths
 
 		return frames;
 	}
+
+	// get single frame (for now sparrow only)
+	public static function getFrame(key:String, frame:String, ?library:String):FlxGraphic
+		return FlxGraphic.fromFrame(getSparrowAtlas(key).getByName(frame));
 		
 	public static function readDir(dir:String, ?typeArr:Array<String>, ?removeType:Bool = true, ?library:String):Array<String>
 	{
@@ -276,9 +280,6 @@ class Paths
 		Logs.print('read dir ${(swagList.length > 0) ? '$swagList' : 'EMPTY'} at ${getPath(dir, library)}');
 		return swagList;
 	}
-
-	public static function getFrame(key:String, frame:String, ?library:String):FlxGraphic
-		return FlxGraphic.fromFrame(getSparrowAtlas(key).getByName(frame));
 
 	// preload stuff for playstate
 	// so it doesnt lag whenever it gets called out

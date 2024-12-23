@@ -84,8 +84,9 @@ class CoolUtil
 	* NOTE UTILS
 	*/
 
+	public static var directions:Array<String> = ["left", "down", "up", "right"];
 	inline public static function getDirection(i:Int)
-		return ["left", "down", "up", "right"][i];
+		return directions[i];
 	
 	inline public static function noteWidth()
 		return 160 * 0.7; // 112
