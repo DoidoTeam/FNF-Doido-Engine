@@ -33,7 +33,7 @@
 	<define name="RENAME_UNDERSCORE" 	if="html5 || android"/>
 	<define name="ENABLE_PRINTING" 		if="cpp || hl || html5"/>
 	<define name="ROUND_ICON" 			if="mac"/>
-	<define name="TOUCH_CONTROLS"		if="cpp"/>
+	<define name="TOUCH_CONTROLS"		if="mobile"/>
 	<!--Uncomment-this-to-use-videos-in-your-mod!!-->
 	<!--<define name="VIDEOS_ALLOWED" if="desktop || android" />-->
 	<define name="HXVLC_NO_SHARE_DIRECTORY" if="VIDEOS_ALLOWED" />

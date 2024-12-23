@@ -35,11 +35,14 @@ import objects.*;
 import objects.hud.*;
 import objects.note.*;
 import objects.dialogue.Dialogue;
-import objects.mobile.Hitbox;
 import shaders.*;
 import states.editors.*;
 import states.menu.*;
 import subStates.*;
+
+#if TOUCH_CONTROLS
+import objects.mobile.Hitbox;
+#end
 
 using StringTools;
 

@@ -1,16 +1,17 @@
 package backend.game;
 
-import flixel.FlxSubState;
-import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxState;
-import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIState;
 import flixel.addons.ui.FlxUISubState;
 import flixel.group.FlxGroup;
 import backend.song.Conductor;
 import crowplexus.iris.Iris;
+
+#if TOUCH_CONTROLS
 import objects.mobile.*;
+import flixel.FlxSubState;
+#end
 
 /*
 	Custom state and substate classes. Use them instead of FlxState or FlxSubstate

@@ -3,10 +3,13 @@ package backend.game;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;
+
+#if TOUCH_CONTROLS
 import flixel.util.FlxTimer;
 import backend.game.Mobile;
 import backend.game.GameData;
 import objects.mobile.DoidoPad;
+#end
 
 using haxe.EnumTools;
 
