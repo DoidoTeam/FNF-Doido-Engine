@@ -28,9 +28,9 @@
 
 	<!-- _____________________________ Custom Defines ___________________________ -->
 
-	<define name="DISCORD_RPC" 			if="cpp" unless="android" />
+	<define name="DISCORD_RPC" 			if="cpp" unless="mobile" />
 	<define name="PRELOAD_SONG" 		if="cpp" unless="debug" />
-	<define name="RENAME_UNDERSCORE" 	if="html5 || android"/>
+	<define name="RENAME_UNDERSCORE" 	if="html5 || mobile"/>
 	<define name="ENABLE_PRINTING" 		if="cpp || hl || html5"/>
 	<define name="ROUND_ICON" 			if="mac"/>
 	<define name="TOUCH_CONTROLS"		if="mobile"/>
