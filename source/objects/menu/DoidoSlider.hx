@@ -77,10 +77,7 @@ class DoidoSlider extends FlxSpriteGroup
         }
         
         // capping the handle
-        if(handle.x < hitbox.x)
-            handle.x = hitbox.x;
-        if(handle.x > hitbox.x + hitbox.width)
-            handle.x = hitbox.x + hitbox.width;
+        handle.x = FlxMath.bound(handle.x, hitbox.x, hitbox.x + hitbox.width);
 
         // updating the value
         if(isPressed)
