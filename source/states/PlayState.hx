@@ -1395,12 +1395,16 @@ class PlayState extends MusicBeatState
 				{
 					// hitting / missing notes automatically
 					if(strumline.botplay)
+					{
 						if(note.songTime - Conductor.songPos <= 0 && !note.gotHit && !note.mustMiss)
 							checkNoteHit(note, strumline);
+					}
 					else
+					{
 						if(Conductor.songPos >= note.songTime + Timings.getTimings("good")[1]
 						&& !note.gotHit && !note.missed && !note.mustMiss)
 							onNoteMiss(note, strumline);
+					}
 					
 					// doesnt actually do anything
 					if (note.scrollSpeed != strumline.scrollSpeed)
