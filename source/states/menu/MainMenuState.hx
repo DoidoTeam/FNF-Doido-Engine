@@ -55,6 +55,11 @@ class MainMenuState extends MusicBeatState
 				herobrine.updateHitbox();
 				herobrine.screenCenter(Y);
 				add(herobrine);
+
+				new FlxTimer().start(2, function(tmr) {
+					if(herobrine != null)
+						remove(herobrine);
+				});
 			}
 		}
 		
