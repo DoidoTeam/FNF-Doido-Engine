@@ -129,6 +129,13 @@ class MainMenuState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		#if debug
+		// Crash the game. For CrashHandler test purposes
+		if(FlxG.keys.justPressed.R)
+			null.draw();
+		#end
+
 		if(FlxG.keys.justPressed.V)
 		{
 			persistentUpdate = false;

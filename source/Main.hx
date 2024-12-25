@@ -97,7 +97,8 @@ class Main extends Sprite
 		e.stopImmediatePropagation();
 
 		var path:String;
-		var stackTraceString = StringTools.trim(CallStack.toString(CallStack.exceptionStack(true)));
+		var exception:String = 'Exception: ${e.error}\n';
+		var stackTraceString = exception + StringTools.trim(CallStack.toString(CallStack.exceptionStack(true)));
 		var dateNow:String = Date.now().toString().replace(" ", "_").replace(":", "'");
 
 		path = 'crash/DoidoEngine_${dateNow}.txt';
