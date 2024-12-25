@@ -806,7 +806,8 @@ class PlayState extends MusicBeatState
 		if(note.mustMiss)
 			health -= 0.005;
 		
-		if(note.gotHit || thisChar == null) return;
+		// playing the hold animation
+		if(note.gotHit || thisChar == null || note.holdHitLength > note.holdLength - 60) return;
 		
 		if(note.noteType != "no animation" && thisChar.specialAnim != 2)
 		{
