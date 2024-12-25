@@ -13,17 +13,17 @@
     {
       "name": "flixel",
       "type": "haxelib",
-      "version": "5.8.0"
+      "version": "5.9.0"
     },
     {
       "name": "flixel-addons",
       "type": "haxelib",
-      "version": "3.2.3"
+      "version": "3.3.0"
     },
     {
       "name": "flixel-ui",
       "type": "haxelib",
-      "version": "2.6.1"
+      "version": "2.6.3"
     },
     {
       "name": "flxanimate-doido",

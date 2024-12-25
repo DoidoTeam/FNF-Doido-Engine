@@ -136,9 +136,6 @@ jobs:
           haxelib --global run hmm setup
           hmm init
           hmm install
-          haxelib install flixel
-          haxelib install flixel-addons
-          haxelib install flixel-ui
       - name: Configure Android
         run: |
           haxelib run lime config ANDROID_SDK $ANDROID_HOME
