@@ -76,6 +76,48 @@ jobs:
         with:
           name: DoidoEngine-Linux-${{ steps.ver.outputs.content }}-${{ github.run_id}}
           path: 'export/release/linux/bin'
+
+  build-html:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4.1.7
+
+      - uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.3
+
+      - name: Read Version
+        id: ver
+        uses: jaywcjlove/github-action-read-file@v2.0.0
+        with:
+          path: ver.txt
+      # Runs a set of commands using the runners shell
+      - name: Install Haxelib
+        run: |
+          haxelib setup ~/haxelib
+          haxelib install hxcpp > /dev/null --quiet
+          haxelib --global install hmm
+          haxelib --global run hmm setup
+          hmm init
+          hmm install
+      - name: Compile
+        run:
+          haxelib run lime build html5 --app-version="${{ steps.ver.outputs.content }}-${{ github.run_id}}"
+      - name: Push a directory to another repository
+        uses: datalbry/copy_folder_to_another_repo_action@1.0.1
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_WIKI }}
+        with:
+          source_folder: 'export/release/html5/bin'
+          destination_repo: 'DoidoTeam/doidoteam.github.io'
+          destination_folder: 'funkin/doidoweb'
+          user_email: '85184617+iamteles@users.noreply.github.com'
+          user_name: 'iamteles'
+          commit_msg: 'Pushed HTML5 build from github.run_id'
+
+            
   build-macos:
     # hoping setting this to macos 13 will keep it working on intel macs??? i don't actually own any apple hardware so i'm just guessing here...
     runs-on: macos-13
