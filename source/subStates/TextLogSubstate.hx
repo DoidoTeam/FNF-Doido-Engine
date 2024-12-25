@@ -17,7 +17,7 @@ import objects.menu.Alphabet;
 import objects.dialogue.DialogueObjects;
 import states.*;
 
-class TextLogSubstate extends MusicBeatSubState
+class TextLogSubState extends MusicBeatSubState
 {	
     var data:DialogueData;
 

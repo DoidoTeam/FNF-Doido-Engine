@@ -165,7 +165,7 @@ class Dialogue extends FlxGroup
 
 		if(Controls.justPressed(TEXT_LOG)) {
 			CoolUtil.activateTimers(false);
-			FlxG.state.openSubState(new subStates.TextLogSubstate(pastData));
+			FlxG.state.openSubState(new subStates.TextLogSubState(pastData));
 		}
 
 		
