@@ -63,7 +63,7 @@ class Logs {
 		Sys.println(formatOutput(v, type, printType, printTime, printClass, true, infos));
 		#elseif html5
         if (js.Syntax.typeof(untyped console) != "undefined" && (untyped console).log != null)
-			(untyped console).log(formatOutput(v, type, printType, printTime, printClass, true, infos));
+			(untyped console).log(formatOutput(v, type, printType, printTime, printClass, false, infos));
         #end
     }
 
