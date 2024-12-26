@@ -260,7 +260,7 @@ class Paths
 			var rawList = sys.FileSystem.readDirectory(getPath(dir, library));
 			for(i in 0...rawList.length)
 			{
-				if(typeArr?.length > 1)
+				if(typeArr?.length > 0)
 				{
 					for(type in typeArr) {
 						if(rawList[i].endsWith(type)) {
