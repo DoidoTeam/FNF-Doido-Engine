@@ -30,6 +30,7 @@ and more!
 
 ## How to use
 For information on how to Build the engine, as well as guides for how to use it, please check out the [FNF: Doido Engine Wiki](https://doidoteam.github.io/wiki/)!
+If you need help with anything, you can [join our Discord Server for support!](https://discord.gg/KVXf9Ygzu5)
 
 ### Libraries
 To install the correct libraries, you can run your platform's respective script in `art/setup/`. You can also install manually by checking the `.hmm` file.
