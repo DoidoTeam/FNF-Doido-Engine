@@ -122,7 +122,9 @@ class Paths
 				openfl.Assets.cache.removeBitmapData(key);
 			
 			FlxG.bitmap.remove(graphic);
+			#if (flixel < "6.0.0")
 			graphic.dump();
+			#end
 			graphic.destroy();
 		}
 
@@ -138,7 +140,9 @@ class Paths
 			{
 				openfl.Assets.cache.removeBitmapData(key);
 				FlxG.bitmap._cache.remove(key);
+				#if (flixel < "6.0.0")
 				obj.dump();
+				#end
 				obj.destroy();
 			}
 		}

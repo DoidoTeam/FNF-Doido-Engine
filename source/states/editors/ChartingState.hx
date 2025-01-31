@@ -1009,7 +1009,9 @@ class ChartingState extends MusicBeatState
 	}
 	function updateEventInfo()
 	{
+		#if (flixel < "6.0.0")
 		eventInfo.graphic.dump();
+		#end
 		var daIndex = eventsLabels.indexOf(eventButton.label.text);
 		if(daIndex == -1)
 			eventInfo.text = "event info not found!!";
@@ -1946,7 +1948,9 @@ class ChartingState extends MusicBeatState
 			endTime = CoolUtil.posToTimer(songLength, true);
 		}
 
+		#if (flixel < "6.0.0")
 		infoTxt.graphic.dump();
+		#end
 		infoTxt.text = ""
 		+ "Time: " + curTime
 		+ " - "    + endTime
