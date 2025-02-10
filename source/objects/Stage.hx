@@ -245,7 +245,11 @@ class Stage extends FlxGroup
 		{
 			case "mugen": "no-gf";
 			case "school"|"school-evil": "gf-pixel";
-			default: "gf";
+			default:
+			if (PlayState.instance != null && PlayState.instance.SONG.gfVersion != null)
+				return PlayState.instance.SONG.gfVersion;
+			else
+				return "gf";
 		}
 	}
 	
