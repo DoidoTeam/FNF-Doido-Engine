@@ -12,6 +12,8 @@ typedef SwagSong =
 
 	var player1:String;
 	var player2:String;
+	// Borrowed from older engines, for the DJ Character (GF)
+	var gfVersion:String;
 }
 typedef SwagSection =
 {
@@ -119,6 +121,7 @@ class SongData
 
 			player1: "bf",
 			player2: "dad",
+			gfVersion: "gf",
 		};
 	}
 
