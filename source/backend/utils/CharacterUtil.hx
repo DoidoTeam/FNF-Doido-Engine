@@ -49,7 +49,6 @@ class CharacterUtil
 	public static function charList():Array<String>
 	{
 		return [
-			"face",
 			"dad",
 			"gf",
 			"bf",
@@ -65,7 +64,8 @@ class CharacterUtil
 			"senpai-angry",
 			"spirit",
 			"gemamugen",
-			"zero"
+			"zero",
+			"face"
 		];
 	}
 }

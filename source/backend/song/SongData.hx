@@ -12,8 +12,9 @@ typedef SwagSong =
 
 	var player1:String;
 	var player2:String;
-	// Borrowed from older engines, for the DJ Character (GF)
-	var gfVersion:String;
+
+	// Parity with other engines
+	var ?gfVersion:String;
 }
 typedef SwagSection =
 {
@@ -121,7 +122,7 @@ class SongData
 
 			player1: "bf",
 			player2: "dad",
-			gfVersion: "gf",
+			gfVersion: "stage-set",
 		};
 	}
 
@@ -154,12 +155,6 @@ class SongData
 		
 		var daSong:SwagSong = cast Paths.json('songs/$jsonInput/chart/$diff').song;
 		
-		// no need for SONG.song.toLowerCase() every time
-		// the game auto-lowercases it now
-		daSong.song = daSong.song.toLowerCase();
-		if(daSong.song.contains(' '))
-			daSong.song = daSong.song.replace(' ', '-');
-		
 		// formatting it
 		daSong = formatSong(daSong);
 		
@@ -189,6 +184,11 @@ class SongData
 	// Removes duplicated notes from a chart.
 	inline public static function formatSong(SONG:SwagSong):SwagSong
 	{
+		// Normalize song name to use only lowercases and no spaces
+		SONG.song = SONG.song.toLowerCase();
+		if(SONG.song.contains(' '))
+			SONG.song = SONG.song.replace(' ', '-');
+
 		// cleaning multiple notes at the same place
 		var removed:Int = 0;
 		for(section in SONG.notes)
@@ -218,6 +218,9 @@ class SongData
 		}
 		if(removed > 0)
 			Logs.print('removed $removed duplicated notes');
+
+		if(SONG.gfVersion == null)
+			SONG.gfVersion = "stage-set";
 		
 		return SONG;
 	}

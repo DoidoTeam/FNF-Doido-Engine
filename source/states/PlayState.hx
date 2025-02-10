@@ -248,7 +248,7 @@ class PlayState extends MusicBeatState
 		callScript("create");
 		
 		stageBuild = new Stage();
-		stageBuild.reloadStageFromSong(SONG.song);
+		stageBuild.reloadStageFromSong(SONG.song, SONG.gfVersion);
 		add(stageBuild);
 
 		classicZoom = defaultCamZoom;
