@@ -90,7 +90,7 @@ class LoadingState extends MusicBeatState
 			Paths.preloadGraphic('hud/base/healthBar');
 			
 			var stageBuild = new Stage();
-			stageBuild.reloadStageFromSong(SONG.song);
+			stageBuild.reloadStageFromSong(SONG.song, SONG.gfVersion);
 			addBehind(stageBuild);
 
 			var playerChars:Array<String> = [SONG.player1];
@@ -108,7 +108,9 @@ class LoadingState extends MusicBeatState
 					case 'Change Stage':
 						stageBuild.reloadStage(daEvent.value1);
 						addBehind(stageBuild);
-						charList.push(stageBuild.gfVersion);
+
+						if(!charList.contains(stageBuild.gfVersion))
+							charList.push(stageBuild.gfVersion);
 				}
 			}
 			Logs.print('preloaded stage and hud');
