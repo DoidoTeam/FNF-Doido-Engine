@@ -445,7 +445,7 @@ class ChartingState extends MusicBeatState
 
 		var gfButton:FlxUIButton = null;
 		gfButton = new FlxUIButton(10, 147, SONG.gfVersion, function() {
-			openSubState(new ChooserSubState(["stage-set"].concat(characters), CHARACTER, function(pick:String) {
+			openSubState(new ChooserSubState(["stage-set", "no-gf"].concat(characters), CHARACTER, function(pick:String) {
 				gfButton.label.text = pick;
 				SONG.gfVersion = pick;
 				reloadIcons(true);
