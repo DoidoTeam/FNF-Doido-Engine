@@ -9,6 +9,8 @@ import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import objects.menu.Alphabet;
 import objects.menu.options.*;
 import states.PlayState;
@@ -90,6 +92,7 @@ class OptionsSubState extends MusicBeatSubState
     var curCat:String = 'gameplay';
 
     var curSelected:Int = 0;
+    var startCounter:Int = 0;
     var storedSelected:Map<String, Int> = [];
 
     var grpItems:FlxTypedGroup<Alphabet>;
@@ -133,7 +136,8 @@ class OptionsSubState extends MusicBeatSubState
         else
         {
             bg.makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFF000000);
-            bg.alpha = 0.80;
+            bg.alpha = 0;
+            FlxTween.tween(bg, {alpha: 0.8}, 0.1);
         }
         bg.screenCenter();
         add(bg);
@@ -218,7 +222,7 @@ class OptionsSubState extends MusicBeatSubState
 
         if(curCat == 'main')
         {
-            if(Controls.justPressed(ACCEPT))
+            if(Controls.justPressed(ACCEPT) && startCounter >= mainShit.length)
             {
                 switch(mainShit[curSelected])
                 {
@@ -401,6 +405,22 @@ class OptionsSubState extends MusicBeatSubState
                 item.y = (FlxG.height / 2) - (item.height / 2);
                 item.y += (100 * i);
                 item.y -= (100 * ((mainShit.length - 1) / 2));
+
+                if(playState == null)
+                    startCounter++;
+                else if(startCounter < mainShit.length) {
+                    item.y += 20;
+                    item.alpha = 0;
+
+                    var newAlpha = 0.4;
+                    if(i == curSelected)
+                        newAlpha = 1.0;
+    
+                    FlxTween.tween(item, {y: item.y - 20, alpha: newAlpha}, 0.15, {ease: FlxEase.quadInOut, startDelay: 0.05 * i,
+                    onComplete: function(twn:FlxTween) {
+                        startCounter++;
+                    }});
+                }
             }
         }
         else
@@ -441,6 +461,9 @@ class OptionsSubState extends MusicBeatSubState
     
     function changeSelection(change:Int = 0)
     {
+        if(startCounter < mainShit.length)
+            return;
+
         if(change != 0)
             FlxG.sound.play(Paths.sound('menu/scrollMenu'));
         
