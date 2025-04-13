@@ -23,6 +23,7 @@ class VideoPlayerSubState extends MusicBeatSubState
     private var curBtn:FlxSprite;
 
     private var lockControls:Bool = true;
+    private var lockMovement:Bool = true;
     private var holdSkip:Bool = false;
     private var skipProgress:Float = 0.0;
 
@@ -119,6 +120,7 @@ class VideoPlayerSubState extends MusicBeatSubState
 
         new FlxTimer().start(0.001, function(tmr) {
             lockControls = false;
+            lockMovement = false;
             video.play();
         });
     }
@@ -126,6 +128,7 @@ class VideoPlayerSubState extends MusicBeatSubState
     public function pauseVideo(isPause:Bool)
     {
         lockControls = true;
+        lockMovement = true;
         FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
         if(isPause)
             video.pause();
@@ -144,8 +147,18 @@ class VideoPlayerSubState extends MusicBeatSubState
         }
 
         FlxTween.tween(darkBG, {alpha: isPause ? 0.7 : 0.001}, 0.4);
+
+        if(isPause) {
+            new FlxTimer().start(0.05, function(tmr) {
+                lockControls = false;
+            });
+        }
+
         new FlxTimer().start(0.75, function(tmr) {
-            lockControls = false;
+            if(!isPause)
+                lockControls = false;
+
+            lockMovement = false;
             if(!isPause)
                 video.resume();
         });
@@ -156,16 +169,20 @@ class VideoPlayerSubState extends MusicBeatSubState
         if(change) {
             curSelection = ((curSelection == 0) ? 1 : 0);
             FlxG.sound.play(Paths.sound('menu/scrollMenu'), 0.7);
-            for(btn in buttons.members)
-            {
-                FlxTween.cancelTweensOf(btn);
-                btn.y = FlxG.height - btn.height - 30;
-                if(btn.ID == curSelection)
-                {
-                    btn.y -= 10;
-                    FlxTween.tween(btn, {y: btn.y + 10}, 0.2, {ease: FlxEase.cubeOut});
-                }
+
+            if(!lockMovement) {
+                for(btn in buttons.members)
+                    {
+                        FlxTween.cancelTweensOf(btn);
+                        btn.y = FlxG.height - btn.height - 30;
+                        if(btn.ID == curSelection)
+                        {
+                            btn.y -= 10;
+                            FlxTween.tween(btn, {y: btn.y + 10}, 0.2, {ease: FlxEase.cubeOut});
+                        }
+                    }
             }
+
             if(curBtn?.animation.curAnim.name.startsWith('hold')) {
                 curBtn.animation.play('release');
                 holdSkip = false;
