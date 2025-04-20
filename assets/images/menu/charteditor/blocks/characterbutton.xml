@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="characterbutton.png">
+	<!-- Created with Adobe Animate version 24.0.3.19 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="charbutton0000" x="3" y="3" width="231" height="31"/>
+	<SubTexture name="charbutton0001" x="3" y="37" width="231" height="31"/>
+</TextureAtlas>

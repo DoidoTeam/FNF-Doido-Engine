@@ -1,4 +1,4 @@
-package states.editors;
+package states.editors.legacy;
 
 import flixel.FlxG;
 import flixel.FlxCamera;
@@ -44,7 +44,7 @@ import objects.hud.HealthIcon;
 import objects.note.*;
 import states.PlayState;
 import states.LoadingState;
-import subStates.editors.*;
+import subStates.editors.legacy.*;
 
 using StringTools;
 

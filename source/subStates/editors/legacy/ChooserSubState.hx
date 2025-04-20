@@ -1,4 +1,4 @@
-package subStates.editors;
+package subStates.editors.legacy;
 
 import backend.game.GameData.MusicBeatSubState;
 import flixel.FlxSprite;

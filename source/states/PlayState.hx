@@ -33,6 +33,7 @@ import objects.note.*;
 import objects.dialogue.Dialogue;
 import shaders.*;
 import states.editors.*;
+import states.editors.legacy.ChartingState as LegacyChartingState;
 import states.menu.*;
 import subStates.*;
 
@@ -1014,14 +1015,14 @@ class PlayState extends MusicBeatState
 		#if !mobile
 		if(FlxG.keys.justPressed.SEVEN)
 		{
-			if(ChartingState.SONG.song != SONG.song)
-				ChartingState.curSection = 0;
+			if(LegacyChartingState.SONG.song != SONG.song)
+				LegacyChartingState.curSection = 0;
 			
-			ChartingState.songDiff = songDiff;
+			LegacyChartingState.songDiff = songDiff;
 
-			ChartingState.SONG = SONG;
-			ChartingState.EVENTS = EVENTS;
-			Main.switchState(new ChartingState());
+			LegacyChartingState.SONG = SONG;
+			LegacyChartingState.EVENTS = EVENTS;
+			Main.switchState(new LegacyChartingState());
 		}
 
 		if(FlxG.keys.justPressed.EIGHT)

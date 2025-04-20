@@ -213,7 +213,7 @@ class SaveData
 		load();
 		Controls.load();
 		Highscore.load();
-		subStates.editors.ChartAutoSaveSubState.load(); // uhhh
+		subStates.editors.legacy.ChartAutoSaveSubState.load(); // uhhh
 		updateWindowSize();
 	}
 	

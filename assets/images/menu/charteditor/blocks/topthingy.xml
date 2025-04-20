@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="topthingy.png">
+	<!-- Created with Adobe Animate version 24.0.3.19 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="topthingy0000" x="3" y="3" width="123" height="49"/>
+	<SubTexture name="topthingy0001" x="129" y="3" width="123" height="49"/>
+	<SubTexture name="topthingy0002" x="3" y="55" width="123" height="49"/>
+	<SubTexture name="topthingy0003" x="129" y="55" width="123" height="49"/>
+</TextureAtlas>

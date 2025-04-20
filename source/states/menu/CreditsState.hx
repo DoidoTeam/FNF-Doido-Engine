@@ -14,8 +14,6 @@ import backend.song.SongData;
 import objects.menu.AlphabetMenu;
 import objects.hud.HealthIcon;
 import states.*;
-import states.editors.ChartingState;
-import subStates.menu.DeleteScoreSubState;
 
 using StringTools;
 

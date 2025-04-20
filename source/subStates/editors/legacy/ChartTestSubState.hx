@@ -1,4 +1,4 @@
-package subStates.editors;
+package subStates.editors.legacy;
 
 import backend.game.GameData.MusicBeatSubState;
 import backend.utils.DialogueUtil;
@@ -31,7 +31,7 @@ import objects.hud.*;
 import objects.note.*;
 import shaders.*;
 import states.PlayState;
-import states.editors.ChartingState;
+import states.editors.legacy.ChartingState;
 import subStates.*;
 
 using StringTools;
