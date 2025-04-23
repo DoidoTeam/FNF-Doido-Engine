@@ -1,12 +1,12 @@
 package states.editors;
 
-import flixel.sound.FlxSound;
-import backend.song.Conductor;
-import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
 import backend.game.GameData.MusicBeatState;
 import backend.song.SongData;
+import backend.song.Conductor;
 import flixel.FlxSprite;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
+import flixel.sound.FlxSound;
 import flixel.util.FlxColor;
 import objects.note.*;
 
@@ -18,6 +18,7 @@ class ChartingState extends MusicBeatState
 
     public static final GRID_SIZE = 40;
     public static var noteNum:Int = 4;
+    public static var gridNum:Int = 9;
 
     public static var songList:Array<FlxSound> = [];
 
@@ -27,6 +28,8 @@ class ChartingState extends MusicBeatState
 
     public var songPosLine:FlxSprite;
 
+    public var undoList:Array<Void->Void> = [];
+    public var redoList:Array<Void->Void> = [];
     public var isTyping:Bool = false;
     public var playing:Bool = false;
 
@@ -40,20 +43,24 @@ class ChartingState extends MusicBeatState
 		bg.scrollFactor.set();
 		add(bg);
 
+        var backGrid = new FlxSprite();
+        backGrid.makeGraphic((GRID_SIZE * gridNum) + 8, FlxG.height + 2, 0xFF000000);
+        backGrid.screenCenter();
+        add(backGrid);
+
         mainGrid = new ChartGrid();
-        add(mainGrid);
-        mainGrid.truePos.set(
-            FlxG.width / 2 - (GRID_SIZE * noteNum),
+        mainGrid.setPosition(
+            FlxG.width / 2 - (GRID_SIZE * gridNum / 2),
             FlxG.height / 2
         );
-
-        songPosLine = new FlxSprite().makeGraphic(GRID_SIZE * noteNum * 2, 4, 0xFFFFFFFF);
-		songPosLine.setPosition(mainGrid.truePos.x, mainGrid.truePos.y);
+        add(mainGrid);
+        
+        songPosLine = new FlxSprite().makeGraphic(GRID_SIZE * gridNum, 4, 0xFFFFFFFF);
+		songPosLine.setPosition(mainGrid.x, mainGrid.y);
 		add(songPosLine);
         
         for(section in SONG.notes)
         {
-            // notes
             for(note in section.sectionNotes)
             {
                 // psych event notes come on
@@ -78,6 +85,7 @@ class ChartingState extends MusicBeatState
                 newNote.strumlineID = (isPlayer ? 1 : 0);
 
                 mainGrid.notes.push(newNote);
+                newNote.draw();
             }
         }
     }
@@ -136,7 +144,7 @@ class ChartingState extends MusicBeatState
                 audio.stop();
         }
 
-        mainGrid.truePos.y = (FlxG.height / 2) -
+        mainGrid.y = (FlxG.height / 2) -
             (Conductor.songPos * ((GRID_SIZE/* * GRID_ZOOM*/) / Conductor.stepCrochet));
             
         if(FlxG.keys.justPressed.NUMPADNINE)
@@ -196,60 +204,76 @@ class ChartingState extends MusicBeatState
 class ChartGrid extends FlxSprite
 {
     final GRID_SIZE = ChartingState.GRID_SIZE;
-    final GRID_WIDTH:Int = ChartingState.noteNum * 2;
+    final GRID_WIDTH:Int = ChartingState.gridNum;
 
-    public var truePos:FlxPoint = FlxPoint.get();
-
+    public var gridSquare:FlxSprite;
     public var divLine:FlxSprite;
+    public var beatLine:FlxSprite;
     public var notes:Array<Note> = [];
 
     public function new() {
         super();
-        makeGraphic(GRID_SIZE, GRID_SIZE, 0xFFFFFFFF);
-        antialiasing = false;
-        divLine = new FlxSprite().makeGraphic(GRID_SIZE * GRID_WIDTH, 2, 0xFFFFFFFF);
+        gridSquare = new FlxSprite().makeGraphic(GRID_SIZE, GRID_SIZE, 0xFFFFFFFF);
+        gridSquare.antialiasing = false;
+
+        beatLine = new FlxSprite().makeGraphic(GRID_SIZE * GRID_WIDTH, 2, 0xFFFFFFFF);
+        beatLine.antialiasing = false;
+
+        divLine = new FlxSprite().makeGraphic(2, FlxG.height + 2, 0xFF000000);
         divLine.antialiasing = false;
+        divLine.screenCenter(Y);
     }
 
     override public function draw()
     {
-        y = truePos.y;
+        // super.draw();
+        gridSquare.y = y;
         for(section in ChartingState.SONG.notes)
         {
             for(j in 0...section.lengthInSteps)
             {
                 // if its onscreen
-                if(y > -GRID_SIZE && y < FlxG.height)
+                if(gridSquare.y > -GRID_SIZE && gridSquare.y < FlxG.height)
                 {
                     for(i in 0...GRID_WIDTH)
                     {
-                        x = truePos.x + (GRID_SIZE * i);
-                        color = ChartingState.mainGridColor[(j + i) % 2];
-                        super.draw();
+                        gridSquare.x = x + (GRID_SIZE * i);
+                        gridSquare.color = ChartingState.mainGridColor[(j + i) % 2];
+                        gridSquare.draw();
                     }
                     if(j % 4 == 0)
                     {
-                        divLine.color = ((j == 0) ? 0xFF000000 : 0xFFFF0000);
-                        divLine.setPosition(truePos.x, y);
-                        divLine.draw();
+                        beatLine.color = ((j == 0) ? 0xFF000000 : 0xFFFF0000);
+                        beatLine.setPosition(x, gridSquare.y);
+                        beatLine.draw();
                     }
                 }
-                y += GRID_SIZE;
+                gridSquare.y += GRID_SIZE;
             }
         }
+        divLine.x = x + GRID_SIZE;
+        divLine.draw();
+        divLine.x += GRID_SIZE * ChartingState.noteNum;
+        divLine.draw();
         for(note in notes)
         {
-            note.y = truePos.y + FlxMath.remapToRange(
+            note.y = y + FlxMath.remapToRange(
                 note.songTime,
                 0, Conductor.stepCrochet,
                 0, GRID_SIZE
             );
             if(note.y + note.height > 0 && note.y < FlxG.height)
             {
-                note.x = truePos.x + (note.noteData * GRID_SIZE);
+                note.x = x + GRID_SIZE + (note.noteData * GRID_SIZE);
                 if(note.strumlineID == 1)
                     note.x += (GRID_SIZE * ChartingState.noteNum);
                 note.draw();
+            }
+
+            if(FlxG.mouse.overlaps(note))
+            {
+                //CoolUtil.setCursor(POINTER);
+                
             }
         }
     }

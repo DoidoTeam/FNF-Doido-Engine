@@ -11,6 +11,8 @@ import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
+import lime.app.Application;
+import lime.ui.MouseCursor;
 import objects.note.Note;
 import subStates.menu.WebsiteSubState;
 
@@ -285,6 +287,10 @@ class CoolUtil
 
 		return finalArray;
 	}
+
+	public static function setCursor(cursor:MouseCursor) {
+        Application.current.window.cursor = cursor;
+    }
 
 	public static function openURL(url:String)
 	{
