@@ -150,11 +150,6 @@ class SaveData
 			CHECKMARK,
 			"Makes only one rating appear at a time",
 		],
-		"Ratings on HUD" => [
-			true,
-			CHECKMARK,
-			"Makes the ratings stick on the HUD"
-		],
 		"Song Timer" => [
 			true,
 			CHECKMARK,

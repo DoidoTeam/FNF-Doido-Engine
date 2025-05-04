@@ -29,6 +29,7 @@ import openfl.filters.BitmapFilter;
 import openfl.filters.ShaderFilter;
 import objects.*;
 import objects.hud.*;
+import objects.hud.game.*;
 import objects.note.*;
 import objects.dialogue.Dialogue;
 import shaders.*;
@@ -255,8 +256,15 @@ class PlayState extends MusicBeatState
 		classicZoom = defaultCamZoom;
 		
 		camGame.zoom = defaultCamZoom;
-		hudBuild = new HudClass();
-		hudBuild.setAlpha(0);
+		switch(SONG.song)
+		{
+			case "useless"|"beep-power":
+				hudBuild = new HudOG();
+				hudBuild.alpha = 0.0;
+			default:
+				hudBuild = new HudDoido();
+				hudBuild.alpha = 0.0;
+		}
 		
 		/*
 		*	if you want to change characters
@@ -308,15 +316,15 @@ class PlayState extends MusicBeatState
 
 		ghostTapping = SaveData.data.get('Ghost Tapping');
 		var downscroll:Bool = SaveData.data.get("Downscroll");
-		var doidoEasterEgg:Bool = FlxG.random.bool(0.01);
+		//var doidoEasterEgg:Bool = FlxG.random.bool(0.01);
 
 		var noteskins:Array<String> = [];
 
 		for(character in [dad.curChar, boyfriend.curChar]) {
-			if(doidoEasterEgg) {
+			/*if(doidoEasterEgg) {
 				noteskins.push("doido");
 				continue;
-			}
+			}*/
 			
 			switch(character) {
 				case 'bf-pixel':
@@ -341,8 +349,9 @@ class PlayState extends MusicBeatState
 			strumline.scrollSpeed = SONG.speed;
 			strumline.updateHitbox();
 		}
-
-		hudBuild.updateHitbox(bfStrumline.downscroll);
+		
+		hudBuild.downscroll = SaveData.data.get("Downscroll");
+		hudBuild.updatePositions();
 
 		var daSong:String = SONG.song.toLowerCase();
 
@@ -525,10 +534,10 @@ class PlayState extends MusicBeatState
 				}
 			}
 			
-			// when the girl say "one" the hud appears
+			// when the girl says "one" the hud appears
 			if(daCount == 2)
 			{
-				hudBuild.setAlpha(1, Conductor.crochet * 2 / 1000);
+				FlxTween.tween(hudBuild, {alpha: 1.0}, Conductor.crochet * 2 / 1000);
 			}
 
 			if(daCount == 4)
@@ -918,7 +927,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 		
-		hudBuild.updateText();
+		hudBuild.updateInfoTxt();
 		
 		var daRating = new Rating(rating, Timings.combo, note.assetModifier);
 
@@ -930,27 +939,7 @@ class PlayState extends MusicBeatState
 			prevRating = daRating;
 		}
 		
-		if(SaveData.data.get("Ratings on HUD"))
-		{
-			hudBuild.ratingGrp.add(daRating);
-			
-			for(item in daRating.members)
-				item.cameras = [camHUD];
-			
-			var daX:Float = (FlxG.width / 2);
-			if(SaveData.data.get("Middlescroll"))
-				daX -= FlxG.width / 4;
-
-			daRating.setPos(daX, SaveData.data.get('Downscroll') ? FlxG.height - 100 : 100);
-		}
-		else
-		{
-			add(daRating);
-			daRating.setPos(
-				thisChar.x + thisChar.ratingsOffset.x,
-				thisChar.y + thisChar.ratingsOffset.y
-			);
-		}
+		hudBuild.addRating(daRating);
 	}
 	
 	public var pressed:Array<Bool> 		= [];
@@ -1038,29 +1027,45 @@ class PlayState extends MusicBeatState
 
 		if(oldIconEasterEgg)
 		{
-			if(FlxG.keys.justPressed.NINE
-			&& (FlxG.keys.pressed.SHIFT || Controls.pressed(CONTROL))
-			&& boyfriend.curChar == "bf")
+			if(hudBuild.hudName == "doido")
 			{
-				var changeBack:Bool = false;
-				var curIcon:String = hudBuild.healthBar.icons[1].curIcon;
-				if(FlxG.keys.pressed.SHIFT)
+				var hudBuild:HudDoido = cast hudBuild;
+				if(FlxG.keys.justPressed.NINE
+				&& (FlxG.keys.pressed.SHIFT || Controls.pressed(CONTROL))
+				&& boyfriend.curChar == "bf")
 				{
-					if(curIcon != 'bf-old')
-						curIcon = 'bf-old';
-					else
-						changeBack = true;
+					var changeBack:Bool = false;
+					var curIcon:String = hudBuild.iconP1.curIcon;
+					if(FlxG.keys.pressed.SHIFT)
+					{
+						if(curIcon != 'bf-old')
+							curIcon = 'bf-old';
+						else
+							changeBack = true;
+					}
+					if(Controls.pressed(CONTROL))
+					{
+						if(curIcon != 'bf-cool')
+							curIcon = 'bf-cool';
+						else
+							changeBack = true;
+					}
+					if(changeBack)
+						curIcon = boyfriend.char.curChar;
+					hudBuild.changeIcon(curIcon, PLAYER);
 				}
-				if(Controls.pressed(CONTROL))
+			}
+			if(hudBuild.hudName == "OG")
+			{
+				var hudBuild:HudOG = cast hudBuild;
+				if(FlxG.keys.justPressed.NINE)
 				{
-					if(curIcon != 'bf-cool')
-						curIcon = 'bf-cool';
-					else
-						changeBack = true;
+					var curIcon = hudBuild.iconP1.curIcon;
+					if(curIcon == "bf")
+						hudBuild.changeIcon("bf-old", PLAYER);
+					else if(curIcon == "bf-old")
+						hudBuild.changeIcon("bf", PLAYER);
 				}
-				if(changeBack)
-					curIcon = boyfriend.char.curChar;
-				hudBuild.changeIcon(1, curIcon);
 			}
 		}
 		#end
@@ -1569,6 +1574,7 @@ class PlayState extends MusicBeatState
 	{
 		super.stepHit();
 		stageBuild.stepHit(curStep);
+		hudBuild.stepHit(curStep);
 		syncSong();
 		
 		callScript("stepHit", [curStep]);
@@ -1709,8 +1715,7 @@ class PlayState extends MusicBeatState
 		if(iconToo)
 		{
 			// updating icons
-			var daID:Int = (char.isPlayer ? 1 : 0);
-			hudBuild.changeIcon(daID, char.curChar);
+			hudBuild.changeIcon(char.curChar, char.isPlayer ? PLAYER : ENEMY);
 		}
 		
 		var evilTrail = char._dynamic["evilTrail"];
@@ -1766,13 +1771,12 @@ class PlayState extends MusicBeatState
 					if(note.strumlineID == strumline.ID)
 						thisStrumline = strumline;
 				
-				if(thisStrumline.customData) continue;
+				if(thisStrumline.customData || note.gotHit) continue;
 				if(!thisStrumline.isPlayer)
 					note.visible = !SaveData.data.get('Middlescroll');
-				if(note.gotHit)
-					note.visible = false;
 			}
-			hudBuild.updateHitbox(bfStrumline.downscroll);
+			hudBuild.downscroll = SaveData.data.get('Downscroll');
+			hudBuild.updatePositions();
 			updateNotes();
 		}
 
@@ -1808,7 +1812,7 @@ class PlayState extends MusicBeatState
 				loopGroup(this);
 			
 			case 'Song Timer':
-				hudBuild.timeTxt.visible = SaveData.data.get('Song Timer');
+				hudBuild.enableTimeTxt(SaveData.data.get('Song Timer'));
 		}
 	}
 

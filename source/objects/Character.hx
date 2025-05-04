@@ -42,7 +42,6 @@ class Character extends FlxAnimate
 	// you can modify these manually but i reccomend using the offset editor instead
 	public var globalOffset:FlxPoint = new FlxPoint();
 	public var cameraOffset:FlxPoint = new FlxPoint();
-	public var ratingsOffset:FlxPoint = new FlxPoint();
 	private var scaleOffset:FlxPoint = new FlxPoint();
 
 	// you're probably gonna use sparrow by default?
@@ -393,7 +392,6 @@ class Character extends FlxAnimate
 					}
 					globalOffset.set(charData.globalOffset[0], charData.globalOffset[1]);
 					cameraOffset.set(charData.cameraOffset[0], charData.cameraOffset[1]);
-					ratingsOffset.set(charData.ratingsOffset[0], charData.ratingsOffset[1]);
 				} catch(e) {
 					Logs.print('$curChar offsets not found', WARNING);
 				}

@@ -64,7 +64,6 @@ class OptionsSubState extends MusicBeatSubState
             "Split Holds",
             "Static Hold Anim",
             "Single Rating",
-			"Ratings on HUD",
 			"Song Timer"
 		],
         #if TOUCH_CONTROLS

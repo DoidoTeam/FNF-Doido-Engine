@@ -17,11 +17,17 @@ class Rating extends FlxGroup
 
 	var tweens:Array<FlxTween> = [];
 
-	public var numOffset:FlxPoint = new FlxPoint(0,0);
+	public var ratingScale:Float = 1.0; // scale multiplier
+	public var numberScale:Float = 1.0; // scale multiplier
+	public var numberOffset:FlxPoint = new FlxPoint(0,0); // global offset for numbers
+	public var numberSpace:Float = 0.0; // space between each number
+
+	public var assetModifier:String = "base";
 	
 	public function new(rating:String, combo:Int, assetModifier:String = "base")
 	{
 		super();
+		this.assetModifier = assetModifier;
 		daRating = new RatingFNF(rating, assetModifier);
 		add(daRating);
 		
@@ -35,13 +41,18 @@ class Rating extends FlxGroup
 		switch(assetModifier)
 		{
 			case "pixel":
-				numOffset.set(4, 8);
+				numberSpace = 0.8;
+				numberOffset.y = -1.6;
 			default:
-				numOffset.set(12, 18);
+				numberSpace = 24;
+				numberOffset.y = -42;
 		}
 		
 		setPos();
-		
+	}
+
+	public function playRating()
+	{
 		var single:Bool = SaveData.data.get("Single Rating");
 
 		if(!single)
@@ -53,7 +64,6 @@ class Rating extends FlxGroup
 		else
 		{
 			jumpTween(daRating);
-			numOffset.x -= 2;
 		}
 		deathTween(daRating, 0.3);
 		for(item in daNum)
@@ -66,7 +76,7 @@ class Rating extends FlxGroup
 			}
 			else
 			{
-				jumpTween(item);
+				jumpTween(item, FlxG.random.float(0, 0.25));
 			}
 			deathTween(item, FlxG.random.float(0.2, 0.8));
 		}
@@ -74,14 +84,31 @@ class Rating extends FlxGroup
 	
 	public function setPos(x:Float = 0, y:Float = 0)
 	{
+		daRating.scale.set(
+			daRating.mainScale * ratingScale,
+			daRating.mainScale * ratingScale
+		);
+		daRating.updateHitbox();
+		for(item in daNum)
+		{
+			item.scale.set(
+				daNum.mainScale * ratingScale,
+				daNum.mainScale * ratingScale
+			);
+			item.updateHitbox();
+		}
+
 		daRating.x = x - daRating.width / 2;
 		daRating.y = y - daRating.height / 2;
 		
 		var center:Float = daRating.x + daRating.width / 2;
 		for(item in daNum)
 		{
-			item.x = center + ((item.width - numOffset.x) * item.ID);
-			item.y = daRating.y + daRating.height - numOffset.y;
+			var formatOffset = numberSpace * item.scale.x;
+
+			item.x = center + ((item.width - formatOffset) * item.ID);
+			item.y = daRating.y + daRating.height + (numberOffset.y * item.scale.y);
+			item.x += numberOffset.x * item.scale.x;
 		}
 		
 		var lastItem = daNum.members[daNum.members.length - 1];
@@ -92,12 +119,13 @@ class Rating extends FlxGroup
 	}
 
 	// makes the thing do a little jump
-	public function jumpTween(item:FlxSprite)
+	public function jumpTween(item:FlxSprite, timeOffset:Float = 0.0)
 	{
+		var scaleOffset = FlxG.random.bool(50) ? -0.2 : 0.2;
 		var prevScale = [item.scale.x, item.scale.y];
-		item.scale.x *= 1.1;
-		item.scale.y *= 1.1;
-		tweens.push(FlxTween.tween(item.scale, {x: prevScale[0], y: prevScale[1]}, 0.15, {ease: FlxEase.cubeOut}));
+		item.scale.x *= 1.0 + scaleOffset;
+		item.scale.y *= 1.0 - scaleOffset;
+		tweens.push(FlxTween.tween(item.scale, {x: prevScale[0], y: prevScale[1]}, 0.15 + timeOffset, {ease: FlxEase.cubeOut}));
 	}
 	
 	// KILLS the poor thing :[
@@ -147,6 +175,8 @@ class Rating extends FlxGroup
 */
 class RatingFNF extends FlxSprite
 {
+	public var mainScale:Float = 1.0;
+
 	public function new(rating:String, assetModifier:String = "base")
 	{
 		super();
@@ -173,15 +203,11 @@ class RatingFNF extends FlxSprite
 		switch(assetModifier)
 		{
 			default:
-				scale.set(0.7,0.7);
+				mainScale = 0.7;
 			case "pixel":
 				antialiasing = false;
 				isPixelSprite = true;
-				scale.set(5,5);
-		}
-		if(SaveData.data.get('Ratings on HUD')) {
-			scale.x *= 0.7;
-			scale.y *= 0.7;
+				mainScale = 5;
 		}
 		updateHitbox();
 	}
@@ -189,13 +215,21 @@ class RatingFNF extends FlxSprite
 
 class NumberFNF extends FlxSpriteGroup
 {
+	public var mainScale:Float = 1.0;
+
 	public function new(number:Int, assetModifier:String = "base")
 	{
 		super();
 		if(!Paths.fileExists('images/hud/$assetModifier/numbers.png'))
 			assetModifier = "base";
-		
-		var numArray:Array<String> = Std.string(number).split("");
+
+		var stringNum = Std.string(number);
+		if(number > 0)
+		{
+			stringNum = stringNum.lpad('0', 3);
+		}
+
+		var numArray:Array<String> = stringNum.split("");
 		var count:Int = 0;
 		for(i in numArray)
 		{
@@ -223,17 +257,12 @@ class NumberFNF extends FlxSpriteGroup
 			switch(assetModifier)
 			{
 				default:
-					num.scale.set(0.5,0.5);
+					mainScale = 0.5;
 				case "pixel":
 					num.antialiasing = false;
 					num.isPixelSprite = true;
-					num.scale.set(5,5);
+					mainScale = 5;
 			}
-			if(SaveData.data.get('Ratings on HUD')) {
-				num.scale.x *= 0.7;
-				num.scale.y *= 0.7;
-			}
-			num.updateHitbox();
 		}
 	}
 }
