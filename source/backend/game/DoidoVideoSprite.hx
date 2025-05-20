@@ -225,6 +225,16 @@ class DoidoVideoSprite extends FlxSprite
 	}
 
 	/**
+	 * Restarts video from the beginning
+	 */
+	public inline function restart():Void
+	{
+		if(bitmap != null)
+			bitmap.time = 0;
+		resume();
+	}
+
+	/**
 	 * Resumes playback of a paused video.
 	 */
 	public inline function resume():Void

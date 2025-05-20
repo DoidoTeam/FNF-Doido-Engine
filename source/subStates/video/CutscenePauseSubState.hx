@@ -1,7 +1,6 @@
-package subStates;
+package subStates.video;
 
 import backend.game.GameData.MusicBeatSubState;
-#if VIDEOS_ALLOWED
 import backend.game.DoidoVideoSprite;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxPieDial;
@@ -12,13 +11,20 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 
-class VideoPlayerSubState extends MusicBeatSubState
+enum PauseExit
 {
-    private var video:DoidoVideoSprite;
+    UNPAUSE;
+    SKIP;
+    RESTART;
+}
+
+class CutscenePauseSubState extends MusicBeatSubState
+{
+    private var buttonNames:Array<String> = ["unpause", "restart", "skip"];
 
     private var darkBG:FlxSprite;
     private var pieDial:FlxPieDial;
-    private var curSelection:Int = 0;
+    private var curSelected:Int = 0;
     private var buttons:FlxTypedGroup<FlxSprite>;
     private var curBtn:FlxSprite;
 
@@ -27,45 +33,26 @@ class VideoPlayerSubState extends MusicBeatSubState
     private var holdSkip:Bool = false;
     private var skipProgress:Float = 0.0;
 
-    public function new(key:String, ?finishCallBack:Void->Void)
+    private var finishCallBack:PauseExit->Void;
+
+    public function new(?finishCallBack:PauseExit->Void)
     {
         super();
+        this.finishCallBack = finishCallBack; 
         this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
         FlxG.sound.music?.pause();
-        video = new DoidoVideoSprite();
-		video.antialiasing = SaveData.data.get("Antialiasing");
-		video.bitmap.onFormatSetup.add(function():Void
-		{
-			if (video.bitmap != null && video.bitmap.bitmapData != null)
-			{
-				video.setGraphicSize(FlxG.width, FlxG.height);
-				video.updateHitbox();
-				video.screenCenter();
-			}
-		});
-        video.bitmap.onEndReached.add(function():Void
-        {
-            FlxG.sound.music?.resume();
-            video.destroy();
-            close();
-        });
-        if(finishCallBack != null)
-            video.bitmap.onEndReached.add(finishCallBack);
-		
-        Logs.print('loaded video $key.mp4');
-        video.load(Paths.video(key));
-        add(video);
         
         darkBG = new FlxSprite().makeGraphic(FlxG.width + 10, FlxG.height + 10, 0xFF000000);
         darkBG.alpha = 0.0001;
         add(darkBG);
 
         add(buttons = new FlxTypedGroup<FlxSprite>());
-        for(i in 0...2)
+        for(i in 0...buttonNames.length)
         {
+            var name = buttonNames[i];
             var btn = new FlxSprite(50 + (170 * i), FlxG.height + 20);
-            btn.frames = Paths.getSparrowAtlas('hud/base/videos/${(i == 0) ? 'unpause' : 'skip'}');
-            var anims:Array<Array<Dynamic>> = (i == 0) ? [
+            btn.frames = Paths.getSparrowAtlas('hud/base/videos/$name');
+            var anims:Array<Array<Dynamic>> = (name != "skip") ? [
                 ['idle', true],
                 ['click', false],
             ] : [
@@ -80,18 +67,18 @@ class VideoPlayerSubState extends MusicBeatSubState
             function endAnim(name:String)
             {
                 var finishAnim:Null<String> = null;
-                if(i == 0)
-                {
-                    finishAnim = switch(name) {
-                        case 'click': 'idle';
-                        default: null;
-                    }
-                }
-                if(i == 1)
+                if(name == "skip")
                 {
                     finishAnim = switch(name) {
                         case 'hold': 'hold loop';
                         case 'release': 'idle';
+                        default: null;
+                    }
+                }
+                else
+                {
+                    finishAnim = switch(name) {
+                        case 'click': 'idle';
                         default: null;
                     }
                 }
@@ -109,7 +96,7 @@ class VideoPlayerSubState extends MusicBeatSubState
             btn.animation.play('idle');
             buttons.add(btn);
         }
-        changeSelection(false);
+        changeSelection(0);
 
         pieDial = new FlxPieDial(0, 0, 48, FlxColor.WHITE, 72, CIRCLE, false);
         pieDial.x = 80 + (170 * buttons.members.length);
@@ -118,20 +105,13 @@ class VideoPlayerSubState extends MusicBeatSubState
         pieDial.amount = 0.0;
         add(pieDial);
 
-        new FlxTimer().start(0.001, function(tmr) {
-            lockControls = false;
-            lockMovement = false;
-            video.play();
-        });
+        moveButtons(true);
     }
 
-    public function pauseVideo(isPause:Bool)
+    public function moveButtons(moveIn:Bool)
     {
         lockControls = true;
         lockMovement = true;
-        FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
-        if(isPause)
-            video.pause();
 
         for(btn in buttons.members)
         {
@@ -139,35 +119,31 @@ class VideoPlayerSubState extends MusicBeatSubState
                 startDelay: 0.1 * btn.ID,
                 ease: FlxEase.cubeOut,
                 onComplete: function(twn) {
-                    FlxTween.tween(btn, {y: isPause ? FlxG.height - btn.height - 30 : FlxG.height + 20}, 0.4, {
-                        ease: isPause ? FlxEase.cubeInOut : FlxEase.cubeIn
+                    FlxTween.tween(btn, {y: moveIn ? FlxG.height - btn.height - 30 : FlxG.height + 20}, 0.4, {
+                        ease: moveIn ? FlxEase.cubeInOut : FlxEase.cubeIn
                     });
                 }
             });
         }
 
-        FlxTween.tween(darkBG, {alpha: isPause ? 0.7 : 0.001}, 0.4);
+        FlxTween.tween(darkBG, {alpha: moveIn ? 0.7 : 0.001}, 0.4);
 
-        if(isPause) {
+        if(moveIn) {
             new FlxTimer().start(0.05, function(tmr) {
                 lockControls = false;
             });
+
+            new FlxTimer().start(0.9, function(tmr) {
+                lockMovement = false;
+            });
         }
-
-        new FlxTimer().start(0.75, function(tmr) {
-            if(!isPause)
-                lockControls = false;
-
-            lockMovement = false;
-            if(!isPause)
-                video.resume();
-        });
     }
 
-    private function changeSelection(change:Bool = true)
+    private function changeSelection(change:Int = 0)
     {
-        if(change) {
-            curSelection = ((curSelection == 0) ? 1 : 0);
+        if(change != 0) {
+            curSelected += change;
+		    curSelected = FlxMath.wrap(curSelected, 0, buttonNames.length - 1);
             FlxG.sound.play(Paths.sound('menu/scrollMenu'), 0.7);
 
             if(!lockMovement) {
@@ -175,7 +151,7 @@ class VideoPlayerSubState extends MusicBeatSubState
                     {
                         FlxTween.cancelTweensOf(btn);
                         btn.y = FlxG.height - btn.height - 30;
-                        if(btn.ID == curSelection)
+                        if(btn.ID == curSelected)
                         {
                             btn.y -= 10;
                             FlxTween.tween(btn, {y: btn.y + 10}, 0.2, {ease: FlxEase.cubeOut});
@@ -191,7 +167,7 @@ class VideoPlayerSubState extends MusicBeatSubState
         for(btn in buttons.members)
         {
             btn.color = 0xFF555555;
-            if(btn.ID == curSelection) {
+            if(btn.ID == curSelected) {
                 btn.color = 0xFFFFFFFF;
                 curBtn = btn;
             }
@@ -203,25 +179,13 @@ class VideoPlayerSubState extends MusicBeatSubState
         super.update(elapsed);
         if(!lockControls)
         {
-            if(video.bitmap?.isPlaying)
-            {
-                if(Controls.justPressed(ACCEPT))
-                    pauseVideo(true);
-            }
-            else
-            {
-                if(Controls.justPressed(UI_LEFT) || Controls.justPressed(UI_RIGHT))
-                    changeSelection();
-                if(curSelection == 0)
-                {
-                    if(Controls.justPressed(ACCEPT))
-                    {
-                        curBtn.animation.play('click');
-                        pauseVideo(false);
-                    }
-                }
-                if(curSelection == 1)
-                {
+            if(Controls.justPressed(UI_LEFT))
+                changeSelection(-1);
+            if(Controls.justPressed(UI_RIGHT))
+                changeSelection(1);
+
+            switch(buttonNames[curSelected]) {
+                case "skip":
                     holdSkip = Controls.pressed(ACCEPT);
                     if(Controls.justPressed(ACCEPT)) {
                         curBtn.animation.play('hold');
@@ -231,9 +195,42 @@ class VideoPlayerSubState extends MusicBeatSubState
                         curBtn.animation.play('release');
                         FlxG.sound.play(Paths.sound('menu/scrollMenu'), 0.7);
                     }
-                }
+                case "restart":
+                    if(Controls.justPressed(ACCEPT)) {
+                        curBtn.animation.play('click');
+                        FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
+
+                        var time:Float = 0.3;
+
+                        FlxTween.tween(darkBG, {alpha: 0.001}, time);
+                        for(btn in buttons.members)
+                        {
+                            FlxTween.cancelTweensOf(btn);
+                            if(btn.ID != curSelected)
+                                FlxTween.tween(btn, {alpha: 0.001}, time);
+                        }
+
+                        new FlxTimer().start(time + 0.18, function(tmr) {
+                            if(finishCallBack != null)
+                                finishCallBack(RESTART);
+                            close();
+                        });
+                    } 
+                default:
+                    if(Controls.justPressed(ACCEPT)) {
+                        curBtn.animation.play('click');
+                        FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
+                        moveButtons(false);
+
+                        new FlxTimer().start(0.9, function(tmr) {
+                            if(finishCallBack != null)
+                                finishCallBack(UNPAUSE);
+                            close();
+                        });
+                    }
             }
         }
+
         if(holdSkip)
             skipProgress += elapsed;
         else
@@ -241,24 +238,10 @@ class VideoPlayerSubState extends MusicBeatSubState
         skipProgress = FlxMath.bound(skipProgress, 0, 1);
         pieDial.amount = skipProgress;
         pieDial.alpha = (pieDial.amount <= 0.02 ? 0.0001 : 1.0);
-        if(skipProgress >= 1.0)
-            for(event in video.bitmap.onEndReached.__listeners)
-                event();
+        if(skipProgress >= 1.0) {
+            if(finishCallBack != null)
+                finishCallBack(SKIP);
+            close();
+        }
     }
 }
-#else
-class VideoPlayerSubState extends MusicBeatSubState
-{
-    public function new(key:String)
-    {
-        super();
-        Logs.print('Videos are disabled!! Enable them at "Project.xml" to play "${key}"', WARNING);
-    }
-
-    override function create()
-    {
-        super.create();
-        close();
-    }
-}
-#end

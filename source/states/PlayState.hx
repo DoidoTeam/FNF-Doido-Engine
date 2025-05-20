@@ -37,6 +37,8 @@ import states.editors.*;
 import states.editors.legacy.ChartingState as LegacyChartingState;
 import states.menu.*;
 import subStates.*;
+import subStates.video.*;
+import subStates.video.CutscenePauseSubState;
 
 #if TOUCH_CONTROLS
 import objects.mobile.Hitbox;
@@ -124,7 +126,12 @@ class PlayState extends MusicBeatState
 
 	public static var camFollow:FlxObject = new FlxObject();
 
+	// cutscene related
 	public static var playedCutscene:Bool = false;
+	var inCutscene:Bool = false;
+	var pauseCallback:Bool->Void;
+	var skipCallback:Void->Void;
+
 	public static var startedCountdown:Bool = false;
 	public static var startedSong:Bool = false;
 	
@@ -449,8 +456,14 @@ class PlayState extends MusicBeatState
 				#end
 				
 				case 'thorns':
+					inCutscene = true;
+
 					CoolUtil.playMusic('dialogue/lunchbox-scary');
 					Paths.preloadSound('sounds/dialogue/senpai/senpai_dies');
+
+					var senpaiDies:FlxSound;
+					senpaiDies = new FlxSound();
+
 					var red = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFFff1b31);
 					red.cameras = [camHUD];
 					red.scrollFactor.set();
@@ -471,6 +484,27 @@ class PlayState extends MusicBeatState
 					add(spirit);
 					
 					spirit.alpha = 0;
+
+					skipCallback = () -> {
+						inCutscene = false;
+
+						CoolUtil.flash(camHUD, 0.6, 0xFFff1b31, true);
+						remove(red);
+						remove(spirit);
+						remove(senpaiDies);
+
+						new FlxTimer().start(0.8, function(tmr:FlxTimer)
+						{
+							startDialogue(DialogueUtil.loadDialogue('thorns', songDiff));
+						});
+					};
+
+					pauseCallback = (isPause:Bool) -> {
+						if(isPause)
+							senpaiDies.pause();
+						else
+							senpaiDies.resume();
+					};
 					
 					new FlxTimer().start(0.6, function(tmr:FlxTimer)
 					{
@@ -478,18 +512,8 @@ class PlayState extends MusicBeatState
 						FlxTween.tween(spirit, {alpha: 1}, 0.5);
 						FlxTween.tween(spirit, {alpha: 0}, 1.0, {startDelay: 3.2});
 						
-						FlxG.sound.play(Paths.sound('dialogue/senpai/senpai_dies'), 1, false, null, true, function()
-						{
-							CoolUtil.flash(camHUD, 0.6, 0xFFff1b31, true);
-							//camHUD.flash(0xFFff1b31, 0.6, null, true);
-							remove(red);
-							remove(spirit);
-							
-							new FlxTimer().start(0.8, function(tmr:FlxTimer)
-							{
-								startDialogue(DialogueUtil.loadDialogue('thorns', songDiff));
-							});
-						});
+						senpaiDies.loadEmbedded(Paths.sound('dialogue/senpai/senpai_dies'), false, true, skipCallback);
+						senpaiDies.play();
 					});
 					
 				default:
@@ -1676,6 +1700,31 @@ class PlayState extends MusicBeatState
 
 	public function pauseSong()
 	{
+		if(inCutscene) {
+			if(pauseCallback != null)
+				pauseCallback(true);
+
+			paused = true;
+			CoolUtil.activateTimers(false);
+			discordUpdateTime = 0.0;
+			openSubState(new subStates.video.CutscenePauseSubState(function(exit:PauseExit) {
+				switch (exit) {
+					case SKIP:
+						if(skipCallback != null)
+							skipCallback();
+					case RESTART:
+						playedCutscene = false;
+						Main.skipStuff();
+						Main.resetState();
+					default:
+						if(pauseCallback != null)
+							pauseCallback(false);
+				}
+
+				paused = false;
+			}));
+		}
+
 		if(!startedCountdown || endedSong || paused || isDead) return;
 		
 		paused = true;
