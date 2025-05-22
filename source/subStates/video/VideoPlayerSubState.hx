@@ -56,7 +56,7 @@ class VideoPlayerSubState extends MusicBeatSubState
         FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
         video.pause();
 
-        openSubState(new subStates.video.CutscenePauseSubState(function(exit:PauseExit) {
+        openSubState(new subStates.CutscenePauseSubState(function(exit:PauseExit) {
             switch(exit) {
                 case SKIP:
                     for(event in video.bitmap.onEndReached.__listeners)

@@ -38,7 +38,7 @@ import states.editors.legacy.ChartingState as LegacyChartingState;
 import states.menu.*;
 import subStates.*;
 import subStates.video.*;
-import subStates.video.CutscenePauseSubState;
+import subStates.CutscenePauseSubState;
 
 #if TOUCH_CONTROLS
 import objects.mobile.Hitbox;
@@ -1707,7 +1707,7 @@ class PlayState extends MusicBeatState
 			paused = true;
 			CoolUtil.activateTimers(false);
 			discordUpdateTime = 0.0;
-			openSubState(new subStates.video.CutscenePauseSubState(function(exit:PauseExit) {
+			openSubState(new CutscenePauseSubState(function(exit:PauseExit) {
 				switch (exit) {
 					case SKIP:
 						if(skipCallback != null)

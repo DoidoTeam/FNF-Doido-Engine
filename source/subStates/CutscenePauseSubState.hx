@@ -1,4 +1,4 @@
-package subStates.video;
+package subStates;
 
 import backend.game.GameData.MusicBeatSubState;
 import backend.game.DoidoVideoSprite;
@@ -17,7 +17,6 @@ enum PauseExit
     SKIP;
     RESTART;
 }
-
 class CutscenePauseSubState extends MusicBeatSubState
 {
     private var buttonNames:Array<String> = ["unpause", "restart", "skip"];
@@ -41,6 +40,7 @@ class CutscenePauseSubState extends MusicBeatSubState
         this.finishCallBack = finishCallBack; 
         this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
         FlxG.sound.music?.pause();
+        FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
         
         darkBG = new FlxSprite().makeGraphic(FlxG.width + 10, FlxG.height + 10, 0xFF000000);
         darkBG.alpha = 0.0001;
@@ -51,7 +51,7 @@ class CutscenePauseSubState extends MusicBeatSubState
         {
             var name = buttonNames[i];
             var btn = new FlxSprite(50 + (170 * i), FlxG.height + 20);
-            btn.frames = Paths.getSparrowAtlas('hud/base/videos/$name');
+            btn.frames = Paths.getSparrowAtlas('hud/base/cutscene/$name');
             var anims:Array<Array<Dynamic>> = (name != "skip") ? [
                 ['idle', true],
                 ['click', false],
@@ -115,15 +115,7 @@ class CutscenePauseSubState extends MusicBeatSubState
 
         for(btn in buttons.members)
         {
-            FlxTween.tween(btn, {y: FlxG.height - btn.height - 70}, 0.3, {
-                startDelay: 0.1 * btn.ID,
-                ease: FlxEase.cubeOut,
-                onComplete: function(twn) {
-                    FlxTween.tween(btn, {y: moveIn ? FlxG.height - btn.height - 30 : FlxG.height + 20}, 0.4, {
-                        ease: moveIn ? FlxEase.cubeInOut : FlxEase.cubeIn
-                    });
-                }
-            });
+            moveSingleButton(btn, moveIn, true);
         }
 
         FlxTween.tween(darkBG, {alpha: moveIn ? 0.7 : 0.001}, 0.4);
@@ -137,6 +129,19 @@ class CutscenePauseSubState extends MusicBeatSubState
                 lockMovement = false;
             });
         }
+    }
+
+    public function moveSingleButton(btn:FlxSprite, moveIn:Bool, hasDelay:Bool = false)
+    {
+        FlxTween.tween(btn, {y: FlxG.height - btn.height - 70}, 0.3, {
+            startDelay: 0.1 * (hasDelay ? btn.ID : 1),
+            ease: FlxEase.cubeOut,
+            onComplete: function(twn) {
+                FlxTween.tween(btn, {y: moveIn ? FlxG.height - btn.height - 30 : FlxG.height + 20}, 0.4, {
+                    ease: moveIn ? FlxEase.cubeInOut : FlxEase.cubeIn
+                });
+            }
+        });
     }
 
     private function changeSelection(change:Int = 0)
@@ -210,7 +215,9 @@ class CutscenePauseSubState extends MusicBeatSubState
                                 FlxTween.tween(btn, {alpha: 0.001}, time);
                         }
 
-                        new FlxTimer().start(time + 0.18, function(tmr) {
+                        moveSingleButton(curBtn, false, false);
+
+                        new FlxTimer().start(time + 0.6, function(tmr) {
                             if(finishCallBack != null)
                                 finishCallBack(RESTART);
                             close();
