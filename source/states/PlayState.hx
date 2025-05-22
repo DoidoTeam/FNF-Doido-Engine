@@ -861,13 +861,13 @@ class PlayState extends MusicBeatState
 	
 	public function popUpRating(note:Note, strumline:Strumline, miss:Bool = false)
 	{
-		// return;
 		var thisChar = strumline.character.char;
-		var noteDiff:Float = Math.abs(note.noteDiff());
-		if(strumline.botplay)
-			noteDiff = 0;
-		else
-			if(note.isHold && !miss)
+		var noteDiff:Float = 0;
+		if(!strumline.botplay && !miss)
+		{
+			if(!note.isHold)
+				noteDiff = Math.abs(note.noteDiff());
+			else
 			{
 				noteDiff = Timings.minTiming;
 				var holdPercent:Float = (note.holdHitLength / note.holdLength);
@@ -875,6 +875,7 @@ class PlayState extends MusicBeatState
 					if(holdPercent >= timing[0] && noteDiff > timing[1])
 						noteDiff = timing[1];
 			}
+		}
 
 		var rating:String = Timings.diffToRating(noteDiff);
 		var judge:Float = Timings.diffToJudge(noteDiff);
@@ -947,6 +948,10 @@ class PlayState extends MusicBeatState
 			// regains your health only if you hold it entirely
 			if(note.isHold)
 				health += 0.05 * (note.holdHitLength / note.holdLength);
+
+			// adding timings
+			Timings.notesHit++;
+			Timings.ratingCount.set(rating, Timings.ratingCount.get(rating) + 1);
 			
 			if(rating == "shit")
 			{

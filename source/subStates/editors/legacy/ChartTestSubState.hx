@@ -251,7 +251,7 @@ class ChartTestSubState extends MusicBeatSubState
 		if(!noteInfo) return;
 
 		infoTxt.text = 'Accuracy: ${Timings.accuracy}%' + ' -- Step: ${curStep}\n';
-		infoTxt.text +='Hits: ${Timings.notesHit - Timings.misses} -- Misses: ${Timings.misses}';
+		infoTxt.text +='Hits: ${Timings.notesHit} -- Misses: ${Timings.misses}';
 		
 		infoTxt.screenCenter(X);
 		infoTxt.y = (downscroll ? 15 : FlxG.height - infoTxt.height - 15);
@@ -439,19 +439,18 @@ class ChartTestSubState extends MusicBeatSubState
 
 	public function popUpRating(note:Note, strumline:Strumline, miss:Bool = false)
 	{
-		// return;
-		var noteDiff:Float = Math.abs(note.songTime - Conductor.songPos);
-		if(strumline.botplay)
-			noteDiff = 0;
-
-		if(note.isHold && !miss)
+		var noteDiff:Float = 0;
+		if(!strumline.botplay && !miss)
 		{
-			noteDiff = Timings.minTiming;
-			var holdPercent:Float = (note.holdHitLength / note.holdLength);
-			for(timing in Timings.holdTimings)
+			if(!note.isHold)
+				noteDiff = Math.abs(note.noteDiff());
+			else
 			{
-				if(holdPercent >= timing[0] && noteDiff > timing[1])
-					noteDiff = timing[1];
+				noteDiff = Timings.minTiming;
+				var holdPercent:Float = (note.holdHitLength / note.holdLength);
+				for(timing in Timings.holdTimings)
+					if(holdPercent >= timing[0] && noteDiff > timing[1])
+						noteDiff = timing[1];
 			}
 		}
 
@@ -480,6 +479,10 @@ class ChartTestSubState extends MusicBeatSubState
 			if(Timings.combo < 0)
 				Timings.combo = 0;
 			Timings.combo++;
+
+			// adding timings
+			Timings.notesHit++;
+			Timings.ratingCount.set(rating, Timings.ratingCount.get(rating) + 1);
 			
 			if(rating == "shit")
 			{
@@ -498,8 +501,11 @@ class ChartTestSubState extends MusicBeatSubState
 			
 			prevRating = daRating;
 		}
+		daRating.ratingScale = 0.7;
+		daRating.numberScale = 0.7;
 		daRating.setPos(FlxG.width / 2, downscroll ? FlxG.height - 100 : 100);
 		backGroup.add(daRating);
+		daRating.playRating();
 		
 		updateInfo();
 	}
