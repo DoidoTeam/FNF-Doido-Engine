@@ -458,6 +458,10 @@ class PlayState extends MusicBeatState
 				case 'thorns':
 					inCutscene = true;
 
+					#if TOUCH_CONTROLS
+					createPad("pause", [camOther]);
+					#end
+
 					CoolUtil.playMusic('dialogue/lunchbox-scary');
 					Paths.preloadSound('sounds/dialogue/senpai/senpai_dies');
 
