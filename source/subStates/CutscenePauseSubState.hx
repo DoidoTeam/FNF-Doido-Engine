@@ -28,6 +28,7 @@ class CutscenePauseSubState extends MusicBeatSubState
     private var curBtn:FlxSprite;
 
     private var lockControls:Bool = true;
+    private var lockMovement:Bool = true;
     private var holdSkip:Bool = false;
     private var skipProgress:Float = 0.0;
 
@@ -110,17 +111,23 @@ class CutscenePauseSubState extends MusicBeatSubState
     public function moveButtons(moveIn:Bool)
     {
         lockControls = true;
+        lockMovement = true;
 
         for(btn in buttons.members)
         {
+            FlxTween.cancelTweensOf(btn);
             moveSingleButton(btn, moveIn, true);
         }
 
         FlxTween.tween(darkBG, {alpha: moveIn ? 0.7 : 0.001}, 0.4);
 
         if(moveIn) {
-            new FlxTimer().start(0.9, function(tmr) {
+            new FlxTimer().start(0.05, function(tmr) {
                 lockControls = false;
+            });
+
+            new FlxTimer().start(0.9, function(tmr) {
+                lockMovement = false;
             });
         }
     }
@@ -145,7 +152,7 @@ class CutscenePauseSubState extends MusicBeatSubState
 		    curSelected = FlxMath.wrap(curSelected, 0, buttonNames.length - 1);
             FlxG.sound.play(Paths.sound('menu/scrollMenu'), 0.7);
 
-            if(!lockControls) {
+            if(!lockMovement) {
                 for(btn in buttons.members)
                     {
                         FlxTween.cancelTweensOf(btn);
@@ -196,12 +203,12 @@ class CutscenePauseSubState extends MusicBeatSubState
                     }
                 case "restart":
                     if(Controls.justPressed(ACCEPT)) {
-                        lockControls = true;
                         curBtn.animation.play('click');
                         FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
 
                         var time:Float = 0.3;
 
+                        FlxTween.cancelTweensOf(darkBG);
                         FlxTween.tween(darkBG, {alpha: 0.001}, time);
                         for(btn in buttons.members)
                         {
