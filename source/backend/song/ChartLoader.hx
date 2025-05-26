@@ -1,8 +1,8 @@
 package backend.song;
 
-import backend.song.SongData.EventSong;
-import backend.song.SongData.SwagSection;
 import backend.song.SongData.SwagSong;
+import backend.song.SongData.SwagNote;
+import backend.song.SongData.SwagEventSong;
 import objects.note.EventNote;
 import objects.note.Note;
 
@@ -22,96 +22,19 @@ class ChartLoader
 		// bpm change stuff for sustain notes
 		var noteCrochet:Float = Conductor.stepCrochet;
 		
-		for(section in SONG.notes)
-		{
-			for(event in Conductor.bpmChangeMap)
-				if(event.stepTime == (daSection * 16))
-				{
-					noteCrochet = Conductor.calcStep(event.bpm);
-					Logs.print('changed note bpm ${event.bpm}');
-				}
-			
-			for (songNotes in section.sectionNotes)
-			{
-				/* - late || + early */
-				var daStrumTime:Float = songNotes[0];
-				var daNoteData:Int = Std.int(songNotes[1] % 4);
-				var daNoteType:String = 'none';
-				// very stupid but I'm lazy
-				if(songNotes.length > 2)
-					daNoteType = songNotes[3];
-				
-				// psych event notes come on
-				if(songNotes[1] < 0) continue;
-				
-				// create the new note
-				var swagNote:Note = new Note();
-				swagNote.updateData(daStrumTime, daNoteData, daNoteType);
-				
-				unspawnNotes.push(swagNote);
-				
-				var isPlayer = (songNotes[1] >= 4);
-				if(section.mustHitSection)
-					isPlayer = (songNotes[1] <  4);
-				
-				swagNote.strumlineID = isPlayer ? 1 : 0;
-				
-				var susLength:Float = songNotes[2];
-				if(susLength > 0)
-				{
-					var daParent:Note = swagNote;
-					
-					swagNote.holdLength = susLength;
-					swagNote.noteCrochet = noteCrochet;
-					
-					var rawLoop:Float = (susLength / noteCrochet);
-					var holdLoop:Int = (
-						(rawLoop - Math.floor(rawLoop) <= 0.8) ?
-						Math.floor(rawLoop) : Math.round(rawLoop)
-					);
-					if (holdLoop <= 0)
-						holdLoop = 1;
-					
-					var holdID:Int = 0;
-					for(j in 0...(holdLoop + 1))
-					{
-						var isHoldEnd = (j == holdLoop);
-						
-						var holdNote:Note = new Note();
-						holdNote.isHold = true;
-						holdNote.isHoldEnd = isHoldEnd;
-						holdNote.updateData(daStrumTime, daNoteData, daNoteType);
-						
-						holdNote.parentNote = daParent;
-						holdNote.strumlineID = swagNote.strumlineID;
-						holdNote.ID = holdID;
-						
-						// uhhh
-						holdNote.holdLength = susLength;
-						holdNote.noteCrochet = noteCrochet;
-						
-						unspawnNotes.push(holdNote);
-						
-						daParent = holdNote;
-						swagNote.children.push(holdNote);
-						holdID++;
-					}
-				}
-			}
-			daSection++;
-		}
+		// load
 		
 		unspawnNotes.sort(CoolUtil.sortByShit);
 		
 		return unspawnNotes;
 	}
 
-	public static function getEvents(EVENTS:EventSong):Array<EventNote>
+	public static function getEvents(EVENTS:SwagEventSong):Array<EventNote>
 	{
 		var unspawnEvents:Array<EventNote> = [];
-		for(eventList in EVENTS.songEvents)
+		/*for(eventList in EVENTS.songEvents)
 		{
-			for(i in 0...eventList[2].length)
+			/*for(i in 0...eventList[2].length)
 			{
 				var event = eventList[2][i];
 				if(event == null)
@@ -128,7 +51,7 @@ class ChartLoader
 				eventNote.value3 = event[3];
 				unspawnEvents.push(eventNote);
 			}
-		}
+		}*/
 		unspawnEvents.sort(CoolUtil.sortByShit);
 		return unspawnEvents;
 	}

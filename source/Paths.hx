@@ -199,8 +199,11 @@ class Paths
 		return openfl.Assets.getText(getPath(filePath, library));
 		#end
 
+	public static function parseJson(key:Dynamic):Dynamic
+		return TJSON.parse(key.trim());
+
 	public static function json(key:String, ?library:String):Dynamic
-		return TJSON.parse(getContent('$key.json', library).trim());
+		return parseJson(getContent('$key.json', library));
 
 	public static function script(key:String, ?library:String):String
 		return getContent('$key', library);

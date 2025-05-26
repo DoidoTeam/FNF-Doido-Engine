@@ -4,9 +4,8 @@ import crowplexus.iris.Iris;
 import backend.game.GameData.MusicBeatState;
 import backend.utils.DialogueUtil;
 import backend.song.*;
-import backend.song.SongData.EventSong;
+import backend.song.SongData.SwagEventSong;
 import backend.song.SongData.SwagSong;
-import backend.song.SongData.SwagSection;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
@@ -34,7 +33,6 @@ import objects.note.*;
 import objects.dialogue.Dialogue;
 import shaders.*;
 import states.editors.*;
-import states.editors.legacy.ChartingState as LegacyChartingState;
 import states.menu.*;
 import subStates.*;
 import subStates.video.*;
@@ -49,7 +47,7 @@ using StringTools;
 class PlayState extends MusicBeatState
 {
 	// song stuff
-	public static var EVENTS:EventSong;
+	public static var EVENTS:SwagEventSong;
 	public static var SONG:SwagSong;
 	public static var songDiff:String = "normal";
 	// more song stuff
@@ -122,7 +120,6 @@ class PlayState extends MusicBeatState
 	public static var forcedCamPos:Null<FlxPoint>;
 	public static var forcedCamSection:String = "none";
 	public var camZoomTween:FlxTween;
-	public var curSection:SwagSection;
 
 	public static var camFollow:FlxObject = new FlxObject();
 
@@ -230,8 +227,7 @@ class PlayState extends MusicBeatState
 		// adjusting the conductor
 		Conductor.setBPM(SONG.bpm);
 		Conductor.mapBPMChanges(SONG);
-		curSection = SONG.notes[0];
-		
+			
 		// setting up the cameras
 		camGame = new FlxCamera();
 		
@@ -257,7 +253,7 @@ class PlayState extends MusicBeatState
 		callScript("create");
 		
 		stageBuild = new Stage();
-		stageBuild.reloadStageFromSong(SONG.song, SONG.gfVersion);
+		stageBuild.reloadStageFromSong(SONG.song, SONG.gf);
 		add(stageBuild);
 
 		classicZoom = defaultCamZoom;
@@ -280,8 +276,8 @@ class PlayState extends MusicBeatState
 		*	so it doesnt reload the icons
 		*/
 		gf = new CharGroup(false, stageBuild.gfVersion);
-		dad = new CharGroup(false, SONG.player2);
-		boyfriend = new CharGroup(true, SONG.player1);
+		dad = new CharGroup(false, SONG.opponent);
+		boyfriend = new CharGroup(true, SONG.player);
 
 		preloadEvents(unspawnEvents);
 
@@ -365,8 +361,10 @@ class PlayState extends MusicBeatState
 		inst = new FlxSound();
 		inst.loadEmbedded(Paths.inst(daSong, songDiff), false, false);
 
+		var hasVocals:Bool = true;
+
 		vocals = new FlxSound();
-		if(SONG.needsVoices)
+		if(hasVocals)
 			vocals.loadEmbedded(Paths.vocals(daSong, songDiff, "-player"), false, false);
 
 		songLength = inst.length;
@@ -390,8 +388,7 @@ class PlayState extends MusicBeatState
 		addMusic(vocals);
 
 		// adding opponent vocals
-		if(SONG.needsVoices
-		&& Paths.songPath(daSong, 'Voices', songDiff, '-opp').endsWith('-opp'))
+		if(Paths.songPath(daSong, 'Voices', songDiff, '-opp').endsWith('-opp'))
 		{
 			vocalsOpp = new FlxSound();
 			vocalsOpp.loadEmbedded(Paths.vocals(daSong, songDiff, '-opp'), false, false);
@@ -401,10 +398,8 @@ class PlayState extends MusicBeatState
 		Conductor.songPos = -Conductor.crochet * 5;
 		
 		// setting up the camera following
-		followCamSection(SONG.notes[0]);
+		//followCamSection("player");
 		FlxG.camera.focusOn(camFollow.getPosition());
-
-		
 		
 		for(note in unspawnNotes)
 		{
@@ -1037,14 +1032,7 @@ class PlayState extends MusicBeatState
 		#if !mobile
 		if(FlxG.keys.justPressed.SEVEN)
 		{
-			if(LegacyChartingState.SONG.song != SONG.song)
-				LegacyChartingState.curSection = 0;
 			
-			LegacyChartingState.songDiff = songDiff;
-
-			LegacyChartingState.SONG = SONG;
-			LegacyChartingState.EVENTS = EVENTS;
-			Main.switchState(new LegacyChartingState());
 		}
 
 		if(FlxG.keys.justPressed.EIGHT)
@@ -1313,7 +1301,7 @@ class PlayState extends MusicBeatState
 		
 		if(startedCountdown)
 		{
-			var lastSteps:Int = 0;
+			/*var lastSteps:Int = 0;
 			for(section in SONG.notes)
 			{
 				if(curStep >= lastSteps)
@@ -1327,7 +1315,7 @@ class PlayState extends MusicBeatState
 
 				if(SONG.song == "tutorial")
 					extraCamZoom = CoolUtil.camZoomLerp(extraCamZoom, curSection.mustHitSection ? 0 : 0.5, 3);
-			}
+			}*/
 		}
 		// stuff
 		if(forcedCamPos != null)
@@ -1519,7 +1507,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 	
-	public function followCamSection(sect:SwagSection):Void
+	/*public function followCamSection(sect:SwagSection):Void
 	{
 		var char:Character = dadStrumline.character.char;
 		var offset:FlxPoint = stageBuild.dadCam;
@@ -1537,9 +1525,8 @@ class PlayState extends MusicBeatState
 		else if(char == gf.char)
 			offset = stageBuild.gfCam;
 
-
 		followCamera(char, offset.x, offset.y);
-	}
+	}*/
 
 	public function followCamera(?char:Character, ?offsetX:Float = 0, ?offsetY:Float = 0)
 	{

@@ -11,10 +11,10 @@ import backend.game.GameData.MusicBeatState;
 import backend.song.Highscore;
 import backend.song.Highscore.ScoreData;
 import backend.song.SongData;
+import backend.song.WeekData;
 import objects.menu.AlphabetMenu;
 import objects.hud.HealthIcon;
 import states.*;
-import states.editors.legacy.ChartingState as LegacyChartingState;
 import subStates.menu.DeleteScoreSubState;
 import backend.song.Timings;
 
@@ -62,9 +62,9 @@ class FreeplayState extends MusicBeatState
 		add(bg);
 		
 		// adding songs
-		for(i in 0...SongData.weeks.length)
+		for(i in 0...WeekData.weeks.length)
 		{
-			var week = SongData.getWeek(i);
+			var week = WeekData.getWeek(i);
 			if(week.storyModeOnly) continue;
 
 			for(song in week.songs)
@@ -84,7 +84,7 @@ class FreeplayState extends MusicBeatState
 			var songName:String = diffArray.shift();
 
 			// if theres no difficulties, add easy normal and hard
-			if(diffArray.length < 1) diffArray = SongData.defaultDiffs;
+			if(diffArray.length < 1) diffArray = WeekData.defaultDiffs;
 
 			// finally adding the song
 			addSong(songName, "face", diffArray);
@@ -172,19 +172,21 @@ class FreeplayState extends MusicBeatState
 				PlayState.playList = [];
 				PlayState.songDiff = curSong.diffs[curDiff];
 				PlayState.loadSong(curSong.name);
-				
+
 				if(!toChartEditor)
 					Main.switchState(new LoadingState());
 				else
 				{
-					if(LegacyChartingState.SONG.song != PlayState.SONG.song)
+					/*if(LegacyChartingState.SONG.song != PlayState.SONG.song)
 						LegacyChartingState.curSection = 0;
 
 					LegacyChartingState.songDiff = PlayState.songDiff;
 					LegacyChartingState.SONG   = PlayState.SONG;
 					LegacyChartingState.EVENTS = PlayState.EVENTS;
-		
-					Main.switchState(new LegacyChartingState());
+					
+					Main.switchState(new LegacyChartingState());*/
+					Logs.print('Chart Editor disabled for now!!', ERROR);
+					throw "";
 				}
 			}
 			catch(e)

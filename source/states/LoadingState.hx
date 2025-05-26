@@ -90,11 +90,11 @@ class LoadingState extends MusicBeatState
 			Paths.preloadGraphic('hud/base/healthBar');
 			
 			var stageBuild = new Stage();
-			stageBuild.reloadStageFromSong(SONG.song, SONG.gfVersion);
+			stageBuild.reloadStageFromSong(SONG.song, SONG.gf);
 			addBehind(stageBuild);
 
-			var playerChars:Array<String> = [SONG.player1];
-			var charList:Array<String> = [SONG.player1, SONG.player2, stageBuild.gfVersion];
+			var playerChars:Array<String> = [SONG.player];
+			var charList:Array<String> = [SONG.player, SONG.opponent, stageBuild.gfVersion];
 			for(daEvent in unspawnEvents)
 			{
 				switch(daEvent.eventName)
@@ -141,7 +141,7 @@ class LoadingState extends MusicBeatState
 			
 			var songDiff:String = PlayState.songDiff;
 			Paths.preloadSound(Paths.songPath(SONG.song, 'Inst', songDiff));
-			if(SONG.needsVoices)
+			if(true) // has voices
 			{
 				Paths.preloadSound(Paths.songPath(SONG.song, 'Voices', songDiff, '-player'));
 				

@@ -3,6 +3,7 @@ package states.menu;
 import backend.game.GameData.MusicBeatState;
 import backend.song.Highscore;
 import backend.song.SongData;
+import backend.song.WeekData;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
@@ -43,9 +44,9 @@ class StoryMenuState extends MusicBeatState
 
 		DiscordIO.changePresence("Story Mode - Choosin' a week");
 		
-		for(i in 0...SongData.weeks.length)
+		for(i in 0...WeekData.weeks.length)
 		{
-			var week = SongData.getWeek(i);
+			var week = WeekData.getWeek(i);
 			if(week.freeplayOnly) continue;
 			
 			weekList.push(week);
@@ -272,7 +273,7 @@ class StoryMenuState extends MusicBeatState
 		diffInt += change;
 		diffInt = FlxMath.wrap(diffInt, 0, 2);
 		
-		curDiff = SongData.defaultDiffs[diffInt];
+		curDiff = WeekData.defaultDiffs[diffInt];
 		
 		// updates the score
 		scoreCount[0] = Highscore.getScore('week-' + weekList[curWeek].weekFile + '-' + curDiff).score;

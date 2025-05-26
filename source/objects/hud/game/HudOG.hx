@@ -37,11 +37,11 @@ class HudOG extends HudClass
 		
 		final SONG = PlayState.SONG;
 		iconP1 = new HealthIcon();
-		changeIcon(SONG.player1, PLAYER);
+		changeIcon(SONG.player, PLAYER);
 		add(iconP1);
 
 		iconP2 = new HealthIcon();
-		changeIcon(SONG.player2, ENEMY);
+		changeIcon(SONG.opponent, ENEMY);
 		add(iconP2);
 		
 		infoTxt = new FlxText(FlxG.width / 2 + 112, 0, 0, "hi there! i am using whatsapp");

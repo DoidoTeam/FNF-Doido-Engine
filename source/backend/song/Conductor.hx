@@ -31,7 +31,7 @@ class Conductor
 	{
 		bpmChangeMap = [];
 
-		if(song == null) return;
+		/*if(song == null) return;
 
 		var curBPM:Float = song.bpm;
 		var totalSteps:Int = 0;
@@ -52,7 +52,7 @@ class Conductor
 			var deltaSteps:Int = song.notes[i].lengthInSteps;
 			totalSteps += deltaSteps;
 			totalPos += calcStep(curBPM) * deltaSteps;
-		}
+		}*/
 	}
 
 	public static function calcBeat(bpm:Float):Float
