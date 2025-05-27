@@ -18,6 +18,7 @@ class ChartLoader
 	{
 		var unspawnNotes:Array<Note> = [];
 		var daSection:Int = 0;
+		var daSteps:Int = 0;
 		
 		// bpm change stuff for sustain notes
 		var noteCrochet:Float = Conductor.stepCrochet;
@@ -25,7 +26,7 @@ class ChartLoader
 		for(section in SONG.notes)
 		{
 			for(event in Conductor.bpmChangeMap)
-				if(event.stepTime == (daSection * 16))
+				if(event.stepTime == daSteps)
 				{
 					noteCrochet = Conductor.calcStep(event.bpm);
 					Logs.print('changed note bpm ${event.bpm}');
@@ -98,6 +99,7 @@ class ChartLoader
 					}
 				}
 			}
+			daSteps += section.lengthInSteps;
 			daSection++;
 		}
 		
