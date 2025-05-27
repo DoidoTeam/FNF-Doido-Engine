@@ -1,7 +1,5 @@
 package backend.song;
 
-using StringTools;
-
 typedef SwagSong =
 {
 	var song:String;
@@ -12,14 +10,13 @@ typedef SwagSong =
 	var player:String;
 	var opponent:String;
 	var ?gf:String;
-
-	var ?isDoido:Bool;
 }
 typedef SwagNote =
 {
 	var step:Float;
+	var data:Int;
 	var holdLength:Float;
-	var type:String;
+	var ?type:String;
 }
 /*
 *

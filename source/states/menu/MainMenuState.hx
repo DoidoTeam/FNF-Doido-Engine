@@ -141,6 +141,12 @@ class MainMenuState extends MusicBeatState
 			persistentUpdate = false;
 			openSubState(new subStates.video.VideoPlayerSubState("test"));
 		}
+		
+		if(FlxG.keys.justPressed.SEVEN)
+		{
+			FlxG.sound.play(Paths.sound("menu/cancelMenu"));
+			Main.switchState(new states.editors.ChartConvertState());
+		}
 
 		if(FlxG.keys.justPressed.EIGHT)
 		{

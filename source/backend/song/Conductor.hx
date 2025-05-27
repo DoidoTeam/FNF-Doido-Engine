@@ -4,8 +4,7 @@ import backend.song.SongData.SwagSong;
 
 typedef BPMChangeEvent =
 {
-	var stepTime:Int;
-	var songTime:Float;
+	var stepTime:Float;
 	var bpm:Float;
 }
 class Conductor
@@ -65,15 +64,13 @@ class Conductor
 	{
 		var lastChange:BPMChangeEvent = {
 			stepTime: 0,
-			songTime: 0,
 			bpm: 0
 		}
 		for(change in bpmChangeMap)
 		{
-			if (songPos >= change.songTime)
+			if (songPos >= change.stepTime * stepCrochet)
 				lastChange = change;
 		}
-
-		return lastChange.stepTime + Math.floor((songPos - lastChange.songTime) / stepCrochet);
+		return Math.floor(lastChange.stepTime + Math.floor((songPos - (lastChange.stepTime * stepCrochet)) / stepCrochet));
 	}
 }
