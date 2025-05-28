@@ -39,7 +39,7 @@ import states.menu.*;
 import subStates.*;
 import subStates.video.*;
 import subStates.CutscenePauseSubState;
-
+import backend.game.FlxVideo;
 #if TOUCH_CONTROLS
 import objects.mobile.Hitbox;
 #end
@@ -454,7 +454,6 @@ class PlayState extends MusicBeatState
 				case 'useless':
 					startVideo("test");
 				#end
-				
 				case 'thorns':
 					inCutscene = true;
 
@@ -652,17 +651,21 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	#if VIDEOS_ALLOWED
 	public function startVideo(key:String, onEnd:Bool = false):Void
 	{
+		#if hxvlc
 		openSubState(new VideoPlayerSubState(key, function() {
 			if(onEnd)
 				endSong();
 			else
 				startCountdown();
 		}));
+		#else
+		var vid:FlxVideo = new FlxVideo(Paths.video(key));
+		vid.finishCallback = onEnd ? endSong : startCountdown;
+		add(vid);
+		#end
 	}
-	#end
 	
 	public function hasCutscene():Bool
 	{

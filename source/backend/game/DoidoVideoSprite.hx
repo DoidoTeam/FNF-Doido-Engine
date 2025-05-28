@@ -1,6 +1,6 @@
 package backend.game;
 
-#if VIDEOS_ALLOWED
+#if hxvlc 
 import flixel.graphics.FlxGraphic;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;

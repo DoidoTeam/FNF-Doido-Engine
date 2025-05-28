@@ -1,7 +1,7 @@
 package subStates.video;
 
 import backend.game.GameData.MusicBeatSubState;
-#if VIDEOS_ALLOWED
+#if hxvlc
 import backend.game.DoidoVideoSprite;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxPieDial;
@@ -11,7 +11,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import subStates.video.CutscenePauseSubState;
+import subStates.CutscenePauseSubState;
 
 class VideoPlayerSubState extends MusicBeatSubState
 {
@@ -55,7 +55,7 @@ class VideoPlayerSubState extends MusicBeatSubState
     {
         FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
         video.pause();
-
+        
         openSubState(new subStates.CutscenePauseSubState(function(exit:PauseExit) {
             switch(exit) {
                 case SKIP:
@@ -67,6 +67,7 @@ class VideoPlayerSubState extends MusicBeatSubState
                     video.resume();
             }
         }));
+        
     }
 
     override function update(elapsed:Float)
