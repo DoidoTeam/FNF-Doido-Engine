@@ -35,8 +35,8 @@
 	<define name="ROUND_ICON" 			if="mac"/>
 	<define name="TOUCH_CONTROLS"		if="mobile"/>
 	<!--Uncomment-this-to-use-videos-in-your-mod!!-->
-	<!--<define name="VIDEOS_ALLOWED" />-->
-	<define name="HXVLC_NO_SHARE_DIRECTORY" if="hxvlc" />
+	<!--<define name="VIDEOS_ALLOWED" 		if="desktop || android || html5"/>-->
+	<define name="HXVLC_NO_SHARE_DIRECTORY" if="desktop || android" />
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
@@ -71,7 +71,7 @@
 	<haxelib name="hscript-iris" />
 	<haxedef name="hscriptPos" />
 	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
-	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" unless = "html5" />
+	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" unless="html5" />
 	
 	<!-- ______ Custom Doido Libraries ______ -->
 	<haxelib name="flxanimate-doido"/>

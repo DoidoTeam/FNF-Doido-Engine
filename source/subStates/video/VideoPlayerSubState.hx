@@ -2,7 +2,6 @@ package subStates.video;
 
 import backend.game.GameData.MusicBeatSubState;
 #if VIDEOS_ALLOWED
-import backend.game.FlxVideo;
 import backend.game.DoidoVideoSprite;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxPieDial;
@@ -16,38 +15,33 @@ import subStates.CutscenePauseSubState;
 
 class VideoPlayerSubState extends MusicBeatSubState
 {
-    #if hxvlc private var video:DoidoVideoSprite;
-    #else  private var video:FlxVideo;
-    #end
-    var videoPaused:Bool = false;
-    var finishcallback:Void->Void;
+    private var video:DoidoVideoSprite;
+
     public function new(key:String, ?finishCallBack:Void->Void)
     {
         super();
         this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
         FlxG.sound.music?.pause();
+
         #if hxvlc
         video = new DoidoVideoSprite();
 		video.antialiasing = SaveData.data.get("Antialiasing");
-		video.bitmap.onFormatSetup.add(function():Void
-		{
-			if (video.bitmap != null && video.bitmap.bitmapData != null)
-			{
+
+		video.bitmap.onFormatSetup.add(function():Void {
+			if (video.bitmap != null && video.bitmap.bitmapData != null) {
 				video.setGraphicSize(FlxG.width, FlxG.height);
 				video.updateHitbox();
 				video.screenCenter();
 			}
 		});
-        video.bitmap.onEndReached.add(function():Void
-        {
-            FlxG.sound.music?.resume();
-            video.destroy();
+
+        video.bitmap.onEndReached.add(function():Void {
             close();
         });
-        if(finishCallBack != null)
+
+        if(finishCallBack != null) 
             video.bitmap.onEndReached.add(finishCallBack);
-		
-        Logs.print('loaded HxVLC video: $key.mp4');
+
         video.load(Paths.video(key));
         add(video);
         
@@ -55,75 +49,51 @@ class VideoPlayerSubState extends MusicBeatSubState
             video.play();
         });
         #else
-        video = new FlxVideo(Paths.video(key));
+        video = new DoidoVideoSprite(Paths.video(key));
 		add(video);
-        video.finishCallback= flxVideoEnd;
-        finishcallback = finishCallBack;
-        Logs.print('loaded HTML5 video:  $key.mp4');
+
+        video.closeCallBack = close;
+        
+        if(finishCallBack != null) 
+            video.finishCallBack = finishCallBack;
         #end
     }
 
     public function pauseVideo()
     {
         FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
-        videoPaused = true;
-        #if hxvlc
         video.pause();
         
         openSubState(new subStates.CutscenePauseSubState(function(exit:PauseExit) {
             switch(exit) {
                 case SKIP:
-                    for(event in video.bitmap.onEndReached.__listeners)
-                        event();
+                    #if html5
+                    video.finish();
+                    #end
+                    
+                    close();
                 case RESTART:
-                         videoPaused = false;
-
                     video.restart();
                 default:
                     video.resume();
-                    videoPaused = false;
             }
         }));
-        #else
-        video.pauseVideo();
-            openSubState(new subStates.CutscenePauseSubState(function(exit:PauseExit) {
-            switch(exit) {
-                case SKIP:
-                    trace('skipping');
-                    videoPaused = false;
-                    video.finishVideo();
-
-                case RESTART:
-                        videoPaused = false;
-
-                    video.restartVideo();
-                default:
-                    video.resumeVideo();
-                    
-                    videoPaused = false;
-
-            }
-
-        }));
-        #end
-        
     }
-    #if !hxvlc
-    function flxVideoEnd():Void
+
+    override function close()
     {
-        video.finishCallback = finishcallback;
-        video.finishVideo();
-        video.kill();
         video.destroy();
-        close();
+        FlxG.sound.music?.resume();
+
+        super.close();
     }
-    #end
+
     override function update(elapsed:Float)
     {
         super.update(elapsed);
-            if(Controls.justPressed(ACCEPT) && !videoPaused)
-                pauseVideo();
-        
+
+        if(Controls.justPressed(ACCEPT))
+            pauseVideo();
     }
 }
 #else
