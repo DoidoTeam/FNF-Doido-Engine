@@ -20,6 +20,11 @@ class ChartConvertState extends MusicBeatState
         "event" => null,
     ];
 
+    public final convertInfo:Map<String, String> = [
+        "convert_doido_old" => "> Doido Engine v3 Format <\n> Works with FNF' v0.2.8-based Engines <",
+        "convert_doido_new" => "> Doido Engine v4+ Format <\n> More events available <\n> Easier to work with <"
+    ];
+
     override function create()
     {
         super.create();
@@ -75,6 +80,14 @@ class ChartConvertState extends MusicBeatState
         btnLoadChart.setPosition(posL, mainY + 45);
         add(btnLoadChart);
 
+        var btnCleanChart = new ConvertButton("x", () -> {
+            loadedJson.set("chart", null);
+            setTxt(txtLoadChart, "No Chart Loaded!!");
+            FlxG.sound.play(Paths.sound('menu/cancelMenu'));
+        });
+        btnCleanChart.setPosition(posL - btnCleanChart.width - 10, mainY + 45);
+        add(btnCleanChart);
+
         var btnLoadEvent = new ConvertButton("load_event", () -> {
             loadFile("event", () -> {
                 setTxt(txtLoadEvent, "Events: " + eventName);
@@ -82,6 +95,18 @@ class ChartConvertState extends MusicBeatState
         });
         btnLoadEvent.setPosition(posR, mainY + 45);
         add(btnLoadEvent);
+
+        var btnCleanEvent = new ConvertButton("x", () -> {
+            loadedJson.set("event", null);
+            setTxt(txtLoadEvent, "No Events Loaded!!");
+            FlxG.sound.play(Paths.sound('menu/cancelMenu'));
+        });
+        btnCleanEvent.setPosition(posR + btnLoadEvent.width + 10, mainY + 45);
+        add(btnCleanEvent);
+        btnCleanEvent._update = (elapsed:Float) -> {
+            btnCleanChart.visible = loadedJson.get("chart") != null;
+            btnCleanEvent.visible = loadedJson.get("event") != null;
+        };
 
         var btnConvertDoidoOld = new ConvertButton("convert_doido_old", () -> {
             
@@ -94,6 +119,26 @@ class ChartConvertState extends MusicBeatState
         });
         btnConvertDoidoNew.setPosition(posR, mainY + 245);
         add(btnConvertDoidoNew);
+
+        var buttList = [btnConvertDoidoOld, btnConvertDoidoNew];
+        var infoTxt = new Alphabet(FlxG.width / 2, mainY + 245 + 64, "", false);
+        infoTxt.scale.set(0.45,0.45);
+        infoTxt.align = CENTER;
+        infoTxt.updateHitbox();
+        add(infoTxt);
+        infoTxt._update = (elapsed:Float) -> {
+            var daTxt:String = infoTxt.text;
+            for(butt in buttList)
+            {
+                if(FlxG.mouse.overlaps(butt)) {
+                    daTxt = convertInfo.get(butt.curName);
+                    break;
+                } else
+                    daTxt = "";
+            }
+            if(daTxt != infoTxt.text)
+                setTxt(infoTxt, daTxt);
+        }
     }
 
     public function setTxt(item:Alphabet, newTxt:String)
@@ -160,8 +205,12 @@ class ConvertButton extends FlxSprite
         super();
         this.curName = curName;
         this.onClick = onClick;
-        frames = Paths.getSparrowAtlas('menu/chartconvert/buttons');
-        animation.addByPrefix('idle', 'buttons', 0, false);
+        var path:String = switch(curName) {
+            case "x": "x";
+            default: "buttons";
+        };
+        frames = Paths.getSparrowAtlas('menu/chartconvert/$path');
+        animation.addByPrefix('idle', '$path', 0, false);
         animation.play('idle');
 
         animation.curAnim.curFrame = switch(curName)
@@ -170,14 +219,16 @@ class ConvertButton extends FlxSprite
             case "load_event": 1;
             case "convert_doido_old": 2;
             case "convert_doido_new": 3;
+            case "x": 4;
             default: 0;
         }
+        updateHitbox();
     }
 
     override function update(elapsed:Float)
     {
         super.update(elapsed);
-        if(FlxG.mouse.overlaps(this))
+        if(FlxG.mouse.overlaps(this) && visible)
         {
             alpha = 1.0;
             if(FlxG.mouse.justPressed && onClick != null)

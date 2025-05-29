@@ -1,0 +1,595 @@
+{
+	"speed": 1.6,
+	"notes": [
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 0
+		},
+		{
+			"holdLength": 3,
+			"data": 3,
+			"step": 4
+		},
+		{
+			"holdLength": 4,
+			"data": 3,
+			"step": 7
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 16
+		},
+		{
+			"holdLength": 3,
+			"data": 7,
+			"step": 20
+		},
+		{
+			"holdLength": 4,
+			"data": 7,
+			"step": 23
+		},
+		{
+			"holdLength": 2,
+			"data": 1,
+			"step": 32
+		},
+		{
+			"holdLength": 2,
+			"data": 0,
+			"step": 36
+		},
+		{
+			"holdLength": 2,
+			"data": 3,
+			"step": 40
+		},
+		{
+			"holdLength": 2,
+			"data": 5,
+			"step": 48
+		},
+		{
+			"holdLength": 2,
+			"data": 4,
+			"step": 52
+		},
+		{
+			"holdLength": 2,
+			"data": 7,
+			"step": 56
+		},
+		{
+			"holdLength": 1,
+			"data": 1,
+			"step": 64
+		},
+		{
+			"holdLength": 0,
+			"data": 3,
+			"step": 68
+		},
+		{
+			"holdLength": 0,
+			"data": 0,
+			"step": 70
+		},
+		{
+			"holdLength": 3,
+			"data": 1,
+			"step": 72
+		},
+		{
+			"holdLength": 1,
+			"data": 5,
+			"step": 80
+		},
+		{
+			"holdLength": 0,
+			"data": 7,
+			"step": 84
+		},
+		{
+			"holdLength": 0,
+			"data": 4,
+			"step": 86
+		},
+		{
+			"holdLength": 3,
+			"data": 5,
+			"step": 88
+		},
+		{
+			"holdLength": 0,
+			"data": 3,
+			"step": 96
+		},
+		{
+			"holdLength": 0,
+			"data": 1,
+			"step": 98
+		},
+		{
+			"holdLength": 0,
+			"data": 0,
+			"step": 102
+		},
+		{
+			"holdLength": 2,
+			"data": 2,
+			"step": 104
+		},
+		{
+			"holdLength": 0,
+			"data": 7,
+			"step": 112
+		},
+		{
+			"holdLength": 0,
+			"data": 5,
+			"step": 114
+		},
+		{
+			"holdLength": 0,
+			"data": 4,
+			"step": 118
+		},
+		{
+			"holdLength": 2,
+			"data": 6,
+			"step": 120
+		},
+		{
+			"holdLength": 0,
+			"data": 0,
+			"step": 128
+		},
+		{
+			"holdLength": 0,
+			"data": 3,
+			"step": 130
+		},
+		{
+			"holdLength": 5,
+			"data": 1,
+			"step": 132
+		},
+		{
+			"holdLength": 0,
+			"data": 4,
+			"step": 144
+		},
+		{
+			"holdLength": 0,
+			"data": 7,
+			"step": 146
+		},
+		{
+			"holdLength": 5,
+			"data": 5,
+			"step": 148
+		},
+		{
+			"holdLength": 0,
+			"data": 1,
+			"step": 160
+		},
+		{
+			"holdLength": 0,
+			"data": 3,
+			"step": 162
+		},
+		{
+			"holdLength": 5,
+			"data": 0,
+			"step": 164
+		},
+		{
+			"holdLength": 0,
+			"data": 7,
+			"step": 178
+		},
+		{
+			"holdLength": 5,
+			"data": 4,
+			"step": 180
+		},
+		{
+			"holdLength": 0,
+			"data": 5,
+			"step": 176
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 192
+		},
+		{
+			"holdLength": 0,
+			"data": 3,
+			"step": 194
+		},
+		{
+			"holdLength": 7,
+			"data": 0,
+			"step": 196
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 208
+		},
+		{
+			"holdLength": 0,
+			"data": 7,
+			"step": 210
+		},
+		{
+			"holdLength": 7,
+			"data": 4,
+			"step": 212
+		},
+		{
+			"holdLength": 0,
+			"data": 0,
+			"step": 224
+		},
+		{
+			"holdLength": 0,
+			"data": 3,
+			"step": 226
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 230
+		},
+		{
+			"holdLength": 3,
+			"data": 1,
+			"step": 232
+		},
+		{
+			"holdLength": 0,
+			"data": 4,
+			"step": 240
+		},
+		{
+			"holdLength": 0,
+			"data": 7,
+			"step": 242
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 246
+		},
+		{
+			"holdLength": 3,
+			"data": 5,
+			"step": 248
+		},
+		{
+			"holdLength": 3,
+			"data": 2,
+			"step": 256
+		},
+		{
+			"holdLength": 2,
+			"data": 3,
+			"step": 260
+		},
+		{
+			"holdLength": 3,
+			"data": 0,
+			"step": 264
+		},
+		{
+			"holdLength": 3,
+			"data": 6,
+			"step": 272
+		},
+		{
+			"holdLength": 2,
+			"data": 7,
+			"step": 276
+		},
+		{
+			"holdLength": 3,
+			"data": 4,
+			"step": 280
+		},
+		{
+			"holdLength": 0,
+			"data": 1,
+			"step": 288
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 292
+		},
+		{
+			"holdLength": 0,
+			"data": 1,
+			"step": 296
+		},
+		{
+			"holdLength": 0,
+			"data": 1,
+			"step": 297
+		},
+		{
+			"holdLength": 0,
+			"data": 1,
+			"step": 298
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 300
+		},
+		{
+			"holdLength": 0,
+			"data": 5,
+			"step": 304
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 308
+		},
+		{
+			"holdLength": 0,
+			"data": 5,
+			"step": 312
+		},
+		{
+			"holdLength": 0,
+			"data": 5,
+			"step": 313
+		},
+		{
+			"holdLength": 0,
+			"data": 5,
+			"step": 314
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 316
+		},
+		{
+			"holdLength": 3,
+			"data": 2,
+			"step": 320
+		},
+		{
+			"holdLength": 2,
+			"data": 3,
+			"step": 324
+		},
+		{
+			"holdLength": 3,
+			"data": 0,
+			"step": 328
+		},
+		{
+			"holdLength": 3,
+			"data": 6,
+			"step": 336
+		},
+		{
+			"holdLength": 2,
+			"data": 7,
+			"step": 340
+		},
+		{
+			"holdLength": 3,
+			"data": 4,
+			"step": 344
+		},
+		{
+			"holdLength": 11,
+			"data": 3,
+			"step": 352
+		},
+		{
+			"holdLength": 11,
+			"data": 7,
+			"step": 368
+		},
+		{
+			"holdLength": 0,
+			"data": 0,
+			"step": 371
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 384
+		},
+		{
+			"holdLength": 0,
+			"data": 3,
+			"step": 386
+		},
+		{
+			"holdLength": 7,
+			"data": 0,
+			"step": 388
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 400
+		},
+		{
+			"holdLength": 0,
+			"data": 7,
+			"step": 402
+		},
+		{
+			"holdLength": 7,
+			"data": 4,
+			"step": 404
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 414
+		},
+		{
+			"holdLength": 0,
+			"data": 0,
+			"step": 416
+		},
+		{
+			"holdLength": 0,
+			"data": 3,
+			"step": 418
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 422
+		},
+		{
+			"holdLength": 3,
+			"data": 1,
+			"step": 424
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 430
+		},
+		{
+			"holdLength": 0,
+			"data": 4,
+			"step": 432
+		},
+		{
+			"holdLength": 0,
+			"data": 7,
+			"step": 434
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 438
+		},
+		{
+			"holdLength": 3,
+			"data": 5,
+			"step": 440
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 448
+		},
+		{
+			"holdLength": 0,
+			"data": 3,
+			"step": 450
+		},
+		{
+			"holdLength": 0,
+			"data": 0,
+			"step": 452
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 454
+		},
+		{
+			"holdLength": 3,
+			"data": 1,
+			"step": 456
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 464
+		},
+		{
+			"holdLength": 0,
+			"data": 7,
+			"step": 466
+		},
+		{
+			"holdLength": 0,
+			"data": 4,
+			"step": 468
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 470
+		},
+		{
+			"holdLength": 3,
+			"data": 5,
+			"step": 472
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 478
+		},
+		{
+			"holdLength": 0,
+			"data": 0,
+			"step": 480
+		},
+		{
+			"holdLength": 0,
+			"data": 3,
+			"step": 482
+		},
+		{
+			"holdLength": 0,
+			"data": 2,
+			"step": 486
+		},
+		{
+			"holdLength": 3,
+			"data": 1,
+			"step": 488
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 494
+		},
+		{
+			"holdLength": 0,
+			"data": 4,
+			"step": 496
+		},
+		{
+			"holdLength": 0,
+			"data": 7,
+			"step": 498
+		},
+		{
+			"holdLength": 0,
+			"data": 6,
+			"step": 502
+		},
+		{
+			"holdLength": 3,
+			"data": 5,
+			"step": 504
+		}
+	],
+	"opponent": "dad",
+	"gf": "stage-set",
+	"bpm": 100,
+	"player": "bf",
+	"song": "Bopeebo"
+}

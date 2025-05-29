@@ -106,9 +106,9 @@ class SongConverter
 				// create the new note
 				var swagNote:SwagNote =
 				{
-					step: daStrumTime / noteCrochet,
+					step: CoolUtil.floatPointFix(daStrumTime / noteCrochet),
 					data: section.mustHitSection ? (daNoteData + 4) % 8 : daNoteData,
-					holdLength: noteLength / noteCrochet,
+					holdLength: CoolUtil.floatPointFix(noteLength / noteCrochet),
 				};
 				if(daNoteType != null)
 					swagNote.type = daNoteType;

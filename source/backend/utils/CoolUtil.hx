@@ -70,6 +70,23 @@ class CoolUtil
 		}
 		return result;
 	}
+
+	inline public static function floatPointFix(float:Float):Float
+	{
+		var formatFloat:Float = float;
+		if(FlxMath.getDecimals(float) > 8)
+		{
+			var arr:Array<String> = Std.string(float).split("");
+			var lastDigit:Int = Std.parseInt(arr[arr.length - 1]);
+			var roundNum:Int = 0;
+			for(i in 0...arr.length)
+				if(arr[arr.length - 1 - i] != Std.string(lastDigit))
+					roundNum = arr.length - i;
+
+			formatFloat = FlxMath.roundDecimal(formatFloat, roundNum);
+		}
+		return formatFloat;
+	}
 	
 	// custom camera follow because default lerp is broken :(
 	// REMINDER! despite renaming the function from "dumbCamPosLerp" to "camPosLerp" this function is still dumb!
