@@ -1,7 +1,8 @@
 package subStates.video;
 
 import backend.game.GameData.MusicBeatSubState;
-#if hxvlc
+#if VIDEOS_ALLOWED
+import backend.game.FlxVideo;
 import backend.game.DoidoVideoSprite;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxPieDial;
@@ -15,13 +16,17 @@ import subStates.CutscenePauseSubState;
 
 class VideoPlayerSubState extends MusicBeatSubState
 {
-    private var video:DoidoVideoSprite;
-
+    #if hxvlc private var video:DoidoVideoSprite;
+    #else  private var video:FlxVideo;
+    #end
+    var videoPaused:Bool = false;
+    var finishcallback:Void->Void;
     public function new(key:String, ?finishCallBack:Void->Void)
     {
         super();
         this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
         FlxG.sound.music?.pause();
+        #if hxvlc
         video = new DoidoVideoSprite();
 		video.antialiasing = SaveData.data.get("Antialiasing");
 		video.bitmap.onFormatSetup.add(function():Void
@@ -42,18 +47,27 @@ class VideoPlayerSubState extends MusicBeatSubState
         if(finishCallBack != null)
             video.bitmap.onEndReached.add(finishCallBack);
 		
-        Logs.print('loaded video $key.mp4');
+        Logs.print('loaded HxVLC video: $key.mp4');
         video.load(Paths.video(key));
         add(video);
-
+        
         new FlxTimer().start(0.001, function(tmr) {
             video.play();
         });
+        #else
+        video = new FlxVideo(Paths.video(key));
+		add(video);
+        video.finishCallback= flxVideoEnd;
+        finishcallback = finishCallBack;
+        Logs.print('loaded HTML5 video:  $key.mp4');
+        #end
     }
 
     public function pauseVideo()
     {
         FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
+        videoPaused = true;
+        #if hxvlc
         video.pause();
         
         openSubState(new subStates.CutscenePauseSubState(function(exit:PauseExit) {
@@ -62,22 +76,54 @@ class VideoPlayerSubState extends MusicBeatSubState
                     for(event in video.bitmap.onEndReached.__listeners)
                         event();
                 case RESTART:
+                         videoPaused = false;
+
                     video.restart();
                 default:
                     video.resume();
+                    videoPaused = false;
             }
         }));
+        #else
+        video.pauseVideo();
+            openSubState(new subStates.CutscenePauseSubState(function(exit:PauseExit) {
+            switch(exit) {
+                case SKIP:
+                    trace('skipping');
+                    videoPaused = false;
+                    video.finishVideo();
+
+                case RESTART:
+                        videoPaused = false;
+
+                    video.restartVideo();
+                default:
+                    video.resumeVideo();
+                    
+                    videoPaused = false;
+
+            }
+
+        }));
+        #end
         
     }
-
+    #if !hxvlc
+    function flxVideoEnd():Void
+    {
+        video.finishCallback = finishcallback;
+        video.finishVideo();
+        video.kill();
+        video.destroy();
+        close();
+    }
+    #end
     override function update(elapsed:Float)
     {
         super.update(elapsed);
-        if(video.bitmap?.isPlaying)
-        {
-            if(Controls.justPressed(ACCEPT))
+            if(Controls.justPressed(ACCEPT) && !videoPaused)
                 pauseVideo();
-        }
+        
     }
 }
 #else

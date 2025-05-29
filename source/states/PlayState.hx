@@ -650,23 +650,18 @@ class PlayState extends MusicBeatState
 			startCountdown();
 		}
 	}
-
+	#if VIDEOS_ALLOWED
 	public function startVideo(key:String, onEnd:Bool = false):Void
 	{
-		#if hxvlc
 		openSubState(new VideoPlayerSubState(key, function() {
 			if(onEnd)
 				endSong();
 			else
 				startCountdown();
 		}));
-		#else
-		var vid:FlxVideo = new FlxVideo(Paths.video(key));
-		vid.finishCallback = onEnd ? endSong : startCountdown;
-		add(vid);
-		#end
+
 	}
-	
+	#end
 	public function hasCutscene():Bool
 	{
 		return switch(SaveData.data.get('Cutscenes'))
