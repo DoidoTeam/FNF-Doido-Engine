@@ -37,7 +37,6 @@ import states.menu.*;
 import subStates.*;
 import subStates.video.*;
 import subStates.CutscenePauseSubState;
-
 #if TOUCH_CONTROLS
 import objects.mobile.Hitbox;
 #end
@@ -449,7 +448,7 @@ class PlayState extends MusicBeatState
 				case 'useless':
 					startVideo("test");
 				#end
-				
+
 				case 'thorns':
 					inCutscene = true;
 
@@ -658,7 +657,7 @@ class PlayState extends MusicBeatState
 		}));
 	}
 	#end
-	
+
 	public function hasCutscene():Bool
 	{
 		return switch(SaveData.data.get('Cutscenes'))

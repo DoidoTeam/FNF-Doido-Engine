@@ -11,7 +11,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import subStates.video.CutscenePauseSubState;
+import subStates.CutscenePauseSubState;
 
 class VideoPlayerSubState extends MusicBeatSubState
 {
@@ -22,45 +22,56 @@ class VideoPlayerSubState extends MusicBeatSubState
         super();
         this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
         FlxG.sound.music?.pause();
+
+        #if hxvlc
         video = new DoidoVideoSprite();
 		video.antialiasing = SaveData.data.get("Antialiasing");
-		video.bitmap.onFormatSetup.add(function():Void
-		{
-			if (video.bitmap != null && video.bitmap.bitmapData != null)
-			{
+
+		video.bitmap.onFormatSetup.add(function():Void {
+			if (video.bitmap != null && video.bitmap.bitmapData != null) {
 				video.setGraphicSize(FlxG.width, FlxG.height);
 				video.updateHitbox();
 				video.screenCenter();
 			}
 		});
-        video.bitmap.onEndReached.add(function():Void
-        {
-            FlxG.sound.music?.resume();
-            video.destroy();
+
+        video.bitmap.onEndReached.add(function():Void {
             close();
         });
-        if(finishCallBack != null)
+
+        if(finishCallBack != null) 
             video.bitmap.onEndReached.add(finishCallBack);
-		
-        Logs.print('loaded video $key.mp4');
+
         video.load(Paths.video(key));
         add(video);
-
+        
         new FlxTimer().start(0.001, function(tmr) {
             video.play();
         });
+        #else
+        video = new DoidoVideoSprite(Paths.video(key));
+		add(video);
+
+        video.closeCallBack = close;
+        
+        if(finishCallBack != null) 
+            video.finishCallBack = finishCallBack;
+        #end
     }
 
     public function pauseVideo()
     {
         FlxG.sound.play(Paths.sound('menu/cancelMenu'), 0.7);
         video.pause();
-
+        
         openSubState(new subStates.CutscenePauseSubState(function(exit:PauseExit) {
             switch(exit) {
                 case SKIP:
-                    for(event in video.bitmap.onEndReached.__listeners)
-                        event();
+                    #if html5
+                    video.finish();
+                    #end
+                    
+                    close();
                 case RESTART:
                     video.restart();
                 default:
@@ -69,14 +80,20 @@ class VideoPlayerSubState extends MusicBeatSubState
         }));
     }
 
+    override function close()
+    {
+        video.destroy();
+        FlxG.sound.music?.resume();
+
+        super.close();
+    }
+
     override function update(elapsed:Float)
     {
         super.update(elapsed);
-        if(video.bitmap?.isPlaying)
-        {
-            if(Controls.justPressed(ACCEPT))
-                pauseVideo();
-        }
+
+        if(Controls.justPressed(ACCEPT))
+            pauseVideo();
     }
 }
 #else
