@@ -19,10 +19,51 @@ class ChartLoader
 		var unspawnNotes:Array<Note> = [];
 		var daSection:Int = 0;
 		
-		// bpm change stuff for sustain notes
-		var noteCrochet:Float = Conductor.stepCrochet;
-		
-		// load
+		// loading notes
+		for(note in SONG.notes)
+		{
+			var noteStep:Float = note.step;
+			var noteData:Int = (note.data % 4);
+			var noteType:String = (note.type != null) ? note.type : 'none';
+			var holdLength:Float = note.holdLength;
+
+			var swagNote:Note = new Note();
+			swagNote.updateData(noteStep, noteData, noteType);
+			unspawnNotes.push(swagNote);
+
+			var isPlayer = (note.data >= 4);
+
+			swagNote.strumlineID = isPlayer ? 1 : 0;
+
+			if(holdLength > 0)
+			{
+				var daParent:Note = swagNote;
+				swagNote.holdStepLength = holdLength;
+
+				var intHoldLength:Int = Math.ceil(holdLength);
+				for(i in 0...intHoldLength + 1)
+				{
+					var isHoldEnd = (i == intHoldLength);
+						
+					var holdNote:Note = new Note();
+					holdNote.isHold = true;
+					holdNote.isHoldEnd = isHoldEnd;
+					holdNote.updateData(noteStep, noteData, noteType);
+					
+					holdNote.parentNote = daParent;
+					holdNote.strumlineID = swagNote.strumlineID;
+					holdNote.ID = i;
+					
+					// uhhh
+					holdNote.holdStepLength = holdLength;
+
+					unspawnNotes.push(holdNote);
+					
+					daParent = holdNote;
+					swagNote.children.push(holdNote);
+				}
+			}
+		}
 		
 		unspawnNotes.sort(CoolUtil.sortByShit);
 		

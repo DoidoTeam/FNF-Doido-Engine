@@ -150,7 +150,7 @@ class SplashNote extends FlxSprite
 			if(animation.curAnim.name != "splash")
 				setPosition(holdStrum.x, holdStrum.y);
 
-			var holdPercent = (holdNote.holdHitLength / holdNote.holdLength);
+			var holdPercent = (holdNote.holdHitStepLength / holdNote.holdStepLength);
 			if(holdStrum.animation.curAnim.name != "confirm" || holdPercent >= 1.0)
 			{
 				if(animation.curAnim.name != "splash")

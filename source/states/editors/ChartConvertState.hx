@@ -115,7 +115,15 @@ class ChartConvertState extends MusicBeatState
         add(btnConvertDoidoOld);
 
         var btnConvertDoidoNew = new ConvertButton("convert_doido_new", () -> {
-            saveFile(SongConverter.updateDoidoChart(cast loadedJson.get("chart").song));
+
+            // cast loadedJson.get("chart").song
+            var songLoad:Dynamic = cast loadedJson.get("chart");
+            var saveStuff:Array<Dynamic> = SongConverter.updateDoidoChart(
+                songLoad == null ? null : songLoad.song,
+                loadedJson.get("event")
+            );
+            saveFile(saveStuff[0], saveStuff[1]);
+
         });
         btnConvertDoidoNew.setPosition(posR, mainY + 245);
         add(btnConvertDoidoNew);
@@ -151,6 +159,8 @@ class ChartConvertState extends MusicBeatState
     override function update(elapsed:Float)
     {
         super.update(elapsed);
+        if(Controls.justPressed(BACK))
+            Main.switchState(new states.menu.MainMenuState());
     }
     
     public function saveFile(daFile:Dynamic, isEvent:Bool = false):Void

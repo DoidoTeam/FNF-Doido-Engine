@@ -13,7 +13,7 @@ import objects.note.*;
 class ChartingState extends MusicBeatState
 {
 	public static var SONG:SwagSong = SongData.defaultSong();
-    public static var EVENTS:EventSong = SongData.defaultSongEvents();
+    public static var EVENTS:SwagEventSong = SongData.defaultSongEvents();
 	public static var songDiff:String = "normal";
 
     public static final GRID_SIZE = 40;

@@ -16,9 +16,9 @@ class Note extends FlxSprite
 	public var assetModifier:String = "base";
 	public var hasHoldSplash:Bool = true;
 
-	public function updateData(songTime:Float, noteData:Int, ?noteType:String = "default", ?assetModifier:String = "base")
+	public function updateData(stepTime:Float, noteData:Int, ?noteType:String = "default", ?assetModifier:String = "base")
 	{
-		this.songTime = initialSongTime = songTime;
+		this.stepTime = initialStepTime = stepTime;
 		this.noteData = noteData;
 		this.noteType = noteType;
 		this.assetModifier = assetModifier;
@@ -126,16 +126,16 @@ class Note extends FlxSprite
 	
 	public var noteAngle:Float = 0;
 	
-	public var initialSongTime:Float = 0;
-	public var songTime:Float = 0;
+	public var initialStepTime:Float = 0;
+	public var stepTime:Float = 0;
 	public var noteData:Int = 0;
 	public var noteType:String = "default";
 
 	public function setSongOffset():Void
-		songTime = initialSongTime + Conductor.musicOffset;
+		stepTime = initialStepTime;// + Conductor.musicOffset;
 
 	public function noteDiff():Float
-		return songTime + Conductor.inputOffset - Conductor.songPos;
+		return (stepTime * Conductor.stepCrochet) + Conductor.inputOffset - Conductor.songPos;
 
 	// in case you want to avoid notes this will do
 	public var mustMiss:Bool = false;
@@ -144,11 +144,10 @@ class Note extends FlxSprite
 	public var scrollSpeed:Float = Math.NEGATIVE_INFINITY;
 	
 	// hold note stuff
-	public var noteCrochet:Float = 0;
 	public var isHold:Bool = false;
 	public var isHoldEnd:Bool = false;
-	public var holdLength:Float = 0;
-	public var holdHitLength:Float = 0;
+	public var holdStepLength:Float = 0;
+	public var holdHitStepLength:Float = 0;
 
 	// reusing this for clipRect later
 	public var holdClipHeight:Float = 0.0;
@@ -184,9 +183,22 @@ class Note extends FlxSprite
 		alpha = realAlpha * multAlpha;
 	}
 
+	public function songTime():Float
+	{
+		return stepTime * Conductor.stepCrochet;
+	}
+
+	public function holdTimeLength(hit:Bool = false)
+	{
+		if(hit)
+			return holdHitStepLength * Conductor.stepCrochet;
+		else
+			return holdStepLength * Conductor.stepCrochet;
+	}
+
 	public function checkActive():Void
 	{
-		visible = active = alive = (Math.abs(songTime - Conductor.songPos) < Conductor.crochet * 2);
+		visible = active = alive = (Math.abs(songTime() - Conductor.songPos) < Conductor.crochet * 2);
 
 		// making sure you dont see it anymore
 		if(gotHit && !isHold)
@@ -201,7 +213,7 @@ class Note extends FlxSprite
 		gotHit = false;
 		gotHeld = false;
 		gotReleased = false;
-		holdHitLength = 0;
+		holdHitStepLength = 0;
 		//spawned = false;
 		
 		clipRect = null;

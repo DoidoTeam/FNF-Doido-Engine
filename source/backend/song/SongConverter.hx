@@ -2,6 +2,7 @@ package backend.song;
 
 import backend.song.SongData.SwagNote;
 import backend.song.SongData.SwagSong;
+import backend.song.SongData.SwagEventSong;
 
 typedef OldSwagSong =
 {
@@ -40,83 +41,98 @@ typedef OldBPMChangeEvent =
 
 class SongConverter
 {
-    public inline static function updateDoidoChart(oldSONG:OldSwagSong):SwagSong
+	// returns a SwagSong and a SwagEventSong
+    public inline static function updateDoidoChart(?oldSONG:OldSwagSong, ?oldEVENTS):Array<Dynamic>
     {
-		var SONG:SwagSong = {
-			song: oldSONG.song,
-			notes: [],
-			speed: oldSONG.speed,
-			bpm: oldSONG.bpm,
-
-			player: oldSONG.player1,
-			opponent: oldSONG.player2,
-			gf: oldSONG.gfVersion == null ? "stage-set" : oldSONG.gfVersion,
-		};
-
-		// loading bpm change map
-		var bpmChangeMap:Array<OldBPMChangeEvent> = [];
-		if(true)
+		var SONG:SwagSong = null;
+		var EVENTS:SwagEventSong = SongData.defaultSongEvents();
+		if(oldSONG != null)
 		{
-			var curBPM:Float = oldSONG.bpm;
-			var totalSteps:Int = 0;
-			var totalPos:Float = 0;
-			for (i in 0...oldSONG.notes.length)
+			SONG = {
+				song: oldSONG.song,
+				notes: [],
+				speed: oldSONG.speed,
+				bpm: oldSONG.bpm,
+
+				player: oldSONG.player1,
+				opponent: oldSONG.player2,
+				gf: oldSONG.gfVersion == null ? "stage-set" : oldSONG.gfVersion,
+			};
+
+			// loading bpm change map
+			var bpmChangeMap:Array<OldBPMChangeEvent> = [];
+			if(true)
 			{
-				if (oldSONG.notes[i].changeBPM && oldSONG.notes[i].bpm != curBPM)
+				var curBPM:Float = oldSONG.bpm;
+				var totalSteps:Int = 0;
+				var totalPos:Float = 0;
+				for (i in 0...oldSONG.notes.length)
 				{
-					curBPM = oldSONG.notes[i].bpm;
-					var event:OldBPMChangeEvent = {
-						stepTime: totalSteps,
-						songTime: totalPos,
-						bpm: curBPM
+					if (oldSONG.notes[i].changeBPM && oldSONG.notes[i].bpm != curBPM)
+					{
+						curBPM = oldSONG.notes[i].bpm;
+						var event:OldBPMChangeEvent = {
+							stepTime: totalSteps,
+							songTime: totalPos,
+							bpm: curBPM
+						};
+						bpmChangeMap.push(event);
+					}
+
+					var deltaSteps:Int = oldSONG.notes[i].lengthInSteps;
+					totalSteps += deltaSteps;
+					totalPos += Conductor.calcStep(curBPM) * deltaSteps;
+				}
+			}
+
+			var daSteps:Int = 0;
+			var daSection:Int = 0;
+			var noteCrochet:Float = Conductor.calcStep(oldSONG.bpm);
+			for(section in oldSONG.notes)
+			{
+				for(event in bpmChangeMap)
+					if(event.stepTime == daSteps)
+					{
+						noteCrochet = Conductor.calcStep(event.bpm);
+						//Logs.print('changed note bpm ${event.bpm}');
+					}
+				
+				for (songNotes in section.sectionNotes)
+				{
+					var daStrumTime:Float = songNotes[0];
+					var daNoteData:Int = songNotes[1];
+					var noteLength:Float = songNotes[2];
+					var daNoteType:Null<String> = null; // 'none';
+					// very stupid but I'm lazy
+					if(songNotes.length > 2)
+						daNoteType = songNotes[3];
+					
+					// psych event notes come on
+					if(songNotes[1] < 0) continue;
+					
+					// create the new note
+					var swagNote:SwagNote =
+					{
+						step: CoolUtil.floatPointFix(daStrumTime / noteCrochet),
+						data: section.mustHitSection ? (daNoteData + 4) % 8 : daNoteData,
+						holdLength: CoolUtil.floatPointFix(noteLength / noteCrochet),
 					};
-					bpmChangeMap.push(event);
+					if(daNoteType != null)
+						swagNote.type = daNoteType;
+					SONG.notes.push(swagNote);
 				}
-
-				var deltaSteps:Int = oldSONG.notes[i].lengthInSteps;
-				totalSteps += deltaSteps;
-				totalPos += Conductor.calcStep(curBPM) * deltaSteps;
+				daSteps += section.lengthInSteps;
+				daSection++;
 			}
 		}
-
-		var daSection:Int = 0;
-		var noteCrochet:Float = Conductor.calcStep(oldSONG.bpm);
-		for(section in oldSONG.notes)
+		if(oldEVENTS != null)
 		{
-			for(event in bpmChangeMap)
-				if(event.stepTime == (daSection * section.lengthInSteps))
-				{
-					noteCrochet = Conductor.calcStep(event.bpm);
-					//Logs.print('changed note bpm ${event.bpm}');
-				}
 			
-			for (songNotes in section.sectionNotes)
-			{
-				var daStrumTime:Float = songNotes[0];
-				var daNoteData:Int = songNotes[1];
-				var noteLength:Float = songNotes[2];
-				var daNoteType:Null<String> = null; // 'none';
-				// very stupid but I'm lazy
-				if(songNotes.length > 2)
-					daNoteType = songNotes[3];
-				
-				// psych event notes come on
-				if(songNotes[1] < 0) continue;
-				
-				// create the new note
-				var swagNote:SwagNote =
-				{
-					step: CoolUtil.floatPointFix(daStrumTime / noteCrochet),
-					data: section.mustHitSection ? (daNoteData + 4) % 8 : daNoteData,
-					holdLength: CoolUtil.floatPointFix(noteLength / noteCrochet),
-				};
-				if(daNoteType != null)
-					swagNote.type = daNoteType;
-				SONG.notes.push(swagNote);
-			}
-			daSection++;
 		}
-        return SONG;
+		if(EVENTS.songEvents.length <= 0)
+			EVENTS = null;
+		
+        return [SONG, EVENTS];
     }
 
     public inline static function downgradeDoidoChart():OldSwagSong
