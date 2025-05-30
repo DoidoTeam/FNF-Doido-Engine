@@ -14,6 +14,7 @@ import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
 import objects.menu.Alphabet;
 import subStates.menu.DeleteScoreSubState;
+import flixel.util.FlxStringUtil;
 
 class StoryMenuState extends MusicBeatState
 {
@@ -219,7 +220,7 @@ class StoryMenuState extends MusicBeatState
 		if(Math.abs(scoreCount[1] - scoreCount[0]) <= 0.4)
 			scoreCount[1] = scoreCount[0];
 		
-		weekScoreTxt.text = "WEEK SCORE: " + Math.floor(scoreCount[1]);
+		weekScoreTxt.text = "WEEK SCORE: " + FlxStringUtil.formatMoney(Math.floor(scoreCount[1]), false, true);
 	}
 	
 	public function updateWeekPos(lerp:Float = 0)

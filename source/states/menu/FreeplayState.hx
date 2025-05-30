@@ -17,6 +17,7 @@ import states.*;
 import states.editors.legacy.ChartingState as LegacyChartingState;
 import subStates.menu.DeleteScoreSubState;
 import backend.song.Timings;
+import flixel.util.FlxStringUtil;
 
 using StringTools;
 
@@ -301,7 +302,7 @@ class ScoreCounter extends FlxGroup
 		super.update(elapsed);
 		text.text = "";
 
-		text.text +=   "HIGHSCORE: " + Math.floor(lerpValues.score);
+		text.text +=   "HIGHSCORE: " + FlxStringUtil.formatMoney(Math.floor(lerpValues.score), false, true);
 		text.text += "\nACCURACY:  " +(Math.floor(lerpValues.accuracy * 100) / 100) + "%" + ' [$rank]';
 		text.text += "\nMISSES:    " + Math.floor(lerpValues.misses);
 
