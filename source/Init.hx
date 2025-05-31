@@ -8,6 +8,7 @@ import states.*;
 
 class Init extends MusicBeatState
 {
+	var openWarningMenu:Bool = false;
 	override function create()
 	{
 		super.create();
@@ -28,15 +29,24 @@ class Init extends MusicBeatState
 	function firstState()
 	{
 		#if html5
-		Main.switchState(new WarningState());
-		#elseif MENU
+		openWarningMenu = true;
+		#end
+		if(FlxG.save.data.beenWarned == null || openWarningMenu)
+			Main.switchState(new WarningState());
+		else
+			Main.switchState(new TitleState());
+	}
+	/*
+	A function to call some of the engines build flags from
+	other states.
+	*/
+	public static function flagStates()
+	{
+		#if MENU
 		Main.switchState(new states.menu.MainMenuState());
 		#elseif FREEPLAY
 		Main.switchState(new states.menu.FreeplayState());
 		#else
-		if(FlxG.save.data.beenWarned == null)
-			Main.switchState(new WarningState());
-		else
 			Main.switchState(new TitleState());
 		#end
 	}
