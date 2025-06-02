@@ -1,5 +1,7 @@
 package states.editors;
 
+import flixel.addons.display.shapes.FlxShapeBox;
+import objects.menu.Alphabet;
 import backend.game.GameData.MusicBeatState;
 import backend.song.SongData;
 import backend.song.Conductor;
@@ -18,7 +20,7 @@ class ChartingState extends MusicBeatState
 
     public static final GRID_SIZE = 40;
     public static var noteNum:Int = 4;
-    public static var gridNum:Int = 9;
+    public static var gridNum:Int = 1 + 8; // notes and events
 
     public static var songList:Array<FlxSound> = [];
 
@@ -28,14 +30,17 @@ class ChartingState extends MusicBeatState
 
     public var songPosLine:FlxSprite;
 
-    public var undoList:Array<Void->Void> = [];
-    public var redoList:Array<Void->Void> = [];
+    public var undoList:Array<Void->Void> = []; // fills up with every action
+    public var redoList:Array<Void->Void> = []; // very temporary since any action empties it, but useful
     public var isTyping:Bool = false;
     public var playing:Bool = false;
+
+    public static var instance:ChartingState;
 
     override function create()
     {
         super.create();
+        instance = this;
         loadAudio();
 
         var bg = new FlxSprite().loadGraphic(Paths.image("menu/charteditor/background"));
@@ -59,34 +64,13 @@ class ChartingState extends MusicBeatState
 		songPosLine.setPosition(mainGrid.x, mainGrid.y);
 		add(songPosLine);
         
-        for(section in SONG.notes)
+        // loading the notes from the chart file
+        for(note in SONG.notes)
         {
-            for(note in section.sectionNotes)
-            {
-                // psych event notes come on
-				if(note[1] < 0) continue;
+            // psych event notes come on
+			if(note.data < 0) continue;
 
-                var daStrumTime:Float = note[0];
-				var daNoteData:Int = Std.int(note[1] % 4);
-				var daNoteType:String = 'none';
-				if(note.length > 2)
-					daNoteType = note[3];
-
-                var newNote = new Note();
-                newNote.updateData(daStrumTime, daNoteData, daNoteType, PlayState.assetModifier);
-                newNote.reloadSprite();
-                newNote.setGraphicSize(GRID_SIZE, GRID_SIZE);
-				newNote.updateHitbox();
-
-                var isPlayer = (note[1] >= 4);
-				if(section.mustHitSection)
-					isPlayer = (note[1] <  4);
-
-                newNote.strumlineID = (isPlayer ? 1 : 0);
-
-                mainGrid.notes.push(newNote);
-                newNote.draw();
-            }
+            addNoteToGrid(note);
         }
     }
 
@@ -151,6 +135,63 @@ class ChartingState extends MusicBeatState
             FlxG.camera.zoom = (FlxG.camera.zoom == 1 ? 0.75 : 1);
     }
 
+    public function addNoteToGrid(newNote:SwagNote)
+    {
+        // notes
+        var noteStep:Float = newNote.step;
+        var noteData:Int = (newNote.data % 4);
+        var noteType:String = (newNote.type != null) ? newNote.type : 'none';
+
+        var swagNote = new ChartNote();
+        swagNote.updateData(noteStep, noteData, noteType);
+        swagNote.holdStepLength = newNote.holdLength;
+        swagNote.reloadSprite();
+
+        swagNote.setGraphicSize(GRID_SIZE, GRID_SIZE);
+        swagNote.updateHitbox();
+
+        var isPlayer = (newNote.data >= 4);
+
+        swagNote.strumlineID = isPlayer ? 1 : 0;
+
+        mainGrid.notes.push(swagNote);
+        swagNote.setPosition(FlxG.width, FlxG.height);
+        swagNote.draw();
+
+        // adding a hold note to it even if its not a hold note
+        var holdNote = new ChartNote();
+        holdNote.isHold = true;
+        holdNote.updateData(noteStep, noteData, noteType);
+        holdNote.reloadSprite();
+        swagNote.children = [holdNote];
+    }
+
+    public function addNote(?newNote:SwagNote)
+    {
+        if(newNote == null)
+        {
+            if(FlxG.mouse.x >= mainGrid.x && FlxG.mouse.x <= mainGrid.x + GRID_SIZE * gridNum)
+            {
+                if(FlxG.mouse.x >= mainGrid.x + GRID_SIZE)
+                {
+                    // notes
+                    newNote = {
+                        step: (mainGrid.hoverSquare.y - mainGrid.y) / GRID_SIZE,
+                        data: Math.floor((mainGrid.hoverSquare.x - mainGrid.getGridNoteX()) / GRID_SIZE),
+                        holdLength: 0,
+                        type: 'none',
+                    };
+                }
+                else
+                {
+                    // events
+                }
+            }
+        }
+        SONG.notes.push(newNote);
+        addNoteToGrid(newNote);
+    }
+
     override function stepHit()
     {
         super.stepHit();
@@ -185,7 +226,7 @@ class ChartingState extends MusicBeatState
 		songLength = inst.length;
 		addMusic(inst);
 
-		if(SONG.needsVoices)
+		if(true)
 		{
 			var vocals = new FlxSound();
 			vocals.loadEmbedded(Paths.vocals(daSong, songDiff, '-player'), false, false);
@@ -207,14 +248,28 @@ class ChartGrid extends FlxSprite
     final GRID_WIDTH:Int = ChartingState.gridNum;
 
     public var gridSquare:FlxSprite;
+    public var hoverSquare:FlxSprite;
     public var divLine:FlxSprite;
     public var beatLine:FlxSprite;
-    public var notes:Array<Note> = [];
+    public var notes:Array<ChartNote> = [];
+
+    public var sectTxt:Alphabet;
+    public var sectCount:Int = 0;
+
+    public function getGridNoteX():Float {
+        return x + GRID_SIZE;
+    }
 
     public function new() {
         super();
         gridSquare = new FlxSprite().makeGraphic(GRID_SIZE, GRID_SIZE, 0xFFFFFFFF);
         gridSquare.antialiasing = false;
+
+        hoverSquare = new FlxShapeBox(0, 0, GRID_SIZE, GRID_SIZE, {
+            thickness: 3,
+            color: 0xFF000000,
+        }, FlxColor.TRANSPARENT);
+        hoverSquare.antialiasing = false;
 
         beatLine = new FlxSprite().makeGraphic(GRID_SIZE * GRID_WIDTH, 2, 0xFFFFFFFF);
         beatLine.antialiasing = false;
@@ -222,58 +277,99 @@ class ChartGrid extends FlxSprite
         divLine = new FlxSprite().makeGraphic(2, FlxG.height + 2, 0xFF000000);
         divLine.antialiasing = false;
         divLine.screenCenter(Y);
+
+        sectTxt = new Alphabet(0, 0, "00", true);
+        sectTxt.scale.set(0.4,0.4);
+        sectTxt.align = RIGHT;
+        sectTxt.updateHitbox();
     }
 
     override public function draw()
     {
+        sectTxt.x = x - 8;
+        sectCount = 0;
+
         // super.draw();
         gridSquare.y = y;
-        for(section in ChartingState.SONG.notes)
+        var stopGrid:Bool = false;
+        var gridStep:Int = 0;
+        while(!stopGrid)
         {
-            for(j in 0...section.lengthInSteps)
+            // if its onscreen
+            if(gridSquare.y > -GRID_SIZE && gridSquare.y < FlxG.height)
             {
-                // if its onscreen
-                if(gridSquare.y > -GRID_SIZE && gridSquare.y < FlxG.height)
+                for(i in 0...GRID_WIDTH)
                 {
-                    for(i in 0...GRID_WIDTH)
-                    {
-                        gridSquare.x = x + (GRID_SIZE * i);
-                        gridSquare.color = ChartingState.mainGridColor[(j + i) % 2];
-                        gridSquare.draw();
-                    }
-                    if(j % 4 == 0)
-                    {
-                        beatLine.color = ((j == 0) ? 0xFF000000 : 0xFFFF0000);
-                        beatLine.setPosition(x, gridSquare.y);
-                        beatLine.draw();
-                    }
+                    gridSquare.x = x + (GRID_SIZE * i);
+                    gridSquare.color = ChartingState.mainGridColor[(gridStep + i) % 2];
+                    gridSquare.draw();
                 }
-                gridSquare.y += GRID_SIZE;
+                if(gridStep % 4 == 0)
+                {
+                    beatLine.color = ((gridStep == 0) ? 0xFF000000 : 0xFFFF0000);
+                    beatLine.setPosition(x, gridSquare.y);
+                    beatLine.draw();
+                }
+                if(gridStep == 0)
+                {
+                    sectTxt.text = Std.string(sectCount).lpad("0", 2);
+                    sectTxt.y = beatLine.y;
+                    sectTxt.draw();
+                }
+                if(FlxG.mouse.x > x && FlxG.mouse.x < x + GRID_SIZE * GRID_WIDTH
+                && FlxG.mouse.y > y)
+                {
+                    hoverSquare.x = x + Math.floor((FlxG.mouse.x - x) / GRID_SIZE) * GRID_SIZE;
+			        hoverSquare.y = y + Math.floor((FlxG.mouse.y - y) / GRID_SIZE) * GRID_SIZE;
+                    hoverSquare.visible = true;
+                } else
+                    hoverSquare.visible = false;
             }
+            else if(gridSquare.y > FlxG.height)
+                stopGrid = true;
+            gridSquare.y += GRID_SIZE;
+            gridStep = (gridStep + 1) % 16;
+
+            if(gridStep == 0)
+                sectCount++;
         }
         divLine.x = x + GRID_SIZE;
         divLine.draw();
         divLine.x += GRID_SIZE * ChartingState.noteNum;
         divLine.draw();
-        for(note in notes)
+        for(swagNote in notes)
         {
-            note.y = y + FlxMath.remapToRange(
-                note.songTime,
-                0, Conductor.stepCrochet,
-                0, GRID_SIZE
-            );
-            if(note.y + note.height > 0 && note.y < FlxG.height)
+            swagNote.y = y + swagNote.stepTime * GRID_SIZE;
+            if(swagNote.y + swagNote.height + GRID_SIZE * swagNote.holdStepLength > 0
+            && swagNote.y < FlxG.height)
             {
-                note.x = x + GRID_SIZE + (note.noteData * GRID_SIZE);
-                if(note.strumlineID == 1)
-                    note.x += (GRID_SIZE * ChartingState.noteNum);
-                note.draw();
+                swagNote.x = x + GRID_SIZE + (swagNote.noteData * GRID_SIZE);
+                if(swagNote.strumlineID == 1)
+                    swagNote.x += (GRID_SIZE * ChartingState.noteNum);
+                if(swagNote.holdStepLength > 0)
+                {
+                    var holdNote = swagNote.children[0];
+                    holdNote.setGraphicSize(GRID_SIZE * 0.3, GRID_SIZE * swagNote.holdStepLength);
+                    holdNote.updateHitbox();
+                    holdNote.x = swagNote.x + GRID_SIZE / 2 - holdNote.width / 2;
+                    holdNote.y = swagNote.y + GRID_SIZE;
+                    holdNote.draw();
+                }
+                swagNote.draw();
             }
 
-            if(FlxG.mouse.overlaps(note))
+            /*if(FlxG.mouse.overlaps(swagNote))
             {
                 //CoolUtil.setCursor(POINTER);
                 
+            }*/
+        }
+        if(hoverSquare.visible)
+        {
+            hoverSquare.draw();
+            if(FlxG.mouse.justReleased)
+            {
+                ChartingState.instance.addNote();
             }
         }
     }

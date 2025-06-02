@@ -1032,7 +1032,11 @@ class PlayState extends MusicBeatState
 		#if !mobile
 		if(FlxG.keys.justPressed.SEVEN)
 		{
-			
+			ChartingState.SONG = SONG;
+			ChartingState.EVENTS = EVENTS;
+			ChartingState.songDiff = songDiff;
+
+			Main.switchState(new ChartingState());
 		}
 
 		if(FlxG.keys.justPressed.EIGHT)
