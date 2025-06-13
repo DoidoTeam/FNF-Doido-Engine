@@ -135,6 +135,20 @@ class ChartingState extends MusicBeatState
             FlxG.camera.zoom = (FlxG.camera.zoom == 1 ? 0.75 : 1);
     }
 
+    public function getSwagNote(note:Note):SwagNote
+    {
+        var returnNote:SwagNote = null;
+        for(swagNote in SONG.notes)
+        {
+            if(swagNote.step == note.stepTime
+            && swagNote.data == note.noteData + (4 * note.strumlineID))
+            {
+                returnNote = swagNote;
+            }
+        }
+        return returnNote;
+    }
+
     public function addNoteToGrid(newNote:SwagNote)
     {
         // notes
@@ -163,33 +177,44 @@ class ChartingState extends MusicBeatState
         holdNote.isHold = true;
         holdNote.updateData(noteStep, noteData, noteType);
         holdNote.reloadSprite();
+        holdNote.parentNote = swagNote;
         swagNote.children = [holdNote];
+
+        for(note in [swagNote, holdNote])
+            note.antialiasing = false;
     }
 
     public function addNote(?newNote:SwagNote)
     {
         if(newNote == null)
         {
-            if(FlxG.mouse.x >= mainGrid.x && FlxG.mouse.x <= mainGrid.x + GRID_SIZE * gridNum)
+            if(FlxG.mouse.x >= mainGrid.x + GRID_SIZE)
             {
-                if(FlxG.mouse.x >= mainGrid.x + GRID_SIZE)
-                {
-                    // notes
-                    newNote = {
-                        step: (mainGrid.hoverSquare.y - mainGrid.y) / GRID_SIZE,
-                        data: Math.floor((mainGrid.hoverSquare.x - mainGrid.getGridNoteX()) / GRID_SIZE),
-                        holdLength: 0,
-                        type: 'none',
-                    };
-                }
-                else
-                {
-                    // events
-                }
+                // notes
+                newNote = {
+                    step: (mainGrid.hoverSquare.y - mainGrid.y) / GRID_SIZE,
+                    data: Math.floor((mainGrid.hoverSquare.x - mainGrid.getGridNoteX()) / GRID_SIZE),
+                    holdLength: 0,
+                    type: 'none',
+                };
+            }
+            else
+            {
+                // events
             }
         }
         SONG.notes.push(newNote);
         addNoteToGrid(newNote);
+    }
+    
+    public function removeNote(note:ChartNote)
+    {
+        var swagNote = getSwagNote(note);
+        if(swagNote != null)
+            SONG.notes.remove(swagNote);
+        if(mainGrid.notes.contains(note))
+            mainGrid.notes.remove(note);
+        note.destroy();
     }
 
     override function stepHit()
@@ -284,6 +309,10 @@ class ChartGrid extends FlxSprite
         sectTxt.updateHitbox();
     }
 
+    public var draggingL:Bool = false;
+
+    public var noteOverlap:ChartNote = null;
+
     override public function draw()
     {
         sectTxt.x = x - 8;
@@ -337,6 +366,8 @@ class ChartGrid extends FlxSprite
         divLine.draw();
         divLine.x += GRID_SIZE * ChartingState.noteNum;
         divLine.draw();
+
+        var hasNoteOverlap:Bool = false;
         for(swagNote in notes)
         {
             swagNote.y = y + swagNote.stepTime * GRID_SIZE;
@@ -358,19 +389,75 @@ class ChartGrid extends FlxSprite
                 swagNote.draw();
             }
 
-            /*if(FlxG.mouse.overlaps(swagNote))
+            if(!draggingL)
             {
-                //CoolUtil.setCursor(POINTER);
+                function swapOverlap(noteSwap:ChartNote)
+                {
+                    if(noteOverlap == null)
+                        noteOverlap = noteSwap;
+                    else if(noteSwap.y > noteOverlap.y)
+                        noteOverlap = noteSwap;
+                }
                 
-            }*/
+                if(FlxG.mouse.overlaps(swagNote))
+                {
+                    swapOverlap(swagNote);
+                    hasNoteOverlap = true;
+                }
+                if(swagNote.holdStepLength > 0)
+                {
+                    var swagHold = swagNote.children[0];
+                    if(FlxG.mouse.overlaps(swagHold))
+                    {
+                        swapOverlap(cast swagHold);
+                        hasNoteOverlap = true;
+                    }
+                }
+                
+                if(!hasNoteOverlap)
+                {
+                    noteOverlap = null;
+                }
+                else
+                {
+                    CoolUtil.setCursor(POINTER);
+                }
+            }
         }
         if(hoverSquare.visible)
         {
             hoverSquare.draw();
-            if(FlxG.mouse.justReleased)
+            if(noteOverlap != null)
             {
-                ChartingState.instance.addNote();
+                draggingL = FlxG.mouse.pressed;
+                var formatOverlap = (noteOverlap.isHold ? noteOverlap.parentNote : noteOverlap);
+
+                var swagNote:SwagNote = ChartingState.instance.getSwagNote(formatOverlap);
+                if(draggingL)
+                {
+                    var gridOffset:Float = (noteOverlap.isHold ? 0 : GRID_SIZE);
+                    var stepLength:Float = Math.round((FlxG.mouse.y - (noteOverlap.y + gridOffset)) / GRID_SIZE);
+                    if(stepLength < 0)
+                        stepLength = 0;
+
+                    formatOverlap.holdStepLength = stepLength;
+                    swagNote.holdLength = stepLength;
+                }
+                
+                if(!noteOverlap.isHold)
+                {
+                    if(FlxG.mouse.pressedRight)
+                        ChartingState.instance.removeNote(noteOverlap);
+                }
             }
+            else if(FlxG.mouse.x >= x && FlxG.mouse.x <= x + GRID_SIZE * GRID_WIDTH && FlxG.mouse.y >= y)
+            {
+                if(FlxG.mouse.justReleased)
+                {
+                    ChartingState.instance.addNote();
+                }
+            }
+            
         }
     }
 }
