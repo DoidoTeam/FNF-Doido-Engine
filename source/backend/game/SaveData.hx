@@ -85,7 +85,7 @@ class SaveData
 			"WHILE IDLING",
 			SELECTOR,
 			"Makes you able to press keys freely without missing notes",
-			["ALWAYS", "WHILE IDLING", "NEVER"],
+			["ALWAYS", "WHILE IDLING", "NEVER"]
 		],
 		"Downscroll" => [
 			false,
