@@ -81,10 +81,11 @@ class SaveData
 		* GAMEPLAY
 		* 
 		*/
-		"Ghost Tapping" => [
-			true,
-			CHECKMARK,
-			"Makes you able to press keys freely without missing notes"
+		"Can Ghost Tap" => [
+			"WHILE IDLING",
+			SELECTOR,
+			"Makes you able to press keys freely without missing notes",
+			["ALWAYS", "WHILE IDLING", "NEVER"],
 		],
 		"Downscroll" => [
 			false,

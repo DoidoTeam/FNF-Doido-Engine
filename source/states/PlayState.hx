@@ -101,7 +101,8 @@ class PlayState extends MusicBeatState
 	
 	public static var botplay:Bool = false;
 	public static var validScore:Bool = true;
-	public var ghostTapping:Bool = true;
+	public var ghostTapping:String = "";
+	public var isIdling:Bool = true;
 
 	public var oldIconEasterEgg:Bool = true;
 
@@ -320,7 +321,7 @@ class PlayState extends MusicBeatState
 		strumlines.cameras = [camStrum];
 		add(strumlines);
 
-		ghostTapping = SaveData.data.get('Ghost Tapping');
+		ghostTapping = SaveData.data.get('Can Ghost Tap');
 		var downscroll:Bool = SaveData.data.get("Downscroll");
 		//var doidoEasterEgg:Bool = FlxG.random.bool(0.01);
 
@@ -1240,6 +1241,7 @@ class PlayState extends MusicBeatState
 							
 							if(noteDiff <= minTiming && !note.missed && !note.gotHit && note.noteData == i)
 							{
+								// disables "mustMiss" notes when they are too late to hit
 								if(note.mustMiss
 								&& Conductor.songPos >= note.songTime + Timings.getTimings("sick")[1])
 								{
@@ -1264,14 +1266,18 @@ class PlayState extends MusicBeatState
 						}
 						else // you ghost tapped lol
 						{
-							if(!ghostTapping && startedCountdown)
+							if(startedCountdown)
 							{
-								vocals.volume = 0;
+								if(ghostTapping == "NEVER" || (ghostTapping == "WHILE IDLING" && !isIdling))
+								{
+									// i don't think vocals should stop when ghost tapping
+									// vocals.volume = 0;
 
-								var note = new Note();
-								note.updateData(0, i, "none", assetModifier);
-								//note.reloadSprite();
-								onNoteMiss(note, strumline, true);
+									var note = new Note();
+									note.updateData(0, i, "none", assetModifier);
+									//note.reloadSprite();
+									onNoteMiss(note, strumline, true);
+								}
 							}
 						}
 					}
@@ -1349,8 +1355,16 @@ class PlayState extends MusicBeatState
 
 	public function updateNotes()
 	{
+		isIdling = true;
 		for(strumline in strumlines)
 		{
+			if(strumline.isPlayer)
+			{
+				var char = strumline.character.char;
+				if(char.singAnims.contains(char.curAnimName))
+					isIdling = false;
+			}
+
 			for(hold in strumline.holdGroup)
 			{
 				if(hold.scrollSpeed != strumline.scrollSpeed)
