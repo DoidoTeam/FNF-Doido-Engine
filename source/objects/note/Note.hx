@@ -2,6 +2,7 @@ package objects.note;
 
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import backend.song.Conductor;
 
 class Note extends FlxSprite
@@ -206,5 +207,16 @@ class Note extends FlxSprite
 		
 		clipRect = null;
 		setAlpha();
+	}
+
+	@:noCompletion
+	override function set_clipRect(rect:FlxRect):FlxRect
+	{
+		clipRect = rect;
+
+		if (frames != null)
+			frame = frames.frames[animation.frameIndex];
+
+		return rect;
 	}
 }
