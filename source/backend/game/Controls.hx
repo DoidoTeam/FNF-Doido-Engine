@@ -7,7 +7,7 @@ import flixel.input.FlxInput.FlxInputState;
 #if TOUCH_CONTROLS
 import flixel.util.FlxTimer;
 import backend.game.Mobile;
-import backend.game.GameData;
+import backend.game.MusicBeatData;
 import objects.mobile.DoidoPad;
 #end
 
