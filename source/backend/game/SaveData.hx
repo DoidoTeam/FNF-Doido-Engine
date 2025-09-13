@@ -53,7 +53,7 @@ class SaveData
 			"Pauses the game when the window is unfocused",
 		],
 		"Delay on Unpause" => [
-			true,
+			#if desktop true #else false #end,
 			CHECKMARK,
 			"Whether you want to have a delay when unpausing the game",
 		],
