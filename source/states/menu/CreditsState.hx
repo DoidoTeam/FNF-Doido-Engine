@@ -1,18 +1,12 @@
 package states.menu;
 
 import flixel.FlxSprite;
-import flixel.FlxObject;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import backend.song.Highscore;
-import backend.song.Highscore.ScoreData;
-import backend.song.SongData;
 import objects.menu.AlphabetMenu;
-import objects.hud.HealthIcon;
-import states.*;
 
 using StringTools;
 
@@ -27,9 +21,8 @@ class CreditsState extends MusicBeatState
 {
 	var creditList:Array<CreditData> = [];
     
-	function addCredit(name:String, ?icon:String = "", ?color:FlxColor, ?info:String = "", ?link:Null<String>)
+	function addCredit(name:String, icon:String = "", color:FlxColor, info:String = "", ?link:Null<String>)
 	{
-		if(color == null) color = FlxColor.WHITE;
 		creditList.push({
             name: name,
             icon: icon,
@@ -39,7 +32,19 @@ class CreditsState extends MusicBeatState
         });
 	}
 
+	function addCategory(name:String)
+	{
+		creditList.push({
+			name: name,
+			icon: "",
+			color: FlxColor.WHITE,
+			info: "",
+			link: null
+		});
+	}
+
 	static var curSelected:Int = 1;
+	var skipSelected:Array<Int> = [];
 
 	var bg:FlxSprite;
 	var bgTween:FlxTween;
@@ -50,8 +55,33 @@ class CreditsState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+		/*
+		*	Modify these to add your own credits!!
+		*/
+		final nikoo:Bool = (FlxG.random.bool(1));
+		final specialPeople = 'Anakim, ArturYoshi, BeastlyChip♧, Bnyu, Evandro, NxtVithor, Pi3tr0, Raphalitos, ZieroSama';
+		final specialCoders = 'ShadzXD, pisayesiwsi, crowplexus, Lasystuff, Gazozoz, Joalor64GH, LeonGamerPS1';
+		// yes, this implies coders aren't people :D
+		
+		// btw you dont need to credit everyone here on your mod
+		// just credit doido engine as a whole and we're good
+		addCategory("Doido Engine's Crew");
+		addCredit('DiogoTV', 			'diogotv', 	 0xFFC385FF, "Doido Engine's Owner and Main Coder", 				'https://bsky.app/profile/diogotv.bsky.social');
+		addCredit('teles', 				'teles', 	 0xFFFF95AC, "Doido Engine's Additional Coder",					'https://youtube.com/@telesfnf');
+		addCredit('GoldenFoxy',			'anna', 	 0xFFFFE100, "Main designer of Doido Engine's chart editor",		'https://bsky.app/profile/goldenfoxy.bsky.social');
+		addCredit('JulianoBeta', 		'juyko', 	 0xFF0BA5FF, "Composed Doido Engine's offset menu music",			'https://www.youtube.com/@prodjuyko');
+		addCredit('crowplexus',			'crowplexus',0xFF313538, "Creator of HScript Iris",							'https://github.com/crowplexus/hscript-iris');
+		addCredit('yoisabo',			'yoisabo',	 0xFF56EF19, "Chart Editor's Event Icons Artist",					'https://bsky.app/profile/yoisabo.bsky.social');
+		addCategory('Other Credits');
+		addCredit('cocopuffs',			'coco',	 	 0xFF56EF19, "Mobile Button Artist", 'https://x.com/cocopuffswow');
+		if(nikoo) addCredit('doubleonikoo', 'nikoo', 0xFF60458A, "Hey! What are you doing here?!",		'https://bsky.app/profile/doubleonikoo.bsky.social');
+		addCredit('Github Contributors','github', 	 0xFFFFFFFF, 'Thank you\n${specialCoders}!!', 		'https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors');
+		addCredit('Special Thanks', 	'heart', 	 0xFFC01B42, 'Thank you\n${specialPeople}!!\n<33', "https://youtu.be/N0IkgKHdgIc");
+		
+		/*
+		*	Don't modify the rest of the code unless you know what you're doing!!
+		*/
 		CoolUtil.playMusic("freakyMenu");
-
 		DiscordIO.changePresence("Credits - Thanks!!");
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/menuDesat'));
@@ -67,26 +97,7 @@ class CreditsState extends MusicBeatState
         infoTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
         add(infoTxt);
 
-		final nikoo:Bool = (FlxG.random.bool(1));
-		final specialPeople = 'Anakim, ArturYoshi, BeastlyChip♧, Bnyu, Evandro, NxtVithor, Pi3tr0, Raphalitos, ZieroSama';
-		final specialCoders = 'ShadzXD, pisayesiwsi, crowplexus, Lasystuff, Joalor64GH, Gazozoz';
-		// yes, this implies coders aren't people
-		// :D
-		
-		// btw you dont need to credit everyone here on your mod, just credit doido engine as a whole and we're good
-		addCredit("Doido Engine's Crew");
-		addCredit('DiogoTV', 			'diogotv', 	 0xFFC385FF, "Doido Engine's Owner and Main Coder", 				'https://bsky.app/profile/diogotv.bsky.social');
-		addCredit('teles', 				'teles', 	 0xFFFF95AC, "Doido Engine's Additional Coder",					'https://youtube.com/@telesfnf');
-		addCredit('GoldenFoxy',			'anna', 	 0xFFFFE100, "Main designer of Doido Engine's chart editor",		'https://bsky.app/profile/goldenfoxy.bsky.social');
-		addCredit('JulianoBeta', 		'juyko', 	 0xFF0BA5FF, "Composed Doido Engine's offset menu music",			'https://www.youtube.com/@prodjuyko');
-		addCredit('crowplexus',			'crowplexus',0xFF313538, "Creator of HScript Iris",							'https://github.com/crowplexus/hscript-iris');
-		addCredit('yoisabo',			'yoisabo',	 0xFF56EF19, "Chart Editor's Event Icons Artist",					'https://bsky.app/profile/yoisabo.bsky.social');
-		addCredit('Other Credits');
-		addCredit('cocopuffs',			'coco',	 	 0xFF56EF19, "Mobile Button Artist", 'https://x.com/cocopuffswow');
-		if(nikoo) addCredit('doubleonikoo', 'nikoo', 0xFF60458A, "Hey! What are you doing here?!",		'https://bsky.app/profile/doubleonikoo.bsky.social');
-		addCredit('Github Contributors','github', 	 0xFFFFFFFF, 'Thank you\n${specialCoders}!!', 		'https://github.com/DoidoTeam/FNF-Doido-Engine/graphs/contributors');
-		addCredit('Special Thanks', 	'heart', 	 0xFFC01B42, 'Thank you\n${specialPeople}!!\n<33', "https://youtu.be/N0IkgKHdgIc");
-		
+		var addLater:Array<AlphabetMenu> = [];
 		for(i in 0...creditList.length)
 		{
 			var credit = creditList[i];
@@ -94,11 +105,12 @@ class CreditsState extends MusicBeatState
 			var item = new AlphabetMenu(0, 0, credit.name, (credit.icon == ""));
 			item.align = CENTER;
 			item.updateHitbox();
-			grpItems.add(item);
 
 			var xTo:Float = (FlxG.width / 2);
 			if(!item.bold)
 			{
+				grpItems.add(item);
+
 				var icon = new FlxSprite();
 				icon.loadGraphic(Paths.image('credits/${credit.icon}'));
 				grpItems.add(icon);
@@ -112,7 +124,11 @@ class CreditsState extends MusicBeatState
 				icon.ID = i;
 			}
 			else
-				item.yTo += 80;
+			{
+				item.yTo = 380;
+				skipSelected.push(i);
+				addLater.push(item);
+			}
 
 			item.ID = i;
 			item.spaceX = 0;
@@ -121,6 +137,8 @@ class CreditsState extends MusicBeatState
 			item.focusY = i - curSelected;
 			item.updatePos();
 		}
+		for(i in addLater)
+			grpItems.add(i);
 		changeSelection();
 
 		#if TOUCH_CONTROLS
@@ -132,7 +150,9 @@ class CreditsState extends MusicBeatState
 	{
 		curSelected += change;
 		curSelected = FlxMath.wrap(curSelected, 0, creditList.length - 1);
+		if(skipSelected.contains(curSelected)) changeSelection((change == 0) ? 1 : change, true);
 		
+		var titleItem:AlphabetMenu = null;
 		for(rawItem in grpItems.members)
 		{
 			if(Std.isOfType(rawItem, AlphabetMenu))
@@ -140,14 +160,30 @@ class CreditsState extends MusicBeatState
 				var item = cast(rawItem, AlphabetMenu);
 				item.focusY = item.ID - curSelected;
 
-				if(!item.bold) item.alpha = 0.4;
+				if(!item.bold)
+					item.alpha = 0.4;
+				else
+				{
+					if(curSelected > item.ID + 1)
+						titleItem = item;
+					else
+					{
+						if(curSelected > item.ID)
+							titleItem = null;
+						item.yTo = 380;
+					}
+				}
 				
 				if(item.ID == curSelected) {
-					if(item.bold) return changeSelection((change == 0) ? 1 : change, true);
 					infoTxtFocus = item;
 					item.alpha = 1;
 				}
 			}
+		}
+		if(titleItem != null)
+		{
+			titleItem.focusY = 0;
+			titleItem.yTo = 36;
 		}
 
 		infoTxt.text = creditList[curSelected].info;
