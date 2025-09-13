@@ -2,6 +2,7 @@ package subStates.editors;
 
 import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIInputText;
+import flixel.addons.ui.FlxUISubState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
@@ -19,7 +20,7 @@ enum ChooserType{
     EVENT;
     NOTETYPE;
 }
-class ChooserSubState extends MusicBeatSubState
+class ChooserSubState extends FlxUISubState
 {
     var options:Array<String> = [];
     var type:ChooserType = NONE;
