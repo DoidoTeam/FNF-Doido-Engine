@@ -1757,6 +1757,10 @@ class PlayState extends MusicBeatState
 
 		if(!startedCountdown || endedSong || paused || isDead) return;
 		
+		// visual thingy
+		songSpeed = 0.0;
+		updateNotes();
+		// pausing
 		paused = true;
 		CoolUtil.activateTimers(false);
 		discordUpdateTime = 0.0;

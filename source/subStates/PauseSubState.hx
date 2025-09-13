@@ -120,7 +120,6 @@ class PauseSubState extends MusicBeatSubState
 	function closePause()
 	{
 		pauseSong.stop();
-		playstate.songSpeed = 1.0;
 		if(SaveData.data.get('Delay on Unpause') && PlayState.startedSong)
 		{
 			playstate.songSpeed = 0.0;
@@ -129,6 +128,9 @@ class PauseSubState extends MusicBeatSubState
 				ease: FlxEase.sineIn
 			});
 		}
+		else
+			playstate.songSpeed = 1.0;
+
 		close();
 	}
 	override function close()
