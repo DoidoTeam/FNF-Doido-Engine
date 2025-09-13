@@ -150,7 +150,8 @@ class CreditsState extends MusicBeatState
 	{
 		curSelected += change;
 		curSelected = FlxMath.wrap(curSelected, 0, creditList.length - 1);
-		if(skipSelected.contains(curSelected)) changeSelection((change == 0) ? 1 : change, true);
+		if(skipSelected.contains(curSelected))
+			return changeSelection((change == 0) ? 1 : change, true);
 		
 		var titleItem:AlphabetMenu = null;
 		for(rawItem in grpItems.members)
