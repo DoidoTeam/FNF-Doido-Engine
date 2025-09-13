@@ -14,7 +14,7 @@ import backend.song.SongData;
 import objects.menu.AlphabetMenu;
 import objects.hud.HealthIcon;
 import states.*;
-import states.editors.legacy.ChartingState as LegacyChartingState;
+import states.editors.ChartingState;
 import subStates.menu.DeleteScoreSubState;
 import backend.song.Timings;
 import flixel.util.FlxStringUtil;
@@ -178,14 +178,14 @@ class FreeplayState extends MusicBeatState
 					Main.switchState(new LoadingState());
 				else
 				{
-					if(LegacyChartingState.SONG.song != PlayState.SONG.song)
-						LegacyChartingState.curSection = 0;
+					if(ChartingState.SONG.song != PlayState.SONG.song)
+						ChartingState.curSection = 0;
 
-					LegacyChartingState.songDiff = PlayState.songDiff;
-					LegacyChartingState.SONG   = PlayState.SONG;
-					LegacyChartingState.EVENTS = PlayState.EVENTS;
+					ChartingState.songDiff = PlayState.songDiff;
+					ChartingState.SONG   = PlayState.SONG;
+					ChartingState.EVENTS = PlayState.EVENTS;
 		
-					Main.switchState(new LegacyChartingState());
+					Main.switchState(new ChartingState());
 				}
 			}
 			catch(e)

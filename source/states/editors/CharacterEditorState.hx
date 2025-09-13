@@ -22,7 +22,7 @@ import backend.utils.CharacterUtil;
 import objects.Character;
 import objects.menu.DoidoSlider;
 import states.*;
-import subStates.editors.legacy.ChooserSubState as LegacyChooserSubState;
+import subStates.editors.ChooserSubState;
 
 class CharacterEditorState extends MusicBeatState
 {
@@ -227,7 +227,7 @@ class CharacterEditorState extends MusicBeatState
 		var charList = CharacterUtil.charList();
 
 		var charButton = new FlxUIButton(10, 25, curChar, function() {
-			openSubState(new LegacyChooserSubState(charList, CHARACTER, function(pick:String) {
+			openSubState(new ChooserSubState(charList, CHARACTER, function(pick:String) {
 				Main.switchState(new CharacterEditorState(pick));
 			}));
 		});
@@ -245,7 +245,7 @@ class CharacterEditorState extends MusicBeatState
 		var checkFlipGhost = new FlxUICheckBox(140, 50, null, null, "Ghost FlipX", 100);
 		var checkShowGhost = new FlxUICheckBox(140, 75, null, null, "Show Ghost", 100);
 		var ghostButton = new FlxUIButton(140, 25, ghost.curChar, function() {
-			openSubState(new LegacyChooserSubState(charList, CHARACTER, function(pick:String) {
+			openSubState(new ChooserSubState(charList, CHARACTER, function(pick:String) {
 				ghost = reloadChar(ghost, pick, true);
 				checkFlipGhost.callback();
 				checkShowGhost.callback();

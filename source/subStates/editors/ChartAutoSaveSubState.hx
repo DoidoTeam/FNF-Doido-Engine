@@ -1,4 +1,4 @@
-package subStates.editors.legacy;
+package subStates.editors;
 
 import backend.game.GameData.MusicBeatSubState;
 import backend.song.SongData;
@@ -14,7 +14,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxSave;
 import objects.hud.HealthIcon;
-import states.editors.legacy.ChartingState;
+import states.editors.ChartingState;
 
 typedef AutoSaveData = {
 	var SONG:SwagSong;
