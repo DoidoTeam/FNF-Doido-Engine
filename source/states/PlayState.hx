@@ -1894,8 +1894,9 @@ class PlayState extends MusicBeatState
 				}
 				loopGroup(this);
 			
-			case 'Song Timer':
-				hudBuild.enableTimeTxt(SaveData.data.get('Song Timer'));
+			default:
+				if(option.startsWith("Song Timer"))
+					hudBuild.enableTimeTxt(SaveData.data.get('Song Timer'));
 		}
 	}
 

@@ -45,14 +45,19 @@ class CoolUtil
 			return shit;
 		}
 		
-		var disSec:String = '${sec % 60}';
+		var disSec:String = forceZero('${sec % 60}');
 		var disMin:String = '$min';
-		disSec = forceZero(disSec);
 		
 		if(!hasMil)
 			return '$disMin:$disSec';
 		else
-			return '$disMin:${disSec}.${Math.floor((mil % 1000) / 10)}';
+		{
+			var disMil:String = forceZero('${Math.floor((mil % 1000) / 10)}');
+			if(SaveData.data.get('Song Timer Style') == "MIN:SEC")
+				return '$disMin:$disSec.$disMil';
+			else
+				return '$disMin\'$disSec"$disMil';
+		}
 	}
 	
 	inline public static function intArray(end:Int, start:Int = 0):Array<Int>

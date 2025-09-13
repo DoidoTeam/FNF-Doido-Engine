@@ -95,16 +95,29 @@ class HudDoido extends HudClass
 	override function updateTimeTxt()
 	{
 		super.updateTimeTxt();
-		timeTxt.text
-		= CoolUtil.posToTimer(songTime)
-		+ ' / '
-		+ CoolUtil.posToTimer(PlayState.songLength);
+		if(!timeTxt.visible) return;
+
+		var hasMil:Bool = (SaveData.data.get('Song Timer Style') == "MIN'SEC\"MIL");
+		switch(SaveData.data.get('Song Timer Info'))
+		{
+			case "ELAPSED TIME": 
+				timeTxt.text = CoolUtil.posToTimer(songTime, hasMil);
+			case "TIME LEFT":
+				timeTxt.text = CoolUtil.posToTimer(PlayState.songLength - songTime, hasMil);
+			case "FULL TIMER":
+				timeTxt.text
+				= CoolUtil.posToTimer(songTime, hasMil)
+				+ ' / '
+				+ CoolUtil.posToTimer(PlayState.songLength, hasMil);
+		}
+		
 		timeTxt.screenCenter(X);
 	}
 
 	override function enableTimeTxt(enabled:Bool)
 	{
 		timeTxt.visible = enabled;
+		updateTimeTxt();
 	}
 
 	public function updateIconPos()

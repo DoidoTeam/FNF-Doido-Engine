@@ -154,7 +154,19 @@ class SaveData
 		"Song Timer" => [
 			true,
 			CHECKMARK,
-			"Makes the song timer visible"
+			"Makes the song timer visible",
+		],
+		"Song Timer Info" => [
+			"ELAPSED TIME",
+			SELECTOR,
+			"What information appears on the song timer.\nSong Timer must be enabled.",
+			["ELAPSED TIME", "TIME LEFT", "FULL TIMER"],
+		],
+		"Song Timer Style" => [
+			"MIN:SEC",
+			SELECTOR,
+			"How should the song timer look like.\nSong Timer must be enabled.",
+			["MIN:SEC", "MIN'SEC\"MIL"],
 		],
 		/*
 		*

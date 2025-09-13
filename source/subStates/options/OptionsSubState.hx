@@ -42,7 +42,7 @@ class OptionsSubState extends MusicBeatSubState
             "Discord RPC",
             #end
             "Shaders",
-            "Low Quality"
+            "Low Quality",
         ],
 		"gameplay" => [
 			"Can Ghost Tap",
@@ -63,13 +63,15 @@ class OptionsSubState extends MusicBeatSubState
             "Split Holds",
             "Static Hold Anim",
             "Single Rating",
-			"Song Timer"
+			"Song Timer",
+			"Song Timer Info",
+			"Song Timer Style",
 		],
         #if TOUCH_CONTROLS
         "mobile" => [
             "Invert Swipes",
             "Button Opacity",
-            "Hitbox Opacity"
+            "Hitbox Opacity",
         ]
         #end
 	];
