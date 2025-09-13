@@ -78,7 +78,8 @@ class OptionsSubState extends MusicBeatSubState
     var restartTimer:Float = 0;
     var forceRestartOptions:Array<String> = [ // options that you gotta restart the song for them to reload sorry
         "Can Ghost Tap", // you can't cheat >:]
-        "Low Quality"
+        "Low Quality",
+        "Split Holds" // it dont work
     ];
     var reloadOptions:Array<String> = [ // options that need some manual reloading on playstate when changed
         "Antialiasing",
