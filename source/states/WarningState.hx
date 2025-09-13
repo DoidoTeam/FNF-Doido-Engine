@@ -29,7 +29,7 @@ class WarningState extends MusicBeatState
 		
 		if(Controls.justPressed(ACCEPT))
 		{
-           	Init.flagStates();
+           	Init.flagState();
 
             FlxG.save.data.beenWarned = true;
             FlxG.save.flush();
