@@ -118,7 +118,7 @@ class ChartTestSubState extends MusicBeatSubState
 		
 		add(backGroup = new FlxGroup());
 		
-		bg = new FlxSprite().loadGraphic(Paths.image('menu/charteditor/background'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menu/backgrounds/chartTestBg'));
 		bg.screenCenter();
 		backGroup.add(bg);
 

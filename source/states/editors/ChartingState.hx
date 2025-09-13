@@ -161,9 +161,10 @@ class ChartingState extends MusicBeatState
 		hitsound.stop();
 		FlxG.sound.list.add(hitsound);
 
-		var bg = new FlxSprite().loadGraphic(Paths.image("menu/charteditor/background"));
+		var bg = new FlxSprite().loadGraphic(Paths.image("menu/backgrounds/menuDesat"));
 		bg.screenCenter();
 		bg.scrollFactor.set();
+		bg.alpha = 0.15;
 		add(bg);
 
 		sectionGrids = new FlxTypedGroup<ChartGrid>();
@@ -230,28 +231,6 @@ class ChartingState extends MusicBeatState
 			- ESC to test chart
 			- ENTER to play chart",
 		20);
-		
-		// NEW CHART EDITOR (wow)
-		var newButton = new FlxButton(0, 0, "Try it Out!", function() {
-			states.editors.ChartingState.SONG = SONG;
-			states.editors.ChartingState.EVENTS = EVENTS;
-			Main.switchState(new states.editors.ChartingState());
-		});
-		newButton.setPosition(
-			FlxG.width - newButton.width - 10,
-			FlxG.height - newButton.height - 10
-		);
-		var txt = new FlxText(0, 0, 0, "(Beta)\nNew Layout", 12);
-		txt.setFormat(Main.gFont, 12, 0xFFFFFFFF, CENTER);
-		txt.setPosition(
-			newButton.x + (newButton.width - txt.width) / 2,
-			newButton.y - txt.height - 2
-		);
-		txt.antialiasing = false;
-		txt.scrollFactor.set();
-		add(txt);
-		add(newButton);
-		// NEW CHART EDITOR (wow)
 
 		controlTxt.size = 12;
 		controlTxt.scrollFactor.set();
