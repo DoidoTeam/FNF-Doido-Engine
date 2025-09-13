@@ -57,6 +57,7 @@ class PlayState extends MusicBeatState
 	public var musicList:Array<FlxSound> = [];
 
 	public static var songLength:Float = 0;
+	public var songSpeed(default, set):Float = 1.0;
 
 	// to avoid updating discord rpc each frame, it only updates each second
 	private var discordUpdateTime:Float = 0;
@@ -154,6 +155,14 @@ class PlayState extends MusicBeatState
 	#if TOUCH_CONTROLS
 	var hitbox:Hitbox;
 	#end
+
+	public function set_songSpeed(v:Float)
+	{
+		songSpeed = v;
+		for(music in musicList)
+			music.pitch = songSpeed;
+		return songSpeed;
+	}
 
 	public static function resetStatics()
 	{
@@ -1104,7 +1113,7 @@ class PlayState extends MusicBeatState
 		
 		// syncSong
 		if(startedCountdown)
-			Conductor.songPos += elapsed * 1000;
+			Conductor.songPos += elapsed * 1000 * songSpeed;
 
 		pressed = [
 			Controls.pressed(LEFT),
@@ -1290,7 +1299,7 @@ class PlayState extends MusicBeatState
 			if(char.holdTimer != Math.NEGATIVE_INFINITY)
 			{
 				if(char.holdTimer < char.holdLength)
-					char.holdTimer += elapsed;
+					char.holdTimer += elapsed * songSpeed;
 				else
 				{
 					if(char.isPlayer && playerSinging)

@@ -37,7 +37,7 @@ class OptionsSubState extends MusicBeatSubState
             "FPS Counter",
             "Unfocus Pause",
             #end
-            "Countdown on Unpause",
+            "Delay on Unpause",
             #if DISCORD_RPC
             "Discord RPC",
             #end

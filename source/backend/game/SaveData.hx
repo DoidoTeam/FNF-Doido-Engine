@@ -52,10 +52,10 @@ class SaveData
 			CHECKMARK,
 			"Pauses the game when the window is unfocused",
 		],
-		"Countdown on Unpause" => [
+		"Delay on Unpause" => [
 			true,
 			CHECKMARK,
-			"Whether you want to have a countdown when unpausing the game",
+			"Whether you want to have a delay when unpausing the game",
 		],
 		'Discord RPC' => [
 			#if DISCORD_RPC
