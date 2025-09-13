@@ -1,6 +1,5 @@
 package subStates;
 
-import backend.game.GameData.MusicBeatSubState;
 import backend.song.Conductor;
 import backend.utils.DialogueUtil;
 import flixel.FlxG;

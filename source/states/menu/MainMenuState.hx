@@ -1,6 +1,5 @@
 package states.menu;
 
-import backend.game.GameData.MusicBeatState;
 import backend.song.SongData;
 import flixel.FlxG;
 import flixel.FlxSprite;

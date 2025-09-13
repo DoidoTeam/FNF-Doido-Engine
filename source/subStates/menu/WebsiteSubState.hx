@@ -1,6 +1,5 @@
 package subStates.menu;
 
-import backend.game.GameData.MusicBeatSubState;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxTween;

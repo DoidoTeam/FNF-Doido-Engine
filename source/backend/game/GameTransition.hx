@@ -3,7 +3,7 @@ package backend.game;
 import flixel.FlxSprite;
 import flixel.util.FlxGradient;
 import flixel.tweens.FlxTween;
-import backend.game.GameData.MusicBeatSubState;
+import backend.game.MusicBeatData.MusicBeatSubState;
 
 /*
 	Transition between states.

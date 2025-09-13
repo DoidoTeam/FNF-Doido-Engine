@@ -1,6 +1,5 @@
 package subStates.options;
 
-import backend.game.GameData.MusicBeatSubState;
 import backend.game.SaveData.SettingType;
 import flixel.FlxBasic;
 import flixel.FlxSprite;

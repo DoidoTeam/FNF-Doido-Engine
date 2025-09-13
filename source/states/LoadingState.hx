@@ -1,6 +1,5 @@
 package states;
 
-import backend.game.GameData.MusicBeatState;
 import backend.utils.DialogueUtil;
 import backend.song.ChartLoader;
 import backend.song.SongData.SwagSong;

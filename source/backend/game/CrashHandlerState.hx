@@ -1,7 +1,7 @@
 package backend.game;
 
 import flixel.text.FlxText;
-import backend.game.GameData.MusicBeatState;
+import backend.game.MusicBeatData.MusicBeatState;
 import flixel.FlxSprite;
 import flixel.util.FlxGradient;
 

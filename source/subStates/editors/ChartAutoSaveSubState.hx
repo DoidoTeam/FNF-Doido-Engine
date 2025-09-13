@@ -1,6 +1,5 @@
 package subStates.editors;
 
-import backend.game.GameData.MusicBeatSubState;
 import backend.song.SongData;
 import backend.song.SongData.EventSong;
 import backend.song.SongData.SwagSong;

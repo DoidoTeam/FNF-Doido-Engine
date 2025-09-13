@@ -32,7 +32,6 @@ import openfl.events.IOErrorEvent;
 import openfl.media.Sound;
 import openfl.net.FileReference;
 import backend.game.*;
-import backend.game.GameData.MusicBeatState;
 import backend.song.Conductor;
 import backend.song.SongData;
 import backend.song.SongData.EventSong;

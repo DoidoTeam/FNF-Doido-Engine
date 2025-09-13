@@ -1,7 +1,6 @@
 package states;
 
 import crowplexus.iris.Iris;
-import backend.game.GameData.MusicBeatState;
 import backend.utils.DialogueUtil;
 import backend.song.*;
 import backend.song.SongData.EventSong;

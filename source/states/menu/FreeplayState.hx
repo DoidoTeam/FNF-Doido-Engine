@@ -7,7 +7,6 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import backend.game.GameData.MusicBeatState;
 import backend.song.Highscore;
 import backend.song.Highscore.ScoreData;
 import backend.song.SongData;

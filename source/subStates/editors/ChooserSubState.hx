@@ -1,6 +1,5 @@
 package subStates.editors;
 
-import backend.game.GameData.MusicBeatSubState;
 import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.group.FlxGroup.FlxTypedGroup;

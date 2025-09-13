@@ -1,6 +1,5 @@
 package states.menu;
 
-import backend.game.GameData.MusicBeatState;
 import backend.game.GameTransition;
 import subStates.options.OptionsSubState;
 

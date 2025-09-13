@@ -1,6 +1,6 @@
 package;
 
-import backend.game.GameData.MusicBeatState;
+import backend.game.MusicBeatData.MusicBeatState;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
@@ -13,7 +13,7 @@ class Init extends MusicBeatState
 		super.create();
 		SaveData.init();
 		DiscordIO.check();
-				
+		
 		FlxG.fixedTimestep = false;
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.mouse.visible = false;

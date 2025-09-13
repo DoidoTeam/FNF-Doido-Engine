@@ -17,7 +17,6 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import haxe.Json;
 import openfl.net.FileReference;
-import backend.game.GameData.MusicBeatState;
 import backend.utils.CharacterUtil;
 import objects.Character;
 import objects.menu.DoidoSlider;

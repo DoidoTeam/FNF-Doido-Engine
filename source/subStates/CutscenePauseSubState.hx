@@ -1,6 +1,5 @@
 package subStates;
 
-import backend.game.GameData.MusicBeatSubState;
 import backend.game.DoidoVideoSprite;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxPieDial;

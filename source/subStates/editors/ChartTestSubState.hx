@@ -1,6 +1,5 @@
 package subStates.editors;
 
-import backend.game.GameData.MusicBeatSubState;
 import backend.utils.DialogueUtil;
 import backend.song.*;
 import backend.song.Conductor;

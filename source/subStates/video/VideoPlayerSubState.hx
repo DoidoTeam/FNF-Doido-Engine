@@ -1,6 +1,5 @@
 package subStates.video;
 
-import backend.game.GameData.MusicBeatSubState;
 #if VIDEOS_ALLOWED
 import backend.game.DoidoVideoSprite;
 import flixel.FlxSprite;
