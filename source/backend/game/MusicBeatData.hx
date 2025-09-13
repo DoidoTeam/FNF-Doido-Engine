@@ -62,7 +62,8 @@ class MusicBeatState extends FlxUIState
 		updateBeat();
 
 		if(FlxG.keys.justPressed.F5) {
-			Main.skipStuff();
+			Main.skipClearMemory = (!FlxG.keys.pressed.SHIFT);
+			Main.skipTrans = true;
 			Main.resetState();
 		}
 	}
