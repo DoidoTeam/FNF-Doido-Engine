@@ -1,5 +1,6 @@
 package backend.game;
 
+import flixel.FlxCamera;
 import flixel.FlxState;
 import flixel.FlxSubState;
 import flixel.addons.ui.FlxUIState;
