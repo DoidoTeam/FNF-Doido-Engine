@@ -32,7 +32,7 @@ class Init extends MusicBeatState
 		if(FlxG.save.data.beenWarned == null || openWarningMenu)
 			Main.switchState(new WarningState());
 		else
-			Main.switchState(new TitleState());
+			flagState();
 	}
 
 	/*
