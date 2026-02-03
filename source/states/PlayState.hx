@@ -1,6 +1,8 @@
 package states;
 
 import backend.game.MusicBeat.MusicBeatState;
+import flixel.FlxSprite;
+import backend.assets.Cache;
 
 class PlayState extends MusicBeatState
 {
@@ -8,11 +10,16 @@ class PlayState extends MusicBeatState
 	{
 		super.create();
 		
+		var bg = new FlxSprite().loadGraphic(Paths.image('menuInvert'));
+		add(bg);
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if(Controls.justPressed(ACCEPT))
+			MusicBeat.switchState(new states.PlayState());
 		
 		/*if (Controls.justPressed(UI_LEFT))
 		{

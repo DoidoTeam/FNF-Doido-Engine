@@ -9,74 +9,12 @@ import flixel.sound.FlxSound;
 import lime.utils.Assets;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
+import backend.assets.Cache;
 //import states.PlayState;
 import tjson.TJSON;
 
 class Paths
-{
-	public static var renderedGraphics:Map<String, FlxGraphic> = [];
-	public static var renderedSounds:Map<String, Sound> = [];
-	
-	public static var dumpExclusions:Dynamic = {
-		graphics: [
-			"menu/alphabet/default",
-			"menu/checkmark",
-			"menu/menuArrows",
-		],
-		audio: [
-			"sounds/beep",
-		],
-	};
-	public static function clearMemory()
-	{
-		// sprite caching
-		var clearCount:Array<String> = [];
-		for(key => graphic in renderedGraphics)
-		{
-			if(dumpExclusions.graphics.contains(key)) continue;
-
-			clearCount.push(key);
-			
-			renderedGraphics.remove(key);
-			if(openfl.Assets.cache.hasBitmapData(key))
-				openfl.Assets.cache.removeBitmapData(key);
-			
-			FlxG.bitmap.remove(graphic);
-			#if (flixel < "6.0.0")
-			graphic.dump();
-			#end
-			graphic.destroy();
-		}
-
-		Logs.print('cleared $clearCount');
-		Logs.print('cleared ${clearCount.length} assets');
-
-		// uhhhh
-		@:privateAccess
-		for(key in FlxG.bitmap._cache.keys())
-		{
-			var obj = FlxG.bitmap._cache.get(key);
-			if(obj != null && !renderedGraphics.exists(key))
-			{
-				openfl.Assets.cache.removeBitmapData(key);
-				FlxG.bitmap._cache.remove(key);
-				#if (flixel < "6.0.0")
-				obj.dump();
-				#end
-				obj.destroy();
-			}
-		}
-		
-		// sound clearing
-		for (key => sound in renderedSounds)
-		{
-			if(dumpExclusions.audio.contains(key)) continue;
-			
-			Assets.cache.clear(key);
-			renderedSounds.remove(key);
-		}
-	}
-	
+{	
 	inline public static function fileExists(filePath:String, ?library:String):Bool
 		#if desktop
 		return sys.FileSystem.exists(getPath(filePath, library));
@@ -116,22 +54,8 @@ class Paths
 			key = key.substring(0, key.lastIndexOf('.png'));
 		var path = getPath('images/$key.png', library);
 		if(fileExists('images/$key.png', library))
-		{
-			if(!renderedGraphics.exists(key))
-			{
-				#if desktop
-				var bitmap = BitmapData.fromFile(path);
-				#else
-				var bitmap = openfl.Assets.getBitmapData(path, false);
-				#end
-				
-				var newGraphic = FlxGraphic.fromBitmapData(bitmap, false, key, false);
-				Logs.print('created new image $key');
-				
-				renderedGraphics.set(key, newGraphic);
-			}
-			
-			return renderedGraphics.get(key);
+		{			
+			return Cache.getGraphic(path, false);
 		}
 		Logs.print('$key.png doesnt exist, fuck', WARNING);
 		return null;
@@ -139,7 +63,7 @@ class Paths
 	
 	public static function getSound(key:String, ?library:String):Sound
 	{
-		if(!renderedSounds.exists(key))
+		/*if(!renderedSounds.exists(key))
 		{
 			if(!fileExists('$key.ogg', library)) {
 				Logs.print('$key.ogg doesnt exist', WARNING);
@@ -154,7 +78,8 @@ class Paths
 				#end
 			);
 		}
-		return renderedSounds.get(key);
+		return renderedSounds.get(key);*/
+		return null; //temp
 	}
 	
 	public static function music(key:String, ?library:String):Sound
@@ -273,7 +198,7 @@ class Paths
 		return swagList;
 	}
 	
-	public static function preloadGraphic(key:String, ?library:String)
+	/*public static function preloadGraphic(key:String, ?library:String)
 	{
 		// no point in preloading something already loaded duh
 		if(renderedGraphics.exists(key)) return;
@@ -291,5 +216,5 @@ class Paths
 		var what = new FlxSound().loadEmbedded(getSound(key, library), false, false);
 		what.play();
 		what.stop();
-	}
+	}*/
 }

@@ -7,6 +7,7 @@ import flixel.addons.ui.FlxUIState;
 import flixel.group.FlxGroup;
 import backend.song.Conductor;
 import crowplexus.iris.Iris;
+import backend.assets.Cache;
 
 /*#if TOUCH_CONTROLS
 import objects.mobile.*;
@@ -47,8 +48,7 @@ class MusicBeatState extends FlxUIState
 		
 		//Controls.setSoundKeys();
 
-		/*if(!Main.skipClearMemory)
-			Paths.clearMemory();*/
+		Cache.clearCache();
 		
 		/*if(!Main.skipTrans)
 			openSubState(new GameTransition(true, Main.lastTransition));*/
