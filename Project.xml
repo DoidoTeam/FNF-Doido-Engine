@@ -50,11 +50,13 @@
 	<assets path="art/mobile" rename="assets/images/mobile" if="TOUCH_CONTROLS" />
 
 	<!-- RENAME UNDERSCORE FOLDERS -->
-	<!-- <section if="RENAME_UNDERSCORE">
+	<section if="RENAME_UNDERSCORE">
+		<!--
 		<assets path="assets/images/stages/_scripts" 	rename="assets/images/stages/scripts"/>
 		<assets path="assets/images/characters/_offsets" 	rename="assets/images/characters/offsets"/>
 		<assets path="assets/images/notes/_other" 			rename="assets/images/notes/other"/>
-	</section> -->
+		-->
+	</section> 
 
 	<!-- OpenAL config -->
 	<section if="desktop">
@@ -89,6 +91,8 @@
 
 	<haxedef name="HXCPP_CHECK_POINTER" if="release" />
 	<haxedef name="HXCPP_STACK_LINE" 	if="release" />
+	
+	<haxedef name="FLX_NO_SAVE" /> <!-- disables default FlxG.save -->
 
 	<!-- _________________________________ Custom _______________________________ -->
 
