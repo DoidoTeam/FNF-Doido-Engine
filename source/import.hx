@@ -1,5 +1,5 @@
 import flixel.FlxG;
-import backend.assets.Paths;
+import backend.assets.Assets;
 import backend.game.Controls;
 import backend.game.MusicBeat;
 import backend.game.Save;

@@ -3,15 +3,19 @@ package states;
 import backend.game.MusicBeat.MusicBeatState;
 import flixel.FlxSprite;
 import backend.assets.Cache;
+import backend.assets.Assets;
+import flixel.graphics.FlxGraphic;
 
 class PlayState extends MusicBeatState
 {
 	override function create()
 	{
 		super.create();
-		
-		var bg = new FlxSprite().loadGraphic(Paths.image('menuInvert'));
+
+		var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
 		add(bg);
+
+		trace(Assets.fileExists("fonts/vcr", FONT));
 	}
 
 	override function update(elapsed:Float)

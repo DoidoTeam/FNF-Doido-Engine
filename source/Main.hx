@@ -28,7 +28,7 @@ class Main extends Sprite
 
 	// Use these to customize your mod further!
 	public static final savePath:String = "DiogoTV/DoidoEngine4";
-	public static var globalFont:String = Paths.font("vcr.ttf");
+	public static var globalFont:String;
 
 	public function new()
 	{
@@ -40,6 +40,7 @@ class Main extends Sprite
 		var windowSize:Array<Int> = [Std.parseInt(ws[0]),Std.parseInt(ws[1])];*/
 
 		addChild(new FlxGame(1280, 720, Init, 60, 60, true));
+		globalFont = Assets.font("vcr");
 
 		#if android
 		FlxG.android.preventDefaultKeys = [BACK];

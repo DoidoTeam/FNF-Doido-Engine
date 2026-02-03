@@ -22,9 +22,6 @@ class Init extends MusicBeatState
 		FlxGraphic.defaultPersist = true;
 		openfl.Assets.cache.enabled = false;
 		backend.assets.Cache.initCache();
-		
-		/*for(i in 0...Paths.dumpExclusions.length)
-			Paths.preloadGraphic(Paths.dumpExclusions[i].replace('.png', ''));*/
 
 		firstState();
 	}
