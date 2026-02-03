@@ -6,13 +6,13 @@ import flixel.util.FlxSave;
 @:structInit
 class SaveVariables
 {
+	// gameplay
 	public var test:String = 'bullshit';
-	
-	public var fps:Int = 60;
-	
-	public var gpuCaching:Bool = true;
-	
+	// visuals
 	public var fpsCounter:Bool = false;
+	// graphics
+	public var fps:Int = 60;
+	public var gpuCaching:Bool = true;
 }
 
 class Save
@@ -67,11 +67,7 @@ class Save
 			FlxG.updateFramerate = data.fps;
 		}
 		
-		/*if (Main.fpsVar != null)
-			Main.fpsVar.visible = data.showFPS;
-
-		if (file.data.framerate == null)
-			data.framerate = Std.int(FlxMath.bound(FlxG.stage.application.window.displayMode.refreshRate, 60, 240));
-		*/
+		if (Main.fpsCounter != null)
+			Main.fpsCounter.visible = data.fpsCounter;
 	}
 }

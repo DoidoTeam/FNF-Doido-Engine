@@ -1,4 +1,4 @@
-package;
+package backend.assets;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
