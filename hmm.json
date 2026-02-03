@@ -3,34 +3,32 @@
     {
       "name": "lime",
       "type": "haxelib",
-      "version": "8.2.2"
+      "version": "8.3.0"
     },
     {
       "name": "openfl",
       "type": "haxelib",
-      "version": "9.4.1"
+      "version": "9.5.0"
     },
     {
       "name": "flixel",
       "type": "haxelib",
-      "version": "5.9.0"
+      "version": "6.1.2"
     },
     {
       "name": "flixel-addons",
       "type": "haxelib",
-      "version": "3.3.0"
+      "version": "4.0.1"
     },
     {
       "name": "flixel-ui",
       "type": "haxelib",
-      "version": "2.6.3"
+      "version": "2.6.4"
     },
     {
-      "name": "flxanimate-doido",
-      "type": "git",
-      "dir": null,
-      "ref": "master",
-      "url": "https://github.com/DoidoTeam/flxanimate-doido"
+      "name": "flixel-animate",
+      "type": "haxelib",
+      "version": "1.4.0"
     },
     {
       "name": "tjson",

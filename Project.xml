@@ -7,7 +7,7 @@
 	
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
-	<app preloader="backend.game.DoidoPreloader" />
+	<app preloader="flixel.system.FlxPreloader"/>
 
 	<!--Minimum without FLX_NO_GAMEPAD: 11.8, without FLX_NO_NATIVE_CURSOR: 11.2-->
 	<set name="SWF_VERSION" value="11.8" />
@@ -45,16 +45,16 @@
 	<set name="BUILD_DIR" value="export/release" unless="debug" />
 
 	<source path="source" />
-	<assets path="assets" /> <!-- if="VIDEOS_ALLOWED" /> -->
+	<assets path="assets" />
 	<!--<assets path="assets" exclude="videos" unless="VIDEOS_ALLOWED" />-->
 	<assets path="art/mobile" rename="assets/images/mobile" if="TOUCH_CONTROLS" />
 
 	<!-- RENAME UNDERSCORE FOLDERS -->
-	<section if="RENAME_UNDERSCORE">
+	<!-- <section if="RENAME_UNDERSCORE">
 		<assets path="assets/images/stages/_scripts" 	rename="assets/images/stages/scripts"/>
 		<assets path="assets/images/characters/_offsets" 	rename="assets/images/characters/offsets"/>
 		<assets path="assets/images/notes/_other" 			rename="assets/images/notes/other"/>
-	</section>
+	</section> -->
 
 	<!-- OpenAL config -->
 	<section if="desktop">
@@ -64,17 +64,20 @@
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
-	<haxelib name="flixel" />
-	<haxelib name="flixel-addons" />
-	<haxelib name="flixel-ui" />
+	<haxelib name="flixel" version="6.1.2" />
+	<haxelib name="flixel-addons" version="4.0.1" />
+	<haxelib name="flixel-ui" version="2.6.4" />
+	
 	<haxelib name="hscript" if="debug" /> <!--Used only for flixel's debugger!-->
 	<haxelib name="hscript-iris" />
 	<haxedef name="hscriptPos" />
+	
 	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
+	
 	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" unless="html5" />
 	
 	<!-- ______ Custom Doido Libraries ______ -->
-	<haxelib name="flxanimate-doido"/>
+	<haxelib name="flixel-animate" version="1.4.0" />
 	<haxelib name="tjson"/>
 
 	<!-- ______________________________ Haxedefines _____________________________ -->

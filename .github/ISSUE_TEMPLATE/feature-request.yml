@@ -1,9 +1,0 @@
-name: Feature Request
-description: Request features here.
-labels: [enhancement]
-body:
-  - type: textarea
-    attributes:
-      label: What feature do you want to see added to the engine?
-    validations:
-      required: true
