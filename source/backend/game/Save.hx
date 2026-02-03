@@ -10,6 +10,8 @@ class SaveVariables
 	
 	public var fps:Int = 60;
 	
+	public var gpuCaching:Bool = true;
+	
 	public var fpsCounter:Bool = false;
 }
 
