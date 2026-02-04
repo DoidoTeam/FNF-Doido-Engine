@@ -1,6 +1,6 @@
 package backend.game;
 
-import flixel.util.FlxSave;
+import backend.system.DoidoSave;
 
 @:keep
 @:structInit
@@ -33,8 +33,7 @@ class Save
 	
 	public static function save()
 	{
-		var file = new FlxSave();
-		file.bind("settings", Main.savePath);
+		var file = new DoidoSave("settings");
 		
 		for (key in Reflect.fields(data))
 			Reflect.setField(file.data, key, Reflect.field(data, key));
@@ -45,9 +44,8 @@ class Save
 	
 	public static function load()
 	{
-		var file = new FlxSave();
-		file.bind("settings", Main.savePath);
-
+		var file = new DoidoSave("settings");
+		
 		if (file != null && file.data != null)
 		{
 			for (key in Reflect.fields(data))

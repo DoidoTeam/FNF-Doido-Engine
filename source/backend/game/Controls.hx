@@ -4,10 +4,10 @@ package backend.game;
 import backend.game.Mobile;
 import backend.game.MusicBeatData;
 #end
+import backend.system.DoidoSave;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;
-import flixel.util.FlxSave;
 #if TOUCH_CONTROLS
 import flixel.util.FlxTimer;
 import objects.mobile.DoidoPad;
@@ -229,16 +229,14 @@ class Controls
 	
 	public static function save()
 	{
-		var file = new FlxSave();
-		file.bind("controls", Main.savePath);
+		var file = new DoidoSave("controls");
 		file.data.allControls = allControls;
 		file.close();
 	}
 
 	public static function load()
 	{
-		var file = new FlxSave();
-		file.bind("controls", Main.savePath);
+		var file = new DoidoSave("controls");
 		
 		if(file.data.allControls == null)
 			file.data.allControls = allControls;
