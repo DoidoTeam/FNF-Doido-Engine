@@ -5,9 +5,12 @@ import flixel.FlxSprite;
 import backend.assets.Cache;
 import backend.assets.Assets;
 import flixel.graphics.FlxGraphic;
+import objects.*;
 
 class PlayState extends MusicBeatState
 {
+	var playField:PlayField;
+	
 	override function create()
 	{
 		super.create();
@@ -16,14 +19,17 @@ class PlayState extends MusicBeatState
 		add(bg);
 
 		trace(Assets.fileExists("fonts/vcr", FONT));
+		
+		playField = new PlayField();
+		add(playField);
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
-		if(Controls.justPressed(ACCEPT))
-			MusicBeat.switchState(new states.PlayState());
+		
+		/*if(Controls.justPressed(ACCEPT))
+			MusicBeat.switchState(new states.PlayState());*/
 		
 		/*if (Controls.justPressed(UI_LEFT))
 		{
