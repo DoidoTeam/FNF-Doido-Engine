@@ -29,11 +29,8 @@
 	<!-- _____________________________ Custom Defines ___________________________ -->
 
 	<define name="DISCORD_RPC" 			if="cpp" unless="mobile" />
-	<define name="PRELOAD_SONG" 		if="cpp" unless="debug" />
-	<define name="RENAME_UNDERSCORE" 	if="html5 || mobile"/>
 	<define name="ENABLE_PRINTING" 		if="cpp || hl || html5"/>
-	<define name="ROUND_ICON" 			if="mac"/>
-	<define name="TOUCH_CONTROLS"		if="mobile"/>
+
 	<!--Uncomment-this-to-use-videos-in-your-mod!!-->
 	<!--<define name="VIDEOS_ALLOWED" 		if="desktop || android || html5"/>-->
 	<define name="HXVLC_NO_SHARE_DIRECTORY" if="desktop || android" />
@@ -46,17 +43,6 @@
 
 	<source path="source" />
 	<assets path="assets" />
-	<!--<assets path="assets" exclude="videos" unless="VIDEOS_ALLOWED" />-->
-	<assets path="art/mobile" rename="assets/images/mobile" if="TOUCH_CONTROLS" />
-
-	<!-- RENAME UNDERSCORE FOLDERS -->
-	<section if="RENAME_UNDERSCORE">
-		<!--
-		<assets path="assets/images/stages/_scripts" 	rename="assets/images/stages/scripts"/>
-		<assets path="assets/images/characters/_offsets" 	rename="assets/images/characters/offsets"/>
-		<assets path="assets/images/notes/_other" 			rename="assets/images/notes/other"/>
-		-->
-	</section> 
 
 	<!-- OpenAL config -->
 	<section if="desktop">
@@ -96,23 +82,11 @@
 
 	<!-- _________________________________ Custom _______________________________ -->
 
-	<section if="ROUND_ICON">
-		<icon path="art/icon/macOS/icon16.png" 	size='16'  />
-		<icon path="art/icon/macOS/icon32.png" 	size='32'  />
-		<icon path="art/icon/macOS/icon64.png" 	size='64'  />
-		<icon path="art/icon/macOS/icon128.png" 	size='128' />
-		<icon path="art/icon/macOS/icon256.png" 	size='256' />
-		<icon path="art/icon/macOS/icon512.png"/>
-	</section>
-
-	<section unless="ROUND_ICON">
-		<icon path="art/icon/icon16.png" 	size='16'  />
-		<icon path="art/icon/icon32.png" 	size='32'  />
-		<icon path="art/icon/icon64.png" 	size='64'  />
-		<icon path="art/icon/icon128.png" 	size='128' />
-		<icon path="art/icon/icon256.png" 	size='256' />
-		<icon path="art/icon/icon512.png" 	size='512' />
-		<icon path="art/icon/iconOG.png" />
-	</section>
-
+	<icon path="art/icon/icon16.png" 	size='16'  />
+	<icon path="art/icon/icon32.png" 	size='32'  />
+	<icon path="art/icon/icon64.png" 	size='64'  />
+	<icon path="art/icon/icon128.png" 	size='128' />
+	<icon path="art/icon/icon256.png" 	size='256' />
+	<icon path="art/icon/icon512.png" 	size='512' />
+	<icon path="art/icon/iconOG.png" />
 </project>

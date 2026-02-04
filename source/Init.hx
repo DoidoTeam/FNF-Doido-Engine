@@ -11,7 +11,7 @@ class Init extends MusicBeatState
 	override function create()
 	{
 		super.create();
-		Save.load();
+		Save.init();
 		Controls.load();
 		DiscordIO.check();
 		
@@ -22,18 +22,7 @@ class Init extends MusicBeatState
 		FlxGraphic.defaultPersist = true;
 		openfl.Assets.cache.enabled = false;
 		backend.assets.Cache.initCache();
-
-		firstState();
-	}
-
-	function firstState()
-	{
-		/*var openWarningMenu:Bool = #if html5 true #else false #end;
-
-		if(FlxG.save.data.beenWarned == null || openWarningMenu)
-			MusicBeat.switchState(new WarningState());
-		else*/
-			flagState();
+		flagState();
 	}
 
 	/*
@@ -43,12 +32,5 @@ class Init extends MusicBeatState
 	public static function flagState()
 	{
 		MusicBeat.switchState(new states.PlayState());
-		/*#if MENU
-		MusicBeat.switchState(new states.menu.MainMenuState());
-		#elseif FREEPLAY
-		MusicBeat.switchState(new states.menu.FreeplayState());
-		#else
-		MusicBeat.switchState(new TitleState());
-		#end*/
 	}
 }

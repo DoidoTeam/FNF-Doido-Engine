@@ -17,8 +17,6 @@ class PlayState extends MusicBeatState
 
 		var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
 		add(bg);
-
-		trace(Assets.fileExists("fonts/vcr", FONT));
 		
 		playField = new PlayField();
 		add(playField);

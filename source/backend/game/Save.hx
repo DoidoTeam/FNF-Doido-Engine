@@ -13,6 +13,9 @@ class SaveVariables
 	// graphics
 	public var fps:Int = 60;
 	public var gpuCaching:Bool = true;
+	// sound
+	public var volume:Float = 1;
+	public var muted:Bool = false;
 }
 
 class Save
@@ -23,6 +26,9 @@ class Save
 	public static function init()
 	{
 		load();
+
+		FlxG.sound.volume = data.volume;
+		FlxG.sound.muted = data.muted;
 	}
 	
 	public static function save()
