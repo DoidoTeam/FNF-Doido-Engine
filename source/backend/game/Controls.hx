@@ -230,7 +230,7 @@ class Controls
 	public static function save()
 	{
 		var file = new FlxSave();
-		file.bind("controls");
+		file.bind("controls", Main.savePath);
 		file.data.allControls = allControls;
 		file.close();
 	}
@@ -238,7 +238,7 @@ class Controls
 	public static function load()
 	{
 		var file = new FlxSave();
-		file.bind("settings");
+		file.bind("controls", Main.savePath);
 		
 		if(file.data.allControls == null)
 			file.data.allControls = allControls;

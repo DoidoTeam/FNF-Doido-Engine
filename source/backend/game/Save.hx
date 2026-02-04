@@ -34,7 +34,7 @@ class Save
 	public static function save()
 	{
 		var file = new FlxSave();
-		file.bind("settings");
+		file.bind("settings", Main.savePath);
 		
 		for (key in Reflect.fields(data))
 			Reflect.setField(file.data, key, Reflect.field(data, key));
@@ -46,7 +46,7 @@ class Save
 	public static function load()
 	{
 		var file = new FlxSave();
-		file.bind("settings");
+		file.bind("settings", Main.savePath);
 
 		if (file != null && file.data != null)
 		{
