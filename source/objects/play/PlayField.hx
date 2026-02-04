@@ -1,10 +1,8 @@
-package objects;
+package objects.play;
 
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxPoint;
-/*import flixel.tweens.FlxTween;
-import flixel.tweens.motion.QuadPath;*/
 import backend.game.SplinePath;
 
 class PlayField extends FlxTypedGroup<FlxSprite>
@@ -16,14 +14,12 @@ class PlayField extends FlxTypedGroup<FlxSprite>
 	public function new()
 	{
 		super();
-		testStrum = new FlxSprite(FlxG.width / 2, 80);
-		testStrum.makeGraphic(64, 64, 0xFFFFFFFF);
-		SpriteUtil.centerSpriteOffset(testStrum);
+		testStrum = new FlxSprite(FlxG.width / 2, 80).makeColor(64, 64, 0xFFFFFFFF);
+		testStrum.spriteCenter();
 		add(testStrum);
 		
-		testNote = new FlxSprite(FlxG.width / 2, FlxG.height - 80);
-		testNote.makeGraphic(64, 64, 0xFFFF0000);
-		SpriteUtil.centerSpriteOffset(testNote);
+		testNote = new FlxSprite(FlxG.width / 2, FlxG.height - 80).makeColor(64, 64, 0xFFFF0000);
+		testNote.spriteCenter();
 		add(testNote);
 		
 		testPath = new SplinePath([

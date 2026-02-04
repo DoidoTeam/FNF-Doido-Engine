@@ -6,6 +6,8 @@ import backend.assets.Cache;
 import backend.assets.Assets;
 import flixel.graphics.FlxGraphic;
 import objects.*;
+import objects.play.*;
+import objects.ui.*;
 
 class PlayState extends MusicBeatState
 {

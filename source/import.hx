@@ -9,4 +9,5 @@ import backend.system.Discord.DiscordIO;
 import backend.system.Logs;
 
 using StringTools;
+using backend.utils.SpriteUtil;
 using flixel.util.FlxArrayUtil;

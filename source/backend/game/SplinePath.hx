@@ -6,7 +6,7 @@ import flixel.math.FlxAngle;
 import flixel.FlxG;
 import flixel.util.FlxColor;
 
-class SplinePath
+class SplinePath //extends BasePath
 {
 	public var percent:Float = 0.0;
     public var points:Array<FlxPoint>;
