@@ -5,6 +5,7 @@ import openfl.system.System;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.display.Sprite;
+import flixel.util.FlxStringUtil;
 
 class FPSCounter extends Sprite
 {
@@ -59,8 +60,11 @@ class FPSCounter extends Sprite
 		fpsField.text = '$fps';
 		labelField.x = fpsField.getLineMetrics(0).width + 5;
 
-		var mem:Float = Math.abs(Math.round(System.totalMemory / 1024 / 1024 * 100) / 100);
-		memField.text = formatBytes(mem);
+		memField.text = FlxStringUtil.formatBytes(System.totalMemoryNumber);
+
+		#if windows
+		memField.text += '\n${FlxStringUtil.formatBytes(backend.native.Windows.getMem())}';
+		#end
 
 		#if debug
 		memField.text += '\n${Type.getClassName(Type.getClass(FlxG.state))}';
@@ -73,32 +77,10 @@ class FPSCounter extends Sprite
 		else
 			fpsField.textColor = 0xFFFFFF;
 
-		if(mem >= 2 * 1024)
+		/*if(mem >= 2 * 1024)
 			memField.textColor = 0xFF0000;
 		else
-			memField.textColor = 0xFFFFFF;
-	}
-	
-	// I'm not even gonna lie the petabytes are here just for lolz
-	/*public static*/ final byteUnits:Array<String> = ["MB", "GB", "TB", "PB"];
-	/*public static*/ function formatBytes(bytes:Float):String
-	{
-		var unitCount:Int = 0;
-
-		// Love me some recursion up in here
-		function format()
-		{
-			if(bytes >= 1024) {
-				unitCount++;
-				bytes /= 1024;
-				format();
-			}
-		}
-		format();
-
-		bytes = Math.floor(bytes * 100) / 100;
-		
-		return '$bytes ${byteUnits[unitCount]}';
+			memField.textColor = 0xFFFFFF;*/
 	}
 }
 
