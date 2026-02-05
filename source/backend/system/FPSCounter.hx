@@ -34,7 +34,7 @@ class FPSCounter extends Sprite
 		memField = new CounterField(0, 21, 14, 300, "", Main.globalFont, 0xFFFFFF);
 		addChild(memField);
 
-		//visible = SaveData.data.get("FPS Counter");
+		visible = Save.data.fpsCounter;
 		
 		times = [];
 	}

@@ -1,15 +1,16 @@
 package objects.ui;
 
+import backend.utils.NoteUtil;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
-import backend.game.paths.*;
+import objects.ui.notes.*;
 
 class PlayField extends FlxGroup
 {
-	var testPath:BasePath;
+	/*var testPath:BasePath;
 	var testStrum:FlxSprite;
-	var testNote:FlxSprite;
+	var testNote:FlxSprite;*/
 	
 	public var strumlines:Array<Strumline> = [];
 	public var dadStrumline:Strumline;
@@ -39,6 +40,10 @@ class PlayField extends FlxGroup
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		for(strumline in strumlines)
+		{
+			strumline.updateNotes();
+		}
 		/*if (Controls.pressed(UI_LEFT))
 			testPath.percent -= elapsed / 2;
 		if (Controls.pressed(UI_RIGHT))

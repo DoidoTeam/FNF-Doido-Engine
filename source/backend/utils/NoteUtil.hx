@@ -24,12 +24,11 @@ class NoteUtil
 	}
 	
 	public static function intToString(data:Int):String
-	{
 		return directions[data];
-	}
 	
 	public static function stringToInt(direction:String):Int
-	{
 		return directions.indexOf(direction);
-	}
+
+	inline public static function noteWidth()
+		return 160 * 0.7; // 112
 }

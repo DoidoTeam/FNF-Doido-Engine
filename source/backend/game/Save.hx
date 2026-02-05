@@ -9,10 +9,11 @@ class SaveVariables
 	// gameplay
 	public var test:String = 'bullshit';
 	// visuals
-	public var fpsCounter:Bool = false;
+	public var fpsCounter:Bool = true;
 	// graphics
 	public var fps:Int = 60;
 	public var gpuCaching:Bool = true;
+	public var antialiasing:Bool = true;
 	// sound
 	public var volume:Float = 1;
 	public var muted:Bool = false;
@@ -71,12 +72,13 @@ class Save
 			FlxG.updateFramerate = data.fps;
 		}
 		
+		flixel.FlxSprite.defaultAntialiasing = data.antialiasing;
+		
 		if (Main.fpsCounter != null)
 			Main.fpsCounter.visible = data.fpsCounter;
 	}
 }
 
-//class
 class DoidoSave extends FlxSave
 {
 	public function new(name:String)

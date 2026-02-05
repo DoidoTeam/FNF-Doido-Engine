@@ -47,7 +47,6 @@ class MusicBeatState extends FlxUIState
 		persistentUpdate = false;
 		
 		//Controls.setSoundKeys();
-
 		Cache.clearCache();
 		
 		/*if(!Main.skipTrans)
@@ -57,8 +56,10 @@ class MusicBeatState extends FlxUIState
 
 		// go back to default automatically i dont want to do it
 		//Main.skipStuff(false);
-		curStep = _curStep = Conductor.calcStateStep();
-		curBeat = Math.floor(curStep / 4);
+		
+		curStepFloat = Conductor.calcStateStep();
+		curStep = _curStep = Math.floor(curStepFloat);
+		//curBeat = Math.floor(curStep / 4);
 
 		/*#if TOUCH_CONTROLS
 		createPad("blank");
@@ -68,7 +69,8 @@ class MusicBeatState extends FlxUIState
 
 	private var _curStep = 0; // actual curStep
 	private var curStep = 0;
-	private var curBeat = 0;
+	private var curStepFloat:Float = 0;
+	//private var curBeat = 0;
 
 	override function update(elapsed:Float)
 	{
@@ -86,7 +88,8 @@ class MusicBeatState extends FlxUIState
 
 	private function updateStep()
 	{
-		_curStep = Conductor.calcStateStep();
+		curStepFloat = Conductor.calcStateStep();
+		_curStep = Math.floor(curStepFloat);
 
 		while(_curStep != curStep)
 			stepHit();
@@ -123,7 +126,7 @@ class MusicBeatState extends FlxUIState
 	private function beatHit()
 	{
 		// finally you're useful for something
-		curBeat = Math.floor(curStep / 4);
+		//curBeat = Math.floor(curStep / 4);
 	}
 
 	/*#if TOUCH_CONTROLS
@@ -168,8 +171,10 @@ class MusicBeatSubState extends FlxSubState
 		MusicBeat.activeState = this;
 		persistentDraw = true;
 		persistentUpdate = false;
-		curStep = _curStep = Conductor.calcStateStep();
-		curBeat = Math.floor(curStep / 4);
+		
+		curStepFloat = Conductor.calcStateStep();
+		curStep = _curStep = Math.floor(curStepFloat);
+		//curBeat = Math.floor(curStep / 4);
 
 		/*#if TOUCH_CONTROLS
 		Controls.resetTimer();
@@ -186,10 +191,11 @@ class MusicBeatSubState extends FlxSubState
 		super.close();
 	}
 
-	private var _curStep = 0; // actual curStep
-	private var curStep = 0;
-	private var curBeat = 0;
-
+	private var _curStep:Int = 0; // actual curStep
+	private var curStep:Int = 0;
+	private var curStepFloat:Float = 0;
+	//private var curBeat:Int = 0;
+	
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -198,7 +204,8 @@ class MusicBeatSubState extends FlxSubState
 
 	private function updateStep()
 	{
-		_curStep = Conductor.calcStateStep();
+		curStepFloat = Conductor.calcStateStep();
+		_curStep = Math.floor(curStepFloat);
 
 		while(_curStep != curStep)
 			stepHit();
@@ -235,7 +242,7 @@ class MusicBeatSubState extends FlxSubState
 	private function beatHit()
 	{
 		// finally you're useful for something
-		curBeat = Math.floor(curStep / 4);
+		//curBeat = Math.floor(curStep / 4);
 	}
 
 	/*#if TOUCH_CONTROLS

@@ -27,13 +27,20 @@ class DoidoSprite extends FlxAnimate
 		updateOffset();
 	}
 	
+	// use this to modify the sprite's origin
+	public function preUpdateOffset()
+	{
+		offset.set(0, 0);
+	}
+	
 	public function updateOffset()
 	{
+		preUpdateOffset();
 		if(animOffsets.exists(curAnimName))
 		{
 			var daOffset = animOffsets.get(curAnimName);
-			offset.x += daOffset[0];
-			offset.y += daOffset[1];
+			offset.x += daOffset[0] * scale.x;
+			offset.y += daOffset[1] * scale.y;
 		}
 	}
 

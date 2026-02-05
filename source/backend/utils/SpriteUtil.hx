@@ -45,7 +45,7 @@ class SpriteUtil
 	{
 		spr.updateHitbox();
 		spr.offset.x += spr.frameWidth * spr.scale.x / 2;
-		spr.offset.y += spr.frameHeight * spr.scale.y / 2;
+		spr.offset.y += spr.frameHeight* spr.scale.y / 2;
 		return spr;
 	}
 }
