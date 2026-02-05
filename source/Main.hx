@@ -1,10 +1,12 @@
 package;
 
+import animate.FlxAnimateController;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.input.keyboard.FlxKey;
 import openfl.display.Sprite;
 import backend.system.FPSCounter;
+import animate.FlxAnimateAssets;
 
 class Main extends Sprite
 {

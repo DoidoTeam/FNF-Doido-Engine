@@ -18,6 +18,7 @@ class FPSCounter extends Sprite
 
 	// Use this if you want to add a watermark to the counter!
 	var watermark:String = "";
+	var taskMem:Bool = false;
 
 	public function new(x:Float = 0, y:Float = 0)
 	{
@@ -64,7 +65,7 @@ class FPSCounter extends Sprite
 		memField.text = FlxStringUtil.formatBytes(System.totalMemoryNumber);
 
 		#if windows
-		memField.text += '\n${FlxStringUtil.formatBytes(backend.native.Windows.getMem())}';
+		if(taskMem) memField.text == '\n${FlxStringUtil.formatBytes(backend.native.Windows.getMem())}';
 		#end
 
 		#if debug

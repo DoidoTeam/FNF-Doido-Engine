@@ -17,7 +17,7 @@ enum Asset
     TEXT;
     JSON;
     XML;
-    //SCRIPT;
+    BINARY;
     OTHER;
 }
 
@@ -33,6 +33,7 @@ class Assets
         TEXT => ["txt"],
         JSON => ["json"],
         XML => ["xml"],
+        BINARY => [""],
         OTHER => [""] //?
     ];
     public static final mainPath:String = 'assets';
@@ -40,18 +41,23 @@ class Assets
         return '$mainPath/$key';
     }
 
-    public static function fileExists(path:String, type:Asset):Bool
+    public static function fileExists(path:String, type:Asset = OTHER):Bool
         return whichExists(getPath(path), type) >= 0;
+
+    public static function getExt(key:String, ext:String) {
+        var path = key;
+        if(ext != "")
+            path += '.$ext';
+        return path;
+    }
 
     public static function whichExists(path:String, type:Asset):Int {
         var ext = extensions.get(type);
         for (i in 0...ext.length) {
-            if(OpenFLAssets.exists('$path.${ext[i]}')) {
+            if(OpenFLAssets.exists(getExt(path, ext[i]))) {
                 return i;
-            }
-                
+            }       
         }
-
         return -1;
     }
 
@@ -61,11 +67,11 @@ class Assets
         if(index == -1)
             return null;
 
-        return getPath('$key.${extensions.get(type)[index]}');
+        return getExt(path, extensions.get(type)[index]);
     }
 
-    public static function getAsset<T>(key:String, type:Asset):T {
-        var path = resolvePath(key, type);
+    public static function getAsset<T>(key:String, type:Asset, ext:Bool = true):T {
+        var path = resolvePath(key, (ext ? type : OTHER));
         switch(type) {
             case IMAGE:
                 if(path == null)
@@ -77,9 +83,20 @@ class Assets
                 return cast Cache.getSound(path, false);
             case TEXT | JSON | XML:
                 return cast OpenFLAssets.getText(path).trim();
+            case BINARY:
+                return cast OpenFLAssets.getBytes(path);
             default:
                 return cast path;
         };
+    }
+
+    public static function list(key:String):Array<String> {
+        var list = OpenFLAssets.list();
+        var path = getPath(key);
+
+        //taken from flixel-animate
+        return list.filter((str) -> str.startsWith(path.substring(path.indexOf(':') + 1, path.length)))
+			.map((str) -> str.split('${path.split(":").pop()}/').pop());
     }
 
     public static function image(key:String):FlxGraphic
@@ -101,7 +118,7 @@ class Assets
 		return FlxAtlasFrames.fromSparrow(getAsset('images/$key', IMAGE), getAsset('images/$key', XML));
 	
 	public static function animate(key:String):FlxAnimateFrames
-		return FlxAnimateFrames.fromAnimate(key);
+		return FlxAnimateFrames.fromAnimate('images/$key');
 
     public static function inst(song:String):Sound
 		return getAsset('songs/$song/audio/Inst', SOUND);

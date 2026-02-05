@@ -10,6 +10,8 @@ import flixel.sound.FlxSound;
 import objects.*;
 import objects.play.*;
 import objects.ui.*;
+import animate.FlxAnimate;
+import animate.FlxAnimateFrames;
 
 class PlayState extends MusicBeatState
 {
@@ -34,6 +36,11 @@ class PlayState extends MusicBeatState
 		
 		debugInfo = new DebugInfo();
 		add(debugInfo);
+
+		//friend
+		/*var sprite:FlxAnimate = new FlxAnimate();
+		sprite.frames = Assets.animate("face");
+		add(sprite);*/
 	}
 
 	override function update(elapsed:Float)
