@@ -1,27 +1,16 @@
-package backend.game;
+package backend.game.paths;
 
 import flixel.math.FlxPoint;
 import flixel.math.FlxMath;
-import flixel.math.FlxAngle;
-import flixel.FlxG;
-import flixel.util.FlxColor;
 
-class SplinePath //extends BasePath
-{
-	public var percent:Float = 0.0;
-    public var points:Array<FlxPoint>;
-	
-    public function new(?points:Array<FlxPoint>)
+class SplinePath extends BasePath
+{	
+    public function new(points:Array<FlxPoint>)
     {
-        this.points = (points ?? []);
+		super(points);
     }
 
-    public function add(x:Float, y:Float):Void
-    {
-        points.push(FlxPoint.get(x, y));
-    }
-
-    public function getPosition(?percent:Float):FlxPoint
+    override function getPosition(?percent:Float):FlxPoint
     {
 		if (percent == null) percent = this.percent;
 		
@@ -54,8 +43,6 @@ class SplinePath //extends BasePath
 			);
 		}
 
-		percent = FlxMath.bound(percent, 0, 1);
-
 		var segments = count - 1;
 		var t = percent * segments;
 		var seg = Math.floor(t);
@@ -68,32 +55,6 @@ class SplinePath //extends BasePath
 
 		return catmullRom(p0, p1, p2, p3, localT);
     }
-
-    inline function getPoint(index:Int):FlxPoint
-    {
-        var count:Int = points.length;
-
-        return points[
-            Math.floor(FlxMath.bound(index, 0, count - 1))
-        ];
-    }
-
-	function tangentEnd():FlxPoint
-	{
-		var n = points.length;
-		var a = points[n - 2];
-		var b = points[n - 1];
-
-		return FlxPoint.get(b.x - a.x, b.y - a.y);
-	}
-
-	function tangentStart():FlxPoint
-	{
-		var a = points[0];
-		var b = points[1];
-
-		return FlxPoint.get(b.x - a.x, b.y - a.y);
-	}
 
     inline function catmullRom(
         p0:FlxPoint,

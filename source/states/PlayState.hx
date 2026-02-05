@@ -28,8 +28,8 @@ class PlayState extends MusicBeatState
 	{
 		super.update(elapsed);
 		
-		/*if(Controls.justPressed(ACCEPT))
-			MusicBeat.switchState(new states.PlayState());*/
+		if(Controls.justPressed(RESET))
+			MusicBeat.switchState(new states.PlayState());
 		
 		/*if (Controls.justPressed(UI_LEFT))
 		{

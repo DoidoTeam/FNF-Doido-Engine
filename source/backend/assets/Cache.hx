@@ -78,7 +78,7 @@ class Cache
     public static function getGraphic(key:String, persist:Bool = false):FlxGraphic {
         if(isGraphicCached(key)) return getCachedGraphic(key, persist);
 
-        Logs.print("no cached graphic in sight! " + key);
+        Logs.print("creating: " + key);
 
         var bitmap:BitmapData = OpenFLAssets.getBitmapData(key, false);
         

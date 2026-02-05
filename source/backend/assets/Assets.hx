@@ -1,9 +1,11 @@
 package backend.assets;
 
-import openfl.Assets as OpenFLAssets;
 import flixel.graphics.FlxGraphic;
-import openfl.media.Sound;
 import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.graphics.frames.FlxFramesCollection;
+import animate.FlxAnimateFrames;
+import openfl.Assets as OpenFLAssets;
+import openfl.media.Sound;
 import tjson.TJSON;
 
 //am i gonna do something with this?
@@ -95,8 +97,11 @@ class Assets
     public static function json(key:String):Dynamic
 		return TJSON.parse(getAsset('$key', JSON));
 
-    public static function sparrow(key:String)
+    public static function sparrow(key:String):FlxFramesCollection
 		return FlxAtlasFrames.fromSparrow(getAsset('images/$key', IMAGE), getAsset('images/$key', XML));
+	
+	public static function animate(key:String):FlxAnimateFrames
+		return FlxAnimateFrames.fromAnimate(key);
 
     public static function inst(song:String):Sound
 		return getAsset('songs/$song/audio/Inst', SOUND);
