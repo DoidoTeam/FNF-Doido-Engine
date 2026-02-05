@@ -35,6 +35,7 @@ class FPSCounter extends Sprite
 		addChild(memField);
 
 		visible = Save.data.fpsCounter;
+		watermark = 'DE-Pudim Pre-Alpha';
 		
 		times = [];
 	}

@@ -1,31 +1,57 @@
 package backend.game;
 
-import flixel.FlxCamera;
 import flixel.FlxState;
 import flixel.FlxSubState;
 import flixel.addons.ui.FlxUIState;
 import flixel.group.FlxGroup;
 import backend.song.Conductor;
-import crowplexus.iris.Iris;
 import backend.assets.Cache;
-
-/*#if TOUCH_CONTROLS
-import objects.mobile.*;
-import flixel.FlxSubState;
-#end*/
+import backend.game.Transition;
 
 class MusicBeat
 {
 	public static var activeState:FlxState;
-	
-	public static function switchState(?newState:MusicBeatState)
+	public static var nextTransition:String = '';
+
+	public static function switchState(?target:MusicBeatState, tOut:String = 'funkin', ?tIn:String)
 	{
-		FlxG.switchState(() -> newState);
+		if(tIn != null)
+			nextTransition = tIn;
+		else
+			nextTransition = tOut;
+
+		var trans = new Transition(false, tOut);
+		trans.finishCallback = function()
+		{
+			if(target != null)		
+				FlxG.switchState(() -> target);
+			else
+				FlxG.resetState();
+		};
+
+		if(skipTrans)
+			return trans.finishCallback();
+		
+		if(activeState != null)
+			activeState.openSubState(trans);
 	}
 	
 	public static function resetState()
 	{
 		switchState(null);
+	}
+
+	public static var skipClearCache:Bool = false;
+	public static var skipTrans:Bool = true;
+	public static var skip(get, set):Bool;
+
+	public static function get_skip()
+		return skipTrans && skipClearCache;
+
+	public static function set_skip(newSkip:Bool) {
+		skipTrans = newSkip;
+		skipClearCache = newSkip;
+		return newSkip;
 	}
 }
 
@@ -34,10 +60,6 @@ class MusicBeat
 */
 class MusicBeatState extends FlxUIState
 {
-	/*#if TOUCH_CONTROLS
-	public var pad:DoidoPad;
-	#end*/
-
 	override function create()
 	{
 		super.create();
@@ -46,25 +68,17 @@ class MusicBeatState extends FlxUIState
 		persistentDraw = true;
 		persistentUpdate = false;
 		
-		//Controls.setSoundKeys();
-		Cache.clearCache();
-		
-		/*if(!Main.skipTrans)
-			openSubState(new GameTransition(true, Main.lastTransition));*/
+		Controls.setSoundKeys();
 
-		Iris.destroyAll();
+		if(!MusicBeat.skipClearCache)
+			Cache.clearCache();
+
+		if(!MusicBeat.skipTrans)
+			openSubState(new Transition(true, MusicBeat.nextTransition));
 
 		// go back to default automatically i dont want to do it
-		//Main.skipStuff(false);
-		
 		curStepFloat = Conductor.calcStateStep();
 		curStep = _curStep = Math.floor(curStepFloat);
-		//curBeat = Math.floor(curStep / 4);
-
-		/*#if TOUCH_CONTROLS
-		createPad("blank");
-		Controls.resetTimer();
-		#end*/
 	}
 
 	private var _curStep = 0; // actual curStep
@@ -77,13 +91,10 @@ class MusicBeatState extends FlxUIState
 		super.update(elapsed);
 		updateStep();
 		
-		#if debug
-		/*if(FlxG.keys.justPressed.F5) {
-			Main.skipClearMemory = (!FlxG.keys.pressed.SHIFT);
-			Main.skipTrans = true;
-			Main.resetState();
-		}*/
-		#end
+		if(FlxG.keys.justPressed.F5) {
+			MusicBeat.skip = (!FlxG.keys.pressed.SHIFT);
+			MusicBeat.resetState();
+		}
 	}
 
 	private function updateStep()
@@ -128,41 +139,11 @@ class MusicBeatState extends FlxUIState
 		// finally you're useful for something
 		//curBeat = Math.floor(curStep / 4);
 	}
-
-	/*#if TOUCH_CONTROLS
-	function createPad(mode:String = "blank", ?cameras:Array<FlxCamera>)
-	{
-		remove(pad);
-		pad = new DoidoPad(mode);
-
-		if(mode != "blank") {
-			if(cameras != null)
-				pad.cameras = cameras;
-
-			add(pad);
-		}
-	}
-
-	override function openSubState(SubState:FlxSubState) {
-		if(!(SubState is GameTransition))
-			pad.togglePad(false);
-		super.openSubState(SubState);
-	}
-
-	override function closeSubState() {
-		pad.togglePad(true);
-		super.closeSubState();
-	}
-	#end*/
 }
 
 class MusicBeatSubState extends FlxSubState
 {
 	var subParent:FlxState;
-
-	/*#if TOUCH_CONTROLS
-	public var pad:DoidoPad = new DoidoPad();
-	#end*/
 
 	override function create()
 	{
@@ -171,22 +152,12 @@ class MusicBeatSubState extends FlxSubState
 		MusicBeat.activeState = this;
 		persistentDraw = true;
 		persistentUpdate = false;
-		
 		curStepFloat = Conductor.calcStateStep();
 		curStep = _curStep = Math.floor(curStepFloat);
-		//curBeat = Math.floor(curStep / 4);
-
-		/*#if TOUCH_CONTROLS
-		Controls.resetTimer();
-		#end*/
 	}
 	
 	override function close()
 	{
-		/*#if TOUCH_CONTROLS
-		Controls.resetTimer();
-		#end*/
-		
 		MusicBeat.activeState = subParent;
 		super.close();
 	}
@@ -244,20 +215,5 @@ class MusicBeatSubState extends FlxSubState
 		// finally you're useful for something
 		//curBeat = Math.floor(curStep / 4);
 	}
-
-	/*#if TOUCH_CONTROLS
-	function createPad(mode:String = "blank", ?cameras:Array<FlxCamera>)
-	{
-		remove(pad);
-		pad = new DoidoPad(mode);
-
-		if(mode != "blank") {
-			if(cameras != null)
-				pad.cameras = cameras;
-
-			add(pad);
-		}
-	}
-	#end*/
 }
 

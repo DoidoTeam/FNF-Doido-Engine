@@ -14,7 +14,7 @@ class Main extends Sprite
     var framerate:Int = 60;
     var skipSplash:Bool = true;
 
-    public static final savePath:String = "DiogoTV/DoidoEngine4";
+    public static final savePath:String = "DiogoTV/DEPudim";
     public static var fpsCounter:FPSCounter;
     public static var globalFont:String;
 

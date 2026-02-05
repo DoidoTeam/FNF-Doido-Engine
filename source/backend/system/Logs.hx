@@ -44,10 +44,6 @@ class Logs {
 		Log.trace = function(v:Dynamic, ?infos:Null<haxe.PosInfos>) {
 			Logs.print(Std.string(v), TRACE, true, true, true, infos);
 		};
-
-		crowplexus.iris.Iris.logLevel = function (level:crowplexus.iris.ErrorSeverity, v:Dynamic, ?pos:haxe.PosInfos) {
-			Logs.print(v, HSCRIPT, true, true, true, true, pos);
-		};
     }
 
     public static function print(v:Dynamic, type:ErrorType = TRACE, printType:Bool = true, printTime:Bool = true, printClass:Bool = true, allowDebugger:Bool = true, ?infos:Null<haxe.PosInfos>) {

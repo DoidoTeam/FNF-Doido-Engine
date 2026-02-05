@@ -3,7 +3,7 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="FNF: Doido Engine" file="DoidoEngine" packageName="com.diogotv.doidoengine" package="com.diogotv.doidoengine" main="Main" version="3.4.1" company="DiogoTV" />
+	<app title="FNF: Doido Engine" file="DoidoEngine" packageName="com.diogotv.doidoengine" package="com.diogotv.doidoengine" main="Main" version="0.0.1" company="DiogoTV" />
 	
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
@@ -31,10 +31,6 @@
 	<define name="DISCORD_RPC" 			if="cpp" unless="mobile" />
 	<define name="ENABLE_PRINTING" 		if="cpp || hl || html5"/>
 
-	<!--Uncomment-this-to-use-videos-in-your-mod!!-->
-	<!--<define name="VIDEOS_ALLOWED" 		if="desktop || android || html5"/>-->
-	<define name="HXVLC_NO_SHARE_DIRECTORY" if="desktop || android" />
-
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<set name="BUILD_DIR" value="export" />
@@ -57,12 +53,9 @@
 	<haxelib name="flixel-ui" version="2.6.4" />
 	
 	<haxelib name="hscript" if="debug" /> <!--Used only for flixel's debugger!-->
-	<haxelib name="hscript-iris" />
 	<haxedef name="hscriptPos" />
 	
 	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
-	
-	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" unless="html5" />
 	
 	<!-- ______ Custom Doido Libraries ______ -->
 	<haxelib name="flixel-animate" version="1.4.0" />
