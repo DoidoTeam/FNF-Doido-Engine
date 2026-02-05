@@ -1,5 +1,6 @@
 package states;
 
+import animate.FlxAnimate;
 import backend.song.Conductor;
 import backend.assets.Cache;
 import backend.assets.Assets;
@@ -7,11 +8,11 @@ import backend.game.MusicBeat.MusicBeatState;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.sound.FlxSound;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import objects.*;
 import objects.play.*;
 import objects.ui.*;
-import animate.FlxAnimate;
-import animate.FlxAnimateFrames;
 
 class PlayState extends MusicBeatState
 {
@@ -34,11 +35,11 @@ class PlayState extends MusicBeatState
 		playField = new PlayField();
 		add(playField);
 		
-		debugInfo = new DebugInfo();
+		debugInfo = new DebugInfo(this);
 		add(debugInfo);
 
 		//friend
-		/*var sprite:FlxAnimate = new FlxAnimate();
+		/*var sprite = new FlxAnimate();
 		sprite.frames = Assets.animate("face");
 		add(sprite);*/
 	}
@@ -56,10 +57,7 @@ class PlayState extends MusicBeatState
 				inst.play();
 		
 		if (inst.playing)
-		{
 			Conductor.songPos += elapsed * 1000;
-			syncSong();
-		}
 		
 		/*if (Controls.justPressed(UI_LEFT))
 		{
@@ -73,9 +71,23 @@ class PlayState extends MusicBeatState
 			Logs.print('RIGHT !!', WARNING);*/
 	}
 	
+	override function stepHit()
+	{
+		super.stepHit();
+		syncSong();
+		
+		if (curStep % 4 == 0) {
+			FlxTween.cancelTweensOf(FlxG.camera);
+			FlxG.camera.zoom *= 1.02;
+			FlxTween.tween(FlxG.camera, {zoom: 1.0}, Conductor.crochet / 1000 * 1, {
+				ease: FlxEase.cubeOut
+			});
+		}
+	}
+	
 	public function syncSong()
 	{
-		if (Math.abs(inst.time - Conductor.songPos) >= 20)
+		if (Math.abs(Conductor.songPos - inst.time) >= 20)
 		{
 			Logs.print('FIXING DELAYED MUSIC: ${inst.time} > ${Conductor.songPos}', WARNING);
 			inst.time = Conductor.songPos;
