@@ -4,7 +4,7 @@ package backend.game;
 import backend.game.Mobile;
 import backend.game.MusicBeatData;
 #end
-import backend.system.DoidoSave;
+import backend.game.Save.DoidoSave;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;

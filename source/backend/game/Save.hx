@@ -1,6 +1,6 @@
 package backend.game;
 
-import backend.system.DoidoSave;
+import flixel.util.FlxSave;
 
 @:keep
 @:structInit
@@ -73,5 +73,15 @@ class Save
 		
 		if (Main.fpsCounter != null)
 			Main.fpsCounter.visible = data.fpsCounter;
+	}
+}
+
+//class
+class DoidoSave extends FlxSave
+{
+	public function new(name:String)
+	{
+		super();
+		bind(name, Main.savePath);
 	}
 }
