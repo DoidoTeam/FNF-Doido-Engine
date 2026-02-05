@@ -21,6 +21,7 @@ class PlayState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+		Conductor.songPos = 0;
 		Conductor.setBPM(100);
 		
 		inst = FlxG.sound.load(Assets.inst("bopeebo"));
@@ -50,6 +51,7 @@ class PlayState extends MusicBeatState
 		if (inst.playing)
 		{
 			Conductor.songPos += elapsed * 1000;
+			syncSong();
 		}
 		
 		/*if (Controls.justPressed(UI_LEFT))
@@ -68,6 +70,7 @@ class PlayState extends MusicBeatState
 	{
 		if (Math.abs(inst.time - Conductor.songPos) >= 20)
 		{
+			Logs.print('FIXING DELAYED MUSIC: ${inst.time} > ${Conductor.songPos}', WARNING);
 			inst.time = Conductor.songPos;
 		}
 	}
