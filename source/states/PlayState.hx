@@ -53,31 +53,21 @@ class PlayState extends MusicBeatState
 			MusicBeat.switchState(new states.PlayState());
 		}
 		
-		if(Controls.justPressed(BACK))
+		if(Controls.justPressed(BACK)) {
 			MusicBeat.switchState(new states.DebugMenu());
 		}
 		
-		if(Controls.justPressed(ACCEPT))
+		if(Controls.justPressed(ACCEPT)) {
 			if (inst.playing)
 				inst.pause();
 			else
 				inst.play();
+		}
 		
 		if (inst.playing)
 			Conductor.songPos += elapsed * 1000;
 			
 		playField.updateNotes(curStepFloat);
-		
-		/*if (Controls.justPressed(UI_LEFT))
-		{
-			Logs.print('LEFT !!', WARNING);
-			//Save.data.fps = (Save.data.fps == 0 ? 144 : 0);
-			//Save.save();
-			
-			//Logs.print(Std.string(Save.data.test));
-		}
-		if (Controls.justPressed(UI_RIGHT))
-			Logs.print('RIGHT !!', WARNING);*/
 	}
 	
 	override function stepHit()
