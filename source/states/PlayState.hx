@@ -50,6 +50,8 @@ class PlayState extends MusicBeatState
 		
 		if(Controls.justPressed(RESET))
 			MusicBeat.switchState(new states.PlayState());
+		if(Controls.justPressed(BACK))
+			MusicBeat.switchState(new states.DebugMenu());
 		if(Controls.justPressed(ACCEPT))
 			if (inst.playing)
 				inst.pause();

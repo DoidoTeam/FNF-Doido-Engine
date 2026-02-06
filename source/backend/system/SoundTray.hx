@@ -90,7 +90,7 @@ class SoundTray extends FlxSoundTray
 
 	override public function showAnim(volume:Float, ?sound:FlxSoundAsset, duration = 1.0, label = "VOLUME"):Void
 	{
-		var sound = Assets.sound("menu/scrollMenu");
+		var sound = Assets.sound("scroll");
 		if (sound != null)
 			FlxG.sound.load(sound).play();
 

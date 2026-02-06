@@ -76,6 +76,8 @@ class MusicBeatState extends FlxUIState
 		if(!MusicBeat.skipTrans)
 			openSubState(new Transition(true, MusicBeat.nextTransition));
 
+		MusicBeat.skip = false;
+
 		// go back to default automatically i dont want to do it
 		curStepFloat = Conductor.calcStateStep();
 		curStep = _curStep = Math.floor(curStepFloat);

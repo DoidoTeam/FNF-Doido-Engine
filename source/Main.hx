@@ -17,6 +17,7 @@ class Main extends Sprite
     var skipSplash:Bool = true;
 
     public static final savePath:String = "DiogoTV/DEPudim";
+    public static final internalVer:String = "Pre-Alpha";
     public static var fpsCounter:FPSCounter;
     public static var globalFont:String;
 
