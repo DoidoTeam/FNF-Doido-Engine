@@ -48,10 +48,15 @@ class PlayState extends MusicBeatState
 	{
 		super.update(elapsed);
 		
-		if(Controls.justPressed(RESET))
+		if(Controls.justPressed(RESET)) {
+			MusicBeat.skipClearCache = true;
 			MusicBeat.switchState(new states.PlayState());
+		}
+		
 		if(Controls.justPressed(BACK))
 			MusicBeat.switchState(new states.DebugMenu());
+		}
+		
 		if(Controls.justPressed(ACCEPT))
 			if (inst.playing)
 				inst.pause();
@@ -60,6 +65,8 @@ class PlayState extends MusicBeatState
 		
 		if (inst.playing)
 			Conductor.songPos += elapsed * 1000;
+			
+		playField.updateNotes(curStepFloat);
 		
 		/*if (Controls.justPressed(UI_LEFT))
 		{

@@ -21,10 +21,10 @@ class PlayField extends FlxGroup
 		super();
 		NoteUtil.setUpDirections(4);
 		
-		bfStrumline = new Strumline(FlxG.width / 4);
+		bfStrumline = new Strumline(FlxG.width / 4, false, true, false);
 		strumlines.push(bfStrumline);
 		
-		dadStrumline = new Strumline(-FlxG.width / 4);
+		dadStrumline = new Strumline(-FlxG.width / 4, false, false, true);
 		strumlines.push(dadStrumline);
 		
 		for(strumline in strumlines)
@@ -35,15 +35,18 @@ class PlayField extends FlxGroup
 		
 	}
 	
-	public var elapsedtime:Float = 0;
+	public function updateNotes(curStepFloat:Float)
+	{
+		for(strumline in strumlines)
+		{
+			strumline.updateNotes(curStepFloat);
+		}
+	}
 	
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		for(strumline in strumlines)
-		{
-			strumline.updateNotes();
-		}
+		
 		/*if (Controls.pressed(UI_LEFT))
 			testPath.percent -= elapsed / 2;
 		if (Controls.pressed(UI_RIGHT))

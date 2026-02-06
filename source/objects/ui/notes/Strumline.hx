@@ -2,19 +2,23 @@ package objects.ui.notes;
 
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 
 class Strumline extends FlxGroup
 {
 	public var x:Float = 0;
 	public var downscroll:Bool = false;
+	public var isPlayer:Bool = false;
+	public var botplay:Bool = false;
+	public var hasModchart:Bool = false;
+	
+	public var scrollSpeed:Float = 1.0;
 	
 	public var strums:Array<StrumNote> = [];
 	public var notes:Array<Note> = [];
 	
-	public var hasModchart:Bool = false;
-	
-	public function new(xOffset:Float, downscroll:Bool = false)
+	public function new(xOffset:Float, downscroll:Bool = false, isPlayer:Bool = false, botplay:Bool = false)
 	{
 		super();
 		x = (FlxG.width / 2) + xOffset;
@@ -27,26 +31,10 @@ class Strumline extends FlxGroup
 			strums.push(strum);
 			add(strum);
 			
-			addNote(i * 2, i);
+			for(j in 0...4)
+				addNote((j * 16) + (i * 4), i);
 		}
 		
-		/*testStrum = new FlxSprite(FlxG.width / 2, 80).makeColor(64, 64, 0xFFFFFFFF);
-		testStrum.spriteCenter();
-		add(testStrum);*/
-		
-		/*testNote = new FlxSprite(FlxG.width / 2, FlxG.height - 80).makeColor(64, 64, 0xFFFF0000);
-		testNote.spriteCenter();
-		add(testNote);
-		
-		testPath = new BasePath([
-			FlxPoint.get(FlxG.width / 2, FlxG.height + 80), // começo
-			
-			FlxPoint.get(FlxG.width / 2 + 400, FlxG.height / 2),
-			//FlxPoint.get(FlxG.width / 2, FlxG.height / 2),
-			FlxPoint.get(FlxG.width / 2 - 400, FlxG.height / 2),
-			
-			FlxPoint.get(testStrum.x, testStrum.y), // fim
-		]);*/
 		recalculateX();
 		recalculateY();
 	}
@@ -66,15 +54,17 @@ class Strumline extends FlxGroup
 		note.kill();
 	}
 	
-	public function updateNotes()
+	public function updateNotes(curStepFloat:Float)
 	{
 		for(note in notes)
 		{
 			var strum = strums[note.noteData];
-			var path = note.notePath ?? strum.strumPath;
+			var path = (note.notePath ?? strum.strumPath);
 			
-			var pathPercent:Float = 0.5;
-			var pos = path.getPosition(pathPercent);
+			var noteSpeed:Float = note.noteSpeed ?? scrollSpeed;
+			var pathPercent:Float = (note.stepTime - curStepFloat) / 16 * noteSpeed;
+			
+			var pos = path.getPosition(1.0 - pathPercent);
 			note.setPosition(pos.x, pos.y);
 		}
 	}
@@ -90,7 +80,7 @@ class Strumline extends FlxGroup
 			strum.initialPos.x = strum.x;
 		}
 	}
-	
+		
 	public function recalculateY()
 	{
 		for(strum in strums)
@@ -104,6 +94,27 @@ class Strumline extends FlxGroup
 					FlxPoint.get(strum.x, downscroll ? -100 : FlxG.height + 100),
 					FlxPoint.get(strum.x, strum.y)
 				];
+				//strum.strumPath.spline = true;
+				/*for(_i in 0...2) {
+					var i = _i;
+					if (i == 0) i = -1;
+					strum.strumPath.points.insert(1, 
+						FlxPoint.get(
+							strum.x + 80 * i,
+							FlxG.height / 2 + 100 * i
+						)
+					);
+				}*/
+				/*for(_i in 0...2) {
+					var i = _i;
+					if (i == 0) i = -1;
+					strum.strumPath.points.insert(1, 
+						FlxPoint.get(
+							strum.x + 8 * i,
+							strum.y + 200 + (25 * i)
+						)
+					);
+				}*/
 			}
 		}
 	}

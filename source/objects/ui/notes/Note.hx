@@ -5,11 +5,16 @@ import objects.doido.DoidoSprite;
 
 class Note extends DoidoSprite
 {
+	// main data
 	public var stepTime:Float = 0;
 	public var noteData:Int = 0;
 	
+	// noteskin stuff
 	public var noteScale:Float = 1.0;
+	
+	// modchart stuff
 	public var notePath:NotePath = null;
+	public var noteSpeed:Null<Float> = null;
 	
 	public function new()
 	{
