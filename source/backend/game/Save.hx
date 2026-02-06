@@ -9,10 +9,10 @@ class SaveVariables
 	// gameplay
 	public var test:String = 'bullshit';
 	// visuals
-	public var fpsCounter:Bool = true;
+	public var fpsCounter:Bool = #if desktop true #else false #end;
 	// graphics
 	public var fps:Int = 60;
-	public var gpuCaching:Bool = true;
+	public var gpuCaching:Bool = #if desktop true #else false #end;
 	public var antialiasing:Bool = true;
 	// sound
 	public var volume:Float = 1;

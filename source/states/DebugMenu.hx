@@ -98,6 +98,7 @@ class DebugOptions extends MusicBeatState
 		add(bg);
 
         options = [
+            #if desktop
             {
                 name: "FPS Counter",
                 get: () -> Save.data.fpsCounter,
@@ -113,6 +114,7 @@ class DebugOptions extends MusicBeatState
                 get: () -> Save.data.gpuCaching,
                 set: (b:Bool) -> Save.data.gpuCaching = b
             },
+            #end
             {
                 name: "Antialiasing",
                 get: () -> Save.data.antialiasing,
