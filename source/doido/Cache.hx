@@ -1,4 +1,4 @@
-package backend.assets;
+package doido;
 
 import openfl.Assets as OpenFLAssets;
 import openfl.display.BitmapData;

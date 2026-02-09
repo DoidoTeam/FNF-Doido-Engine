@@ -5,7 +5,7 @@ import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.input.keyboard.FlxKey;
 import openfl.display.Sprite;
-import backend.system.FPSCounter;
+import doido.objects.ui.*;
 import animate.FlxAnimateAssets;
 
 class Main extends Sprite
@@ -35,7 +35,7 @@ class Main extends Sprite
         var game:FlxGame = new FlxGame(gameWidth, gameHeight, Init, framerate, framerate, skipSplash);
         globalFont = Assets.font("vcr"); // we need to initialize this before the font ever gets used, otherwise it wont be found
         @:privateAccess
-        game._customSoundTray = backend.system.SoundTray;
+        game._customSoundTray = SoundTray;
         addChild(game);
     }
 
@@ -75,3 +75,6 @@ class Main extends Sprite
 		}
 	}
 }
+
+@:deprecated("flixel.system.FlxSound was moved to flixel.sound.FlxSound")
+typedef Paths = doido.Assets;

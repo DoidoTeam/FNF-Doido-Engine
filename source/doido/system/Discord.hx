@@ -1,4 +1,4 @@
-package backend.system;
+package doido.system;
 
 import lime.app.Application;
 

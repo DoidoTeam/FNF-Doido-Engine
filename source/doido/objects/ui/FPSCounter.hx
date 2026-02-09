@@ -1,4 +1,4 @@
-package backend.system;
+package doido.objects.ui;
 
 import haxe.Timer;
 import openfl.system.System;
@@ -65,7 +65,7 @@ class FPSCounter extends Sprite
 		memField.text = FlxStringUtil.formatBytes(System.totalMemoryNumber);
 
 		#if windows
-		if(taskMem) memField.text == '\n${FlxStringUtil.formatBytes(backend.native.Windows.getMem())}';
+		if(taskMem) memField.text == '\n${FlxStringUtil.formatBytes(doido.system.Windows.getMem())}';
 		#end
 
 		#if debug

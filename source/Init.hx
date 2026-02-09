@@ -1,8 +1,9 @@
 package;
 
-import backend.game.MusicBeat.MusicBeatState;
+import doido.Cache;
+import doido.MusicBeat.MusicBeatState;
+import doido.system.Discord.DiscordIO;
 import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import states.*;
 
@@ -21,7 +22,7 @@ class Init extends MusicBeatState
 		
 		FlxGraphic.defaultPersist = true;
 		openfl.Assets.cache.enabled = false;
-		backend.assets.Cache.initCache();
+		Cache.initCache();
 		flagState();
 	}
 
@@ -31,6 +32,6 @@ class Init extends MusicBeatState
 	*/
 	public static function flagState()
 	{
-		MusicBeat.switchState(new states.DebugMenu());
+		MusicBeat.switchState(new DebugMenu());
 	}
 }

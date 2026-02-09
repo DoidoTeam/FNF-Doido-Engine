@@ -1,11 +1,11 @@
 package objects.ui;
 
-import backend.song.Conductor;
+import doido.song.Conductor;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import states.PlayState;
 
-using backend.utils.TextUtil;
+using doido.utils.TextUtil;
 
 class DebugInfo extends FlxGroup
 {

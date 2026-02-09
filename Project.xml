@@ -75,6 +75,8 @@
 
 	<!-- _________________________________ Custom _______________________________ -->
 
+	<!-- <haxeflag name="macro" value="addMetadata('@:build(doido.system.DoidoMacro.buildFlxBasic())', 'flixel.FlxBasic')" /> -->
+
 	<icon path="art/icon/icon16.png" 	size='16'  />
 	<icon path="art/icon/icon32.png" 	size='32'  />
 	<icon path="art/icon/icon64.png" 	size='64'  />

@@ -1,7 +1,6 @@
 package objects.ui.notes;
 
 import flixel.math.FlxPoint;
-import objects.doido.DoidoSprite;
 
 class StrumNote extends DoidoSprite
 {

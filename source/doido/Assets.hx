@@ -1,4 +1,4 @@
-package backend.assets;
+package doido;
 
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -7,6 +7,7 @@ import animate.FlxAnimateFrames;
 import openfl.Assets as OpenFLAssets;
 import openfl.media.Sound;
 import tjson.TJSON;
+import doido.Cache;
 
 //am i gonna do something with this?
 enum Asset

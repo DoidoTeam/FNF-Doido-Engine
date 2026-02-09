@@ -1,4 +1,4 @@
-package backend.utils;
+package doido.utils;
 
 import flixel.text.FlxText;
 import flixel.util.FlxColor;

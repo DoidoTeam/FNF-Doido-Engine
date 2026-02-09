@@ -1,4 +1,4 @@
-package backend.native;
+package doido.system;
 
 #if windows
 @:buildXml('

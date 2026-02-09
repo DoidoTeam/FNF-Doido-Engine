@@ -1,10 +1,10 @@
-package backend.game;
+package doido;
 
 #if TOUCH_CONTROLS
 import backend.game.Mobile;
 import backend.game.MusicBeatData;
 #end
-import backend.game.Save.DoidoSave;
+import doido.Save.DoidoSave;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;

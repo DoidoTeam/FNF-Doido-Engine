@@ -1,4 +1,4 @@
-package backend.game;
+package doido.utils;
 
 import flixel.math.FlxPoint;
 import flixel.math.FlxMath;

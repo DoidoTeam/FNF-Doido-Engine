@@ -1,8 +1,5 @@
 package objects.ui.notes;
 
-import flixel.math.FlxPoint;
-import objects.doido.DoidoSprite;
-
 class Note extends DoidoSprite
 {
 	// main data

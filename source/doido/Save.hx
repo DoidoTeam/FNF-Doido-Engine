@@ -1,4 +1,4 @@
-package backend.game;
+package doido;
 
 import flixel.util.FlxSave;
 
@@ -12,7 +12,7 @@ class SaveVariables
 	public var fpsCounter:Bool = #if desktop true #else false #end;
 	// graphics
 	public var fps:Int = 60;
-	public var gpuCaching:Bool = #if desktop true #else false #end;
+	public var gpuCaching:Bool = false;
 	public var antialiasing:Bool = true;
 	// sound
 	public var volume:Float = 1;

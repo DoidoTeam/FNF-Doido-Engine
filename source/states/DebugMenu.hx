@@ -4,7 +4,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.math.FlxMath;
 
-using backend.utils.TextUtil;
+using doido.utils.TextUtil;
 
 class DebugMenu extends MusicBeatState
 {
@@ -17,6 +17,8 @@ class DebugMenu extends MusicBeatState
     override function create()
     {
         super.create();
+        DiscordIO.changePresence("In the Main Menu");
+
         var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
 		add(bg);
 
@@ -94,6 +96,8 @@ class DebugOptions extends MusicBeatState
     override function create()
     {
         super.create();
+        DiscordIO.changePresence("In the Options Menu");
+
         var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
 		add(bg);
 

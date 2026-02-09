@@ -1,6 +1,6 @@
 package objects.ui;
 
-import backend.utils.NoteUtil;
+import doido.utils.NoteUtil;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;

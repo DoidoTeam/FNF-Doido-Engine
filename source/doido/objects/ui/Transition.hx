@@ -1,9 +1,9 @@
-package backend.game;
+package doido.objects.ui;
 
 import flixel.FlxSprite;
 import flixel.util.FlxGradient;
 import flixel.tweens.FlxTween;
-import backend.game.MusicBeat.MusicBeatSubState;
+import doido.MusicBeat.MusicBeatSubState;
 
 /*
 	Transition between states.

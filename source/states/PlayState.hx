@@ -1,10 +1,7 @@
 package states;
 
 import animate.FlxAnimate;
-import backend.song.Conductor;
-import backend.assets.Cache;
-import backend.assets.Assets;
-import backend.game.MusicBeat.MusicBeatState;
+import doido.song.Conductor;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.sound.FlxSound;
@@ -24,12 +21,15 @@ class PlayState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+		DiscordIO.changePresence("In the PlayState");
+
 		Conductor.songPos = 0;
 		Conductor.setBPM(100);
 		
 		inst = FlxG.sound.load(Assets.inst("bopeebo"));
 		
 		var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+		//bg.zIndex = 500;
 		add(bg);
 		
 		playField = new PlayField();

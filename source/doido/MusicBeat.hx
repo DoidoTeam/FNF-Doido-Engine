@@ -1,12 +1,12 @@
-package backend.game;
+package doido;
 
 import flixel.FlxState;
 import flixel.FlxSubState;
 import flixel.addons.ui.FlxUIState;
 import flixel.group.FlxGroup;
-import backend.song.Conductor;
-import backend.assets.Cache;
-import backend.game.Transition;
+import doido.Cache;
+import doido.song.Conductor;
+import doido.objects.ui.Transition;
 
 class MusicBeat
 {

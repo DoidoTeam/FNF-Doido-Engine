@@ -1,4 +1,4 @@
-package objects.doido;
+package doido.objects;
 
 import animate.FlxAnimate;
 

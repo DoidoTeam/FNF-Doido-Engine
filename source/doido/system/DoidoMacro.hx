@@ -1,7 +1,7 @@
-package backend.macro;
+package doido.system;
 
 #if macro
-class FlxMacro
+class DoidoMacro
 {
 	/**
 	 * A macro to be called targeting the `FlxBasic` class.
