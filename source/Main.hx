@@ -76,5 +76,5 @@ class Main extends Sprite
 	}
 }
 
-@:deprecated("flixel.system.FlxSound was moved to flixel.sound.FlxSound")
+@:deprecated("Paths was moved to Assets")
 typedef Paths = doido.Assets;

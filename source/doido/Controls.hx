@@ -1,236 +1,150 @@
 package doido;
 
-#if TOUCH_CONTROLS
-import backend.game.Mobile;
-import backend.game.MusicBeatData;
-#end
-import doido.Save.DoidoSave;
-import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.keyboard.FlxKey;
+import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.FlxInput.FlxInputState;
-#if TOUCH_CONTROLS
-import flixel.util.FlxTimer;
-import objects.mobile.DoidoPad;
-#end
+import flixel.input.gamepad.FlxGamepad.FlxGamepadModel;
 
-using haxe.EnumTools;
-
-/*
-	Custom input and controller handler
-*/
-enum DoidoKey
+enum abstract DoidoKey(String)
 {
 	// gameplay
-	LEFT;
-	DOWN;
-	UP;
-	RIGHT;
-	RESET;
-	// ui stuff
-	UI_LEFT;
-	UI_DOWN;
-	UI_UP;
-	UI_RIGHT;
-	ACCEPT;
-	BACK;
-	PAUSE;
-	TEXT_LOG;
-	CONTROL;
-	// none
-	NONE;
+	var LEFT = "left";
+	var DOWN = "down";
+	var UP = "up";
+	var RIGHT = "right";
+	var RESET = "reset";
+	// ui
+	var UI_LEFT = "ui_left";
+	var UI_DOWN = "ui_down";
+	var UI_UP = "ui_up";
+	var UI_RIGHT = "ui_right";
+	var ACCEPT = "accept";
+	var BACK = "back";
+    //other
+	var NONE = "none";
+}
+
+typedef Binds =
+{
+	var keyboard:Array<FlxKey>;
+	var gamepad:Array<FlxPad>;
+	var rebindable:Bool;
 }
 
 class Controls
 {
-	public static function justPressed(bind:DoidoKey):Bool
-	{
-		return checkBind(bind, JUST_PRESSED);
-	}
+	public static var bindMap:Map<DoidoKey, Binds> = [
+		// GAMEPLAY
+		LEFT => {
+            keyboard: [FlxKey.A, FlxKey.LEFT],
+            gamepad: [FlxPad.LEFT_TRIGGER, FlxPad.DPAD_LEFT],
+			rebindable: true
+        },
+        DOWN => {
+            keyboard: [FlxKey.S, FlxKey.DOWN],
+            gamepad: [FlxPad.LEFT_SHOULDER, FlxPad.DPAD_DOWN],
+			rebindable: true
+        },
+        UP => {
+            keyboard: [FlxKey.W, FlxKey.UP],
+            gamepad: [FlxPad.RIGHT_SHOULDER, FlxPad.DPAD_UP],
+			rebindable: true
+        },
+        RIGHT => {
+            keyboard: [FlxKey.D, FlxKey.RIGHT],
+            gamepad: [FlxPad.RIGHT_TRIGGER, FlxPad.DPAD_RIGHT],
+			rebindable: true
+        },
+		RESET => {
+			keyboard: [FlxKey.R, FlxKey.NONE],
+			gamepad: [FlxPad.BACK, FlxPad.NONE],
+			rebindable: true
+		},
 
-	public static function pressed(bind:DoidoKey):Bool
-	{
-		return checkBind(bind, PRESSED);
-	}
+		// UI
+		UI_LEFT => {
+            keyboard: [FlxKey.A, FlxKey.LEFT],
+            gamepad: [FlxPad.LEFT_STICK_DIGITAL_LEFT, FlxPad.DPAD_LEFT],
+			rebindable: false
+        },
+        UI_DOWN => {
+            keyboard: [FlxKey.S, FlxKey.DOWN],
+            gamepad: [FlxPad.LEFT_STICK_DIGITAL_DOWN, FlxPad.DPAD_DOWN],
+			rebindable: false
+        },
+        UI_UP => {
+            keyboard: [FlxKey.W, FlxKey.UP],
+            gamepad: [FlxPad.LEFT_STICK_DIGITAL_UP, FlxPad.DPAD_UP],
+			rebindable: false
+        },
+        UI_RIGHT => {
+            keyboard: [FlxKey.D, FlxKey.RIGHT],
+            gamepad: [FlxPad.LEFT_STICK_DIGITAL_RIGHT, FlxPad.DPAD_RIGHT],
+			rebindable: false
+        },
+		ACCEPT => {
+			keyboard: [FlxKey.SPACE, FlxKey.ENTER],
+			gamepad: [FlxPad.A, FlxPad.X, FlxPad.START],
+			rebindable: false
+		},
+		BACK => {
+			keyboard: [FlxKey.BACKSPACE, FlxKey.ESCAPE],
+			gamepad: [FlxPad.B],
+			rebindable: false
+		},
+	];
 
-	public static function released(bind:DoidoKey):Bool
-	{
-		return checkBind(bind, JUST_RELEASED);
-	}
-
-	public static function checkBind(rawBind:DoidoKey, inputState:FlxInputState):Bool
-	{
-		var bind = bindToString(rawBind);
-		if(!allControls.exists(bind))
-		{
-			Logs.print('Bind $bind not found', WARNING);
-			return false;
-		}
-
-		for(i in 0...allControls.get(bind)[0].length)
-		{
-			var key:FlxKey = allControls.get(bind)[0][i];
-			if(FlxG.keys.checkStatus(key, inputState)
-			&& key != FlxKey.NONE)
-				return true;
-		}
-
-		// gamepads
-		if(FlxG.gamepads.lastActive != null)
-		for(i in 0...allControls.get(bind)[1].length)
-		{
-			var key:FlxPad = allControls.get(bind)[1][i];
-			if(FlxG.gamepads.lastActive.checkStatus(key, inputState)
-			&& key != FlxPad.NONE)
-				return true;
-		}
-
-		#if TOUCH_CONTROLS
-		return checkMobile(bind, inputState);
-		#else
-		return false;
-		#end
-	}
-
-	inline public static function bindToString(bind:DoidoKey):String
-	{
-		var constructors = DoidoKey.getConstructors();
-		return constructors[constructors.indexOf(Std.string(bind))];
-	}
-
-	//THIS IS A TEMP FIX!!!! CHANGE LATER!!!!
-	inline public static function stringToBind(bind:String):DoidoKey
-	{
-		switch(bind.toUpperCase()) {
-			case "LEFT":
-				return LEFT;
-			case "DOWN":
-				return DOWN;
-			case "UP":
-				return UP;
-			case "RIGHT":
-				return RIGHT;
-			case "RESET":
-				return RESET;
-			case "UI_LEFT":
-				return UI_LEFT;
-			case "UI_DOWN":
-				return UI_DOWN;
-			case "UI_UP":
-				return UI_UP;
-			case "UI_RIGHT":
-				return UI_RIGHT;
-			case "ACCEPT":
-				return ACCEPT;
-			case "BACK":
-				return BACK;
-			case "PAUSE":
-				return PAUSE;
-			case "TEXT_LOG":
-				return TEXT_LOG;
-			case "CONTROL":
-				return CONTROL;
-			default:
-				return NONE;
-		}
-
-		// NOTE: This does not work on Linux or macOS
-		//return cast DoidoKey.getConstructors().indexOf(Std.string(bind));
-	}
-	
-	public static function setSoundKeys(?empty:Bool = false)
-	{
-		if(empty)
-		{
+	public static function setSoundKeys(?empty:Bool = false) {
+		if(empty) {
 			FlxG.sound.muteKeys 		= [];
 			FlxG.sound.volumeDownKeys 	= [];
 			FlxG.sound.volumeUpKeys 	= [];
 		}
-		else
-		{
+		else {
 			FlxG.sound.muteKeys 		= [ZERO,  NUMPADZERO];
 			FlxG.sound.volumeDownKeys 	= [MINUS, NUMPADMINUS];
 			FlxG.sound.volumeUpKeys 	= [PLUS,  NUMPADPLUS];
 		}
 	}
-	
-	// self explanatory (i think)
-	public static final changeableControls:Array<String> = [
-		'LEFT', 'DOWN', 'UP', 'RIGHT',
-		'RESET',
-	];
-	
-	/*
-	** [0]: keyboard
-	** [1]: gamepad
-	*/
-	public static var allControls:Map<String, Array<Dynamic>> = [
-		// gameplay controls
-		'LEFT' => [
-			[FlxKey.A, FlxKey.LEFT],
-			[FlxPad.LEFT_TRIGGER, FlxPad.DPAD_LEFT],
-		],
-		'DOWN' => [
-			[FlxKey.S, FlxKey.DOWN],
-			[FlxPad.LEFT_SHOULDER, FlxPad.DPAD_DOWN],
-		],
-		'UP' => [
-			[FlxKey.W, FlxKey.UP],
-			[FlxPad.RIGHT_SHOULDER, FlxPad.DPAD_UP],
-		],
-		'RIGHT' => [
-			[FlxKey.D, FlxKey.RIGHT],
-			[FlxPad.RIGHT_TRIGGER, FlxPad.DPAD_RIGHT],
-		],
-		'RESET' => [
-			[FlxKey.R, FlxKey.NONE],
-			[FlxPad.BACK, FlxPad.NONE],
-		],
 
-		// ui controls
-		'UI_LEFT' => [
-			[FlxKey.A, FlxKey.LEFT],
-			[FlxPad.LEFT_STICK_DIGITAL_LEFT, FlxPad.DPAD_LEFT],
-		],
-		'UI_DOWN' => [
-			[FlxKey.S, FlxKey.DOWN],
-			[FlxPad.LEFT_STICK_DIGITAL_DOWN, FlxPad.DPAD_DOWN],
-		],
-		'UI_UP' => [
-			[FlxKey.W, FlxKey.UP],
-			[FlxPad.LEFT_STICK_DIGITAL_UP, FlxPad.DPAD_UP],
-		],
-		'UI_RIGHT' => [
-			[FlxKey.D, FlxKey.RIGHT],
-			[FlxPad.LEFT_STICK_DIGITAL_RIGHT, FlxPad.DPAD_RIGHT],
-		],
+	public static inline function justPressed(bind:DoidoKey):Bool
+		return checkBind(bind, JUST_PRESSED);
 
-		// ui buttons
-		'ACCEPT' => [
-			[FlxKey.SPACE, FlxKey.ENTER],
-			[FlxPad.A, FlxPad.X, FlxPad.START],
-		],
-		'BACK' => [
-			[FlxKey.BACKSPACE, FlxKey.ESCAPE],
-			[FlxPad.B],
-		],
-		'PAUSE' => [
-			[FlxKey.ENTER, FlxKey.ESCAPE],
-			[FlxPad.START],
-		],
-		'TEXT_LOG' => [
-			[FlxKey.TAB],
-			[FlxPad.Y],
-		],
-		'CONTROL' => [
-			[#if mac FlxKey.WINDOWS, #end FlxKey.CONTROL],
-			[],
-		],
-	];
-	
-	public static function save()
-	{
-		var file = new DoidoSave("controls");
-		file.data.allControls = allControls;
+	public static inline function pressed(bind:DoidoKey):Bool
+		return checkBind(bind, PRESSED);
+
+	public static inline function released(bind:DoidoKey):Bool
+		return checkBind(bind, JUST_RELEASED);
+
+    public static function checkBind(bind:DoidoKey, inputState:FlxInputState):Bool {
+		if(!bindMap.exists(bind)) {
+			Logs.print('Bind $bind not found', WARNING);
+			return false;
+		}
+
+		var binds:Binds = bindMap.get(bind);
+
+		for(key in binds.keyboard) {
+			if(FlxG.keys.checkStatus(key, inputState)
+			&& key != FlxKey.NONE)
+				return true;
+		}
+
+		if(FlxG.gamepads.lastActive != null) {
+            for(key in binds.gamepad) {
+                if(FlxG.gamepads.lastActive.checkStatus(key, inputState)
+                && key != FlxPad.NONE)
+                    return true;
+            }
+        }
+		
+		return false;
+	}
+
+	public static function save(?file:DoidoSave) {
+		if(file == null)
+			file = new DoidoSave("controls");
+		file.data.bindMap = bindMap;
 		file.close();
 	}
 
@@ -238,80 +152,110 @@ class Controls
 	{
 		var file = new DoidoSave("controls");
 		
-		if(file.data.allControls == null)
-			file.data.allControls = allControls;
-		else
-		{
-			if(Lambda.count(allControls) != Lambda.count(file.data.allControls))
-			{
-				var oldControls:Map<String, Array<Dynamic>> = file.data.allControls;
-				
-				for(key => values in allControls) {
-					if(oldControls.get(key) == null)
-						oldControls.set(key, values);
+		if (file != null && file.data != null && file.data.bindMap != null) {
+			var saved:Map<DoidoKey, Binds> = file.data.bindMap;
+			for (key in bindMap.keys()) {
+				if (saved.exists(key)) {
+					bindMap.set(key, saved.get(key));
 				}
-				for(key => values in oldControls) {
-					if(allControls.get(key) == null)
-						oldControls.remove(key);
-				}
-
-				file.data.allControls = allControls = oldControls;
-			}
-			
-			var impControls:Map<String, Array<Dynamic>> = file.data.allControls;
-			for(label => key in impControls)
-			{
-				if(changeableControls.contains(label))
-					allControls.set(label, key);
 			}
 		}
 		
-		file.close();
-		save();
+		save(file);
 	}
 
-	/*#if TOUCH_CONTROLS
-	public static var canTouch:Bool = false;
-	public static var timer:FlxTimer;
-	public static function resetTimer() {
-		canTouch = false;
+	public static final formatNum:Array<String> = ['ZERO','ONE','TWO','THREE','FOUR','FIVE','SIX','SEVEN','EIGHT','NINE'];
+    public static final ps4Binds:Map<String, String> = [
+        "LB" => "L1",
+        "LT" => "L2",
+        "RB" => "R1",
+        "RT" => "R2",
+        "A"  => "CROSS",
+        "B"  => "CIRCLE",
+        "X"  => "SQUARE",
+        "Y"  => "TRIANGLE",
+        "START" => "OPTIONS",
+        "SELECT" => "SHARE",
+    ];
+    public static final nSwitchBinds:Map<String, String> = [
+        "LB" => "L",
+        "LT" => "ZL",
+        "RB" => "R",
+        "RT" => "ZR",
+        "A"  => "B",
+        "B"  => "A",
+        "X"  => "Y",
+        "Y"  => "X",
+        "START" => "PLUS",
+        "SELECT" => "MINUS",
+    ];
 
-		if(timer != null)
-			timer.cancel();
-		timer = new FlxTimer().start(0.25, function(tmr:FlxTimer)
-		{
-			canTouch = true;
-		});
-	}
+	public static function formatKey(rawKey:Null<String>, isGamepad:Bool):String
+    {
+        var fKey:String = '---';
+        if(rawKey != null && rawKey != 'NONE')
+        {
+            fKey = rawKey;
+            for(num in formatNum)
+            {
+                if(fKey.contains(num))
+                    fKey = fKey.replace(num, '${formatNum.indexOf(num)}');
+            }
 
-	public static function checkMobile(bind:String, inputState:FlxInputState) {
-		if(!canTouch)
-			return false;
-		
-		// DOIDOPAD
-		if(Main.activeState is MusicBeatSubState || Main.activeState is MusicBeatState) {
-			var state = cast(Main.activeState);
-			var pad:DoidoPad = state.pad;
+            if(fKey.contains('NUMPAD'))
+            {
+                fKey = fKey.replace('NUMPAD', '');
+                fKey += '#';
+            }
 
-			if(pad.padActive) {
-				if(pad.checkButton(bind, inputState))
-					return pad.checkButton(bind, inputState);
+            if(isGamepad)
+            {
+                fKey = fKey.replace("BACK", "SELECT"); // select fica menos confuso (eu acho)
+                
+                fKey = fKey.replace("DPAD_", "D-");
 
-				//if(bind == "ACCEPT" && inputState == JUST_PRESSED && (pad.checkButton(bind, PRESSED) || pad.checkButton(bind, JUST_RELEASED)))
-				//	return false;	
-			}
-		}
+                if(fKey.contains("SHOULDER") || fKey.contains("TRIGGER"))
+                {
+                    fKey = fKey.replace("LEFT", "L");
+                    fKey = fKey.replace("RIGHT", "R");
+                    if(fKey.contains("SHOULDER"))
+                    {
+                        fKey = fKey.replace("_SHOULDER", "");
+                        fKey += "B";
+                    }
+                    if(fKey.contains("TRIGGER"))
+                    {
+                        fKey = fKey.replace("_TRIGGER", "");
+                        fKey += "T";
+                    }
+                }
 
-		// SPECIAL BUTTONS
-		if(bind.startsWith("UI_"))
-			return Mobile.getSwipe(bind);
-		else if(bind == "BACK")
-			return Mobile.back;
-		else if(bind == "ACCEPT") {
-			return Mobile.getTap(inputState) && !Mobile.getSwipe() && !Mobile.back;
-		}
-		else
-			return false;
-	}
-	#end*/
+                if(fKey.contains("STICK"))
+                {
+                    fKey = fKey.replace("LEFT_STICK",  "L-STICK");
+                    fKey = fKey.replace("RIGHT_STICK", "R-STICK");
+                    fKey = fKey.replace("_DIGITAL", "");
+                    fKey = fKey.replace("_", "\n");
+                }
+
+				var curGamepad = FlxG.gamepads.lastActive;
+                if(curGamepad != null)
+                {
+                    var convertMap:Int = 0;
+                    if([PS4, PSVITA].contains(curGamepad.detectedModel))
+                        convertMap = 1;
+                    if([SWITCH_PRO].contains(curGamepad.detectedModel))
+                        convertMap = 2;
+                    
+                    if(convertMap > 0)
+                    {
+                        for(bind => newBind in ((convertMap == 1) ? ps4Binds : nSwitchBinds))
+                            if(fKey == bind)
+                                fKey = newBind;
+                    }
+                }
+            }
+        }
+        return fKey;
+    }
 }

@@ -32,9 +32,10 @@ class Save
 		FlxG.sound.muted = data.muted;
 	}
 	
-	public static function save()
+	public static function save(?file:DoidoSave)
 	{
-		var file = new DoidoSave("settings");
+		if(file == null)
+			file = new DoidoSave("settings");
 		
 		for (key in Reflect.fields(data))
 			Reflect.setField(file.data, key, Reflect.field(data, key));
@@ -55,8 +56,7 @@ class Save
 					Reflect.setField(data, key, Reflect.field(file.data, key));
 			}
 		}
-		file.close();
-		save();
+		save(file);
 	}
 	
 	private static function update()

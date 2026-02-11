@@ -1,5 +1,6 @@
 package states;
 
+import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import animate.FlxAnimate;
 import doido.song.Conductor;
 import flixel.FlxSprite;
@@ -7,6 +8,7 @@ import flixel.graphics.FlxGraphic;
 import flixel.sound.FlxSound;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.FlxStrip;
 import objects.*;
 import objects.play.*;
 import objects.ui.*;
@@ -37,6 +39,7 @@ class PlayState extends MusicBeatState
 		
 		debugInfo = new DebugInfo(this);
 		add(debugInfo);
+
 
 		//friend
 		/*var sprite = new FlxAnimate();

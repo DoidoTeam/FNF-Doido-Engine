@@ -38,11 +38,11 @@ class Assets
         OTHER => [""] //?
     ];
     public static final mainPath:String = 'assets';
-    public static function getPath(key:String):String {
+    public static inline function getPath(key:String):String {
         return '$mainPath/$key';
     }
 
-    public static function fileExists(path:String, type:Asset = OTHER):Bool
+    public static inline function fileExists(path:String, type:Asset = OTHER):Bool
         return whichExists(getPath(path), type) >= 0;
 
     public static function getExt(key:String, ext:String) {
@@ -100,30 +100,30 @@ class Assets
 			.map((str) -> str.split('${path.split(":").pop()}/').pop());
     }
 
-    public static function image(key:String):FlxGraphic
+    public static inline function image(key:String):FlxGraphic
 		return getAsset('images/$key', IMAGE);
 
-    public static function sound(key:String):Sound
+    public static inline function sound(key:String):Sound
 		return getAsset('sounds/$key', SOUND);
 
-    public static function music(key:String):Sound
+    public static inline function music(key:String):Sound
         return getAsset('music/$key', SOUND);
 
-    public static function font(key:String):String
+    public static inline function font(key:String):String
         return getAsset('fonts/$key', FONT);
 
-    public static function json(key:String):Dynamic
+    public static inline function json(key:String):Dynamic
 		return TJSON.parse(getAsset('$key', JSON));
 
-    public static function sparrow(key:String):FlxFramesCollection
+    public static inline function sparrow(key:String):FlxFramesCollection
 		return FlxAtlasFrames.fromSparrow(getAsset('images/$key', IMAGE), getAsset('images/$key', XML));
 	
-	public static function animate(key:String):FlxAnimateFrames
+	public static inline function animate(key:String):FlxAnimateFrames
 		return FlxAnimateFrames.fromAnimate('images/$key');
 
-    public static function inst(song:String):Sound
+    public static inline function inst(song:String):Sound
 		return getAsset('songs/$song/audio/Inst', SOUND);
 
-    public static function voices(song:String):Sound
+    public static inline function voices(song:String):Sound
 		return getAsset('songs/$song/audio/Voices', SOUND);
 }
