@@ -1,5 +1,6 @@
 package doido.song;
 
+import flixel.tweens.FlxEase.EaseFunction;
 //import backend.song.SongData.SwagSong;
 
 typedef BPMChangeEvent =
@@ -7,6 +8,8 @@ typedef BPMChangeEvent =
 	var stepTime:Int;
 	var songTime:Float;
 	var bpm:Float;
+	var ?length:Float;
+	var ?ease:EaseFunction;
 }
 class Conductor
 {

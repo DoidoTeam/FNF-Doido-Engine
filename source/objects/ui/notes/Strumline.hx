@@ -1,5 +1,6 @@
 package objects.ui.notes;
 
+import doido.song.Conductor;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
@@ -12,6 +13,8 @@ class Strumline extends FlxGroup
 	public var isPlayer:Bool = false;
 	public var botplay:Bool = false;
 	public var hasModchart:Bool = false;
+
+	public var strumlineData:Int = 0;
 	
 	public var scrollSpeed:Float = 1.0;
 	
@@ -32,17 +35,25 @@ class Strumline extends FlxGroup
 			add(strum);
 			
 			for(j in 0...4)
-				addNote((j * 16) + (i * 4), i);
+			{
+				addNote({
+					stepTime: (j * 16) + (i * 4),
+					lane: i,
+					length: 0,
+					type: "none",
+					strumline: strumlineData,
+				});
+			}
 		}
-		
+
 		recalculateX();
 		recalculateY();
 	}
 	
-	public function addNote(stepTime:Float, noteData:Int)
+	public function addNote(noteData:NoteData)
 	{
 		var note:Note = cast recycle(Note);
-		note.loadData(stepTime, noteData);
+		note.loadData(noteData);
 		note.reloadSprite();
 		notes.push(note);
 		add(note);
@@ -58,14 +69,23 @@ class Strumline extends FlxGroup
 	{
 		for(note in notes)
 		{
-			var strum = strums[note.noteData];
-			var path = (note.notePath ?? strum.strumPath);
+			var strum = strums[note.data.lane];
+			/*var path = (note.notePath ?? strum.strumPath);
 			
 			var noteSpeed:Float = note.noteSpeed ?? scrollSpeed;
 			var pathPercent:Float = (note.stepTime - curStepFloat) / 16 * noteSpeed;
 			
 			var pos = path.getPosition(1.0 - pathPercent);
-			note.setPosition(pos.x, pos.y);
+			note.setPosition(pos.x, pos.y);*/
+
+			var offsetX = 0.0; // note.noteOffset.x;
+			var offsetY = (note.data.stepTime - curStepFloat) * Conductor.stepCrochet * (scrollSpeed * 0.45);
+			var angle = 0.0;
+
+			NoteUtil.setNotePos(
+				note, strum, angle,
+				offsetX, offsetY,
+			);
 		}
 	}
 	
@@ -87,35 +107,6 @@ class Strumline extends FlxGroup
 		{
 			strum.y = (!downscroll ? 110 : FlxG.height - 110);
 			strum.initialPos.x = strum.y;
-			
-			if (!hasModchart)
-			{
-				strum.strumPath.points = [
-					FlxPoint.get(strum.x, downscroll ? -100 : FlxG.height + 100),
-					FlxPoint.get(strum.x, strum.y)
-				];
-				//strum.strumPath.spline = true;
-				/*for(_i in 0...2) {
-					var i = _i;
-					if (i == 0) i = -1;
-					strum.strumPath.points.insert(1, 
-						FlxPoint.get(
-							strum.x + 80 * i,
-							FlxG.height / 2 + 100 * i
-						)
-					);
-				}*/
-				/*for(_i in 0...2) {
-					var i = _i;
-					if (i == 0) i = -1;
-					strum.strumPath.points.insert(1, 
-						FlxPoint.get(
-							strum.x + 8 * i,
-							strum.y + 200 + (25 * i)
-						)
-					);
-				}*/
-			}
 		}
 	}
 }

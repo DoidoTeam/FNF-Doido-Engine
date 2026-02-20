@@ -3,14 +3,12 @@ package objects.ui.notes;
 class Note extends DoidoSprite
 {
 	// main data
-	public var stepTime:Float = 0;
-	public var noteData:Int = 0;
+	public var data:NoteData;
 	
 	// noteskin stuff
 	public var noteScale:Float = 1.0;
 	
 	// modchart stuff
-	public var notePath:NotePath = null;
 	public var noteSpeed:Null<Float> = null;
 	
 	public function new()
@@ -18,18 +16,17 @@ class Note extends DoidoSprite
 		super(-5000, -5000); // offscreen lol
 	}
 	
-	public function loadData(stepTime:Float, noteData:Int)
+	public function loadData(data:NoteData)
 	{
 		path = null;
-		this.stepTime = stepTime;
-		this.noteData = noteData;
+		this.data = data;
 	}
 	
 	public function reloadSprite()
 	{
 		this.noteScale = 1.0;
 		
-		var direction:String = NoteUtil.intToString(noteData);
+		var direction:String = NoteUtil.intToString(data.lane);
 		switch("i told you ill do the skins later")
 		{
 			default:

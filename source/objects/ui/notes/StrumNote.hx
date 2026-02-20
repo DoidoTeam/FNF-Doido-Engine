@@ -8,12 +8,10 @@ class StrumNote extends DoidoSprite
 		
 	public var initialPos:FlxPoint = FlxPoint.get(0, 0);
 	public var strumScale:Float = 1.0;
-	public var strumPath:NotePath;
 	
 	public function new()
 	{
 		super();
-		strumPath = new NotePath();
 	}
 	
 	public function reloadStrum(strumData:Int)

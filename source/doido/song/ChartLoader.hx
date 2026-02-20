@@ -1,3 +1,9 @@
+package doido.song;
+
 import doido.utils.NoteUtil;
 import doido.song.SongData.NoteData;
-import doido.objects.DoidoSprite;
+
+class ChartLoader
+{
+    
+}
