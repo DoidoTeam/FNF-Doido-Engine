@@ -1,18 +1,18 @@
 package doido.song;
 
-import doido.song.SongDataOld.SwagSong;
+import doido.song.Compatibility;
 
 typedef DoidoSong =
 {
 	var song:String;
 	var notes:Array<NoteData>;
 	var bpm:Float;
-	//var needsVoices:Bool;
 	var speed:Float;
 
 	var player1:String;
 	var player2:String;
 }
+
 typedef NoteData = {
 	var stepTime:Float;
 	var lane:Int;
@@ -20,111 +20,30 @@ typedef NoteData = {
     var type:String;
 	var length:Float;
 }
-/*typedef EventSong = {
-	// [0] = section // [1] = strumTime // [2] events
-	var songEvents:Array<Dynamic>;
-}*/
 
 class SongData
 {
-    inline public static function loadFromJson(jsonInput:String, ?diff:String = "normal"):DoidoSong
+    inline public static function loadJson(jsonInput:String, ?diff:String = "normal"):DoidoSong
 	{		
 		Logs.print('Chart Loaded: ' + '$jsonInput/$diff');
 
 		if(!Assets.fileExists('songs/$jsonInput/chart/$diff.json'))
 			diff = "normal";
 
-        var rawSong:Dynamic = cast Assets.json('songs/$jsonInput/chart/$diff');
-
-        if (!Std.isOfType(rawSong.song, String))
-        {
-            var SONG:DoidoSong = fnf2Doido(rawSong.song);
-            return formatSong(SONG);
-        }
-
-        var SONG:DoidoSong = cast rawSong;
-        return formatSong(SONG);
+		return parseSong(Assets.json('songs/$jsonInput/chart/$diff'));
 	}
 
-    
-
-    inline public static function fnf2Doido(swagSong:SwagSong):DoidoSong
-    {
-        var SONG:DoidoSong = {
-            song: swagSong.song,
-            notes: [],
-            bpm: swagSong.bpm,
-            speed: swagSong.speed,
-
-            player1: swagSong.player1,
-            player2: swagSong.player2,
-        };
-
-        var unspawnNotes:Array<NoteData> = [];
-		var daSection:Int = 0;
-		var daSteps:Int = 0;
+	inline public static function parseSong(content:Dynamic):DoidoSong {
+		var rawSong:Dynamic = cast content;
+		var SONG:DoidoSong;
 		
-		// bpm change stuff for sustain notes
-		var noteCrochet:Float = Conductor.stepCrochet;
-        var bpmChangeMap = SongDataOld.getOldBPMChanges(swagSong);
-		
-		for(section in swagSong.notes)
-		{
-			for(event in bpmChangeMap)
-				if(event.stepTime == daSteps)
-				{
-					noteCrochet = Conductor.calcStep(event.bpm);
-					Logs.print('changed note bpm ${event.bpm}');
-				}
-			
-			for (songNotes in section.sectionNotes)
-			{
-				/* - late || + early */
-				var daStrumTime:Float = songNotes[0];
-				var daNoteData:Int = Std.int(songNotes[1] % 4);
-				var daNoteType:String = 'none';
-				// very stupid but I'm lazy
-				if(songNotes.length > 2)
-					daNoteType = songNotes[3];
-				
-				// psych event notes come on
-				if(songNotes[1] < 0) continue;
+        if (!Std.isOfType(rawSong.song, String))
+            SONG = Compatibility.fromLegacy(rawSong.song);
+		else
+        	SONG = cast rawSong;
 
-                var isPlayer = (songNotes[1] >= 4);
-				if(section.mustHitSection)
-					isPlayer = (songNotes[1] <  4);
-
-                var swagNote:NoteData = {
-                    stepTime: daStrumTime / noteCrochet,
-                    lane: daNoteData,
-                    strumline: isPlayer ? 1 : 0,
-                    type: daNoteType,
-                    length: 0
-                };
-				
-                unspawnNotes.push(swagNote);
-				
-				var susLength:Float = songNotes[2];
-				if(susLength > 0)
-				{
-					var rawLoop:Float = (susLength / noteCrochet);
-					var holdLoop:Int = (
-						(rawLoop - Math.floor(rawLoop) <= 0.8) ?
-						Math.floor(rawLoop) : Math.round(rawLoop)
-					);
-					if (holdLoop <= 0) holdLoop = 1;
-
-                    swagNote.length = holdLoop;
-				}
-			}
-			daSteps += section.lengthInSteps;
-			daSection++;
-		}
-		
-		//unspawnNotes.sort(CoolUtil.sortByShit);
-
-        return SONG;
-    }
+        return formatSong(SONG);
+	}
 
     // Removes duplicated notes from a chart.
 	inline public static function formatSong(SONG:DoidoSong):DoidoSong

@@ -1,10 +1,17 @@
 package states;
 
+import doido.song.SongData;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.math.FlxMath;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
+import openfl.net.FileReference;
+import openfl.net.FileFilter;
+import openfl.events.Event;
+import openfl.events.IOErrorEvent;
+import tjson.TJSON;
+import haxe.Json;
 
 using doido.utils.TextUtil;
 
@@ -139,11 +146,43 @@ class ChartConverter extends MusicBeatState
         if(Controls.justPressed(ACCEPT)) {
             switch(options[cur]) {
                 case "FNF 2 Doido":
-                    //MusicBeat.switchState(new DebugOptions());
+                    fnf2Doido();
                 case "Doido 2 FNF":
 
             }
         }
+    }
+
+    function fnf2Doido() {
+        var loader = new FileReference();
+        var filter = new FileFilter("Legacy Charts", "*.json");
+        var SONG:DoidoSong;
+
+        function onSelect(e:Event):Void {
+            loader.load();
+        }
+
+        function onComplete(e:Event):Void {
+            var bytes = loader.data;
+            var text = bytes.readUTFBytes(bytes.length);
+            SONG = SongData.parseSong(TJSON.parse(text));
+
+            var data:String = Json.stringify(SONG, "\t");
+            if(data != null && data.length > 0)
+            {
+                var saver = new FileReference();
+                saver.save(data.trim(), 'converted.json');
+            }
+        }
+
+        function onError(e:IOErrorEvent):Void {
+            trace("File load error");
+        }
+
+        loader.addEventListener(Event.SELECT, onSelect);
+        loader.addEventListener(Event.COMPLETE, onComplete);
+        loader.addEventListener(IOErrorEvent.IO_ERROR, onError);
+        loader.browse([filter]);
     }
 
     public function changeSelection(change:Int = 0)
