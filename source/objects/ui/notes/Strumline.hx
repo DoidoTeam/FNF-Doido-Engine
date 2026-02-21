@@ -94,7 +94,7 @@ class Strumline extends FlxGroup
 		for(strum in strums)
 		{
 			strum.y = (!downscroll ? 110 : FlxG.height - 110);
-			strum.initialPos.x = strum.y;
+			strum.initialPos.y = strum.y;
 		}
 	}
 }
