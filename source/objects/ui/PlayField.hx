@@ -8,6 +8,9 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import objects.ui.notes.*;
+#if TOUCH_CONTROLS
+import doido.mobile.Hitbox;
+#end
 
 class PlayField extends FlxGroup
 {
@@ -17,6 +20,10 @@ class PlayField extends FlxGroup
 	public var strumlines:Array<Strumline> = [];
 	public var dadStrumline:Strumline;
 	public var bfStrumline:Strumline;
+
+	#if TOUCH_CONTROLS
+	var hitbox:Hitbox;
+	#end
 	
 	public function new(spawnNotes:Array<NoteData>, speed:Float, downscroll:Bool)
 	{
@@ -35,6 +42,11 @@ class PlayField extends FlxGroup
 			strumline.scrollSpeed = speed;
 			add(strumline);
 		}
+
+		#if TOUCH_CONTROLS
+		hitbox = new Hitbox();
+		add(hitbox);
+		#end
 	}
 
 	public var pressed:Array<Bool> 		= [];
@@ -63,6 +75,27 @@ class PlayField extends FlxGroup
 			Controls.released(UP),
 			Controls.released(RIGHT),
 		];
+
+		#if TOUCH_CONTROLS
+		pressed = [
+			hitbox.pressed("left"),
+			hitbox.pressed("down"),
+			hitbox.pressed("up"),
+			hitbox.pressed("right"),
+		];
+		justPressed = [
+			hitbox.justPressed("left"),
+			hitbox.justPressed("down"),
+			hitbox.justPressed("up"),
+			hitbox.justPressed("right"),
+		];
+		released = [
+			hitbox.released("left"),
+			hitbox.released("down"),
+			hitbox.released("up"),
+			hitbox.released("right"),
+		];
+		#end
 
 		// spawning notes
 		if (curSpawnNote < spawnNotes.length)

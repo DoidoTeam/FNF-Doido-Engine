@@ -24,6 +24,10 @@ class Init extends MusicBeatState
 		openfl.Assets.cache.enabled = false;
 		Cache.initCache();
 		flagState();
+
+		#if android
+		FlxG.android.preventDefaultKeys = [BACK];
+		#end
 	}
 
 	/*
@@ -33,5 +37,6 @@ class Init extends MusicBeatState
 	public static function flagState()
 	{
 		MusicBeat.switchState(new DebugMenu());
+		//MusicBeat.switchState(new DebugMenu.TouchTest());
 	}
 }

@@ -13,10 +13,10 @@ import objects.*;
 import objects.play.*;
 import objects.ui.*;
 
-typedef VoiceData = {
-	var global:FlxSound; // default
-	var opp:FlxSound; // if the opponent has a voices file, play them too
-}
+#if TOUCH_CONTROLS
+import doido.mobile.DoidoButton;
+#end
+
 class PlayState extends MusicBeatState
 {
 	public static var SONG:DoidoSong;
@@ -26,6 +26,10 @@ class PlayState extends MusicBeatState
 	
 	var paused:Bool = true;
 	var audio:AudioHandler;
+
+	#if TOUCH_CONTROLS
+	var pauseButton:DoidoButton;
+	#end
 
 	public static function loadSong(jsonInput:String, ?diff:String = "normal")
 	{
@@ -62,6 +66,11 @@ class PlayState extends MusicBeatState
 		debugInfo = new DebugInfo(this);
 		add(debugInfo);
 
+		#if TOUCH_CONTROLS
+		pauseButton = new DoidoButton(0,0,100,100,0.4);
+		add(pauseButton);
+		#end
+
 		//friend
 		/*var sprite = new FlxAnimate();
 		sprite.frames = Assets.animate("face");
@@ -81,7 +90,11 @@ class PlayState extends MusicBeatState
 			MusicBeat.switchState(new states.DebugMenu());
 		}
 		
-		if(Controls.justPressed(ACCEPT)) {
+		var pause:Bool = Controls.justPressed(PAUSE);
+		#if TOUCH_CONTROLS
+		pause = Controls.justPressed(PAUSE) || pauseButton.justPressed;
+		#end
+		if(pause) {
 			if (!paused)
 				pauseSong();
 			else

@@ -8,12 +8,15 @@ import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import tjson.TJSON;
 import haxe.Json;
+#if TOUCH_CONTROLS
+import doido.mobile.DoidoButton;
+#end
 
 using doido.utils.TextUtil;
 
 class DebugMenu extends MusicBeatState
 {
-    var options:Array<String> = ["Play", "Controls", "Options", "Chart Converter"];
+    var options:Array<String> = ["Play", "Controls", "Options", "Touch Test", "Chart Converter"];
     var text:FlxText;
     var title:FlxText;
     var ver:FlxText;
@@ -71,6 +74,8 @@ class DebugMenu extends MusicBeatState
                     MusicBeat.switchState(new DebugControls());
                 case "chart converter":
                     MusicBeat.switchState(new ChartConverter());
+                case "touch test":
+                    MusicBeat.switchState(new TouchTest());
                 default:
                     MusicBeat.switchState(new Freeplay());
                     /*
@@ -89,6 +94,45 @@ class DebugMenu extends MusicBeatState
 		cur = FlxMath.wrap(cur, 0, options.length - 1);
 		drawText();
 	}
+}
+
+class TouchTest extends MusicBeatState
+{
+    #if TOUCH_CONTROLS
+    var button:DoidoButton;
+    #end
+    override function create()
+    {
+        super.create();
+        DiscordIO.changePresence("Testing");
+
+        var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+		add(bg);
+
+        #if TOUCH_CONTROLS
+        button = new DoidoButton(300, 300, 100, 100);
+        add(button);
+        #end
+
+        FlxG.mouse.useSystemCursor = true;
+        FlxG.mouse.visible = true;
+    }
+
+    override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+        if(Controls.justPressed(BACK))
+			MusicBeat.switchState(new states.DebugMenu());
+
+        #if TOUCH_CONTROLS
+        if(button.justPressed)
+            Logs.print("JUST PRESSED");
+
+        if(button.justReleased)
+            Logs.print("JUST RELEASED");
+        #end
+    }
 }
 
 class Freeplay extends MusicBeatState
@@ -436,12 +480,12 @@ class DebugOptions extends MusicBeatState
 		add(bg);
 
         options = [
-            #if desktop
             {
                 name: "Downscroll",
                 get: () -> Save.data.downscroll,
                 set: (b:Bool) -> Save.data.downscroll = b
             },
+            #if desktop
             {
                 name: "FPS Counter",
                 get: () -> Save.data.fpsCounter,
@@ -463,6 +507,18 @@ class DebugOptions extends MusicBeatState
                 get: () -> Save.data.antialiasing,
                 set: (b:Bool) -> Save.data.antialiasing = b
             },
+            #if TOUCH_CONTROLS
+            {
+                name: "Invert Swipe X",
+                get: () -> Save.data.invertX,
+                set: (b:Bool) -> Save.data.invertX = b
+            },
+            {
+                name: "Invert Swipe Y",
+                get: () -> Save.data.invertY,
+                set: (b:Bool) -> Save.data.invertY = b
+            },
+            #end
         ];
 
         text = new FlxText(10, 0, 0, '');

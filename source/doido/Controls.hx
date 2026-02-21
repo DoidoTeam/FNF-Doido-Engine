@@ -4,6 +4,9 @@ import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.FlxInput.FlxInputState;
 import flixel.input.gamepad.FlxGamepad.FlxGamepadModel;
+#if TOUCH_CONTROLS
+import doido.mobile.TouchHandler;
+#end
 
 enum abstract DoidoKey(String)
 {
@@ -20,7 +23,9 @@ enum abstract DoidoKey(String)
 	var UI_RIGHT = "ui_right";
 	var ACCEPT = "accept";
 	var BACK = "back";
+    var PAUSE = "pause";
     //other
+    var ANY = "any";
 	var NONE = "none";
 }
 
@@ -92,6 +97,11 @@ class Controls
 			gamepad: [FlxPad.B],
 			rebindable: false
 		},
+        PAUSE => {
+			keyboard: [FlxKey.ESCAPE, FlxKey.ENTER],
+			gamepad: [FlxPad.START],
+			rebindable: false
+		},
 	];
 
 	public static function setSoundKeys(?empty:Bool = false) {
@@ -137,9 +147,30 @@ class Controls
                     return true;
             }
         }
+
+        #if TOUCH_CONTROLS
+        return checkMobile(bind, inputState);
+        #end
 		
 		return false;
 	}
+
+    public static function isUiBind(bind:DoidoKey)
+        return Std.string(bind).startsWith("ui_");
+
+    #if TOUCH_CONTROLS
+	public static function checkMobile(bind:DoidoKey, inputState:FlxInputState) {
+		if(isUiBind(bind))
+			return TouchHandler.getSwipe(bind);
+		else if(bind == BACK)
+			return TouchHandler.back;
+		else if(bind == ACCEPT) {
+			return TouchHandler.getTap(inputState) && !TouchHandler.getSwipe() && !TouchHandler.back;
+		}
+		
+        return false;
+	}
+	#end
 
 	public static function save(?file:DoidoSave) {
 		if(file == null)
