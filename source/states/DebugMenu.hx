@@ -373,6 +373,11 @@ class DebugOptions extends MusicBeatState
         options = [
             #if desktop
             {
+                name: "Downscroll",
+                get: () -> Save.data.downscroll,
+                set: (b:Bool) -> Save.data.downscroll = b
+            },
+            {
                 name: "FPS Counter",
                 get: () -> Save.data.fpsCounter,
                 set: (b:Bool) -> Save.data.fpsCounter = b

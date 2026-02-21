@@ -46,7 +46,7 @@ class PlayState extends MusicBeatState
 		//bg.zIndex = 500;
 		add(bg);
 		
-		playField = new PlayField(SONG.notes, SONG.speed, false);
+		playField = new PlayField(SONG.notes, SONG.speed, Save.data.downscroll);
 		add(playField);
 
 		playField.onNoteHit = (note) -> {

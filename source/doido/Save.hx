@@ -8,6 +8,7 @@ class SaveVariables
 {
 	// gameplay
 	public var test:String = 'bullshit';
+	public var downscroll:Bool = false;
 	// visuals
 	public var fpsCounter:Bool = #if desktop true #else false #end;
 	// graphics
