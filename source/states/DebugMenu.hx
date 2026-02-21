@@ -16,7 +16,7 @@ using doido.utils.TextUtil;
 
 class DebugMenu extends MusicBeatState
 {
-    var options:Array<String> = ["Play", "Controls", "Options", "Touch Test", "Chart Converter"];
+    var options:Array<String> = ["Play", "Controls", "Options", "Chart Converter"];
     var text:FlxText;
     var title:FlxText;
     var ver:FlxText;
@@ -74,8 +74,6 @@ class DebugMenu extends MusicBeatState
                     MusicBeat.switchState(new DebugControls());
                 case "chart converter":
                     MusicBeat.switchState(new ChartConverter());
-                case "touch test":
-                    MusicBeat.switchState(new TouchTest());
                 default:
                     MusicBeat.switchState(new Freeplay());
                     /*
@@ -94,45 +92,6 @@ class DebugMenu extends MusicBeatState
 		cur = FlxMath.wrap(cur, 0, options.length - 1);
 		drawText();
 	}
-}
-
-class TouchTest extends MusicBeatState
-{
-    #if TOUCH_CONTROLS
-    var button:DoidoButton;
-    #end
-    override function create()
-    {
-        super.create();
-        DiscordIO.changePresence("Testing");
-
-        var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
-		add(bg);
-
-        #if TOUCH_CONTROLS
-        button = new DoidoButton(300, 300, 100, 100);
-        add(button);
-        #end
-
-        FlxG.mouse.useSystemCursor = true;
-        FlxG.mouse.visible = true;
-    }
-
-    override function update(elapsed:Float)
-	{
-		super.update(elapsed);
-
-        if(Controls.justPressed(BACK))
-			MusicBeat.switchState(new states.DebugMenu());
-
-        #if TOUCH_CONTROLS
-        if(button.justPressed)
-            Logs.print("JUST PRESSED");
-
-        if(button.justReleased)
-            Logs.print("JUST RELEASED");
-        #end
-    }
 }
 
 class Freeplay extends MusicBeatState
@@ -189,6 +148,7 @@ class Freeplay extends MusicBeatState
 			}
 			catch(e) {
 				FlxG.sound.play(Assets.sound('beep'));
+                Logs.print(e);
 			}
             
         }
