@@ -4,6 +4,8 @@ class Note extends DoidoSprite
 {
 	// main data
 	public var data:NoteData;
+	public var gotHit:Bool = false;
+	public var missed:Bool = false;
 	
 	// noteskin stuff
 	public var noteScale:Float = 1.0;
@@ -13,13 +15,19 @@ class Note extends DoidoSprite
 	
 	public function new()
 	{
-		super(-5000, -5000); // offscreen lol
+		super();
 	}
 	
 	public function loadData(data:NoteData)
 	{
-		path = null;
+		setPosition(-5000, -5000); // offscreen lol
 		this.data = data;
+		visible = true;
+		gotHit = false;
+		missed = false;
+		alpha = 1.0;
+
+		//noteSpeed = (FlxG.random.bool(50) ? null : 1.0);
 	}
 	
 	public function reloadSprite()

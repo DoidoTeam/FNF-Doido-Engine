@@ -16,6 +16,7 @@ class DebugInfo extends FlxGroup
 	{
 		super();
 		this.playState = playState;
+		visible = false;
 		
 		daText = new FlxText(10, 0, 0, '');
 		daText.setFormat(Main.globalFont, 18, 0xFFFFFFFF, LEFT);
@@ -27,18 +28,22 @@ class DebugInfo extends FlxGroup
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		if (FlxG.keys.justPressed.F1) visible = !visible;
 	}
 	
 	override function draw()
 	{
-		var text:String = "";
-		text += "Time: " + Math.floor(Conductor.songPos / 1000 * 100) / 100 + "\n";
-		text += "Step: " + Math.floor(playState.curStepFloat * 100) / 100 + "\n";
-		text += "Beat: " + Math.floor(playState.curStepFloat / 4 * 100) / 100;
-		
-		if (daText.text != text) {
-			daText.text = text;
-			daText.y = FlxG.height - daText.height - 10;
+		if (visible)
+		{
+			var text:String = "";
+			text += "Time: " + Math.floor(Conductor.songPos / 1000 * 100) / 100;
+			text += "\nStep: " + Math.floor(playState.curStepFloat * 100) / 100;
+			text += "\nBeat: " + Math.floor(playState.curStepFloat / 4 * 100) / 100;
+			
+			if (daText.text != text) {
+				daText.text = text;
+				daText.y = FlxG.height - daText.height - 10;
+			}
 		}
 		super.draw();
 	}

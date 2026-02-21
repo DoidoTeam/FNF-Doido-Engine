@@ -1,5 +1,6 @@
 package doido.song;
 
+import doido.utils.NoteUtil;
 import doido.song.Compatibility;
 
 typedef DoidoSong =
@@ -33,9 +34,10 @@ class SongData
 		return parseSong(Assets.json('songs/$jsonInput/chart/$diff'));
 	}
 
-	inline public static function parseSong(content:Dynamic):DoidoSong {
+	inline public static function parseSong(content:Dynamic):DoidoSong
+	{
 		var rawSong:Dynamic = cast content;
-		var SONG:DoidoSong;
+		var SONG:DoidoSong = null;
 		
         if (!Std.isOfType(rawSong.song, String))
             SONG = Compatibility.fromLegacy(rawSong.song);
@@ -46,7 +48,7 @@ class SongData
 	}
 
     // Removes duplicated notes from a chart.
-	inline public static function formatSong(SONG:DoidoSong):DoidoSong
+	inline private static function formatSong(SONG:DoidoSong):DoidoSong
 	{
 		// Normalize song name to use only lowercases and no spaces
 		SONG.song = SONG.song.toLowerCase();
@@ -60,6 +62,7 @@ class SongData
 			for(doubleNote in SONG.notes)
 			{
 				if(note != doubleNote
+				&& note.strumline == doubleNote.strumline
                 && note.stepTime == doubleNote.stepTime
                 && note.lane == doubleNote.lane)
 				{
@@ -73,6 +76,8 @@ class SongData
 
 		/*if(SONG.gfVersion == null)
 			SONG.gfVersion = "stage-set";*/
+
+		SONG.notes.sort(NoteUtil.sortByStep);
 		
 		return SONG;
 	}

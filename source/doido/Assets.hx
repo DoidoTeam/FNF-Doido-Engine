@@ -5,6 +5,8 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxFramesCollection;
 import animate.FlxAnimateFrames;
 import openfl.Assets as OpenFLAssets;
+import openfl.events.Event;
+import openfl.events.IOErrorEvent;
 import openfl.media.Sound;
 import tjson.TJSON;
 import doido.Cache;
@@ -44,6 +46,51 @@ class Assets
 
     public static inline function fileExists(path:String, type:Asset = OTHER):Bool
         return whichExists(getPath(path), type) >= 0;
+
+    public static function fileBrowse(onComplete:openfl.net.FileReference->Void, ?filter:openfl.net.FileFilter, ?onError:String->Void):Void
+	{
+		var fr = new openfl.net.FileReference();
+
+        var cleanupBrowse:Void->Void = () -> {};
+
+		var onCompleteLoad = function(_)
+		{
+			cleanupBrowse();
+            // fr.data returns bytes
+			// fr.name returns file name
+			onComplete(fr);
+		};
+
+		var onErrorLoad = function(e:IOErrorEvent)
+		{
+			cleanupBrowse();
+			if (onError != null)
+				onError(e.text);
+		};
+
+		var onSelect = function(_)
+		{
+			fr.addEventListener(Event.COMPLETE, onCompleteLoad);
+			fr.addEventListener(IOErrorEvent.IO_ERROR, onErrorLoad);
+			fr.load();
+		};
+
+		cleanupBrowse = function()
+		{
+			fr.removeEventListener(Event.SELECT, onSelect);
+			fr.removeEventListener(Event.COMPLETE, onCompleteLoad);
+			fr.removeEventListener(IOErrorEvent.IO_ERROR, onErrorLoad);
+		};
+
+		fr.addEventListener(Event.SELECT, onSelect);
+		fr.browse();
+	}
+
+    public static function fileSave(data:Dynamic, name:String)
+    {
+        var saver = new openfl.net.FileReference();
+        saver.save(data, name);
+    }
 
     public static function getExt(key:String, ext:String) {
         var path = key;
@@ -124,6 +171,6 @@ class Assets
     public static inline function inst(song:String):Sound
 		return getAsset('songs/$song/audio/Inst', SOUND);
 
-    public static inline function voices(song:String):Sound
-		return getAsset('songs/$song/audio/Voices', SOUND);
+    public static inline function voices(song:String, postfix:String = ""):Sound
+		return getAsset('songs/$song/audio/Voices$postfix', SOUND);
 }

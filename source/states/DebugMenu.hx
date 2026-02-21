@@ -6,10 +6,6 @@ import flixel.text.FlxText;
 import flixel.math.FlxMath;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
-import openfl.net.FileReference;
-import openfl.net.FileFilter;
-import openfl.events.Event;
-import openfl.events.IOErrorEvent;
 import tjson.TJSON;
 import haxe.Json;
 
@@ -76,6 +72,7 @@ class DebugMenu extends MusicBeatState
                 case "chart converter":
                     MusicBeat.switchState(new ChartConverter());
                 default:
+                    PlayState.loadSong("corn-theft", "hard");
                     MusicBeat.switchState(new states.PlayState());
             }
         }
@@ -143,46 +140,46 @@ class ChartConverter extends MusicBeatState
         if(Controls.justPressed(UI_DOWN))
             changeSelection(1);
 
+        if(Controls.justPressed(BACK))
+			MusicBeat.switchState(new states.DebugMenu());
+
         if(Controls.justPressed(ACCEPT)) {
             switch(options[cur]) {
                 case "FNF 2 Doido":
-                    fnf2Doido();
+                    fnf2doido();
                 case "Doido 2 FNF":
 
             }
         }
     }
 
-    function fnf2Doido() {
-        var loader = new FileReference();
-        var filter = new FileFilter("Legacy Charts", "*.json");
-        var SONG:DoidoSong;
+    function fnf2doido()
+    {
+        Assets.fileBrowse(
+            (fr) -> {
+                var bytes = fr.data;
+                var text = bytes.readUTFBytes(bytes.length);
+                var SONG:DoidoSong = SongData.parseSong(TJSON.parse(text));
 
-        function onSelect(e:Event):Void {
-            loader.load();
-        }
-
-        function onComplete(e:Event):Void {
-            var bytes = loader.data;
-            var text = bytes.readUTFBytes(bytes.length);
-            SONG = SongData.parseSong(TJSON.parse(text));
-
-            var data:String = Json.stringify(SONG, "\t");
-            if(data != null && data.length > 0)
-            {
-                var saver = new FileReference();
-                saver.save(data.trim(), 'converted.json');
+                var data:String = Json.stringify(SONG, "\t");
+                if(data != null && data.length > 0)
+                {
+                    Assets.fileSave(
+                        data.trim(),
+                        '${fr.name.replace(".json", "-converted.json")}'
+                    );
+                }
+            },
+            new openfl.net.FileFilter("Legacy Charts", "*.json"),
+            (err) -> {
+                Logs.print("File load error", WARNING);
             }
-        }
+        );
+    }
 
-        function onError(e:IOErrorEvent):Void {
-            trace("File load error");
-        }
-
-        loader.addEventListener(Event.SELECT, onSelect);
-        loader.addEventListener(Event.COMPLETE, onComplete);
-        loader.addEventListener(IOErrorEvent.IO_ERROR, onError);
-        loader.browse([filter]);
+    function doido2fnf()
+    {
+        // later :P
     }
 
     public function changeSelection(change:Int = 0)

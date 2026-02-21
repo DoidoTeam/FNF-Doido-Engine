@@ -26,6 +26,8 @@ class Strumline extends FlxGroup
 		super();
 		x = (FlxG.width / 2) + xOffset;
 		this.downscroll = downscroll;
+		this.isPlayer = isPlayer;
+		this.botplay = botplay;
 		
 		for(i in 0...NoteUtil.directions.length)
 		{
@@ -33,17 +35,6 @@ class Strumline extends FlxGroup
 			strum.reloadStrum(i);
 			strums.push(strum);
 			add(strum);
-			
-			for(j in 0...4)
-			{
-				addNote({
-					stepTime: (j * 16) + (i * 4),
-					lane: i,
-					length: 0,
-					type: "none",
-					strumline: strumlineData,
-				});
-			}
 		}
 
 		recalculateX();
@@ -70,16 +61,10 @@ class Strumline extends FlxGroup
 		for(note in notes)
 		{
 			var strum = strums[note.data.lane];
-			/*var path = (note.notePath ?? strum.strumPath);
-			
 			var noteSpeed:Float = note.noteSpeed ?? scrollSpeed;
-			var pathPercent:Float = (note.stepTime - curStepFloat) / 16 * noteSpeed;
-			
-			var pos = path.getPosition(1.0 - pathPercent);
-			note.setPosition(pos.x, pos.y);*/
 
 			var offsetX = 0.0; // note.noteOffset.x;
-			var offsetY = (note.data.stepTime - curStepFloat) * Conductor.stepCrochet * (scrollSpeed * 0.45);
+			var offsetY = (note.data.stepTime - curStepFloat) * Conductor.stepCrochet * (noteSpeed * 0.45);
 			var angle = 0.0;
 
 			NoteUtil.setNotePos(
