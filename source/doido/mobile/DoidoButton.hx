@@ -8,6 +8,7 @@ import flixel.input.IFlxInput;
 import flixel.input.touch.FlxTouch;
 import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
+import flixel.util.FlxSignal;
 
 // custom button hitbox thing?
 class DoidoButton extends FlxSprite implements IFlxInput
@@ -15,8 +16,8 @@ class DoidoButton extends FlxSprite implements IFlxInput
     public var currentState:FlxInputState = RELEASED;
 	public var lastState:FlxInputState = RELEASED;
 
-    //?????
-    var hitbox:FlxSprite;
+    public var onUp(default, null):FlxSignal = new FlxSignal();
+    public var onDown(default, null):FlxSignal = new FlxSignal();
 
     public function new(x:Float = 0, y:Float = 0, width:Float = 100, height:Float = 100, ?alpha:Float = 0, ?color:FlxColor)
 	{
@@ -34,10 +35,14 @@ class DoidoButton extends FlxSprite implements IFlxInput
         if(overlap) {
             lastState = currentState;
             currentState = pressed ? PRESSED : JUST_PRESSED;
+            if(justPressed)
+                onDown.dispatch();
         }
         else {
             lastState = currentState;
             currentState = pressed ? JUST_RELEASED : RELEASED;
+            if(justReleased)
+                onUp.dispatch();
         }
     }
 

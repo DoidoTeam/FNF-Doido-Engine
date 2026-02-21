@@ -8,9 +8,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import objects.ui.notes.*;
-#if TOUCH_CONTROLS
 import doido.mobile.Hitbox;
-#end
 
 class PlayField extends FlxGroup
 {
@@ -20,21 +18,30 @@ class PlayField extends FlxGroup
 	public var strumlines:Array<Strumline> = [];
 	public var dadStrumline:Strumline;
 	public var bfStrumline:Strumline;
-
-	#if TOUCH_CONTROLS
-	var hitbox:Hitbox;
-	#end
+	public var hitbox:Hitbox;
 	
-	public function new(spawnNotes:Array<NoteData>, speed:Float, downscroll:Bool)
+	public function new(spawnNotes:Array<NoteData>, speed:Float, downscroll:Bool, middlescroll:Bool)
 	{
 		super();
 		this.spawnNotes = spawnNotes;
 		NoteUtil.setUpDirections(4);
+
+		var wide:Bool = false;
+		#if TOUCH_CONTROLS
+		if(Save.data.modernControls) {
+			middlescroll = true;
+			wide = true;
+		}
+		#end
+
+		var strumPos:Array<Float> = [-FlxG.width / 4, FlxG.width / 4];
+		if(middlescroll)
+			strumPos = [-FlxG.width, 0];
 		
-		dadStrumline = new Strumline(-FlxG.width / 4, downscroll, false, true);
+		dadStrumline = new Strumline(strumPos[0], downscroll, false, true, false);
 		strumlines.push(dadStrumline);
 
-		bfStrumline = new Strumline(FlxG.width / 4, downscroll, true, false);
+		bfStrumline = new Strumline(strumPos[1], downscroll, true, false, wide);
 		strumlines.push(bfStrumline);
 		
 		for(strumline in strumlines)
@@ -43,10 +50,8 @@ class PlayField extends FlxGroup
 			add(strumline);
 		}
 
-		#if TOUCH_CONTROLS
-		hitbox = new Hitbox();
+		hitbox = new Hitbox(bfStrumline);
 		add(hitbox);
-		#end
 	}
 
 	public var pressed:Array<Bool> 		= [];
@@ -58,44 +63,23 @@ class PlayField extends FlxGroup
 	{
 		this.curStepFloat = curStepFloat;
 		pressed = [
-			Controls.pressed(LEFT),
-			Controls.pressed(DOWN),
-			Controls.pressed(UP),
-			Controls.pressed(RIGHT),
+			Controls.pressed(LEFT) 	|| hitbox.pressed("left"),
+			Controls.pressed(DOWN) 	|| hitbox.pressed("down"),
+			Controls.pressed(UP) 	|| hitbox.pressed("up"),
+			Controls.pressed(RIGHT) || hitbox.pressed("right"),
 		];
 		justPressed = [
-			Controls.justPressed(LEFT),
-			Controls.justPressed(DOWN),
-			Controls.justPressed(UP),
-			Controls.justPressed(RIGHT),
+			Controls.justPressed(LEFT) 	|| hitbox.justPressed("left"),
+			Controls.justPressed(DOWN) 	|| hitbox.justPressed("down"),
+			Controls.justPressed(UP) 	|| hitbox.justPressed("up"),
+			Controls.justPressed(RIGHT) || hitbox.justPressed("right"),
 		];
 		released = [
-			Controls.released(LEFT),
-			Controls.released(DOWN),
-			Controls.released(UP),
-			Controls.released(RIGHT),
+			Controls.released(LEFT)  || hitbox.released("left"),
+			Controls.released(DOWN)  || hitbox.released("down"),
+			Controls.released(UP) 	 || hitbox.released("up"),
+			Controls.released(RIGHT) || hitbox.released("right"),
 		];
-
-		#if TOUCH_CONTROLS
-		pressed = [
-			hitbox.pressed("left"),
-			hitbox.pressed("down"),
-			hitbox.pressed("up"),
-			hitbox.pressed("right"),
-		];
-		justPressed = [
-			hitbox.justPressed("left"),
-			hitbox.justPressed("down"),
-			hitbox.justPressed("up"),
-			hitbox.justPressed("right"),
-		];
-		released = [
-			hitbox.released("left"),
-			hitbox.released("down"),
-			hitbox.released("up"),
-			hitbox.released("right"),
-		];
-		#end
 
 		// spawning notes
 		if (curSpawnNote < spawnNotes.length)

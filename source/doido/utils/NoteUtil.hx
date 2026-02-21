@@ -34,8 +34,8 @@ class NoteUtil
 	public static function stringToInt(direction:String):Int
 		return directions.indexOf(direction);
 
-	inline public static function noteWidth()
-		return 160 * 0.7; // 112
+	inline public static function noteWidth(wide:Bool)
+		return (160 * 0.7) + (wide ? 70 : 0); // 112
 
 	public static function setNotePos(note:FlxSprite, strum:FlxSprite, angle:Float, offsetX:Float, offsetY:Float)
 	{

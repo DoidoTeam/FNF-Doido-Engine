@@ -27,9 +27,9 @@ class SpriteUtil
 		return spr;
 	}*/
 	
-	public static function loadImage(spr:FlxSprite, key:String):FlxSprite
+	public static function loadImage(spr:FlxSprite, key:String, animated:Bool = false, frameWidth:Int = 0, frameHeight:Int = 0):FlxSprite
 	{
-		spr.loadGraphic(Assets.image(key));
+		spr.loadGraphic(Assets.image(key), animated, frameWidth, frameHeight);
 		return spr;
 	}
 	

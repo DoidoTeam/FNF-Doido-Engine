@@ -12,6 +12,7 @@ class Strumline extends FlxGroup
 	public var downscroll:Bool = false;
 	public var isPlayer:Bool = false;
 	public var botplay:Bool = false;
+	public var wide:Bool = false;
 	public var hasModchart:Bool = false;
 
 	public var strumlineData:Int = 0;
@@ -21,13 +22,14 @@ class Strumline extends FlxGroup
 	public var strums:Array<StrumNote> = [];
 	public var notes:Array<Note> = [];
 	
-	public function new(xOffset:Float, downscroll:Bool = false, isPlayer:Bool = false, botplay:Bool = false)
+	public function new(xOffset:Float, downscroll:Bool = false, isPlayer:Bool = false, botplay:Bool = false, wide:Bool = false)
 	{
 		super();
 		x = (FlxG.width / 2) + xOffset;
 		this.downscroll = downscroll;
 		this.isPlayer = isPlayer;
 		this.botplay = botplay;
+		this.wide = wide;
 		
 		for(i in 0...NoteUtil.directions.length)
 		{
@@ -82,8 +84,9 @@ class Strumline extends FlxGroup
 		for (strum in strums)
 		{
 			strum.x = x;
-			strum.x += NoteUtil.noteWidth() * strum.strumData;
-			strum.x -= (NoteUtil.noteWidth() * (strums.length - 1)) / 2;
+			strum.x += NoteUtil.noteWidth(wide) * strum.strumData;
+			strum.x -= (NoteUtil.noteWidth(wide) * (strums.length - 1)) / 2;
+			if(wide) strum.x += (strum.strumData < (NoteUtil.directions.length/2) ? -100 : 100);
 			
 			strum.initialPos.x = strum.x;
 		}

@@ -9,6 +9,7 @@ class SaveVariables
 	// gameplay
 	public var test:String = 'bullshit';
 	public var downscroll:Bool = false;
+	public var middlescroll:Bool = false;
 	// visuals
 	public var fpsCounter:Bool = #if desktop true #else false #end;
 	// graphics
@@ -18,6 +19,7 @@ class SaveVariables
 	// mobile
 	public var invertX:Bool = false;
 	public var invertY:Bool = false;
+	public var modernControls:Bool = #if desktop false #else true #end;
 	// sound
 	public var volume:Float = 1;
 	public var muted:Bool = false;

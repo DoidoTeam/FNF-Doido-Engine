@@ -485,6 +485,11 @@ class DebugOptions extends MusicBeatState
                 get: () -> Save.data.downscroll,
                 set: (b:Bool) -> Save.data.downscroll = b
             },
+            {
+                name: "Middlescroll",
+                get: () -> Save.data.middlescroll,
+                set: (b:Bool) -> Save.data.middlescroll = b
+            },
             #if desktop
             {
                 name: "FPS Counter",
@@ -502,12 +507,12 @@ class DebugOptions extends MusicBeatState
                 set: (b:Bool) -> Save.data.gpuCaching = b
             },
             #end
-            {
-                name: "Antialiasing",
-                get: () -> Save.data.antialiasing,
-                set: (b:Bool) -> Save.data.antialiasing = b
-            },
             #if TOUCH_CONTROLS
+            {
+                name: "Modern Controls",
+                get: () -> Save.data.modernControls,
+                set: (b:Bool) -> Save.data.modernControls = b
+            },
             {
                 name: "Invert Swipe X",
                 get: () -> Save.data.invertX,
@@ -519,6 +524,11 @@ class DebugOptions extends MusicBeatState
                 set: (b:Bool) -> Save.data.invertY = b
             },
             #end
+            {
+                name: "Antialiasing",
+                get: () -> Save.data.antialiasing,
+                set: (b:Bool) -> Save.data.antialiasing = b
+            },
         ];
 
         text = new FlxText(10, 0, 0, '');
