@@ -1,11 +1,11 @@
-package doido.song;
+package doido.song.chart;
 
-import doido.song.SongData;
+import doido.song.chart.Handler;
 
-typedef SwagSong =
+typedef LegacySong =
 {
 	var song:String;
-	var notes:Array<SwagSection>;
+	var notes:Array<LegacySection>;
 	var bpm:Float;
 	var needsVoices:Bool;
 	var speed:Float;
@@ -17,7 +17,7 @@ typedef SwagSong =
 	var ?gfVersion:String;
 }
 
-typedef SwagSection =
+typedef LegacySection =
 {
 	var sectionNotes:Array<Dynamic>;
 	var lengthInSteps:Int;
@@ -36,18 +36,18 @@ typedef LegacyBPMChange =
 	var bpm:Float;
 }
 
-class Compatibility
+class Legacy
 {
-	inline public static function fromLegacy(swagSong:SwagSong):DoidoSong
+	inline public static function fromLegacy(LegacySong:LegacySong):DoidoSong
     {
         var SONG:DoidoSong = {
-            song: swagSong.song,
+            song: LegacySong.song,
             notes: [],
-            bpm: swagSong.bpm,
-            speed: swagSong.speed,
+            bpm: LegacySong.bpm,
+            speed: LegacySong.speed,
 
-            player1: swagSong.player1,
-            player2: swagSong.player2,
+            player1: LegacySong.player1,
+            player2: LegacySong.player2,
         };
 
         var unspawnNotes:Array<NoteData> = [];
@@ -56,9 +56,9 @@ class Compatibility
 		
 		// bpm change stuff for sustain notes
 		var noteCrochet:Float = Conductor.stepCrochet;
-        var bpmChangeMap = getLegacyBPMChanges(swagSong);
+        var bpmChangeMap = getLegacyBPMChanges(LegacySong);
 		
-		for(section in swagSong.notes)
+		for(section in LegacySong.notes)
 		{
 			for(event in bpmChangeMap)
 				if(event.stepTime == daSteps)
@@ -84,7 +84,7 @@ class Compatibility
 				if(section.mustHitSection)
 					isPlayer = (songNotes[1] <  4);
 
-                var swagNote:NoteData = {
+                var LegacyNote:NoteData = {
                     stepTime: daStrumTime / noteCrochet,
                     lane: daNoteData,
                     strumline: isPlayer ? 1 : 0,
@@ -92,7 +92,7 @@ class Compatibility
                     length: 0
                 };
 				
-                unspawnNotes.push(swagNote);
+                unspawnNotes.push(LegacyNote);
 				
 				var susLength:Float = songNotes[2];
 				if(susLength > 0)
@@ -104,7 +104,7 @@ class Compatibility
 					);
 					if (holdLoop <= 0) holdLoop = 1;
 
-                    swagNote.length = holdLoop;
+                    LegacyNote.length = holdLoop;
 				}
 			}
 			daSteps += section.lengthInSteps;
@@ -114,7 +114,7 @@ class Compatibility
         return SONG;
     }
 
-    public static function getLegacyBPMChanges(song:SwagSong):Array<LegacyBPMChange>
+    public static function getLegacyBPMChanges(song:LegacySong):Array<LegacyBPMChange>
     {
         var bpmChangeMap:Array<LegacyBPMChange> = [];
 

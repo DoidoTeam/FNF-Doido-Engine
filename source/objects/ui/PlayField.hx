@@ -1,7 +1,7 @@
 package objects.ui;
 
 import doido.song.Conductor;
-import doido.song.SongData.NoteData;
+import doido.song.chart.Handler.NoteData;
 import doido.song.Timings;
 import doido.utils.NoteUtil;
 import flixel.FlxSprite;

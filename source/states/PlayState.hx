@@ -1,9 +1,10 @@
 package states;
 
+import doido.song.AudioHandler;
 import animate.FlxAnimate;
 import doido.song.Conductor;
-import doido.song.SongData;
-import doido.song.SongData.DoidoSong;
+import doido.song.chart.Handler;
+import doido.song.chart.Handler.DoidoSong;
 import flixel.FlxSprite;
 import flixel.sound.FlxSound;
 import flixel.tweens.FlxEase;
@@ -24,12 +25,11 @@ class PlayState extends MusicBeatState
 	public var debugInfo:DebugInfo;
 	
 	var paused:Bool = true;
-	var inst:FlxSound;
-	var voices:VoiceData;
+	var audio:AudioHandler;
 
 	public static function loadSong(jsonInput:String, ?diff:String = "normal")
 	{
-		SONG = SongData.loadJson(jsonInput, diff);
+		SONG = Handler.loadSong(jsonInput, diff);
 	}
 	
 	override function create()
@@ -40,7 +40,7 @@ class PlayState extends MusicBeatState
 		Conductor.songPos = 0;
 		Conductor.setBPM(100);
 		
-		setUpAudio();
+		audio = new AudioHandler(SONG.song);
 		
 		var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
 		//bg.zIndex = 500;
@@ -50,16 +50,10 @@ class PlayState extends MusicBeatState
 		add(playField);
 
 		playField.onNoteHit = (note) -> {
-			if (voices.global != null)
-			{
-				voices.global.volume = 1.0;
-			}
+			audio.muteVoices = false;
 		};
 		playField.onNoteMiss = (note) -> {
-			if (voices.global != null)
-			{
-				voices.global.volume = 0.0;
-			}
+			audio.muteVoices = true;
 		};
 		playField.onGhostTap = (lane, direction) -> {
 			Logs.print("GHOST TAPPED " + direction.toUpperCase(), WARNING);
@@ -72,24 +66,6 @@ class PlayState extends MusicBeatState
 		/*var sprite = new FlxAnimate();
 		sprite.frames = Assets.animate("face");
 		add(sprite);*/
-	}
-
-	public function setUpAudio()
-	{
-		inst = FlxG.sound.load(Assets.inst(SONG.song));
-		voices = {
-			global: null,
-			opp: null,
-		};
-		// global voices
-		if (Assets.fileExists('songs/${SONG.song}/audio/Voices-player', SOUND))
-			voices.global = FlxG.sound.load(Assets.voices(SONG.song, '-player'));
-		else if (Assets.fileExists('songs/${SONG.song}/audio/Voices', SOUND))
-			voices.global = FlxG.sound.load(Assets.voices(SONG.song));
-
-		// opponent voices
-		if (Assets.fileExists('songs/${SONG.song}/audio/Voices-opp', SOUND))
-			voices.opp = FlxG.sound.load(Assets.voices(SONG.song, "-opp"));
 	}
 
 	override function update(elapsed:Float)
@@ -112,7 +88,7 @@ class PlayState extends MusicBeatState
 				unpauseSong();
 		}
 		
-		if (inst.playing)
+		if (audio.playing)
 			Conductor.songPos += elapsed * 1000;
 			
 		playField.updateNotes(curStepFloat);
@@ -121,30 +97,19 @@ class PlayState extends MusicBeatState
 	public function pauseSong()
 	{
 		paused = true;
-		updateMusic((snd) -> {
-			snd.pause();
-		});
+		audio.pause();
 	}
 
 	public function unpauseSong()
 	{
 		paused = false;
-		updateMusic((snd) -> {
-			snd.play();
-		});
+		audio.play();
 	}
 
-	public function updateMusic(func:(snd:FlxSound)->Void)
-	{
-		func(inst);
-		if (voices.global != null) func(voices.global);
-		if (voices.opp != null) func(voices.opp);
-	}
-	
 	override function stepHit()
 	{
 		super.stepHit();
-		syncSong();
+		audio.sync();
 		
 		if (curStep % 4 == 0) {
 			FlxTween.cancelTweensOf(FlxG.camera);
@@ -153,20 +118,5 @@ class PlayState extends MusicBeatState
 				ease: FlxEase.cubeOut
 			});
 		}
-	}
-	
-	public function syncSong()
-	{
-		updateMusic((snd) -> {
-			if (snd == inst) return;
-			if (Math.abs(Conductor.songPos - snd.time) >= 25)
-			{
-				Conductor.songPos = inst.time;
-				Logs.print('FIXING DELAYED MUSIC: ${snd.time} > ${Conductor.songPos}', WARNING);
-				updateMusic((fixSnd) -> {
-					fixSnd.time = Conductor.songPos;
-				});
-			}
-		});
 	}
 }

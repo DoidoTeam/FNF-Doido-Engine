@@ -1,7 +1,7 @@
-package doido.song;
+package doido.song.chart;
 
 import doido.utils.NoteUtil;
-import doido.song.Compatibility;
+import doido.song.chart.Legacy;
 
 typedef DoidoSong =
 {
@@ -22,9 +22,9 @@ typedef NoteData = {
 	var length:Float;
 }
 
-class SongData
+class Handler
 {
-    inline public static function loadJson(jsonInput:String, ?diff:String = "normal"):DoidoSong
+    inline public static function loadSong(jsonInput:String, ?diff:String = "normal"):DoidoSong
 	{		
 		Logs.print('Chart Loaded: ' + '$jsonInput/$diff');
 
@@ -40,7 +40,7 @@ class SongData
 		var SONG:DoidoSong = null;
 		
         if (!Std.isOfType(rawSong.song, String))
-            SONG = Compatibility.fromLegacy(rawSong.song);
+            SONG = Legacy.fromLegacy(rawSong.song);
 		else
         	SONG = cast rawSong;
 

@@ -1,6 +1,6 @@
 package doido.utils;
 
-import doido.song.SongData.NoteData;
+import doido.song.chart.Handler.NoteData;
 import flixel.FlxSprite;
 import flixel.math.FlxAngle;
 import flixel.util.FlxSort;

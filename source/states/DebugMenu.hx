@@ -1,6 +1,6 @@
 package states;
 
-import doido.song.SongData;
+import doido.song.chart.Handler;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.math.FlxMath;
@@ -159,7 +159,7 @@ class ChartConverter extends MusicBeatState
             (fr) -> {
                 var bytes = fr.data;
                 var text = bytes.readUTFBytes(bytes.length);
-                var SONG:DoidoSong = SongData.parseSong(TJSON.parse(text));
+                var SONG:DoidoSong = Handler.parseSong(TJSON.parse(text));
 
                 var data:String = Json.stringify(SONG, "\t");
                 if(data != null && data.length > 0)

@@ -1,7 +1,6 @@
 package doido.song;
 
 import flixel.tweens.FlxEase.EaseFunction;
-//import backend.song.SongData.SwagSong;
 
 typedef BPMChangeEvent =
 {
@@ -30,7 +29,7 @@ class Conductor
 	}
 
 	/*public static var bpmChangeMap:Array<BPMChangeEvent> = [];
-	public static function mapBPMChanges(?song:SwagSong)
+	public static function mapBPMChanges(?song:LegacySong)
 	{
 		bpmChangeMap = [];
 
