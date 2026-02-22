@@ -36,11 +36,16 @@ class AudioHandler
 
     public function sync()
 	{
+		if (Math.abs(Conductor.songPos - inst.time) >= 25)
+		{
+			Logs.print('FIXING DELAYED CONDUCTOR: ${Conductor.songPos} > ${inst.time}', WARNING);
+			Conductor.songPos = inst.time;
+		}
+
 		update((snd) -> {
 			if (snd == inst) return;
 			if (Math.abs(Conductor.songPos - snd.time) >= 25)
 			{
-				Conductor.songPos = inst.time;
 				Logs.print('FIXING DELAYED MUSIC: ${snd.time} > ${Conductor.songPos}', WARNING);
 				update((fixSnd) -> {
 					fixSnd.time = Conductor.songPos;
