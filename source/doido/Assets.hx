@@ -83,7 +83,7 @@ class Assets
 		};
 
 		fr.addEventListener(Event.SELECT, onSelect);
-		fr.browse();
+		fr.browse(filter == null ? [] : [filter]);
 	}
 
     public static function fileSave(data:Dynamic, name:String)
