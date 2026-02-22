@@ -99,12 +99,24 @@ class Assets
         return path;
     }
 
+    public static inline function isImage(path:String, type:Asset)
+        return type == IMAGE || path.endsWith(".png");
+
+    public static inline function isSound(path:String, type:Asset)
+        return type == SOUND || path.endsWith(".ogg");
+
     public static function whichExists(path:String, type:Asset):Int {
         var ext = extensions.get(type);
         for (i in 0...ext.length) {
-            if(OpenFLAssets.exists(getExt(path, ext[i]))) {
+            var key:String = getExt(path, ext[i]);
+            if(isImage(path, type) || isSound(path, type)) {
+                if(isImage(path, type) && Cache.isGraphicCached(key)) return i;
+                if(isSound(path, type) && Cache.isSoundCached(key)) return i;
+            }
+
+            if(OpenFLAssets.exists(key)) {
                 return i;
-            }       
+            }     
         }
         return -1;
     }

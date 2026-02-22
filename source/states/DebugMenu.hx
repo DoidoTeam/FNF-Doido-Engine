@@ -8,6 +8,8 @@ import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import tjson.TJSON;
 import haxe.Json;
+import openfl.media.Sound;
+import doido.Cache;
 #if TOUCH_CONTROLS
 import doido.mobile.DoidoButton;
 #end
@@ -96,7 +98,7 @@ class DebugMenu extends MusicBeatState
 
 class Freeplay extends MusicBeatState
 {
-    var options:Array<String> = ["bopeebo", "corn-theft", "useless"];
+    var options:Array<String> = ["bopeebo", "corn-theft", "useless", "Load Other"];
     var text:FlxText;
     var title:FlxText;
     var cur:Int = 0;
@@ -142,15 +144,19 @@ class Freeplay extends MusicBeatState
 			MusicBeat.switchState(new states.DebugMenu());
 
         if(Controls.justPressed(ACCEPT)) {
-            try {
-				PlayState.loadSong(options[cur], "hard");
-                MusicBeat.switchState(new states.PlayState());
-			}
-			catch(e) {
-				FlxG.sound.play(Assets.sound('beep'));
-                Logs.print(e);
-			}
-            
+            if(options[cur] == "Load Other") {
+                MusicBeat.switchState(new states.LoadOther());
+            }
+            else {
+                try {
+                    PlayState.loadSong(options[cur], "hard");
+                    MusicBeat.switchState(new states.PlayState());
+                }
+                catch(e) {
+                    FlxG.sound.play(Assets.sound('beep'));
+                    Logs.print(e);
+                }
+            }
         }
     }
 
@@ -162,6 +168,121 @@ class Freeplay extends MusicBeatState
 		cur = FlxMath.wrap(cur, 0, options.length - 1);
 		drawText();
 	}
+}
+
+class LoadOther extends MusicBeatState
+{
+    var options:Array<String> = ["Load Chart", "Load Inst", "Load Voices (Optional)", "Load Player (Optional)", "Load Opponent (Optional)", "Play"];
+    var text:FlxText;
+    var title:FlxText;
+    var ver:FlxText;
+    var cur:Int = 0;
+
+    override function create()
+    {
+        super.create();
+        DiscordIO.changePresence("Loading Custom Song");
+
+        var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+		add(bg);
+
+        text = new FlxText(10, 0, 0, '');
+		text.setFormat(Main.globalFont, 48, 0xFFFFFFFF, LEFT);
+		text.setOutline(0xFF000000, 3);
+		add(text);
+        drawText();
+        text.y = FlxG.height - text.height - 10;
+
+        title = new FlxText(10, 0, 0, 'Custom Song');
+		title.setFormat(Main.globalFont, 100, 0xFFFFFFFF, LEFT);
+		title.setOutline(0xFF000000, 5);
+        title.y = text.y - title.height;
+		add(title);
+    }
+
+    function drawText() {
+        text.text = "";
+        for(i in 0...options.length)
+            text.text += options[i] + (i == cur ? " <\n" : "\n");
+    }
+
+    override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+        if(Controls.justPressed(UI_UP))
+            changeSelection(-1);
+        if(Controls.justPressed(UI_DOWN))
+            changeSelection(1);
+
+        if(Controls.justPressed(ACCEPT)) {
+            switch(options[cur].toLowerCase()) {
+                case "load chart":
+                    loadChart();
+                case "load inst":
+                    loadAudio("Inst");
+                case "load voices (optional)":
+                    loadAudio("Voices");
+                case "load player (optional)":
+                    loadAudio("Voices-player");
+                case "load opponent (optional)":
+                    loadAudio("Voices-opponent");
+                default:
+                    if(chartLoaded && Cache.permanent.sounds.get('assets/songs/${PlayState.SONG.song}/audio/Inst.ogg') != null)
+                        MusicBeat.switchState(new states.PlayState());
+                    else
+                        FlxG.sound.play(Assets.sound('beep'));
+            }
+        }
+    }
+
+    public function changeSelection(change:Int = 0)
+	{
+		if(change != 0) FlxG.sound.play(Assets.sound('scroll'));
+		
+		cur += change;
+		cur = FlxMath.wrap(cur, 0, options.length - 1);
+		drawText();
+	}
+
+    var chartLoaded:Bool = false;
+    function loadChart()
+    {
+        Assets.fileBrowse(
+            (fr) -> {
+                var bytes = fr.data;
+                var text = bytes.readUTFBytes(bytes.length);
+                PlayState.SONG = Handler.parseSong(TJSON.parse(text));
+                chartLoaded = true;
+            },
+            new openfl.net.FileFilter("Any Charts", "*.json"),
+            (err) -> {
+                Logs.print("File load error", WARNING);
+            }
+        );
+    }
+
+    function loadAudio(file:String = "Inst")
+    {
+        if(!chartLoaded) {
+            FlxG.sound.play(Assets.sound('beep'));
+            return;
+        }
+        Assets.fileBrowse(
+            (fr) -> {
+                var bytes = fr.data;
+                bytes.position = 0;
+                var sound = new Sound();
+                sound.loadCompressedDataFromByteArray(bytes, bytes.length);
+                var key:String = 'assets/songs/${PlayState.SONG.song}/audio/$file.ogg';
+                Cache.permanent.sounds.set(key, sound);
+            },
+            new openfl.net.FileFilter("Audio File", ".ogg"),
+            (err) -> {
+                Logs.print("File load error", WARNING);
+            }
+        );
+    }
 }
 
 class ChartConverter extends MusicBeatState
