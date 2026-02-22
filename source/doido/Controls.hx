@@ -98,7 +98,8 @@ class Controls
 			rebindable: false
 		},
         PAUSE => {
-			keyboard: [FlxKey.ESCAPE, FlxKey.ENTER],
+            //temp
+			keyboard: [/*FlxKey.ESCAPE,*/ FlxKey.ENTER],
 			gamepad: [FlxPad.START],
 			rebindable: false
 		},

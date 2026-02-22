@@ -143,13 +143,17 @@ class Freeplay extends MusicBeatState
         if(Controls.justPressed(BACK))
 			MusicBeat.switchState(new states.DebugMenu());
 
-        if(Controls.justPressed(ACCEPT)) {
+        if(Controls.justPressed(ACCEPT) || FlxG.keys.justPressed.SHIFT) {
             if(options[cur] == "Load Other") {
                 MusicBeat.switchState(new states.LoadOther());
             }
             else {
                 try {
                     PlayState.loadSong(options[cur], "hard");
+                    if(FlxG.keys.justPressed.SHIFT)
+                        PlayState.skip = true;
+                    else
+                        PlayState.skip = false;
                     MusicBeat.switchState(new states.PlayState());
                 }
                 catch(e) {
@@ -277,7 +281,7 @@ class LoadOther extends MusicBeatState
                 var key:String = 'assets/songs/${PlayState.SONG.song}/audio/$file.ogg';
                 Cache.permanent.sounds.set(key, sound);
             },
-            new openfl.net.FileFilter("Audio File", ".ogg"),
+            new openfl.net.FileFilter("Audio File", "*.ogg"),
             (err) -> {
                 Logs.print("File load error", WARNING);
             }

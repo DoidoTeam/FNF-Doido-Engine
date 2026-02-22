@@ -71,6 +71,26 @@ class AudioHandler
 		return inst.playing;
 	}
 
+	public var time(default, set):Float = 1.0;
+	public function set_time(v:Float) {
+		trace("before " + inst.time);
+		time = v;
+		update((snd) -> {
+			snd.time = v;
+		});
+		sync();
+		return speed;
+	}
+
+	public var speed(default, set):Float = 1.0;
+	public function set_speed(v:Float) {
+		speed = v;
+		update((snd) -> {
+			snd.pitch = v;
+		});
+		return speed;
+	}
+
 	public var muteVoices(default, set):Bool;
 	function set_muteVoices(val:Bool):Bool {
 		if (voicesGlobal != null)

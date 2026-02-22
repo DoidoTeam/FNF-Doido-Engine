@@ -20,12 +20,15 @@ import doido.mobile.DoidoButton;
 class PlayState extends MusicBeatState
 {
 	public static var SONG:DoidoSong;
+	public static var skip:Bool = false;
 
 	public var playField:PlayField;
 	public var debugInfo:DebugInfo;
 	
 	var paused:Bool = true;
+
 	var audio:AudioHandler;
+	var defaultSpeed:Float = 1.0;
 
 	#if TOUCH_CONTROLS
 	var pauseButton:DoidoButton;
@@ -71,6 +74,18 @@ class PlayState extends MusicBeatState
 		add(pauseButton);
 		#end
 
+		if(skip) {
+			audio.play();
+			audio.pause();
+			audio.time = 50000;
+			updateStep();
+			for(note in SONG.notes)
+			{
+				if (note.stepTime <= curStepFloat)
+					playField.curSpawnNote++;
+			}
+		}
+
 		//friend
 		/*var sprite = new FlxAnimate();
 		sprite.frames = Assets.animate("face");
@@ -89,6 +104,11 @@ class PlayState extends MusicBeatState
 		if(Controls.justPressed(BACK)) {
 			MusicBeat.switchState(new states.DebugMenu());
 		}
+
+		if (FlxG.keys.pressed.F9)
+			audio.speed = 10;
+		if (FlxG.keys.justReleased.F9)
+			audio.speed = defaultSpeed;
 		
 		var pause:Bool = Controls.justPressed(PAUSE);
 		#if TOUCH_CONTROLS
