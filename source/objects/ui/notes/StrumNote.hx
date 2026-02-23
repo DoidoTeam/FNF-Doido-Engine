@@ -4,22 +4,23 @@ import flixel.math.FlxPoint;
 
 class StrumNote extends DoidoSprite
 {
-	public var strumData:Int = 0;
+	public var lane:Int = 0;
 		
 	public var initialPos:FlxPoint = FlxPoint.get(0, 0);
 	public var strumScale:Float = 1.0;
+	public var strumAngle:Float = 0.0;
 	
 	public function new()
 	{
 		super();
 	}
 	
-	public function reloadStrum(strumData:Int)
+	public function reloadStrum(lane:Int)
 	{
-		this.strumData = strumData;
+		this.lane = lane;
 		this.strumScale = 1.0;
 		
-		var direction:String = NoteUtil.intToString(strumData);
+		var direction:String = NoteUtil.intToString(lane);
 		
 		switch("ill do it later")
 		{

@@ -105,10 +105,12 @@ class PlayState extends MusicBeatState
 			MusicBeat.switchState(new states.DebugMenu());
 		}
 
+		#if debug
 		if (FlxG.keys.pressed.F9)
 			audio.speed = 10;
 		if (FlxG.keys.justReleased.F9)
 			audio.speed = defaultSpeed;
+		#end
 		
 		var pause:Bool = Controls.justPressed(PAUSE);
 		#if TOUCH_CONTROLS
@@ -122,7 +124,7 @@ class PlayState extends MusicBeatState
 		}
 		
 		if (audio.playing)
-			Conductor.songPos += elapsed * 1000;
+			Conductor.songPos += elapsed * 1000 * audio.speed;
 			
 		playField.updateNotes(curStepFloat);
 	}

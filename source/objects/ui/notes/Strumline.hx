@@ -64,17 +64,15 @@ class Strumline extends FlxGroup
 		{
 			var strum = strums[note.data.lane];
 			var noteSpeed:Float = note.noteSpeed ?? scrollSpeed;
+			noteSpeed *= note.noteSpeedMult;
 
 			var offsetX = 0.0; // note.noteOffset.x;
 			var offsetY = (note.data.stepTime - curStepFloat) * Conductor.stepCrochet * (noteSpeed * 0.45);
-			var angle = 0.0;
-
-			if(downscroll)
-				angle = 180;
+			var angle = note.noteAngle ?? strum.strumAngle;
 
 			NoteUtil.setNotePos(
-				note, strum, angle,
-				offsetX, offsetY,
+				note, strum, angle * (downscroll ? -1 : 1),
+				offsetX, offsetY * (downscroll ? -1 : 1),
 			);
 		}
 	}
@@ -84,9 +82,9 @@ class Strumline extends FlxGroup
 		for (strum in strums)
 		{
 			strum.x = x;
-			strum.x += NoteUtil.noteWidth(wide) * strum.strumData;
+			strum.x += NoteUtil.noteWidth(wide) * strum.lane;
 			strum.x -= (NoteUtil.noteWidth(wide) * (strums.length - 1)) / 2;
-			if(wide) strum.x += (strum.strumData < (NoteUtil.directions.length/2) ? -100 : 100);
+			if(wide) strum.x += (strum.lane < (NoteUtil.directions.length/2) ? -100 : 100);
 			
 			strum.initialPos.x = strum.x;
 		}

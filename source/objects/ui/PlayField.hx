@@ -1,5 +1,7 @@
 package objects.ui;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import doido.song.Conductor;
 import doido.song.chart.Handler.NoteData;
 import doido.song.Timings;
@@ -128,7 +130,7 @@ class PlayField extends FlxGroup
 				{
 					if (strumline.isPlayer)
 					{
-						if(pressed[strum.strumData])
+						if(pressed[strum.lane])
 						{
 							if(!["pressed", "confirm"].contains(strum.animation.curAnim.name))
 								strum.playAnim("pressed");
@@ -194,23 +196,14 @@ class PlayField extends FlxGroup
 							else if (onGhostTap != null)
 							{
 								onGhostTap(i, NoteUtil.directions[i]);
-							}
-							/*else if (i < 4) // you ghost tapped lol
-							{
-								if(startedCountdown)
+								/*if(startedCountdown)
 								{
 									if(ghostTapping == "NEVER" || (ghostTapping == "WHILE IDLING" && !isIdling))
 									{
-										// i don't think vocals should stop when ghost tapping
-										// vocals.volume = 0;
-
-										var note = new Note();
-										note.updateData(0, i, "none", assetModifier);
-										//note.reloadSprite();
-										_onNoteMiss(note, strumline, true);
+										onGhostTap(i, NoteUtil.directions[i]);
 									}
-								}
-							}*/
+								}*/
+							}
 						}
 					}
 				}
@@ -263,5 +256,33 @@ class PlayField extends FlxGroup
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		#if debug
+		for(strumline in strumlines)
+		{
+			for(strum in strumline.strums)
+			{
+				if (FlxG.keys.justPressed.NUMPADNINE)
+				{
+					FlxTween.completeTweensOf(strum);
+					var downMult:Int = (strumline.downscroll ? -1 : 1);
+					var angle:Float = [13, 5.2, -5.2, -13][strum.lane];
+					if (strum.strumAngle == angle) angle = 0;
+
+					FlxTween.tween(
+						strum, {
+							strumAngle: angle,
+							angle: angle * -downMult,
+							y: strum.initialPos.y + ((angle == 0) ? 0 : [12, 0, 0, 12][strum.lane]) * downMult,
+						},
+						0.4, { ease: FlxEase.cubeInOut }
+					);
+				}
+			}
+			for(note in strumline.notes)
+			{
+				note.angle = strumline.strums[note.data.lane].angle;
+			}
+		}
+		#end
 	}
 }

@@ -11,7 +11,9 @@ class Note extends DoidoSprite
 	public var noteScale:Float = 1.0;
 	
 	// modchart stuff
+	public var noteAngle:Null<Float> = null;
 	public var noteSpeed:Null<Float> = null;
+	public var noteSpeedMult:Float = 1.0;
 	
 	public function new()
 	{
