@@ -10,9 +10,7 @@ import tjson.TJSON;
 import haxe.Json;
 import openfl.media.Sound;
 import doido.Cache;
-#if TOUCH_CONTROLS
-import doido.objects.DoidoButton.ButtonHitbox;
-#end
+import doido.objects.DoidoButton;
 
 using doido.utils.TextUtil;
 
