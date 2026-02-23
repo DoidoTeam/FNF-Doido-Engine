@@ -3,15 +3,15 @@ package doido.mobile;
 import objects.ui.notes.Strumline;
 import flixel.group.FlxSpriteGroup;
 #if TOUCH_CONTROLS
-import doido.mobile.DoidoButton;
+import doido.objects.DoidoButton.ButtonHitbox;
 import doido.utils.NoteUtil;
 import flixel.input.FlxInput.FlxInputState;
 import flixel.util.FlxColor;
 import flixel.FlxSprite;
 
-class Hitbox extends FlxSpriteGroup
+class TouchInput extends FlxSpriteGroup
 {
-    var buttonMap:Map<String, DoidoButton> = [];
+    var buttonMap:Map<String, ButtonHitbox> = [];
 	var wide:Bool;
     public function new(strumline:Strumline)
     {
@@ -22,7 +22,7 @@ class Hitbox extends FlxSpriteGroup
 		if(wide) {
 			var buttonSize = NoteUtil.noteWidth(true);
 			for (i in 0...directions.length) {
-				var button = new DoidoButton(0, 0, buttonSize + 50, buttonSize - 10, 0);
+				var button = new ButtonHitbox(0, 0, buttonSize + 50, buttonSize - 10, 0);
 				buttonMap.set(directions[i], button);
 				add(button);
 
@@ -33,7 +33,7 @@ class Hitbox extends FlxSpriteGroup
 		else {
 			var buttonWidth = (FlxG.width/directions.length);
 			for (i in 0...directions.length) {
-				var button = new DoidoButton(i*buttonWidth, 0, buttonWidth, FlxG.height, 0);
+				var button = new ButtonHitbox(i*buttonWidth, 0, buttonWidth, FlxG.height, 0);
 				buttonMap.set(directions[i], button);
 				add(button);
 
@@ -85,7 +85,7 @@ class Hitbox extends FlxSpriteGroup
 	}
 }
 #else
-class Hitbox extends FlxSpriteGroup
+class TouchInput extends FlxSpriteGroup
 {
     public function new(strumline:Strumline)
 		super();

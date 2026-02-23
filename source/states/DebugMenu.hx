@@ -11,7 +11,7 @@ import haxe.Json;
 import openfl.media.Sound;
 import doido.Cache;
 #if TOUCH_CONTROLS
-import doido.mobile.DoidoButton;
+import doido.objects.DoidoButton.ButtonHitbox;
 #end
 
 using doido.utils.TextUtil;

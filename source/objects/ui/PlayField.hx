@@ -8,7 +8,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import objects.ui.notes.*;
-import doido.mobile.Hitbox;
+import doido.mobile.TouchInput;
 
 class PlayField extends FlxGroup
 {
@@ -18,7 +18,7 @@ class PlayField extends FlxGroup
 	public var strumlines:Array<Strumline> = [];
 	public var dadStrumline:Strumline;
 	public var bfStrumline:Strumline;
-	public var hitbox:Hitbox;
+	public var touchInput:TouchInput;
 	
 	public function new(spawnNotes:Array<NoteData>, speed:Float, downscroll:Bool, middlescroll:Bool)
 	{
@@ -50,8 +50,8 @@ class PlayField extends FlxGroup
 			add(strumline);
 		}
 
-		hitbox = new Hitbox(bfStrumline);
-		add(hitbox);
+		touchInput = new TouchInput(bfStrumline);
+		add(touchInput);
 	}
 
 	public var pressed:Array<Bool> 		= [];
@@ -63,22 +63,22 @@ class PlayField extends FlxGroup
 	{
 		this.curStepFloat = curStepFloat;
 		pressed = [
-			Controls.pressed(LEFT) 	|| hitbox.pressed("left"),
-			Controls.pressed(DOWN) 	|| hitbox.pressed("down"),
-			Controls.pressed(UP) 	|| hitbox.pressed("up"),
-			Controls.pressed(RIGHT) || hitbox.pressed("right"),
+			Controls.pressed(LEFT) 		|| touchInput.pressed("left"),
+			Controls.pressed(DOWN) 		|| touchInput.pressed("down"),
+			Controls.pressed(UP) 		|| touchInput.pressed("up"),
+			Controls.pressed(RIGHT) 	|| touchInput.pressed("right"),
 		];
 		justPressed = [
-			Controls.justPressed(LEFT) 	|| hitbox.justPressed("left"),
-			Controls.justPressed(DOWN) 	|| hitbox.justPressed("down"),
-			Controls.justPressed(UP) 	|| hitbox.justPressed("up"),
-			Controls.justPressed(RIGHT) || hitbox.justPressed("right"),
+			Controls.justPressed(LEFT) 	|| touchInput.justPressed("left"),
+			Controls.justPressed(DOWN) 	|| touchInput.justPressed("down"),
+			Controls.justPressed(UP) 	|| touchInput.justPressed("up"),
+			Controls.justPressed(RIGHT) || touchInput.justPressed("right"),
 		];
 		released = [
-			Controls.released(LEFT)  || hitbox.released("left"),
-			Controls.released(DOWN)  || hitbox.released("down"),
-			Controls.released(UP) 	 || hitbox.released("up"),
-			Controls.released(RIGHT) || hitbox.released("right"),
+			Controls.released(LEFT)  	|| touchInput.released("left"),
+			Controls.released(DOWN)  	|| touchInput.released("down"),
+			Controls.released(UP) 	 	|| touchInput.released("up"),
+			Controls.released(RIGHT) 	|| touchInput.released("right"),
 		];
 
 		// spawning notes

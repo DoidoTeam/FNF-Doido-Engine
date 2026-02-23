@@ -1,6 +1,5 @@
-package doido.mobile;
+package doido.objects;
 
-#if TOUCH_CONTROLS
 import flixel.FlxSprite;
 import flixel.input.FlxInput;
 import flixel.input.FlxInput.FlxInputState;
@@ -11,7 +10,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSignal;
 
 // custom button hitbox thing?
-class DoidoButton extends FlxSprite implements IFlxInput
+class ButtonHitbox extends FlxSprite implements IFlxInput
 {
     public var currentState:FlxInputState = RELEASED;
 	public var lastState:FlxInputState = RELEASED;
@@ -47,17 +46,30 @@ class DoidoButton extends FlxSprite implements IFlxInput
     }
 
     function checkButton():Bool {
+        #if TOUCH_CONTROLS
         var touches:Array<FlxTouch> = FlxG.touches.list;
-        if(touches == null || touches.length == 0) return false;
-        for (camera in cameras)
-        {
-            for(touch in touches) {
-                var pos:FlxPoint = touch.getWorldPosition(camera);
-                var overlap = overlapsPoint(pos);
-                pos.put();
-                if(overlap) return true;
+        if(touches != null && touches.length != 0) {
+            for (camera in cameras) {
+                for(touch in touches) {
+                    var pos:FlxPoint = touch.getWorldPosition(camera);
+                    var overlap = overlapsPoint(pos);
+                    pos.put();
+                    if(overlap) return true;
+                }
             }
         }
+        #end
+
+        if(FlxG.mouse.pressed) {
+            for (camera in cameras) {
+                var pos:FlxPoint = FlxG.mouse.getWorldPosition(camera);
+                trace(pos);
+                var overlap = overlapsPoint(pos);
+                pos.put();
+                if (overlap) return true;
+            }
+        }
+
         return false;
     }
 
@@ -78,4 +90,3 @@ class DoidoButton extends FlxSprite implements IFlxInput
 	inline function get_justPressed():Bool
 		return currentState == JUST_PRESSED;
 }
-#end

@@ -14,7 +14,7 @@ import objects.play.*;
 import objects.ui.*;
 
 #if TOUCH_CONTROLS
-import doido.mobile.DoidoButton;
+import doido.objects.DoidoButton.ButtonHitbox;
 #end
 
 class PlayState extends MusicBeatState
@@ -31,7 +31,7 @@ class PlayState extends MusicBeatState
 	var defaultSpeed:Float = 1.0;
 
 	#if TOUCH_CONTROLS
-	var pauseButton:DoidoButton;
+	var pauseButton:ButtonHitbox;
 	#end
 
 	public static function loadSong(jsonInput:String, ?diff:String = "normal")
@@ -70,7 +70,7 @@ class PlayState extends MusicBeatState
 		add(debugInfo);
 
 		#if TOUCH_CONTROLS
-		pauseButton = new DoidoButton(0,0,100,100,0.4);
+		pauseButton = new ButtonHitbox(0,0,100,100,0.4);
 		add(pauseButton);
 		#end
 
