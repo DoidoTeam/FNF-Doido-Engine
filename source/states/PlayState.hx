@@ -13,10 +13,13 @@ import objects.*;
 import objects.play.*;
 import objects.ui.*;
 import hscript.iris.Iris;
+import flixel.FlxCamera;
 
 #if TOUCH_CONTROLS
 import doido.objects.DoidoButton.ButtonHitbox;
 #end
+
+using doido.utils.CameraUtil;
 
 class PlayState extends MusicBeatState
 {
@@ -25,6 +28,9 @@ class PlayState extends MusicBeatState
 
 	public var playField:PlayField;
 	public var debugInfo:DebugInfo;
+
+	var camGame:FlxCamera;
+	var camHUD:FlxCamera;
 	
 	var paused:Bool = true;
 
@@ -60,6 +66,9 @@ class PlayState extends MusicBeatState
 		Conductor.setBPM(100);
 		
 		audio = new AudioHandler(SONG.song);
+
+		camGame = new FlxCamera().createCam(false, true);
+		camHUD = new FlxCamera().createCam(true, false);
 		
 		var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
 		//bg.zIndex = 500;
@@ -68,6 +77,7 @@ class PlayState extends MusicBeatState
 		callScript("create");
 		
 		playField = new PlayField(SONG.notes, SONG.speed, Save.data.downscroll, Save.data.middlescroll);
+		playField.cameras = [camHUD];
 		add(playField);
 
 		playField.onNoteHit = (note) -> {
@@ -160,9 +170,9 @@ class PlayState extends MusicBeatState
 		audio.sync();
 		
 		if (curStep % 4 == 0) {
-			FlxTween.cancelTweensOf(FlxG.camera);
-			FlxG.camera.zoom *= 1.02;
-			FlxTween.tween(FlxG.camera, {zoom: 1.0}, Conductor.crochet / 1000 * 1, {
+			FlxTween.cancelTweensOf(camHUD);
+			camHUD.zoom *= 1.02;
+			FlxTween.tween(camHUD, {zoom: 1.0}, Conductor.crochet / 1000 * 1, {
 				ease: FlxEase.cubeOut
 			});
 			callScript("beatHit", [curStep / 4]); //compatibilidade?
