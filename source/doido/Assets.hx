@@ -20,6 +20,7 @@ enum Asset
     TEXT;
     JSON;
     XML;
+    SCRIPT;
     BINARY;
     OTHER;
 }
@@ -36,6 +37,7 @@ class Assets
         TEXT => ["txt"],
         JSON => ["json"],
         XML => ["xml"],
+        SCRIPT => ["hx", "hxc", "hscript"],
         BINARY => [""],
         OTHER => [""] //?
     ];
@@ -141,7 +143,7 @@ class Assets
                 if(path == null)
                     path = resolvePath('sounds/beep', SOUND);
                 return cast Cache.getSound(path, false);
-            case TEXT | JSON | XML:
+            case TEXT | JSON | XML | SCRIPT:
                 return cast OpenFLAssets.getText(path).trim();
             case BINARY:
                 return cast OpenFLAssets.getBytes(path);
@@ -150,14 +152,38 @@ class Assets
         };
     }
 
-    public static function list(key:String):Array<String> {
-        var list = OpenFLAssets.list();
+    public static function list(key:String, type:Asset = OTHER):Array<String> {
+        var rawlist:Array<String> = OpenFLAssets.list();
+        var list:Array<String> = [];
         var path = getPath(key);
+
+        if(type != OTHER) {
+            for(i in 0...rawlist.length) {
+                for(type in extensions.get(type)) {
+                    if(rawlist[i].endsWith(type)) {
+                        list.push(rawlist[i]);
+                    }
+                }
+			}
+        }
+        else list = rawlist;
 
         //taken from flixel-animate
         return list.filter((str) -> str.startsWith(path.substring(path.indexOf(':') + 1, path.length)))
 			.map((str) -> str.split('${path.split(":").pop()}/').pop());
     }
+
+    public static function getScriptArray(?song:String):Array<String> {
+		var arr:Array<String> = [];
+		for(folder in ["scripts", 'songs/$song/scripts']) {
+			for(file in list(folder, SCRIPT)) {
+                arr.push('$folder/$file');
+                trace(file);
+            }
+		}
+		//trace(arr);
+		return arr;
+	}
 
     public static inline function image(key:String):FlxGraphic
 		return getAsset('images/$key', IMAGE);
@@ -173,6 +199,9 @@ class Assets
 
     public static inline function json(key:String):Dynamic
 		return TJSON.parse(getAsset('$key', JSON));
+
+    public static inline function script(key:String):String
+        return getAsset('$key', SCRIPT, false);
 
     public static inline function sparrow(key:String):FlxFramesCollection
 		return FlxAtlasFrames.fromSparrow(getAsset('images/$key', IMAGE), getAsset('images/$key', XML));

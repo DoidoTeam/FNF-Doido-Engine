@@ -41,8 +41,8 @@
       "name": "hscript-iris",
       "type": "git",
       "dir": null,
-      "ref": "def329241c94ff5185f4388592f1288217453e1e",
-      "url": "https://github.com/crowplexus/hscript-iris"
+      "ref": "master",
+      "url": "https://github.com/DoidoTeam/hscript-iris"
     },
     {
       "name": "hxdiscord_rpc",

@@ -12,6 +12,7 @@ import flixel.tweens.FlxTween;
 import objects.*;
 import objects.play.*;
 import objects.ui.*;
+import hscript.iris.Iris;
 
 #if TOUCH_CONTROLS
 import doido.objects.DoidoButton.ButtonHitbox;
@@ -34,6 +35,9 @@ class PlayState extends MusicBeatState
 	var pauseButton:ButtonHitbox;
 	#end
 
+	public static var instance:PlayState;
+	public var loadedScripts:Array<Iris> = [];
+
 	public static function loadSong(jsonInput:String, ?diff:String = "normal")
 	{
 		SONG = Handler.loadSong(jsonInput, diff);
@@ -42,7 +46,15 @@ class PlayState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+		instance = this;
 		DiscordIO.changePresence("In the PlayState");
+
+		var scriptPaths:Array<String> = Assets.getScriptArray(SONG.song);
+		for(path in scriptPaths) {
+			var newScript:Iris = new Iris(Assets.script('$path'), instance, {name: path, autoRun: true, autoPreset: true});
+			loadedScripts.push(newScript);
+		}
+		//setScript("this", instance); //hopefully we wont be needing THIS anymore!
 
 		Conductor.songPos = 0;
 		Conductor.setBPM(100);
@@ -52,6 +64,8 @@ class PlayState extends MusicBeatState
 		var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
 		//bg.zIndex = 500;
 		add(bg);
+
+		callScript("create");
 		
 		playField = new PlayField(SONG.notes, SONG.speed, Save.data.downscroll, Save.data.middlescroll);
 		add(playField);
@@ -86,14 +100,12 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		//friend
-		/*var sprite = new FlxAnimate();
-		sprite.frames = Assets.animate("face");
-		add(sprite);*/
+		callScript("createPost");
 	}
 
 	override function update(elapsed:Float)
 	{
+		callScript("update", [elapsed]);
 		super.update(elapsed);
 		
 		if(Controls.justPressed(RESET)) {
@@ -127,6 +139,7 @@ class PlayState extends MusicBeatState
 			Conductor.songPos += elapsed * 1000 * audio.speed;
 			
 		playField.updateNotes(curStepFloat);
+		callScript("updatePost", [elapsed]);
 	}
 
 	public function pauseSong()
@@ -152,6 +165,28 @@ class PlayState extends MusicBeatState
 			FlxTween.tween(FlxG.camera, {zoom: 1.0}, Conductor.crochet / 1000 * 1, {
 				ease: FlxEase.cubeOut
 			});
+			callScript("beatHit", [curStep / 4]); //compatibilidade?
 		}
+
+		callScript("stepHit", [curStep]);
+	}
+
+	public function callScript(fun:String, ?args:Array<Dynamic>) {
+		for(script in loadedScripts) {
+			@:privateAccess {
+				var ny: Dynamic = script.interp.variables.get(fun);
+				try {
+					if(ny != null && Reflect.isFunction(ny))
+						script.call(fun, args);
+				} catch(e) {
+					Logs.print('error parsing script: ' + e, ERROR);
+				}
+			}
+		}
+	}
+	
+	public function setScript(name:String, value:Dynamic, allowOverride:Bool = true) {
+		for(script in loadedScripts)
+			script.set(name, value, allowOverride);
 	}
 }
