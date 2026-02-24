@@ -257,32 +257,39 @@ class PlayField extends FlxGroup
 	{
 		super.update(elapsed);
 		#if debug
-		for(strumline in strumlines)
-		{
-			for(strum in strumline.strums)
+		if(modchartAllowed) {
+			for(strumline in strumlines)
 			{
-				if (FlxG.keys.justPressed.NUMPADNINE)
+				for(strum in strumline.strums)
 				{
-					FlxTween.completeTweensOf(strum);
-					var downMult:Int = (strumline.downscroll ? -1 : 1);
-					var angle:Float = [13, 5.2, -5.2, -13][strum.lane];
-					if (strum.strumAngle == angle) angle = 0;
+					if (FlxG.keys.justPressed.NINE)
+					{
+						FlxTween.completeTweensOf(strum);
+						var downMult:Int = (strumline.downscroll ? -1 : 1);
+						var angle:Float = [13, 5.2, -5.2, -13][strum.lane];
+						if (strum.strumAngle == angle) angle = 0;
 
-					FlxTween.tween(
-						strum, {
-							strumAngle: angle,
-							angle: angle * -downMult,
-							y: strum.initialPos.y + ((angle == 0) ? 0 : [12, 0, 0, 12][strum.lane]) * downMult,
-						},
-						0.4, { ease: FlxEase.cubeInOut }
-					);
+						FlxTween.tween(
+							strum, {
+								strumAngle: angle,
+								angle: angle * -downMult,
+								y: strum.initialPos.y + ((angle == 0) ? 0 : [12, 0, 0, 12][strum.lane]) * downMult,
+							},
+							0.4, { ease: FlxEase.cubeInOut }
+						);
+					}
 				}
-			}
-			for(note in strumline.notes)
-			{
-				note.angle = strumline.strums[note.data.lane].angle;
+				for(note in strumline.notes)
+				{
+					note.angle = strumline.strums[note.data.lane].angle;
+				}
 			}
 		}
 		#end
+	}
+
+	public static var modchartAllowed(get, never):Bool;
+	public static function get_modchartAllowed():Bool {
+		return #if TOUCH_CONTROLS !Save.data.modernCondrols #else true #end;
 	}
 }
