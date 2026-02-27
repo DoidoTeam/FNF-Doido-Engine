@@ -1,6 +1,6 @@
 # FNF: DOIDO ENGINE
 <p align="center">
-<img src="https://www.newgrounds.com/dump/draw/a7487bb1dcc15a499c00a5c5d4be5eb3">
+<img src="https://doidoteam.github.io/img/readme-old/banner.png">
 </p>
 
 ## Friday Night Funkin' Rewritten
@@ -43,7 +43,7 @@ Some other assets, such as test sprites and music, are used under permission fro
 
 
 <p align="center">
-<img src="https://www.newgrounds.com/dump/draw/5657fbf528979526e5e7da27e30cd2a7">
+<img src="https://doidoteam.github.io/img/readme-old/credits.png">
 </p>
 
 ### [DiogoTV](https://bsky.app/profile/diogotv.bsky.social) - Doido Engine's Owner and Main Coder
@@ -72,21 +72,21 @@ Some other assets, such as test sprites and music, are used under permission fro
 ## Showcase
 
 <p align="center">
-<img src="https://doidoteam.github.io/img/readme/1main.png">
+<img src="https://doidoteam.github.io/img/readme-old/1main.png">
 </p>
 
 <p align="center">
-<img src="https://doidoteam.github.io/img/readme/6chart.png">
+<img src="https://doidoteam.github.io/img/readme-old/6chart.png">
 </p>
 
 <p align="center">
-<img src="https://doidoteam.github.io/img/readme/7events.png">
+<img src="https://doidoteam.github.io/img/readme-old/7events.png">
 </p>
 
 <p align="center">
-<img src="https://doidoteam.github.io/img/readme/9character.png">
+<img src="https://doidoteam.github.io/img/readme-old/9character.png">
 </p>
 
 <p align="center">
-<img src="https://doidoteam.github.io/img/readme/10crash.png">
+<img src="https://doidoteam.github.io/img/readme-old/10crash.png">
 </p>
