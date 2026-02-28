@@ -32,7 +32,8 @@ function update(elapsed:Float) {
             }
             for(note in strumline.notes)
             {
-                note.angle = strumline.strums[note.data.lane].angle;
+                if (!note.isHold)
+                    note.angle = strumline.strums[note.data.lane].angle;
             }
         }
     }

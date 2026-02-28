@@ -55,7 +55,7 @@ class Legacy
 		var daSteps:Int = 0;
 		
 		// bpm change stuff for sustain notes
-		var noteCrochet:Float = Conductor.stepCrochet;
+		var noteCrochet:Float = Conductor.calcStep(SONG.bpm);
         var bpmChangeMap = getLegacyBPMChanges(LegacySong);
 		
 		for(section in LegacySong.notes)

@@ -49,7 +49,39 @@ class Strumline extends FlxGroup
 		note.loadData(noteData);
 		note.reloadSprite();
 		notes.push(note);
-		add(note);
+		
+		// searchs for hold notes
+		if(noteData.length > 0)
+		{
+			var holdLength:Int = Math.ceil(noteData.length + 1);
+
+			var endDiff:Float = noteData.length - Math.floor(noteData.length);
+			if (endDiff <= 0.0) endDiff = 1.0; // oh well
+			
+			var holdIndex:Float = 0.0;
+			for(i in 0...holdLength)
+			{
+				var hold:Note = cast recycle(Note);
+				hold.loadData(noteData);
+
+				hold.isHold = true;
+				hold.isHoldEnd = (i == holdLength - 1);
+				hold.holdStep = (i == holdLength - 2 ? endDiff : 1.0);
+				hold.holdIndex = holdIndex;
+				note.children.push(hold);
+
+				hold.reloadSprite();
+				hold.holdParent = note;
+				notes.push(hold);
+				if (!members.contains(hold)) add(hold);
+
+				holdIndex += hold.holdStep;
+			}
+		}
+
+		// adds regular note in front of hold notes
+		if (!members.contains(note)) add(note);
+		//members.sort(NoteUtil.sortLayer);
 	}
 	
 	public function killNote(note:Note)
@@ -60,19 +92,37 @@ class Strumline extends FlxGroup
 	
 	public function updateNotes(curStepFloat:Float)
 	{
+		var downMult:Int = (downscroll ? -1 : 1);
+
 		for(note in notes)
 		{
 			var strum = strums[note.data.lane];
 			var noteSpeed:Float = note.noteSpeed ?? scrollSpeed;
 			noteSpeed *= note.noteSpeedMult;
 
+			var noteTime:Float = (note.data.stepTime - curStepFloat);
+			if (note.isHold)
+				noteTime += note.holdIndex;
+
 			var offsetX = 0.0; // note.noteOffset.x;
-			var offsetY = (note.data.stepTime - curStepFloat) * Conductor.stepCrochet * (noteSpeed * 0.45);
+			var offsetY = (noteTime) * Conductor.stepCrochet * (noteSpeed * 0.45);
 			var angle = note.noteAngle ?? strum.strumAngle;
 
+			if (note.isHold)
+			{
+				note.angle = -angle * downMult;
+				if (!note.isHoldEnd)
+				{
+					var holdHeight:Float = Conductor.stepCrochet * (noteSpeed * 0.45) + 2;
+					note.scale.y = (holdHeight / note.frameHeight);
+					note.updateHitbox();
+				}
+			}
+
+			note.updateOffsets();
 			NoteUtil.setNotePos(
-				note, strum, angle * (downscroll ? -1 : 1),
-				offsetX, offsetY * (downscroll ? -1 : 1),
+				note, strum, angle * downMult,
+				offsetX, offsetY * downMult
 			);
 		}
 	}

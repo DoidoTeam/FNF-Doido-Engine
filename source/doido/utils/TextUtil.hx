@@ -11,4 +11,12 @@ class TextUtil
 		
 		text.setBorderStyle(OUTLINE, color, thickness);
 	}
+
+	public static function floorPos(text:FlxText)
+	{
+		text.setPosition(
+			Math.floor(text.x),
+			Math.floor(text.y)
+		);
+	}
 }

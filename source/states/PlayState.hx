@@ -1,8 +1,7 @@
 package states;
 
-import doido.song.AudioHandler;
 import animate.FlxAnimate;
-import doido.song.Conductor;
+import doido.song.*;
 import doido.song.chart.Handler;
 import doido.song.chart.Handler.DoidoSong;
 import flixel.FlxSprite;
@@ -12,6 +11,8 @@ import flixel.tweens.FlxTween;
 import objects.*;
 import objects.play.*;
 import objects.ui.*;
+import objects.ui.hud.*;
+import objects.ui.notes.*;
 import hscript.iris.Iris;
 import flixel.FlxCamera;
 
@@ -27,6 +28,7 @@ class PlayState extends MusicBeatState
 	public static var skip:Bool = false;
 
 	public var playField:PlayField;
+	public var hudClass:BaseHud;
 	public var debugInfo:DebugInfo;
 
 	var camGame:FlxCamera;
@@ -48,12 +50,17 @@ class PlayState extends MusicBeatState
 	{
 		SONG = Handler.loadSong(jsonInput, diff);
 	}
+
+	public function resetStatics()
+	{
+		Timings.init();	
+	}
 	
 	override function create()
 	{
 		super.create();
 		instance = this;
-		DiscordIO.changePresence("In the PlayState");
+		DiscordIO.changePresence("Playing - " + SONG.song);
 
 		var scriptPaths:Array<String> = Assets.getScriptArray(SONG.song);
 		for(path in scriptPaths) {
@@ -63,7 +70,8 @@ class PlayState extends MusicBeatState
 		//setScript("this", instance); //hopefully we wont be needing THIS anymore!
 
 		Conductor.songPos = 0;
-		Conductor.setBPM(100);
+		Conductor.setBPM(SONG.bpm);
+		resetStatics();
 		
 		audio = new AudioHandler(SONG.song);
 
@@ -74,21 +82,21 @@ class PlayState extends MusicBeatState
 		//bg.zIndex = 500;
 		add(bg);
 
+		hudClass = switch(SONG.song)
+		{
+			default: new DoidoHud();
+		}
+		hudClass.playState = this;
+		add(hudClass);
+
 		callScript("create");
 		
 		playField = new PlayField(SONG.notes, SONG.speed, Save.data.downscroll, Save.data.middlescroll);
 		playField.cameras = [camHUD];
 		add(playField);
 
-		playField.onNoteHit = (note) -> {
-			audio.muteVoices = false;
-		};
-		playField.onNoteMiss = (note) -> {
-			audio.muteVoices = true;
-		};
-		playField.onGhostTap = (lane, direction) -> {
-			Logs.print("GHOST TAPPED " + direction.toUpperCase(), WARNING);
-		};
+		hudClass.init();
+		setUpInput();
 		
 		debugInfo = new DebugInfo(this);
 		add(debugInfo);
@@ -111,6 +119,44 @@ class PlayState extends MusicBeatState
 		}
 
 		callScript("createPost");
+	}
+
+	public function setUpInput()
+	{
+		function updateScore(note:Note, noteDiff:Float)
+		{
+			Timings.addScore(note, noteDiff);
+			Timings.addAccuracyDiff(noteDiff);
+			hudClass.updateScoreTxt();
+		}
+
+		playField.onNoteHit = (note, strumline) ->
+		{
+			if (note.isHold) return;
+			if (strumline.isPlayer)
+			{
+				audio.muteVoices = false;
+				updateScore(note, playField.noteDiff(note.data));
+			}
+			else
+			{
+				if (audio.voicesOpp == null) audio.muteVoices = false;
+			}
+		};
+		playField.onNoteMiss = (note, strumline) ->
+		{
+			if (strumline.isPlayer)
+			{
+				audio.muteVoices = true;
+				updateScore(note, Timings.minTiming);
+			}
+		};
+		
+		playField.onGhostTap = (lane, direction) ->
+		{
+			//Logs.print("GHOST TAPPED " + direction.toUpperCase(), WARNING);
+			hudClass.updateScoreTxt();
+		};
 	}
 
 	override function update(elapsed:Float)

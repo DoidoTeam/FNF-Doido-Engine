@@ -6,9 +6,9 @@ import flixel.sound.FlxSound;
 class AudioHandler
 {
 	// esse é que é o tal de "encapsulamento?"
-    private var inst:FlxSound;
-    private var voicesGlobal:FlxSound; // default
-	private var voicesOpp:FlxSound; // if the opponent has a voices file, play them too
+    public var inst:FlxSound;
+    public var voicesGlobal:FlxSound; // default
+	public var voicesOpp:FlxSound; // if the opponent has a voices file, play them too
 
     public function new(song:String)
     {

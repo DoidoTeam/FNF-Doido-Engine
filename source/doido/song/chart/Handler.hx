@@ -77,7 +77,7 @@ class Handler
 		/*if(SONG.gfVersion == null)
 			SONG.gfVersion = "stage-set";*/
 
-		SONG.notes.sort(NoteUtil.sortByStep);
+		SONG.notes.sort(NoteUtil.sortData);
 		
 		return SONG;
 	}

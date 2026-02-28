@@ -1,33 +1,46 @@
 package doido.song;
 
+import objects.ui.notes.Note;
 import flixel.math.FlxMath;
 
 typedef TimingData = {
+	var name:String; // timing name
     var diff:Float; // milliseconds to hit this timing
+	var hold:Float; // 
     var judge:Float; // accuracy multiplier
 };
 class Timings
 {
     public static var timings:Map<String, TimingData> = [
         "sick" => {
+			name: "sick",
             diff: 45,
+			hold: 0.85,
             judge: 1.0,
         },
         "good" => {
+			name: "good",
             diff: 90,
-            judge: 0.75
+			hold: 0.6,
+            judge: 0.75,
         },
         "bad" => {
+			name: "bad",
             diff: 135,
-            judge: 0.25
+			hold: 0.35, 
+            judge: 0.25,
         },
         "shit" => {
+			name: "shit",
             diff: 160,
-            judge: -1.0
+			hold: 0.2,
+            judge: -1.0,
         },
         "miss" => {
+			name: "miss",
             diff: 180,
-            judge: -1.75
+			hold: 0.0,
+            judge: -1.75,
         },
     ];
 
@@ -71,20 +84,56 @@ class Timings
     public static function diffToTiming(noteDiff:Float):TimingData
 	{
         var timing = timings.get("miss");
-        for(key => data in timings)
-        {
-            if (data.diff > timing.diff) continue;
-            if (noteDiff > data.diff) continue;
-            timing = data;
-        }
+		if (noteDiff < timing.diff)
+		{
+			for(key => data in timings)
+			{
+				if (data.diff > timing.diff) continue;
+				if (noteDiff > data.diff) continue;
+				timing = data;
+			}
+		}
         return timing;
     }
 
-    public static function addAccuracy(judge:Float = 1)
+	public static function addScore(note:Note, noteDiff:Float)
+	{
+		var timing = diffToTiming(noteDiff);
+		if (timing.name != "miss")
+			ratingCount.set(timing.name, ratingCount.get(timing.name) + 1);
+
+		if (note.missed)
+		{
+			score += Math.floor(100 * timing.judge);
+			misses++;
+		}
+		else
+		{
+			if (noteDiff <= 5)
+				score += 100;
+			else
+				score += Math.floor(
+					FlxMath.remapToRange(
+						noteDiff,
+						5, getTiming("good").diff,
+						100, 50
+					)
+				);
+		}
+	}
+
+    public static function addAccuracy(judge:Float)
 	{
 		accHit++;
 		accJudge += judge;
 		updateAccuracy();
+	}
+
+	public static function addAccuracyDiff(noteDiff:Float)
+	{
+		addAccuracy(
+			diffToTiming(noteDiff).judge
+		);
 	}
 
     public static function updateAccuracy()

@@ -1,5 +1,6 @@
 package objects.ui;
 
+import flixel.math.FlxRect;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import doido.song.Conductor;
@@ -88,12 +89,17 @@ class PlayField extends FlxGroup
 		{
 			var spawnStep:Float = 32; // spawns notes 32 steps ahead
 
-			var noteData = spawnNotes[curSpawnNote];
-			if (noteDiffStep(noteData) < spawnStep)
+			for(i in 0...spawnNotes.length)
 			{
-				var strumline = strumlines[noteData.strumline];
-				strumline.addNote(noteData);
-				curSpawnNote++;
+				if (i < curSpawnNote) continue;
+
+				var noteData = spawnNotes[curSpawnNote];
+				if (noteDiffStep(noteData) < spawnStep)
+				{
+					var strumline = strumlines[noteData.strumline];
+					strumline.addNote(noteData);
+					curSpawnNote++;
+				}
 			}
 		}
 
@@ -102,19 +108,25 @@ class PlayField extends FlxGroup
 			// deleting notes
 			for (note in strumline.notes)
 			{
-				if (strumline.botplay)
+				if (!note.isHold)
 				{
-					if (!note.gotHit && noteDiff(note.data) <= 0)
-						_onNoteHit(note);
-				}
-				else if (!note.gotHit && !note.missed)
-				{
-					if (noteDiff(note.data) < -Timings.getTiming("good").diff)
-						_onNoteMiss(note);
+					if (strumline.botplay)
+					{
+						if (curStepFloat > note.data.stepTime)
+						{
+							if (!note.gotHit && !note.missed)
+								_onNoteHit(note, strumline);
+						}
+					}
+					else if (!note.gotHit && !note.missed && !note.isHold)
+					{
+						if (noteDiff(note.data) < -Timings.getTiming("good").diff)
+							_onNoteMiss(note, strumline);
+					}
 				}
 
 				var despawnStep:Float = 12; // kills after 12 steps
-				if (curStepFloat > note.data.stepTime + despawnStep)
+				if (curStepFloat > note.data.stepTime + note.data.length + despawnStep)
 					strumline.killNote(note);
 			}
 
@@ -161,7 +173,7 @@ class PlayField extends FlxGroup
 							
 							for(note in strumline.notes)
 							{
-								//if(note.isHold) continue;
+								if(note.isHold) continue;
 								var noteDiff:Float = noteDiff(note.data);
 								
 								var minTiming:Float = Timings.minTiming;
@@ -191,7 +203,7 @@ class PlayField extends FlxGroup
 										canHitNote = note;
 								}
 
-								_onNoteHit(canHitNote);
+								_onNoteHit(canHitNote, strumline);
 							}
 							else if (onGhostTap != null)
 							{
@@ -207,6 +219,72 @@ class PlayField extends FlxGroup
 						}
 					}
 				}
+
+				for(hold in strumline.notes)
+				{
+					if (!hold.isHold) continue;
+					var holdParent = hold.holdParent;
+					if(holdParent != null)
+					{
+						if (holdParent.gotHit && !holdParent.missed && !hold.missed && !hold.gotHit)
+						{
+							var holdHitLength = (curStepFloat - hold.data.stepTime);
+							var holdPercent:Float = (holdHitLength / hold.data.length);
+							hold.holdHitPercent = holdPercent;
+							
+							// calculating the clipping by how much you held the note
+							//if (!strumline.pauseNotes)
+							/*if (true)
+							{
+								var daRect = new FlxRect(0, 0,
+									hold.frameWidth,
+									hold.frameHeight
+								);
+								
+								var holdID:Float = hold.holdIndex;
+
+								var minSize:Float = holdHitLength - (Conductor.stepCrochet * holdID);
+								var maxSize:Float = Conductor.stepCrochet; //hold.noteCrochet;
+								if(minSize > maxSize)
+									minSize = maxSize;
+								
+								if(minSize > 0)
+									daRect.y = (minSize / maxSize) * (hold.height / hold.scale.y);
+								
+								hold.clipRect = daRect;
+							}*/
+							
+							var isPressing:Bool = false;
+							if (strumline.botplay)
+								isPressing = true;
+							else if (strumline.isPlayer)
+								isPressing = pressed[hold.data.lane];
+
+							if (holdPercent >= 1.0)
+								isPressing = false;
+			
+							if(hold.isHoldEnd && isPressing)
+							{
+								Logs.print("percent: " + holdPercent);
+								_onNoteHold(hold, strumline);
+							}
+							
+							if(!isPressing)
+							{
+								if(holdPercent > Timings.getTiming("shit").hold)
+								{
+									if(!hold.gotHit)
+										_onNoteHit(hold, strumline);
+								}
+								else
+									_onNoteMiss(hold, strumline);
+							}
+						}
+						
+						if(holdParent.missed && !hold.missed)
+							_onNoteMiss(hold, strumline);
+					}
+				}
 			}
 		}
 	}
@@ -219,36 +297,49 @@ class PlayField extends FlxGroup
 		return noteDiffStep(note) * Conductor.stepCrochet;
 	}
 
-	public var onNoteHit:(note:Note)->Void = null;
-	private function _onNoteHit(note:Note)
+	public var onNoteHit:(note:Note, strumline:Strumline)->Void = null;
+	private function _onNoteHit(note:Note, strumline:Strumline)
 	{
-		if (onNoteHit != null) onNoteHit(note);
-
-		var strumline = strumlines[note.data.strumline];
 		var strum = strumline.strums[note.data.lane];
 		var diff = noteDiff(note.data);
 
-		// makes the note transparent if you hit less than good (bad or shit)
-		if (diff >= Timings.getTiming("good").diff)
+		if (!note.isHold)
 		{
-			note.missed = true;
-			note.alpha = 0.4;
+			// makes the note transparent if you hit less than good (bad or shit)
+			if (diff >= Timings.getTiming("good").diff)
+			{
+				note.missed = true;
+				note.alpha = 0.4;
+			}
+			else
+			{
+				note.gotHit = true;
+				note.visible = false;
+				strum.playAnim("confirm");
+			}
 		}
 		else
 		{
-			note.gotHit = true;
-			note.visible = false;
-			strum.playAnim("confirm");
+			note.alpha = 0.4;
 		}
+
+		if (onNoteHit != null) onNoteHit(note, strumline);
 	}
 
-	public var onNoteMiss:(note:Note)->Void = null;
-	private function _onNoteMiss(note:Note)
+	private function _onNoteHold(note:Note, strumline:Strumline)
 	{
-		if (onNoteMiss != null) onNoteMiss(note);
+		var strum = strumline.strums[note.data.lane];
+		strum.playAnim("confirm");
+	}
+
+	public var onNoteMiss:(note:Note, strumline:Strumline)->Void = null;
+	private function _onNoteMiss(note:Note, strumline:Strumline)
+	{
 		note.missed = true;
 		//note.visible = false;
 		note.alpha = 0.2;
+
+		if (onNoteMiss != null) onNoteMiss(note, strumline);
 	}
 
 	public var onGhostTap:(lane:Int, direction:String)->Void;
