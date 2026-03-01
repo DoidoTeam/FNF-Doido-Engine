@@ -9,6 +9,7 @@ class Note extends FlxSprite
 	public var gotHit:Bool = false;
 	public var missed:Bool = false;
 
+	// hold parenting
 	public var holdParent:Note = null;
 	public var children:Array<Note> = [];
 	// hold data
@@ -33,21 +34,33 @@ class Note extends FlxSprite
 	
 	public function loadData(data:NoteData)
 	{
+		// visual stuff
 		setPosition(-5000, -5000); // offscreen lol
 		visible = true;
-
-		this.data = data;
-		gotHit = false;
-		missed = false;
 		alpha = 1.0;
 		angle = 0;
 
+		// main data
+		this.data = data;
+		gotHit = false;
+		missed = false;
+
+		// hold parenting
 		holdParent = null;
 		children = [];
-		
+		// hold stuff
 		isHold = isHoldEnd = false;
 		holdIndex = 0;
 		holdStep = 0;
+		holdHitPercent = 0.0;
+		
+		// noteskin stuff
+		noteScale = 1.0;
+
+		// modchart stuff
+		noteAngle = null;
+		noteSpeed = null;
+		noteSpeedMult = 1.0;
 		
 		//noteSpeed = (FlxG.random.bool(50) ? null : 1.0);
 	}
@@ -55,7 +68,6 @@ class Note extends FlxSprite
 	public function reloadSprite()
 	{
 		clipRect = null;
-		noteScale = 1.0;
 		
 		var direction:String = NoteUtil.intToString(data.lane);
 		switch("i told you ill do the skins later")
