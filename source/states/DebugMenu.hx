@@ -96,7 +96,7 @@ class DebugMenu extends MusicBeatState
 
 class Freeplay extends MusicBeatState
 {
-    var options:Array<String> = ["bopeebo", "corn-theft", "useless", "Load Other"];
+    var options:Array<String> = ["bopeebo", "corn-theft", "useless", "bittersweet", "lunar-odyssey", "commotion", "Load Other"];
     var text:FlxText;
     var title:FlxText;
     var cur:Int = 0;

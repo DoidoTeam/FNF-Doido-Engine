@@ -23,6 +23,8 @@ class AudioHandler
 		// opponent voices
 		if (Assets.fileExists('songs/${song}/audio/Voices-opp', SOUND))
 			voicesOpp = FlxG.sound.load(Assets.voices(song, "-opp"));
+		else if (Assets.fileExists('songs/${song}/audio/Voices-opponent', SOUND))
+			voicesOpp = FlxG.sound.load(Assets.voices(song, "-opponent"));
 
 		muteVoices = false;
     }
