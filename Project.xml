@@ -53,7 +53,7 @@
 	<haxelib name="flixel-addons" version="4.0.1" />
 	<haxelib name="flixel-ui" version="2.6.4" />
 	
-	<haxelib name="hscript-iris" /> <!--Used only for flixel's debugger!-->
+	<haxelib name="hscript-iris" />
 	<haxedef name="hscriptPos" />
 	
 	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
