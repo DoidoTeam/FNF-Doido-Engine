@@ -125,14 +125,25 @@ class PlayState extends MusicBeatState
 	{
 		function updateScore(note:Note, noteDiff:Float)
 		{
-			Timings.addScore(note, noteDiff);
-			Timings.addAccuracyDiff(noteDiff);
+			var rating = "sick";
+			if (note.isHold)
+			{
+				Timings.addScoreHold(note);
+				rating = Timings.addAccuracyHold(note.holdHitPercent);
+			}
+			else
+			{
+				Timings.addScore(note, noteDiff);
+				rating = Timings.addAccuracyDiff(noteDiff);
+			}
+			if (rating != "miss") hudClass.addRating(rating);
 			hudClass.updateScoreTxt();
 		}
 
 		playField.onNoteHit = (note, strumline) ->
 		{
-			if (note.isHold) return;
+			if (note.isHold && !note.isHoldEnd) return;
+
 			if (strumline.isPlayer)
 			{
 				audio.muteVoices = false;
@@ -145,6 +156,8 @@ class PlayState extends MusicBeatState
 		};
 		playField.onNoteMiss = (note, strumline) ->
 		{
+			if (note.isHold && !note.isHoldEnd) return;
+			
 			if (strumline.isPlayer)
 			{
 				audio.muteVoices = true;
@@ -214,16 +227,18 @@ class PlayState extends MusicBeatState
 	{
 		super.stepHit();
 		audio.sync();
-		
-		if (curStep % 16 == 0) {
+
+		if (curStep % 16 == 0)
+		{
 			FlxTween.cancelTweensOf(camHUD);
 			camHUD.zoom *= 1.02;
 			FlxTween.tween(camHUD, {zoom: 1.0}, Conductor.crochet / 1000 * 1, {
 				ease: FlxEase.cubeOut
 			});
-			callScript("beatHit", [curStep / 4]); //compatibilidade?
 		}
-
+		
+		if (curStep % 4 == 0)
+			callScript("beatHit", [curStep / 4]); //compatibilidade?
 		callScript("stepHit", [curStep]);
 	}
 

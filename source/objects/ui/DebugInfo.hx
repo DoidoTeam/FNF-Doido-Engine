@@ -19,7 +19,7 @@ class DebugInfo extends FlxGroup
 		visible = false;
 		
 		daText = new FlxText(10, 0, 0, '');
-		daText.setFormat(Main.globalFont, 18, 0xFFFFFFFF, CENTER);
+		daText.setFormat(Main.globalFont, 18, 0xFFFFFFFF, LEFT);
 		daText.setOutline(0xFF000000, 1.5);
 		daText.antialiasing = false;
 		add(daText);

@@ -16,7 +16,7 @@ using doido.utils.TextUtil;
 
 class DebugMenu extends MusicBeatState
 {
-    var options:Array<String> = ["Play", "Controls", "Options", "Chart Converter", "Credits"];
+    var options:Array<String> = ["Play", "Controls", "Options", "Credits", "Crash Handler", "Chart Converter",];
     var text:FlxText;
     var title:FlxText;
     var ver:FlxText;
@@ -28,6 +28,7 @@ class DebugMenu extends MusicBeatState
         DiscordIO.changePresence("In the Main Menu");
 
         var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+        bg.screenCenter();
 		add(bg);
 
         text = new FlxText(10, 0, 0, '');
@@ -72,16 +73,14 @@ class DebugMenu extends MusicBeatState
                     MusicBeat.switchState(new DebugOptions());
                 case "controls":
                     MusicBeat.switchState(new DebugControls());
+                case "crash handler":
+                    null.draw();
                 case "chart converter":
                     MusicBeat.switchState(new ChartConverter());
                 case "credits":
                     MusicBeat.switchState(new Credits());
                 default:
                     MusicBeat.switchState(new Freeplay());
-                    /*
-                    PlayState.loadSong("corn-theft", "hard");
-                    MusicBeat.switchState(new states.PlayState());
-                    */
             }
         }
     }
@@ -127,6 +126,7 @@ class Credits extends MusicBeatState
         DiscordIO.changePresence("In the Main Menu");
 
         var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+        bg.screenCenter();
 		add(bg);
 
         final nikoo:Bool = (FlxG.random.bool(1));
@@ -198,6 +198,7 @@ class Freeplay extends MusicBeatState
         DiscordIO.changePresence("In the Freeplay Menu");
 
         var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+        bg.screenCenter();
 		add(bg);
 
         text = new FlxText(10, 0, 0, '');
@@ -277,6 +278,7 @@ class LoadOther extends MusicBeatState
         DiscordIO.changePresence("Loading Custom Song");
 
         var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+        bg.screenCenter();
 		add(bg);
 
         text = new FlxText(10, 0, 0, '');
@@ -392,6 +394,7 @@ class ChartConverter extends MusicBeatState
         DiscordIO.changePresence("In the Main Menu");
 
         var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+        bg.screenCenter();
 		add(bg);
 
         text = new FlxText(10, 0, 0, '');
@@ -489,6 +492,7 @@ class DebugControls extends MusicBeatState
         super.create();
         DiscordIO.changePresence("In the Controls Menu");
         var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+        bg.screenCenter();
 		add(bg);
 
         for (label => key in Controls.bindMap) {
@@ -651,6 +655,7 @@ class DebugOptions extends MusicBeatState
         DiscordIO.changePresence("In the Options Menu");
 
         var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+        bg.screenCenter();
 		add(bg);
 
         options = [

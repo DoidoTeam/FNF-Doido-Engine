@@ -5,6 +5,8 @@ class DoidoHud extends BaseHud
     public function new()
     {
         super("doido");
+
+        add(ratingGrp);
         
         scoreTxt = new FlxText(10, 0, 0, '');
 		scoreTxt.setFormat(Main.globalFont, 18, 0xFFFFFFFF, CENTER);

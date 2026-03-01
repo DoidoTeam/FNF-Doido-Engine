@@ -1,5 +1,8 @@
 package objects.ui.hud;
 
+import objects.ui.Rating.RatingSprite;
+import objects.ui.Rating.ComboSprite;
+
 class BaseHud extends FlxGroup
 {
     public var playState:PlayState;
@@ -8,9 +11,12 @@ class BaseHud extends FlxGroup
     public var separator:String = " | ";
     public var scoreTxt:FlxText;
 
+    public var ratingGrp:FlxGroup;
+
     public function new(hudName:String) {
         super();
         this.hudName = hudName;
+        ratingGrp = new FlxGroup();
     }
 
     public function init()
@@ -19,4 +25,15 @@ class BaseHud extends FlxGroup
     }
 
     public function updateScoreTxt() {}
+    public function addRating(ratingName:String = "")
+    {
+        var rating:RatingSprite = cast ratingGrp.recycle(RatingSprite);
+        rating.setUp();
+
+        rating.playAnim(ratingName);
+
+        if (ratingGrp.members.contains(rating)) ratingGrp.remove(rating);
+        ratingGrp.add(rating);
+    }
+    //public function addCombo() {}
 }

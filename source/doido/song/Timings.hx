@@ -96,6 +96,21 @@ class Timings
         return timing;
     }
 
+	public static function holdToTiming(noteHold:Float)
+	{
+		var timing = timings.get("miss");
+		if (noteHold > timing.hold)
+		{
+			for(key => data in timings)
+			{
+				if (data.hold < timing.hold) continue;
+				if (noteHold < data.hold) continue;
+				timing = data;
+			}
+		}
+        return timing;
+	}
+
 	public static function addScore(note:Note, noteDiff:Float)
 	{
 		var timing = diffToTiming(noteDiff);
@@ -104,7 +119,7 @@ class Timings
 
 		if (note.missed)
 		{
-			score += Math.floor(100 * timing.judge);
+			score += Math.ceil(100 * timing.judge);
 			misses++;
 		}
 		else
@@ -112,7 +127,7 @@ class Timings
 			if (noteDiff <= 5)
 				score += 100;
 			else
-				score += Math.floor(
+				score += Math.ceil(
 					FlxMath.remapToRange(
 						noteDiff,
 						5, getTiming("good").diff,
@@ -122,6 +137,18 @@ class Timings
 		}
 	}
 
+	public static function addScoreHold(hold:Note)
+	{
+		var timing = holdToTiming(hold.holdHitPercent);
+		if (timing.name != "miss")
+			ratingCount.set(timing.name, ratingCount.get(timing.name) + 1);
+		
+		if (hold.missed)
+			score -= 50;
+		else
+			score += Math.ceil(50 * hold.data.length * hold.holdHitPercent);
+	}
+
     public static function addAccuracy(judge:Float)
 	{
 		accHit++;
@@ -129,11 +156,22 @@ class Timings
 		updateAccuracy();
 	}
 
-	public static function addAccuracyDiff(noteDiff:Float)
+	public static function addAccuracyDiff(noteDiff:Float):String
 	{
+		var timing = diffToTiming(noteDiff);
 		addAccuracy(
-			diffToTiming(noteDiff).judge
+			timing.judge
 		);
+		return timing.name;
+	}
+
+	public static function addAccuracyHold(noteHold:Float):String
+	{
+		var timing = holdToTiming(noteHold);
+		addAccuracy(
+			timing.judge
+		);
+		return timing.name;
 	}
 
     public static function updateAccuracy()
