@@ -351,6 +351,6 @@ class PlayField extends FlxGroup
 
 	public static var modchartAllowed(get, never):Bool;
 	public static function get_modchartAllowed():Bool {
-		return #if TOUCH_CONTROLS !Save.data.modernCondrols #else true #end;
+		return #if TOUCH_CONTROLS !Save.data.modernControls #else true #end;
 	}
 }
