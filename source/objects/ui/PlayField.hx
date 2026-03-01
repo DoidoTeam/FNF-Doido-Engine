@@ -321,6 +321,7 @@ class PlayField extends FlxGroup
 		}
 		else
 		{
+			note.gotHit = true;
 			note.alpha = 0.4;
 		}
 

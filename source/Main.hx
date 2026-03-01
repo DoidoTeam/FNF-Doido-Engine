@@ -1,12 +1,18 @@
 package;
 
-import animate.FlxAnimateController;
+import doido.objects.ui.*;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.input.keyboard.FlxKey;
+import haxe.CallStack;
+import haxe.io.Path;
 import openfl.display.Sprite;
-import doido.objects.ui.*;
-import animate.FlxAnimateAssets;
+import openfl.events.UncaughtErrorEvent;
+
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+#end
 
 class Main extends Sprite
 {
@@ -30,7 +36,12 @@ class Main extends Sprite
     }
 
     function initGame() {
-        Logs.init(); //custom logging shit
+        // adding the crash handler
+        openfl.Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(
+            UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError
+        );
+
+        Logs.init(); // custom logging shit
 
         var game:FlxGame = new FlxGame(gameWidth, gameHeight, Init, framerate, framerate, skipSplash);
         globalFont = Assets.font("vcr"); // we need to initialize this before the font ever gets used, otherwise it wont be found
@@ -38,6 +49,44 @@ class Main extends Sprite
         game._customSoundTray = SoundTray;
         addChild(game);
     }
+
+    function onUncaughtError(e:UncaughtErrorEvent):Void {
+		e.preventDefault();
+		e.stopImmediatePropagation();
+
+		var path:String;
+		var exception:String = 'Exception: ${e.error}\n';
+		var stackTraceString = exception + StringTools.trim(CallStack.toString(CallStack.exceptionStack(true)));
+		var dateNow:String = Date.now().toString().replace(" ", "_").replace(":", "'");
+
+		path = 'crash/DoidoEngine_${dateNow}.txt';
+
+		#if sys
+		if (!FileSystem.exists("crash/"))
+			FileSystem.createDirectory("crash/");
+		File.saveContent(path, '${stackTraceString}\n');
+		#end
+
+		var normalPath:String = Path.normalize(path);
+
+		Logs.print(stackTraceString, ERROR, true, true, false, false);
+		Logs.print('Crash dump saved in $normalPath', WARNING, true, true, false, false);
+
+		// byebye
+		#if (flixel < "6.0.0")
+		FlxG.bitmap.dumpCache();
+		#end
+
+		FlxG.bitmap.clearCache();
+		//CoolUtil.playMusic();
+
+		MusicBeat.skipTrans = true;
+		MusicBeat.switchState(
+            new doido.system.CrashHandler(
+                'Crash log created at: "${normalPath}"\n\n' + stackTraceString
+            )
+        );
+	}
 
     function fixes() {
         // shader coords fix
@@ -56,8 +105,7 @@ class Main extends Sprite
             e.stopImmediatePropagation();
     }
 
-    function resetCamCache()
-	{
+    function resetCamCache() {
 		if(FlxG.cameras != null) {
 			for(cam in FlxG.cameras.list) {
 				if(cam != null && cam.filters != null)
