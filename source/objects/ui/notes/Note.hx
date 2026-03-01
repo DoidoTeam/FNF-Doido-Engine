@@ -40,6 +40,7 @@ class Note extends FlxSprite
 		gotHit = false;
 		missed = false;
 		alpha = 1.0;
+		angle = 0;
 
 		holdParent = null;
 		children = [];
