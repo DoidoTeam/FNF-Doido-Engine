@@ -25,6 +25,8 @@ class BaseHud extends FlxGroup
     }
 
     public function updateScoreTxt() {}
+
+    var ratingCount:Int = 0;
     public function addRating(ratingName:String = "")
     {
         var rating:RatingSprite = cast ratingGrp.recycle(RatingSprite);
@@ -34,6 +36,10 @@ class BaseHud extends FlxGroup
 
         if (ratingGrp.members.contains(rating)) ratingGrp.remove(rating);
         ratingGrp.add(rating);
+
+        rating.setZ(ratingCount);
+        ratingCount++;
+        ratingGrp.members.sort(ZIndex.sortAscending);
     }
     //public function addCombo() {}
 }

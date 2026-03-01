@@ -18,10 +18,6 @@ class Strumline extends FlxGroup
 	public var strumlineData:Int = 0;
 	
 	public var scrollSpeed:Float = 1.0;
-
-	// only use these for layering
-	public var noteGroup:FlxTypedGroup<Note>;
-	public var holdGroup:FlxTypedGroup<Note>;
 	
 	// use these to access the actual data
 	public var strums:Array<StrumNote> = [];
@@ -40,12 +36,10 @@ class Strumline extends FlxGroup
 		{
 			var strum = new StrumNote();
 			strum.reloadStrum(i);
+			strum.setZ(0);
 			strums.push(strum);
 			add(strum);
 		}
-
-		add(holdGroup = new FlxTypedGroup<Note>());
-		add(noteGroup = new FlxTypedGroup<Note>());
 		
 		recalculateX();
 		recalculateY();
@@ -53,11 +47,12 @@ class Strumline extends FlxGroup
 	
 	public function addNote(noteData:NoteData)
 	{
-		var note:Note = cast noteGroup.recycle(Note);
+		var note:Note = cast recycle(Note);
 		note.loadData(noteData);
 		note.reloadSprite();
+		note.setZ(2);
 		notes.push(note);
-		if (!noteGroup.members.contains(note)) noteGroup.add(note);
+		if (!members.contains(note)) add(note);
 		
 		// searchs for hold notes
 		if(noteData.length > 0)
@@ -70,7 +65,7 @@ class Strumline extends FlxGroup
 			var holdIndex:Float = 0.0;
 			for(i in 0...holdLength)
 			{
-				var hold:Note = cast holdGroup.recycle(Note);
+				var hold:Note = cast recycle(Note);
 				hold.loadData(noteData);
 
 				hold.isHold = true;
@@ -81,12 +76,15 @@ class Strumline extends FlxGroup
 
 				hold.reloadSprite();
 				hold.holdParent = note;
+				hold.setZ(1);
 				notes.push(hold);
-				if (!holdGroup.members.contains(hold)) holdGroup.add(hold);
+				if (!members.contains(hold)) add(hold);
 
 				holdIndex += hold.holdStep;
 			}
 		}
+
+		sort(ZIndex.sort);
 	}
 	
 	public function killNote(note:Note)
