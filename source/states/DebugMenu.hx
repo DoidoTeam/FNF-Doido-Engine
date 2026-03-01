@@ -49,6 +49,13 @@ class DebugMenu extends MusicBeatState
         ver.x = title.x + title.width + 5;
         ver.y = text.y - ver.height;
 		add(ver);
+
+        //zindex test...
+        var bg2 = new FlxSprite().loadGraphic(Assets.image('menuDesat'));
+        bg2.setZ(-1);
+		add(bg2);
+
+        sort(ZIndex.sort);
     }
 
     function drawText() {
