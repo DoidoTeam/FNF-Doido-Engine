@@ -219,71 +219,71 @@ class PlayField extends FlxGroup
 						}
 					}
 				}
+			}
 
-				for(hold in strumline.notes)
+			for(hold in strumline.notes)
+			{
+				if (!hold.isHold) continue;
+				var holdParent = hold.holdParent;
+				if(holdParent != null)
 				{
-					if (!hold.isHold) continue;
-					var holdParent = hold.holdParent;
-					if(holdParent != null)
+					if (holdParent.gotHit && !holdParent.missed && !hold.missed && !hold.gotHit)
 					{
-						if (holdParent.gotHit && !holdParent.missed && !hold.missed && !hold.gotHit)
+						var holdHitLength = (curStepFloat - hold.data.stepTime);
+						var holdPercent:Float = Math.min((holdHitLength / hold.data.length), 1.0);
+						hold.holdHitPercent = holdPercent;
+						
+						// calculating the clipping by how much you held the note
+						//if (!strumline.pauseNotes)
+						/*if (true)
 						{
-							var holdHitLength = (curStepFloat - hold.data.stepTime);
-							var holdPercent:Float = (holdHitLength / hold.data.length);
-							hold.holdHitPercent = holdPercent;
+							var daRect = new FlxRect(0, 0,
+								hold.frameWidth,
+								hold.frameHeight
+							);
 							
-							// calculating the clipping by how much you held the note
-							//if (!strumline.pauseNotes)
-							/*if (true)
-							{
-								var daRect = new FlxRect(0, 0,
-									hold.frameWidth,
-									hold.frameHeight
-								);
-								
-								var holdID:Float = hold.holdIndex;
+							var holdID:Float = hold.holdIndex;
 
-								var minSize:Float = holdHitLength - (Conductor.stepCrochet * holdID);
-								var maxSize:Float = Conductor.stepCrochet; //hold.noteCrochet;
-								if(minSize > maxSize)
-									minSize = maxSize;
-								
-								if(minSize > 0)
-									daRect.y = (minSize / maxSize) * (hold.height / hold.scale.y);
-								
-								hold.clipRect = daRect;
-							}*/
+							var minSize:Float = holdHitLength - (Conductor.stepCrochet * holdID);
+							var maxSize:Float = Conductor.stepCrochet; //hold.noteCrochet;
+							if(minSize > maxSize)
+								minSize = maxSize;
 							
-							var isPressing:Bool = false;
-							if (strumline.botplay)
-								isPressing = true;
-							else if (strumline.isPlayer)
-								isPressing = pressed[hold.data.lane];
+							if(minSize > 0)
+								daRect.y = (minSize / maxSize) * (hold.height / hold.scale.y);
+							
+							hold.clipRect = daRect;
+						}*/
+						
+						var isPressing:Bool = false;
+						if (strumline.botplay)
+							isPressing = true;
+						else if (strumline.isPlayer)
+							isPressing = pressed[hold.data.lane];
 
-							if (holdPercent >= 1.0)
-								isPressing = false;
-			
-							if(hold.isHoldEnd && isPressing)
-							{
-								//Logs.print("percent: " + holdPercent);
-								_onNoteHold(hold, strumline);
-							}
-							
-							if(!isPressing)
-							{
-								if(holdPercent > Timings.getTiming("shit").hold)
-								{
-									if(!hold.gotHit)
-										_onNoteHit(hold, strumline);
-								}
-								else
-									_onNoteMiss(hold, strumline);
-							}
+						if (holdPercent >= 1.0)
+							isPressing = false;
+		
+						if(hold.isHoldEnd && isPressing)
+						{
+							//Logs.print("percent: " + holdPercent);
+							_onNoteHold(hold, strumline);
 						}
 						
-						if(holdParent.missed && !hold.missed)
-							_onNoteMiss(hold, strumline);
+						if(!isPressing)
+						{
+							if(holdPercent > Timings.getTiming("shit").hold)
+							{
+								if(!hold.gotHit)
+									_onNoteHit(hold, strumline);
+							}
+							else
+								_onNoteMiss(hold, strumline);
+						}
 					}
+					
+					if(holdParent.missed && !hold.missed)
+						_onNoteMiss(hold, strumline);
 				}
 			}
 		}
