@@ -16,7 +16,7 @@ using doido.utils.TextUtil;
 
 class DebugMenu extends MusicBeatState
 {
-    var options:Array<String> = ["Play", "Controls", "Options", "Chart Converter"];
+    var options:Array<String> = ["Play", "Controls", "Options", "Chart Converter", "Credits"];
     var text:FlxText;
     var title:FlxText;
     var ver:FlxText;
@@ -74,6 +74,8 @@ class DebugMenu extends MusicBeatState
                     MusicBeat.switchState(new DebugControls());
                 case "chart converter":
                     MusicBeat.switchState(new ChartConverter());
+                case "credits":
+                    MusicBeat.switchState(new Credits());
                 default:
                     MusicBeat.switchState(new Freeplay());
                     /*
@@ -90,6 +92,95 @@ class DebugMenu extends MusicBeatState
 		
 		cur += change;
 		cur = FlxMath.wrap(cur, 0, options.length - 1);
+		drawText();
+	}
+}
+
+typedef CreditData = {
+	var name:String;
+    var ?icon:String;
+    var ?info:String;
+	var ?link:Null<String>;
+}
+
+class Credits extends MusicBeatState
+{
+    var creditList:Array<CreditData> = [];
+    var text:FlxText;
+    var title:FlxText;
+    var cur:Int = 0;
+
+    function addCredit(name:String, icon:String = "", color:Dynamic, info:String = "", ?link:Null<String>)
+	{
+		creditList.push({
+            name: name,
+            icon: icon,
+            //color: color, // unused
+            info: info,
+			link: link,
+        });
+	}
+
+    override function create()
+    {
+        super.create();
+        DiscordIO.changePresence("In the Main Menu");
+
+        var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
+		add(bg);
+
+        final nikoo:Bool = (FlxG.random.bool(1));
+        addCredit('DiogoTV', 			'diogotv', 	 0xFFC385FF, "Doido Engine's Owner and Main Coder", 				'https://bsky.app/profile/diogotv.bsky.social');
+		addCredit('teles', 				'teles', 	 0xFFFF95AC, "Doido Engine's Additional Coder",					'https://youtube.com/@telesfnf');
+		addCredit('GoldenFoxy',			'anna', 	 0xFFFFE100, "Main designer of Doido Engine's chart editor",		'https://bsky.app/profile/goldenfoxy.bsky.social');
+		addCredit('JulianoBeta', 		'juyko', 	 0xFF0BA5FF, "Composed Doido Engine's offset menu music",			'https://www.youtube.com/@prodjuyko');
+		addCredit('crowplexus',			'crowplexus',0xFF313538, "Creator of HScript Iris",							'https://github.com/crowplexus/hscript-iris');
+		addCredit('yoisabo',			'yoisabo',	 0xFF56EF19, "Chart Editor's Event Icons Artist",					'https://bsky.app/profile/yoisabo.bsky.social');
+        addCredit('mochoco',			'coco',	 	 0xFF56EF19, "Mobile Button Artist", 'https://x.com/mochocofrappe');
+        if(nikoo) addCredit('doubleonikoo', 'nikoo', 0xFF60458A, "Hey! What are you doing here?!",		'https://bsky.app/profile/doubleonikoo.bsky.social');
+
+        text = new FlxText(10, 0, 0, '');
+		text.setFormat(Main.globalFont, 48, 0xFFFFFFFF, LEFT);
+		text.setOutline(0xFF000000, 3);
+		add(text);
+        drawText();
+        text.y = FlxG.height - text.height - 10;
+
+        title = new FlxText(10, 0, 0, 'Credits');
+		title.setFormat(Main.globalFont, 100, 0xFFFFFFFF, LEFT);
+		title.setOutline(0xFF000000, 5);
+        title.y = text.y - title.height;
+		add(title);
+    }
+
+    function drawText() {
+        text.text = "";
+        for(i in 0...creditList.length)
+            text.text += creditList[i].name + (i == cur ? " <\n" : "\n");
+    }
+
+    override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+        if(Controls.justPressed(UI_UP))
+            changeSelection(-1);
+        if(Controls.justPressed(UI_DOWN))
+            changeSelection(1);
+
+        if(Controls.justPressed(BACK))
+			MusicBeat.switchState(new states.DebugMenu());
+
+        if(Controls.justPressed(ACCEPT))
+            FlxG.openURL(creditList[cur].link);
+    }
+
+    public function changeSelection(change:Int = 0)
+	{
+		if(change != 0) FlxG.sound.play(Assets.sound('scroll'));
+		
+		cur += change;
+		cur = FlxMath.wrap(cur, 0, creditList.length - 1);
 		drawText();
 	}
 }
