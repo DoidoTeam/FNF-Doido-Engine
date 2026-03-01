@@ -108,6 +108,8 @@ class Strumline extends FlxGroup
 			var offsetY = (noteTime) * Conductor.stepCrochet * (noteSpeed * 0.45);
 			var angle = note.noteAngle ?? strum.strumAngle;
 
+			if (downscroll) angle += 180;
+
 			if (note.isHold)
 			{
 				note.angle = -angle * downMult;
@@ -122,7 +124,7 @@ class Strumline extends FlxGroup
 			note.updateOffsets();
 			NoteUtil.setNotePos(
 				note, strum, angle * downMult,
-				offsetX, offsetY * downMult
+				offsetX, offsetY
 			);
 		}
 	}

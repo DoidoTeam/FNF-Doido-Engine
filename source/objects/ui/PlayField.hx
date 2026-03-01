@@ -265,7 +265,7 @@ class PlayField extends FlxGroup
 			
 							if(hold.isHoldEnd && isPressing)
 							{
-								Logs.print("percent: " + holdPercent);
+								//Logs.print("percent: " + holdPercent);
 								_onNoteHold(hold, strumline);
 							}
 							
