@@ -236,7 +236,7 @@ class PlayField extends FlxGroup
 						
 						// calculating the clipping by how much you held the note
 						//if (!strumline.pauseNotes)
-						/*if (true)
+						if (true)
 						{
 							var daRect = new FlxRect(0, 0,
 								hold.frameWidth,
@@ -245,8 +245,8 @@ class PlayField extends FlxGroup
 							
 							var holdID:Float = hold.holdIndex;
 
-							var minSize:Float = holdHitLength - (Conductor.stepCrochet * holdID);
-							var maxSize:Float = Conductor.stepCrochet; //hold.noteCrochet;
+							var minSize:Float = holdHitLength - (holdID);
+							var maxSize:Float = 1; //hold.noteCrochet;
 							if(minSize > maxSize)
 								minSize = maxSize;
 							
@@ -254,7 +254,7 @@ class PlayField extends FlxGroup
 								daRect.y = (minSize / maxSize) * (hold.height / hold.scale.y);
 							
 							hold.clipRect = daRect;
-						}*/
+						}
 						
 						var isPressing:Bool = false;
 						if (strumline.botplay)
