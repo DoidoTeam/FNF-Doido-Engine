@@ -33,6 +33,7 @@ class PlayField extends FlxGroup
 		#if TOUCH_CONTROLS
 		if(Save.data.modernControls) {
 			middlescroll = true;
+			downscroll = true;
 			wide = true;
 		}
 		#end
