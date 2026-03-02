@@ -119,11 +119,18 @@ class Timings
 
 		if (note.missed)
 		{
+			if (combo > 0)
+				combo = 0;
+			else
+				combo--;
 			score += Math.ceil(100 * timing.judge);
 			misses++;
 		}
 		else
 		{
+			if (combo < 0) combo = 0;
+			combo++;
+
 			if (noteDiff <= 5)
 				score += 100;
 			else

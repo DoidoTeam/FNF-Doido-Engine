@@ -135,8 +135,9 @@ class PlayState extends MusicBeatState
 			{
 				Timings.addScore(note, noteDiff);
 				rating = Timings.addAccuracyDiff(noteDiff);
+				hudClass.popUpCombo(Timings.combo);
 			}
-			if (rating != "miss") hudClass.addRating(rating);
+			if (rating != "miss") hudClass.popUpRating(rating);
 			hudClass.updateScoreTxt();
 		}
 
@@ -161,7 +162,7 @@ class PlayState extends MusicBeatState
 			if (strumline.isPlayer)
 			{
 				audio.muteVoices = true;
-				updateScore(note, Timings.minTiming);
+				updateScore(note, Timings.getTiming("miss").diff);
 			}
 		};
 		
