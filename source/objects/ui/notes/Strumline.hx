@@ -58,10 +58,6 @@ class Strumline extends FlxGroup
 		if(noteData.length > 0)
 		{
 			var holdLength:Int = Math.ceil(noteData.length + 1);
-
-			var endDiff:Float = noteData.length - Math.floor(noteData.length);
-			if (endDiff <= 0.0) endDiff = 1.0; // oh well
-			
 			var holdIndex:Float = 0.0;
 			for(i in 0...holdLength)
 			{
@@ -70,7 +66,17 @@ class Strumline extends FlxGroup
 
 				hold.isHold = true;
 				hold.isHoldEnd = (i == holdLength - 1);
-				hold.holdStep = (i == holdLength - 2 ? endDiff : 1.0);
+				if (i == holdLength - 2)
+				{
+					//(i == holdLength - 2 ? endDiff : 1.0)
+					var endDiff:Float = noteData.length - Math.floor(noteData.length);
+					if (endDiff <= 0.0) endDiff = 1.0; // oh well
+					hold.holdStep = endDiff;
+				}
+				else if (hold.isHoldEnd)
+					hold.holdStep = 0.5;
+				else
+					hold.holdStep = 1.0;
 				hold.holdIndex = holdIndex;
 				note.children.push(hold);
 
@@ -116,12 +122,9 @@ class Strumline extends FlxGroup
 			if (note.isHold)
 			{
 				note.angle = -angle * downMult;
-				if (!note.isHoldEnd)
-				{
-					var holdHeight:Float = Conductor.stepCrochet * (noteSpeed * 0.45) + 2;
-					note.scale.y = (holdHeight / note.frameHeight);
-					note.updateHitbox();
-				}
+				var holdHeight:Float = note.holdStep * Conductor.stepCrochet * (noteSpeed * 0.45) + 2;
+				note.scale.y = (holdHeight / note.frameHeight);
+				note.updateHitbox();
 			}
 
 			note.updateOffsets();

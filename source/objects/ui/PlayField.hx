@@ -1,5 +1,6 @@
 package objects.ui;
 
+import flixel.math.FlxMath;
 import flixel.math.FlxRect;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -228,58 +229,60 @@ class PlayField extends FlxGroup
 				var holdParent = hold.holdParent;
 				if(holdParent != null)
 				{
-					if (holdParent.gotHit && !holdParent.missed && !hold.missed && !hold.gotHit)
+					if (holdParent.gotHit && !holdParent.missed)
 					{
 						var holdHitLength = (curStepFloat - hold.data.stepTime);
 						var holdPercent:Float = Math.min((holdHitLength / hold.data.length), 1.0);
-						hold.holdHitPercent = holdPercent;
+
+						// hold input
+						if (!hold.missed && !hold.gotHit)
+						{
+							hold.holdHitPercent = holdPercent;
+
+							var isPressing:Bool = false;
+							if (strumline.botplay)
+								isPressing = true;
+							else if (strumline.isPlayer)
+								isPressing = pressed[hold.data.lane];
+
+							if (holdPercent >= 1.0)
+								isPressing = false;
+			
+							if(hold.isHoldEnd && isPressing)
+								_onNoteHold(hold, strumline);
+							
+							if(!isPressing)
+							{
+								if(holdPercent > Timings.getTiming("shit").hold)
+									_onNoteHit(hold, strumline);
+								else
+									_onNoteMiss(hold, strumline);
+							}
+						}
 						
 						// calculating the clipping by how much you held the note
 						//if (!strumline.pauseNotes)
 						if (true)
 						{
-							var daRect = new FlxRect(0, 0,
+							var daRect = new FlxRect(
+								0, 0,
 								hold.frameWidth,
 								hold.frameHeight
 							);
 							
-							var holdID:Float = hold.holdIndex;
-
-							var minSize:Float = holdHitLength - (holdID);
-							var maxSize:Float = 1; //hold.noteCrochet;
-							if(minSize > maxSize)
-								minSize = maxSize;
-							
-							if(minSize > 0)
-								daRect.y = (minSize / maxSize) * (hold.height / hold.scale.y);
+							var rawSize:Float = holdHitLength - hold.holdIndex;
+							if (rawSize > 0)
+							{
+								daRect.y = FlxMath.remapToRange(
+									rawSize,
+									0.0, hold.holdStep,
+									0.0, hold.frameHeight
+								);
+								if (daRect.y > daRect.height)
+									daRect.y = daRect.height;
+							}
 							
 							hold.clipRect = daRect;
-						}
-						
-						var isPressing:Bool = false;
-						if (strumline.botplay)
-							isPressing = true;
-						else if (strumline.isPlayer)
-							isPressing = pressed[hold.data.lane];
-
-						if (holdPercent >= 1.0)
-							isPressing = false;
-		
-						if(hold.isHoldEnd && isPressing)
-						{
-							//Logs.print("percent: " + holdPercent);
-							_onNoteHold(hold, strumline);
-						}
-						
-						if(!isPressing)
-						{
-							if(holdPercent > Timings.getTiming("shit").hold)
-							{
-								if(!hold.gotHit)
-									_onNoteHit(hold, strumline);
-							}
-							else
-								_onNoteMiss(hold, strumline);
 						}
 					}
 					

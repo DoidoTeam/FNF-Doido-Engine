@@ -44,7 +44,7 @@ class Timings
         },
     ];
 
-    public static var minTiming:Float = timings.get("miss").diff;
+    public static var minTiming:Float = timings.get("shit").diff;
 
     // score and accuracy
 	public static var score:Int = 0;
