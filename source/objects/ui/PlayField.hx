@@ -324,17 +324,27 @@ class PlayField extends FlxGroup
 		}
 		else
 		{
+			strum.playAnim("confirm");
 			note.gotHit = true;
-			note.alpha = 0.4;
+			// turns transparent if you dont hit sick
+			if (note.holdHitPercent < Timings.getTiming("sick").hold)
+				note.alpha = 0.4;
 		}
 
 		if (onNoteHit != null) onNoteHit(note, strumline);
 	}
 
+	public var canPlayHoldAnims:Bool = true;
+	public var onNoteHold:(note:Note, strumline:Strumline)->Void = null;
 	private function _onNoteHold(note:Note, strumline:Strumline)
 	{
 		var strum = strumline.strums[note.data.lane];
-		strum.playAnim("confirm");
+
+		if (canPlayHoldAnims)
+			strum.playAnim("confirm");
+
+		if (onNoteHold != null) onNoteHold(note, strumline);
+		canPlayHoldAnims = false;
 	}
 
 	public var onNoteMiss:(note:Note, strumline:Strumline)->Void = null;

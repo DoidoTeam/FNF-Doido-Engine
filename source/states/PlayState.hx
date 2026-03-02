@@ -228,6 +228,8 @@ class PlayState extends MusicBeatState
 		super.stepHit();
 		audio.sync();
 
+		playField.canPlayHoldAnims = true;
+
 		if (curStep % 16 == 0)
 		{
 			FlxTween.cancelTweensOf(camHUD);
