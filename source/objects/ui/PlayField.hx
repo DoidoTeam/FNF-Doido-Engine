@@ -364,6 +364,11 @@ class PlayField extends FlxGroup
 		super.update(elapsed);
 	}
 
+	public function stepHit(curStep:Int)
+	{
+		canPlayHoldAnims = true;
+	}
+
 	public static var modchartAllowed(get, never):Bool;
 	public static function get_modchartAllowed():Bool {
 		return #if TOUCH_CONTROLS !Save.data.modernControls #else true #end;

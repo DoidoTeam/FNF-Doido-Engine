@@ -226,9 +226,8 @@ class PlayState extends MusicBeatState
 	override function stepHit()
 	{
 		super.stepHit();
+		playField.stepHit(curStep);
 		audio.sync();
-
-		playField.canPlayHoldAnims = true;
 
 		if (curStep % 16 == 0)
 		{
