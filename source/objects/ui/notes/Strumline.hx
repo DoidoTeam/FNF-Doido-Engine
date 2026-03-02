@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import objects.ui.notes.Splash.Cover;
 
 class Strumline extends FlxGroup
 {
@@ -133,6 +134,31 @@ class Strumline extends FlxGroup
 				offsetX, offsetY
 			);
 		}
+	}
+
+	public function addSplash(note:Note)
+	{
+		var splash:Splash = cast recycle(Splash);
+		splash.loadData(note);
+		splash.setZ(3);
+		splash.x = strums[note.data.lane].x;
+		splash.y = strums[note.data.lane].y;
+		splash.reloadSplash();
+		if (!members.contains(splash)) add(splash);
+		sort(ZIndex.sort);
+	}
+
+	public function addCover(note:Note)
+	{
+		var cover:Cover = cast recycle(Cover);
+		cover.loadData(note);
+		cover.setZ(3);
+		cover.x = strums[note.data.lane].x;
+		cover.y = strums[note.data.lane].y;
+		cover.strum = strums[note.data.lane];
+		cover.reloadSplash();
+		if (!members.contains(cover)) add(cover);
+		sort(ZIndex.sort);
 	}
 	
 	public function recalculateX()

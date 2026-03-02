@@ -238,6 +238,7 @@ class PlayField extends FlxGroup
 						if (!hold.missed && !hold.gotHit)
 						{
 							hold.holdHitPercent = holdPercent;
+							if(hold.holdParent != null) hold.holdParent.holdHitPercent = holdPercent;
 
 							var isPressing:Bool = false;
 							if (strumline.botplay)
@@ -321,6 +322,12 @@ class PlayField extends FlxGroup
 				note.visible = false;
 				strum.playAnim("confirm");
 			}
+
+			if(diff <= Timings.getTiming("sick").diff)
+				strumline.addSplash(note);
+
+			if(note.data.length > 0)
+				strumline.addCover(note);
 		}
 		else
 		{
