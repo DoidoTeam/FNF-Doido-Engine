@@ -90,8 +90,6 @@ class PlayState extends MusicBeatState implements Playable
 
 	public static var instance:PlayState;
 
-	public var loadedScripts:Array<Iris> = [];
-
 	public static function loadSong(input:String, diff:String = "normal", story:Bool = false)
 	{
 		SONG = SongHandler.loadSong(input, diff);
@@ -133,11 +131,7 @@ class PlayState extends MusicBeatState implements Playable
 
 		var scriptPaths:Array<String> = Assets.getScriptArray(CHART.song);
 		for (path in scriptPaths)
-		{
-			var newScript:Iris = new Iris(Assets.script('$path'), instance, {name: path, autoRun: true, autoPreset: true});
-			newScript.setDefaults();
-			loadedScripts.push(newScript);
-		}
+			loadScript(path);
 		setScript("playState", instance);
 
 		Conductor.initialBPM = CHART.bpm;
@@ -200,7 +194,6 @@ class PlayState extends MusicBeatState implements Playable
 		for (event in spawnEvents)
 			preloadEvent(event.name, event.data);
 
-		callScript("create");
 		changeStage(META.stage);
 
 		playField = new PlayField(CHART.notes, CHART.speed, downscroll, middlescroll, META.assets);
@@ -470,7 +463,6 @@ class PlayState extends MusicBeatState implements Playable
 
 	override function update(elapsed:Float)
 	{
-		callScript("update", [elapsed]);
 		super.update(elapsed);
 
 		if (botplay && startedSong)
@@ -744,7 +736,6 @@ class PlayState extends MusicBeatState implements Playable
 	override function stepHit()
 	{
 		super.stepHit();
-		callScript("stepHit", [curStep]);
 		playField.stepHit(curStep);
 
 		if (startedSong && !endedSong)
@@ -827,8 +818,6 @@ class PlayState extends MusicBeatState implements Playable
 	override function beatHit()
 	{
 		super.beatHit();
-		callScript("beatHit", [curBeat]);
-
 		if (curBeat < -4)
 			return;
 
@@ -856,30 +845,11 @@ class PlayState extends MusicBeatState implements Playable
 		hudClass.beatHit(curBeat);
 	}
 
-	public function callScript(fun:String, ?args:Array<Dynamic>)
+	override public function callScript(fun:String, ?args:Array<Dynamic>)
 	{
-		for (script in loadedScripts)
-		{
-			@:privateAccess {
-				var ny:Dynamic = script.interp.variables.get(fun);
-				try
-				{
-					if (ny != null && Reflect.isFunction(ny))
-						script.call(fun, args);
-				}
-				catch (e)
-				{
-					Logs.print('error parsing script: ' + e, ERROR);
-				}
-			}
-		}
-		stageBuild.callScript(fun, args);
-	}
-
-	public function setScript(name:String, value:Dynamic, allowOverride:Bool = true)
-	{
-		for (script in loadedScripts)
-			script.set(name, value, allowOverride);
+		super.callScript(fun, args);
+		if (stageBuild != null)
+			stageBuild.callScript(fun, args);
 	}
 
 	public var player1(get, never):String;

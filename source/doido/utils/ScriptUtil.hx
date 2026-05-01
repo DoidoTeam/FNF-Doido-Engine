@@ -23,28 +23,53 @@ class ScriptedAxes
 	public static var NONE = 0;
 }
 
-class ScriptUtil
+class DoidoIris extends Iris
 {
-	public static function setDefaults(script:Iris)
+	public function new(path:String, ?parent:Dynamic, ?execute:Bool = true)
 	{
+		super(Assets.script(path), parent, {name: path, autoRun: execute, autoPreset: true});
+		if (execute)
+			call("new");
+	}
+
+	// ???????????
+	override public function call(fun:String, ?args:Null<Array<Dynamic>>)
+	{
+		var ny:Dynamic = interp.variables.get(fun);
+		try
+		{
+			if (ny != null && Reflect.isFunction(ny))
+				return super.call(fun, args);
+		}
+		catch (e)
+		{
+			Logs.print('error parsing script: ' + e, ERROR);
+		}
+		return null;
+	}
+
+	override public function preset()
+	{
+		super.preset();
+
 		// import.hx
-		script.set("FlxG", FlxG);
-		script.set("Assets", Assets);
-		script.set("Paths", Assets);
-		script.set("Controls", Controls);
-		script.set("MusicBeat", MusicBeat);
-		script.set("Save", Save);
-		script.set("Logs", Logs);
-		script.set("MathUtil", MathUtil);
-		script.set("ZIndex", ZIndex);
+		set("FlxG", FlxG);
+		set("Assets", Assets);
+		set("Paths", Assets);
+		set("Controls", Controls);
+		set("MusicBeat", MusicBeat);
+		set("Save", Save);
+		set("Logs", Logs);
+		set("MathUtil", MathUtil);
+		set("ZIndex", ZIndex);
 
 		// abstracts
-		script.set("FlxTextBorderStyle", flixel.text.FlxText.FlxTextBorderStyle);
-		script.set("FlxTextAlign", ScriptedTextAlign);
-		script.set("FlxAxes", ScriptedAxes);
+		set("FlxTextBorderStyle", flixel.text.FlxText.FlxTextBorderStyle);
+		set("FlxTextAlign", ScriptedTextAlign);
+		set("FlxAxes", ScriptedAxes);
 
 		// extras
-		script.set("FlxSprite", FlxSprite);
-		script.set("FlxGroup", FlxGroup);
+		set("FlxSprite", FlxSprite);
+		set("FlxGroup", FlxGroup);
 	}
 }

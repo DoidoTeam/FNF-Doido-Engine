@@ -7,7 +7,6 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import objects.CharGroup;
 import states.PlayState;
-
 #if THREAD_LOADING
 import sys.thread.Mutex;
 import sys.thread.Thread;
@@ -15,148 +14,147 @@ import sys.thread.Thread;
 
 class GameOverSubState extends MusicBeatSubState
 {
-    var bf:CharGroup;
+	var bf:CharGroup;
 
-    var folderPath:String = "base";
-    var stopThread:Bool = false;
-    var pressedSomething:Bool = false;
+	var folderPath:String = "base";
+	var stopThread:Bool = false;
+	var pressedSomething:Bool = false;
 
-    var preloadedMusic:Array<String> = [];
+	var preloadedMusic:Array<String> = [];
 
-    public function new(path:String = "base", bf:CharGroup)
-    {
-        super();
-        folderPath = path;
-        this.bf = bf;
-    }
-    override function create()
-    {
-        super.create();
-        cameras = [FlxG.camera];
-        callScript("gameOverCreate");
+	public function new(path:String = "base", bf:CharGroup)
+	{
+		super();
+		folderPath = path;
+		this.bf = bf;
+	}
 
-        Conductor.initialBPM = Std.parseFloat(Assets.text('music/gameover/$folderPath/bpm'));
+	override function create()
+	{
+		super.create();
+		cameras = [FlxG.camera];
+		callScript("gameOverCreate");
+
+		Conductor.initialBPM = Std.parseFloat(Assets.text('music/gameover/$folderPath/bpm'));
 		Conductor.mapBPMChanges();
 		Conductor.songPos = 0;
-        preloadedMusic = [
-            'gameover/$folderPath/deathMusicEnd',
-            'gameover/$folderPath/deathMusic',
-        ];
+		preloadedMusic = ['gameover/$folderPath/deathMusicEnd', 'gameover/$folderPath/deathMusic',];
 
-        FlxG.sound.play(Assets.music('gameover/$folderPath/deathSfx'), 0.7);
-        
-        #if THREAD_LOADING
-        var mutex = new Mutex();
-        Thread.create(() -> {
-            mutex.acquire();
-            #end
-            while(!stopThread)
-            {
-                trace('PRELOADING GAME OVER MUSIC, HURRY!!');
-                Assets.music('gameover/$folderPath/deathMusicEnd');
-                Assets.music('gameover/$folderPath/deathMusic');
-                trace('finished preloading, phew...');
-                stopThread = true;
-            }
-            #if THREAD_LOADING
-            mutex.release();
-        });
-        #end
+		FlxG.sound.play(Assets.music('gameover/$folderPath/deathSfx'), 0.7);
 
-        bf.setActive(bf.char.deathChar);
-        bf.playAnim('firstDeath');
-        bf.char.animation.onFinish.addOnce((animName) -> {
-            
-            if (animName == "firstDeath")
-            {
-                stopThread = true;
-                FlxG.sound.playMusic(Assets.music('gameover/$folderPath/deathMusic'), 0.7);
-                bf.playAnim('deathLoop', true);
-            }
-            
-        });
-        add(bf);
+		#if THREAD_LOADING
+		var mutex = new Mutex();
+		Thread.create(() -> {
+			mutex.acquire();
+		#end
+			while (!stopThread)
+			{
+				trace('PRELOADING GAME OVER MUSIC, HURRY!!');
+				Assets.music('gameover/$folderPath/deathMusicEnd');
+				Assets.music('gameover/$folderPath/deathMusic');
+				trace('finished preloading, phew...');
+				stopThread = true;
+			}
+		#if THREAD_LOADING
+		mutex.release();
+		});
+		#end
 
-        var camFollow = PlayState.instance.followCamera('boyfriend');
-        FlxTween.tween(
-            FlxG.camera.scroll,
-            {
-                x: camFollow.point.x - FlxG.width / 2,
-                y: camFollow.point.y - FlxG.height / 2
-            }, 1.8, {
-                ease: FlxEase.cubeOut,
-                startDelay: 0.4
-            }
-        );
+		bf.setActive(bf.char.deathChar);
+		bf.playAnim('firstDeath');
+		bf.char.animation.onFinish.addOnce((animName) ->
+		{
+			if (animName == "firstDeath")
+			{
+				stopThread = true;
+				FlxG.sound.playMusic(Assets.music('gameover/$folderPath/deathMusic'), 0.7);
+				bf.playAnim('deathLoop', true);
+			}
+		});
+		add(bf);
 
-        callScript("gameOverCreatePost");
-    }
+		var camFollow = PlayState.instance.followCamera('boyfriend');
+		FlxTween.tween(FlxG.camera.scroll, {
+			x: camFollow.point.x - FlxG.width / 2,
+			y: camFollow.point.y - FlxG.height / 2
+		}, 1.8, {
+			ease: FlxEase.cubeOut,
+			startDelay: 0.4
+		});
 
-    override function update(elapsed:Float)
-    {
-        super.update(elapsed);
-        callScript("gameOverUpdate", [elapsed]);
-        
-        if (FlxG.sound.music != null)
-            Conductor.songPos = FlxG.sound.music.time;
+		callScript("gameOverCreatePost");
+	}
 
-        if (!pressedSomething)
-        {
-            if (Controls.justPressed(BACK))
-            {
-                callScript("gameOverLeave");
-                pressedSomething = true;
-                stopThread = true;
-                PlayState.instance.goToMenu();
-            }
-            if (Controls.justPressed(ACCEPT))
-            {
-                callScript("gameOverConfirm");
-                pressedSomething = true;
-                stopThread = true;
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+		callScript("gameOverUpdate", [elapsed]);
 
-                stopMusic();
-                FlxG.sound.play(Assets.music('gameover/$folderPath/deathMusicEnd'));
-                bf.playAnim('deathConfirm');
+		if (FlxG.sound.music != null)
+			Conductor.songPos = FlxG.sound.music.time;
 
-                new FlxTimer().start(1.0, function(tmr:FlxTimer)
-                {
-                    MusicBeat.getTopCamera().fade(0xFF000000);
+		if (!pressedSomething)
+		{
+			if (Controls.justPressed(BACK))
+			{
+				callScript("gameOverLeave");
+				pressedSomething = true;
+				stopThread = true;
+				PlayState.instance.goToMenu();
+			}
+			if (Controls.justPressed(ACCEPT))
+			{
+				callScript("gameOverConfirm");
+				pressedSomething = true;
+				stopThread = true;
 
-                    new FlxTimer().start(2.0, (tmr) -> {
-                        MusicBeat.skipClearCache = true;
-                        MusicBeat.switchState(new PlayState());
-                    });
-                });
-            }
-        }
-    }
+				stopMusic();
+				FlxG.sound.play(Assets.music('gameover/$folderPath/deathMusicEnd'));
+				bf.playAnim('deathConfirm');
 
-    public function callScript(fun:String, ?args:Array<Dynamic>) {
-        PlayState.instance.callScript(fun, args);
-    }
+				new FlxTimer().start(1.0, function(tmr:FlxTimer)
+				{
+					MusicBeat.getTopCamera().fade(0xFF000000);
 
-    override function beatHit()
-    {
-        super.beatHit();
-        if (curBeat % 2 == 0 && bf.curAnimName == 'deathLoop') {
-            bf.playAnim('deathLoop', true);
-        }
-    }
+					new FlxTimer().start(2.0, (tmr) ->
+					{
+						MusicBeat.skipClearCache = true;
+						MusicBeat.switchState(new PlayState());
+					});
+				});
+			}
+		}
+	}
 
-    public function stopMusic()
-    {
-        if (FlxG.sound.music != null) {
-            FlxG.sound.music.stop();
-        }
-    }
+	// dont call super because this substate doesnt actually have a script
+	override public function callScript(fun:String, ?args:Array<Dynamic>)
+	{
+		PlayState.instance.callScript(fun, args);
+	}
 
-    override function destroy()
-    {
-        stopMusic();
-        for(file in preloadedMusic)
-            Assets.clearMusic(file);
-        
-        super.destroy();
-    }
+	override function beatHit()
+	{
+		super.beatHit();
+		if (curBeat % 2 == 0 && bf.curAnimName == 'deathLoop')
+		{
+			bf.playAnim('deathLoop', true);
+		}
+	}
+
+	public function stopMusic()
+	{
+		if (FlxG.sound.music != null)
+		{
+			FlxG.sound.music.stop();
+		}
+	}
+
+	override function destroy()
+	{
+		stopMusic();
+		for (file in preloadedMusic)
+			Assets.clearMusic(file);
+
+		super.destroy();
+	}
 }

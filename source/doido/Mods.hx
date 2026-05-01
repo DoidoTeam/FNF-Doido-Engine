@@ -71,7 +71,7 @@ class Mods
 	public static var modConfigs:Map<String, ModConfig> = [];
 	public static var enabledMods:Array<String> = [];
 
-	public static final API_VERSION:Version = "0.1.0";
+	public static final API_VERSION:Version = "0.2.0";
 	public static final MOD_ROOT:String = "mods";
 	public static final ASSETS_ROOT:String = "assets";
 

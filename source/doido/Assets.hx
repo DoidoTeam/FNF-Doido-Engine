@@ -107,7 +107,7 @@ class Assets
 	public static function getExt(key:String, ext:String)
 	{
 		var path = key;
-		if (ext != "")
+		if (ext != "" && !path.endsWith('.$ext'))
 			path += '.$ext';
 		return path;
 	}
@@ -123,6 +123,9 @@ class Assets
 		var ext = extensions.get(type);
 		for (i in 0...ext.length)
 		{
+			if (path.endsWith('.${ext[i]}'))
+				return i;
+
 			var key:String = getExt(path, ext[i]);
 			if (isImage(path, type) || isSound(path, type))
 			{
@@ -159,6 +162,7 @@ class Assets
 	public static function getAsset<T>(key:String, ?library:String = "", type:Asset, ext:Bool = true, persist:Bool = false):T
 	{
 		var path = resolvePath(key, library, (ext ? type : OTHER));
+
 		switch (type)
 		{
 			case IMAGE:
@@ -248,7 +252,7 @@ class Assets
 	public static function getScriptArray(?song:String):Array<String>
 	{
 		var arr:Array<String> = [];
-		for (folder in ["data/scripts", 'songs/$song/scripts'])
+		for (folder in ["data/scripts/playstate", 'songs/$song/scripts'])
 		{
 			for (file in list(folder, SCRIPT))
 			{
@@ -296,7 +300,7 @@ class Assets
 		return Json.parse(getAsset(key, library, JSON));
 
 	public static inline function script(key:String, ?library:String = ""):String
-		return getAsset('$key', library, SCRIPT, false);
+		return getAsset('$key', library, SCRIPT, true);
 
 	public static inline function font(key:String, ?library:String = ""):String
 		return getAsset('fonts/$key', library, FONT);
@@ -347,7 +351,8 @@ class Assets
 	public static inline function bitmapFont(key:String, ?library:String = "fonts"):FlxBitmapFont
 		return cast framesCollection(key, library, FONT);
 
-	public static inline function framesCollection(key:String, ?extrasheets:Array<String>, ?library:String = "", type:SpriteType, persist:Bool = false):FlxFramesCollection
+	public static inline function framesCollection(key:String, ?extrasheets:Array<String>, ?library:String = "", type:SpriteType,
+			persist:Bool = false):FlxFramesCollection
 	{
 		var path = getPath(key, library);
 		var frames:FlxFramesCollection = null;

@@ -61,7 +61,7 @@ class Stage
 		gfScrollFactor = {x: 1.0, y: 1.0};
 
 		// loading the script
-		var scriptPath:String = 'data/stages/$curStage';
+		var scriptPath:String = 'data/scripts/stages/$curStage';
 		if (Assets.fileExists(scriptPath, SCRIPT))
 			loadScript(scriptPath);
 		else
@@ -73,8 +73,7 @@ class Stage
 
 	function loadScript(path:String)
 	{
-		loadedScript = new Iris(Assets.getAsset(path, SCRIPT), this, {name: path, autoRun: false, autoPreset: true});
-		loadedScript.setDefaults();
+		loadedScript = new DoidoIris(path, this, false);
 		loadedScript.set("PlayState", PlayState);
 		loadedScript.set("add", stageItems.push);
 		loadedScript.execute();
@@ -117,17 +116,6 @@ class Stage
 	{
 		if (loadedScript == null)
 			return;
-		@:privateAccess {
-			var ny:Dynamic = loadedScript.interp.variables.get(fun);
-			try
-			{
-				if (ny != null && Reflect.isFunction(ny))
-					loadedScript.call(fun, args);
-			}
-			catch (e)
-			{
-				Logs.print('error parsing stage script: ' + e, ERROR);
-			}
-		}
+		loadedScript.call(fun, args);
 	}
 }

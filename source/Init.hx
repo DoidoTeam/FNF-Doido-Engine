@@ -57,7 +57,7 @@ class Init extends MusicBeatState
 		var initialState:String = Mods.initialState;
 		if (initialState != "")
 		{
-			if (Assets.fileExists('data/states/$initialState', SCRIPT))
+			if (Assets.fileExists('data/scripts/states/$initialState', SCRIPT))
 				return MusicBeat.switchState(new ScriptedState(initialState));
 
 			var state = Type.resolveClass(initialState);

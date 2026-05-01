@@ -1,5 +1,6 @@
 package doido;
 
+import doido.utils.ScriptUtil.DoidoIris;
 import doido.Cache;
 import doido.song.Conductor;
 import doido.system.Screenshot;
@@ -12,6 +13,7 @@ import flixel.group.FlxGroup;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxSignal.FlxTypedSignal;
 import flixel.util.FlxTimer;
+import hscript.iris.Iris;
 
 typedef InputSignal = FlxTypedSignal<InputType->Void>;
 
@@ -50,7 +52,7 @@ class MusicBeat
 	public static function overrideState(target:MusicBeatState):MusicBeatState
 	{
 		var redirect = Mods.stateRedirects.get(Type.getClassName(Type.getClass(target)));
-		if (redirect != null && Assets.fileExists('data/states/$redirect', SCRIPT))
+		if (redirect != null && Assets.fileExists('data/scripts/states/$redirect', SCRIPT))
 			return new states.ScriptedState(redirect);
 
 		return target;
@@ -59,7 +61,7 @@ class MusicBeat
 	public static function overrideSubState(target:FlxSubState):FlxSubState
 	{
 		var redirect = Mods.stateRedirects.get(Type.getClassName(Type.getClass(target)));
-		if (redirect != null && Assets.fileExists('data/substates/$redirect', SCRIPT))
+		if (redirect != null && Assets.fileExists('data/scripts/substates/$redirect', SCRIPT))
 			target = new substates.ScriptedSubState(redirect);
 
 		return target;
@@ -175,6 +177,7 @@ class MusicBeat
 class MusicBeatState extends FlxUIState
 {
 	public var onInputChange(default, null):InputSignal = new InputSignal();
+	public var loadedScripts:Array<Iris> = [];
 
 	override function create()
 	{
@@ -202,6 +205,7 @@ class MusicBeatState extends FlxUIState
 		curStep = _curStep = Math.floor(curStepFloat);
 
 		setFpsPos();
+		callScript("create");
 	}
 
 	override function openSubState(subState:FlxSubState)
@@ -220,6 +224,7 @@ class MusicBeatState extends FlxUIState
 
 	override function update(elapsed:Float)
 	{
+		callScript("update", [elapsed]);
 		super.update(elapsed);
 		MusicBeat.updateConductor();
 		updateStep();
@@ -265,12 +270,20 @@ class MusicBeatState extends FlxUIState
 			}
 		}
 		loopGroup(this);
+		callScript("stepHit", [curStep]);
 	}
 
 	private function beatHit()
 	{
 		// finally you're useful for something
 		curBeat = Math.floor(curStep / 4);
+		callScript("beatHit", [curBeat]);
+	}
+
+	override function destroy()
+	{
+		callScript("destroy");
+		super.destroy();
 	}
 
 	private function setFpsPos(x:Float = 5, y:Float = 5)
@@ -285,6 +298,24 @@ class MusicBeatState extends FlxUIState
 		MusicBeat.skipClearCache = (!FlxG.keys.pressed.SHIFT);
 		MusicBeat.resetState();
 	}
+
+	public function loadScript(path:String)
+	{
+		if (Assets.fileExists(path, SCRIPT))
+			loadedScripts.push(new DoidoIris(path, this));
+	}
+
+	public function callScript(fun:String, ?args:Array<Dynamic>)
+	{
+		for (script in loadedScripts)
+			script.call(fun, args);
+	}
+
+	public function setScript(name:String, value:Dynamic, allowOverride:Bool = true)
+	{
+		for (script in loadedScripts)
+			script.set(name, value, allowOverride);
+	}
 }
 
 class MusicBeatSubState extends FlxSubState
@@ -292,6 +323,7 @@ class MusicBeatSubState extends FlxSubState
 	var subParent:FlxState;
 
 	public var onInputChange(default, null):InputSignal = new InputSignal();
+	public var loadedScripts:Array<Iris> = [];
 
 	override function create()
 	{
@@ -305,11 +337,13 @@ class MusicBeatSubState extends FlxSubState
 		curStep = _curStep = Math.floor(curStepFloat);
 
 		cameras = [MusicBeat.getTopCamera()];
+		callScript("create");
 	}
 
 	override function close()
 	{
 		MusicBeat.activeState = subParent;
+		callScript("close");
 		super.close();
 	}
 
@@ -329,6 +363,7 @@ class MusicBeatSubState extends FlxSubState
 
 	override function update(elapsed:Float)
 	{
+		callScript("update", [elapsed]);
 		super.update(elapsed);
 		MusicBeat.updateConductor();
 		updateStep();
@@ -371,11 +406,37 @@ class MusicBeatSubState extends FlxSubState
 			}
 		}
 		loopGroup(this);
+		callScript("stepHit", [curStep]);
 	}
 
 	private function beatHit()
 	{
 		// finally you're useful for something
 		curBeat = Math.floor(curStep / 4);
+		callScript("beatHit", [curBeat]);
+	}
+
+	override function destroy()
+	{
+		callScript("destroy");
+		super.destroy();
+	}
+
+	public function loadScript(path:String)
+	{
+		if (Assets.fileExists(path, SCRIPT))
+			loadedScripts.push(new DoidoIris(path, this));
+	}
+
+	public function callScript(fun:String, ?args:Array<Dynamic>)
+	{
+		for (script in loadedScripts)
+			script.call(fun, args);
+	}
+
+	public function setScript(name:String, value:Dynamic, allowOverride:Bool = true)
+	{
+		for (script in loadedScripts)
+			script.set(name, value, allowOverride);
 	}
 }
