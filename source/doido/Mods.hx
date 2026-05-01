@@ -2,6 +2,7 @@ package doido;
 
 #if MODS_FOLDER
 import polymod.util.VersionUtil;
+import thx.semver.VersionRule;
 import polymod.format.ParseRules;
 import polymod.Polymod;
 import polymod.PolymodConfig;
@@ -74,6 +75,7 @@ class Mods
 	public static final API_VERSION:Version = "0.2.0";
 	public static final MOD_ROOT:String = "mods";
 	public static final ASSETS_ROOT:String = "assets";
+	public static final VERSION_RULE:VersionRule = VersionUtil.anyPatch(API_VERSION);
 
 	public static final ignoredFiles:Array<String> = [
 		'assets/data/weeks/order.json',
@@ -109,7 +111,7 @@ class Mods
 			frameworkParams: {
 				coreAssetRedirect: ASSETS_ROOT
 			},
-			apiVersionRule: VersionUtil.anyPatch(API_VERSION),
+			apiVersionRule: VERSION_RULE,
 			errorCallback: onError,
 			parseRules: new ParseRules(), // disables it i hope
 			ignoredFiles: ignoredFiles,
@@ -127,10 +129,17 @@ class Mods
 		var scanned:Array<String> = [];
 		for (meta in modMetas)
 		{
+			if (!VersionUtil.match(meta.apiVersion, VERSION_RULE))
+			{
+				Logs.print('Mod "${meta.id}" was built for incompatible API version ${meta.apiVersion.toString()}, expected "${VERSION_RULE.toString()}"',
+					POLYMOD);
+				continue;
+			}
 			if (!exists(meta.id))
-				setMod(meta.id); // just to be safe
+				setMod(meta.id, false); // just to be safe
 			scanned.push(meta.id);
 		}
+		trace(scanned);
 
 		for (mod in modList.mods)
 			if (!scanned.contains(mod.name))
@@ -241,7 +250,7 @@ class Mods
 	{
 		modList.mods.push({
 			name: mod,
-			enabled: true
+			enabled: false
 		});
 	}
 
