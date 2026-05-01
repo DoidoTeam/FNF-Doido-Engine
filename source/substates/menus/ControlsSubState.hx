@@ -38,6 +38,7 @@ class ControlsSubState extends MusicBeatSubState
     public var bindGrp1:FlxTypedGroup<BindSprite>;
     public var bindOptions:FlxTypedGroup<Alphabet>;
     public var bindSquare:FlxSprite;
+    public var awaitingTxt:Alphabet;
 
     public var curOption:Int = 0;
     public var curSelectedX:Int = 0;
@@ -101,6 +102,13 @@ class ControlsSubState extends MusicBeatSubState
         bindSquare.offset.x += (bindSquare.width / 2) - 10;
         bindSquare.offset.y += (bindSquare.height/ 2) + 16;
         add(bindSquare);
+
+        awaitingTxt = new Alphabet(FlxG.width / 2, 24, "<color value=#FFFFFF>Awaiting input...</color>", false, CENTER);
+        awaitingTxt.scale.set(0.6,0.6);
+        awaitingTxt.updateHitbox();
+        awaitingTxt.visible = false;
+        add(awaitingTxt);
+        if (!Save.data.downscroll) awaitingTxt.y = FlxG.height - awaitingTxt.height - 24;
         
         for(j in 0...2)
         {
@@ -176,6 +184,23 @@ class ControlsSubState extends MusicBeatSubState
         curBindSpr = bindGrpArray[curSelectedY].members[curSelectedX];
     }
 
+    public function changeMenu(newMenu:ControlMode, ?sfx:String)
+    {
+        curMode = newMenu;
+        if (sfx != null) FlxG.sound.play(Assets.sound(sfx));
+
+        switch(newMenu)
+        {
+            case RESETTING:
+                bindSquare.animation.play("reset");
+            case CLEARING:
+                bindSquare.animation.play("clear");
+            case EDIT_CHOOSING:
+                bindSquare.animation.play("edit");
+            default:
+        }
+    }
+
     override function update(elapsed:Float)
     {
         super.update(elapsed);
@@ -188,15 +213,9 @@ class ControlsSubState extends MusicBeatSubState
             {
                 switch(allOptions[curOption])
                 {
-                    case "RESET":
-                        curMode = RESETTING;
-                        bindSquare.animation.play("reset");
-                    case "CLEAR":
-                        curMode = CLEARING;
-                        bindSquare.animation.play("clear");
-                    default:
-                        curMode = EDIT_CHOOSING;
-                        bindSquare.animation.play("edit");
+                    case "RESET": changeMenu(RESETTING, "scroll");
+                    case "CLEAR": changeMenu(CLEARING, "scroll");
+                    default: changeMenu(EDIT_CHOOSING, "scroll");
                 }
             }
 
@@ -210,18 +229,23 @@ class ControlsSubState extends MusicBeatSubState
         {
             /*if (curBindSpr != null)
                 bindSquare.setPosition(curBindSpr.x, curBindSpr.y);*/
+            awaitingTxt.visible = true;
 
-            if (FlxG.keys.justPressed.ESCAPE)
+            if (FlxG.keys.justPressed.ANY)
             {
-                reloadKey(curBindSpr, getSaveBind());
-                curMode = EDIT_CHOOSING;
-            }
-            else if (FlxG.keys.justPressed.ANY)
-            {
-                var key = FlxG.keys.firstJustPressed();
-                setSaveBind(key);
-                reloadKey(curBindSpr, key);
-                curMode = EDIT_CHOOSING;
+                awaitingTxt.visible = false;
+                if (FlxG.keys.justPressed.ESCAPE)
+                {
+                    reloadKey(curBindSpr, getSaveBind());
+                    changeMenu(EDIT_CHOOSING, "cancel");
+                }
+                else
+                {
+                    var key = FlxG.keys.firstJustPressed();
+                    setSaveBind(key);
+                    reloadKey(curBindSpr, key);
+                    changeMenu(EDIT_CHOOSING, "confirm");
+                }
             }
         }
         else
@@ -236,21 +260,24 @@ class ControlsSubState extends MusicBeatSubState
                 switch(curMode)
                 {
                     case CLEARING:
+                        FlxG.sound.play(Assets.sound('cancel'));
                         setSaveBind(FlxKey.NONE);
-                        curBindSpr.reload();
+                        reloadKey(curBindSpr);
+
                     case RESETTING:
+                        FlxG.sound.play(Assets.sound('cancel'));
                         var key = getSaveBind(true);
                         setSaveBind(key);
                         reloadKey(curBindSpr, key);
 
                     default:
-                        curBindSpr.reload();
-                        curMode = EDIT_WAITING;
+                        reloadKey(curBindSpr);
+                        changeMenu(EDIT_WAITING, "scroll");
                 }
             }
 
             if (Controls.justPressed(BACK))
-                curMode = OPTIONS;
+                changeMenu(OPTIONS, "cancel");
         }
 
         if (curBindSpr != null)
@@ -281,9 +308,10 @@ class ControlsSubState extends MusicBeatSubState
         return isGamepad ? bind.gamepad[y] : bind.keyboard[y];
     }
 
-    public function reloadKey(spr:BindSprite, key:Int)
+    public function reloadKey(spr:BindSprite, keyID:Int = FlxKey.NONE)
     {
-        var key = FlxKey.toStringMap[key];
+        var key:Null<String> = FlxKey.toStringMap[keyID];
+        //trace(key);
         for(i in 0...formatNum.length)
         {
             if (key.contains(formatNum[i])) {
@@ -291,16 +319,16 @@ class ControlsSubState extends MusicBeatSubState
             }
         }
 
-        if (key == "NONE") key = "";
+        if (keyID == FlxKey.NONE) key = null;
 
         spr.reload(key);
     }
 
-    public function reloadPad(spr:BindSprite, pad:Int)
+    public function reloadPad(spr:BindSprite, padID:Int = FlxPad.NONE)
     {
-        var pad = FlxPad.toStringMap[pad];
-
-        if (pad == "NONE") pad = "";
+        var pad:Null<String> = FlxPad.toStringMap[padID];
+        
+        if (padID == FlxPad.NONE) pad = null;
 
         spr.reload(pad, true);
     }
