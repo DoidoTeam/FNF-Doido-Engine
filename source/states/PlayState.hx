@@ -845,11 +845,12 @@ class PlayState extends MusicBeatState implements Playable
 		hudClass.beatHit(curBeat);
 	}
 
-	override public function callScript(fun:String, ?args:Array<Dynamic>)
+	override public function callScript(fun:String, ?args:Array<Dynamic>):Dynamic
 	{
-		super.callScript(fun, args);
+		var retValues:Array<Dynamic> = super.callScript(fun, args);
 		if (stageBuild != null)
-			stageBuild.callScript(fun, args);
+			retValues.push(stageBuild.callScript(fun, args));
+		return retValues;
 	}
 
 	public var player1(get, never):String;

@@ -21,13 +21,28 @@ typedef MenuOption =
 class MainMenuState extends MusicBeatState
 {
 	var options:Array<MenuOption> = [];
-
-	static var curSelected:Int = 0;
+	var curSelected:Int = 0;
 
 	var grpOptions:FlxTypedGroup<FlxSprite>;
+	var splashTxt:FlxText;
 	var bg:FlxSprite;
 	var bgMag:FlxSprite;
+
 	var bgPosY:Float = 0;
+	var centerOptX:Bool = true;
+	var centerOptY:Bool = true;
+	var bgBounds:Array<Float> = [0, 0];
+
+	public function new()
+	{
+		super();
+		addOption("story mode", () -> switchState(new states.menus.StoryMenuState()));
+		addOption("freeplay", () -> switchState(new FreeplayState()));
+		addOption("donate", () -> switchState(new DebugMenu()));
+		addOption("options", () -> openSubState(new substates.menus.OptionsSubState()));
+		addOption("credits", () -> switchState(new states.menus.CreditsState()));
+		loadScript();
+	}
 
 	override function create()
 	{
@@ -35,42 +50,22 @@ class MainMenuState extends MusicBeatState
 		MusicBeat.playMusic("freakyMenu");
 		DiscordIO.changePresence("In the Main Menu");
 
-		options = [
-			{
-				name: "story mode",
-				press: () -> switchState(new states.menus.StoryMenuState())
-			},
-			{
-				name: "freeplay",
-				press: () -> switchState(new FreeplayState())
-			},
-			{
-				name: "donate",
-				press: () -> switchState(new DebugMenu())
-			},
-			{
-				name: "options",
-				press: () -> openSubState(new substates.menus.OptionsSubState())
-			},
-			{
-				name: "credits",
-				press: () -> switchState(new states.menus.CreditsState())
-			},
-		];
-
 		bg = new FlxSprite().loadGraphic(Assets.image('menuBG'));
 		bg.scale.set(1.1, 1.1);
 		bg.updateHitbox();
 		bg.screenCenter(X);
+		bg.setZ(0);
 		add(bg);
 
 		bgMag = new FlxSprite().loadGraphic(Assets.image('menuBGMagenta'));
 		bgMag.scale.set(bg.scale.x, bg.scale.y);
 		bgMag.updateHitbox();
 		bgMag.visible = false;
+		bgMag.setZ(1);
 		add(bgMag);
 
 		grpOptions = new FlxTypedGroup<FlxSprite>();
+		grpOptions.setZ(10);
 		add(grpOptions);
 
 		var optionSize:Float = 1;
@@ -118,13 +113,18 @@ class MainMenuState extends MusicBeatState
 		splash += '\nFriday Night Funkin\' Rewritten';
 		#if MODS_FOLDER splash += '\nPress [TAB] to manage Mods'; #end
 
-		var splashTxt = new FlxText(4, 0, 0, splash);
+		splashTxt = new FlxText(4, 0, 0, splash);
 		splashTxt.setFormat(Main.globalFont, 18, 0xFFFFFFFF, LEFT);
 		splashTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
 		splashTxt.y = FlxG.height - splashTxt.height - 4;
+		splashTxt.setZ(20);
 		add(splashTxt);
 
+		callScript("createPost");
 		changeSelection(0);
+		bg.y = bgPosY;
+		bgMag.y = bgPosY;
+		sort(ZIndex.sort);
 	}
 
 	var canSelect = true;
@@ -191,6 +191,7 @@ class MainMenuState extends MusicBeatState
 
 		bg.y = FlxMath.lerp(bg.y, bgPosY, elapsed * 6);
 		bgMag.setPosition(bg.x, bg.y);
+		callScript("updatePost", [elapsed]);
 	}
 
 	public function switchState(?target:MusicBeatState, tOut:String = 'funkin', ?tIn:String)
@@ -199,15 +200,20 @@ class MainMenuState extends MusicBeatState
 			return;
 
 		canSelect = false;
-		FlxG.sound.play(Assets.sound('confirm'));
 
-		for (item in grpOptions.members)
+		if (callScript("switchState", [target]) ?? true)
 		{
-			if (item.ID != curSelected)
-				FlxTween.tween(item, {alpha: 0}, 0.4, {ease: FlxEase.cubeOut});
-		}
+			trace("switching");
+			FlxG.sound.play(Assets.sound('confirm'));
 
-		new FlxTimer().start(1.2, (tmr) -> MusicBeat.switchState(target, tOut, tIn));
+			for (item in grpOptions.members)
+			{
+				if (item.ID != curSelected)
+					FlxTween.tween(item, {alpha: 0}, 0.4, {ease: FlxEase.cubeOut});
+			}
+
+			new FlxTimer().start(1.2, (tmr) -> MusicBeat.switchState(target, tOut, tIn));
+		}
 	}
 
 	public function changeSelection(change:Int = 0)
@@ -217,18 +223,64 @@ class MainMenuState extends MusicBeatState
 
 		curSelected += change;
 		curSelected = FlxMath.wrap(curSelected, 0, options.length - 1);
-		bgPosY = FlxMath.lerp(0, -(bg.height - FlxG.height), curSelected / (options.length - 1));
 
-		for (item in grpOptions.members)
+		if (callScript("changeSelection", [change]) ?? true)
 		{
-			item.animation.play('idle');
-			if (curSelected == item.ID)
-				item.animation.play('hover');
+			bgPosY = FlxMath.lerp(-bgBounds[0], -(bg.height - FlxG.height) + bgBounds[1], curSelected / (options.length - 1));
+			for (item in grpOptions.members)
+			{
+				item.animation.play('idle');
+				if (curSelected == item.ID)
+					item.animation.play('hover');
 
-			item.updateHitbox();
-			// makes it offset to its middle point
-			item.offset.x += (item.frameWidth * item.scale.x) / 2;
-			item.offset.y += (item.frameHeight * item.scale.y) / 2;
+				item.updateHitbox();
+
+				// makes it offset to its middle point
+				if (centerOptX)
+					item.offset.x += (item.frameWidth * item.scale.x) / 2;
+				if (centerOptY)
+					item.offset.y += (item.frameHeight * item.scale.y) / 2;
+			}
 		}
+	}
+
+	public function addOption(name:String, press:Void->Void, ?pos:Int)
+	{
+		var option:MenuOption = {name: name, press: press};
+		if (pos == null)
+			options.push(option);
+		else
+			options.insert(pos, option);
+	}
+
+	public function removeOption(name:String)
+	{
+		var opt:MenuOption = null;
+		for (option in options)
+		{
+			if (option.name == name)
+			{
+				opt = option;
+				break;
+			}
+		}
+		if (opt != null)
+			options.remove(opt);
+	}
+
+	public function moveOption(name:String, pos:Int)
+	{
+		var opt:MenuOption = null;
+		for (option in options)
+		{
+			if (option.name == name)
+			{
+				opt = option;
+				break;
+			}
+		}
+		if (opt != null)
+			options.remove(opt);
+		addOption(opt.name, opt.press, pos);
 	}
 }

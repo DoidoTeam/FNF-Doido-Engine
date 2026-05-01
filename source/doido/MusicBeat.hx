@@ -299,16 +299,28 @@ class MusicBeatState extends FlxUIState
 		MusicBeat.resetState();
 	}
 
-	public function loadScript(path:String)
+	public function loadScript(?path:String)
 	{
+		if (path == null)
+		{
+			path = "data/scripts/states/";
+			path += Type.getClassName(Type.getClass(this)).replace('states.', "").replace(".", "/");
+			trace(path);
+		}
 		if (Assets.fileExists(path, SCRIPT))
 			loadedScripts.push(new DoidoIris(path, this));
 	}
 
-	public function callScript(fun:String, ?args:Array<Dynamic>)
+	public function callScript(fun:String, ?args:Array<Dynamic>):Dynamic
 	{
+		var retValues:Array<Dynamic> = [];
 		for (script in loadedScripts)
-			script.call(fun, args);
+		{
+			var call = script.call(fun, args);
+			if (call != null && call.returnValue != null)
+				retValues.push(call.returnValue);
+		}
+		return (retValues.length > 1 ? retValues : retValues[0]);
 	}
 
 	public function setScript(name:String, value:Dynamic, allowOverride:Bool = true)
@@ -422,8 +434,14 @@ class MusicBeatSubState extends FlxSubState
 		super.destroy();
 	}
 
-	public function loadScript(path:String)
+	public function loadScript(?path:String)
 	{
+		if (path == null)
+		{
+			path = "data/scripts/substates/";
+			path += Type.getClassName(Type.getClass(this)).replace('substates.', "").replace(".", "/");
+			trace(path);
+		}
 		if (Assets.fileExists(path, SCRIPT))
 			loadedScripts.push(new DoidoIris(path, this));
 	}

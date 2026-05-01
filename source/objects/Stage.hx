@@ -71,6 +71,7 @@ class Stage
 		}
 	}
 
+	// to-do: make "new" function to preload assets
 	function loadScript(path:String)
 	{
 		loadedScript = new DoidoIris(path, this, false);
@@ -112,10 +113,15 @@ class Stage
 	// Scripts
 	public var loadedScript:Iris = null;
 
-	public function callScript(fun:String, ?args:Array<Dynamic>)
+	public function callScript(fun:String, ?args:Array<Dynamic>):Dynamic
 	{
-		if (loadedScript == null)
-			return;
-		loadedScript.call(fun, args);
+		var retValue:Dynamic = null;
+		if (loadedScript != null)
+		{
+			var call = loadedScript.call(fun, args);
+			if (call != null && call.returnValue != null)
+				retValue = call.returnValue;
+		}
+		return retValue;
 	}
 }
