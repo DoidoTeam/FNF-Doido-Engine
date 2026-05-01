@@ -103,7 +103,7 @@ class ControlsSubState extends MusicBeatSubState
         bindSquare.offset.y += (bindSquare.height/ 2) + 16;
         add(bindSquare);
 
-        awaitingTxt = new Alphabet(FlxG.width / 2, 24, "<color value=#FFFFFF>Awaiting input...</color>", false, CENTER);
+        awaitingTxt = new Alphabet(FlxG.width / 2, 24, "<color value=#FFFFFF>Press any key...</color>", false, CENTER);
         awaitingTxt.scale.set(0.6,0.6);
         awaitingTxt.updateHitbox();
         awaitingTxt.visible = false;
