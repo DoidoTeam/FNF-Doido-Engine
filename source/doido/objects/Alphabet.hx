@@ -208,6 +208,9 @@ class Alphabet extends FlxTypedSpriteGroup<AlphaCharacter>
 			char.frames = fontFrames;
 			char.alphabet = (font == "alphabet");
 			char.row = daRow;
+			
+			char.alpha = alpha;
+			char.angle = angle;
 
 			var charBold:Bool = bold;
 			/*var charOutline = this.outline;
