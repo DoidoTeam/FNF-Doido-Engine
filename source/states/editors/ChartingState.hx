@@ -775,8 +775,8 @@ class ChartingState extends MusicBeatState
 
 		tab.add(createText(getX(), getY(14) + 10, "Stage:", 0xFFD8DAF6));
 
-		var stages:Array<String> = Assets.list("data/stages/", true, SCRIPT);
-		//stages = stages.concat(stages);
+		var stages:Array<String> = Assets.list("data/scripts/stages/", true, SCRIPT);
+		// stages = stages.concat(stages);
 		var stageButton = new DoidoTextButton("");
 		stageButton.button.onUp.add(() ->
 		{
@@ -1848,10 +1848,10 @@ class TimeWindow extends DoidoWindow
 			if (!chartState.tweeningSongPos)
 				chartState.playingSong = !chartState.playingSong;
 			/*else
-			{
-				FlxTween.completeTweensOf();
-				FlxTween.color(btn, 0.4, 0xFFFF0000, 0xFFFFFFFF);
-				FlxTween.shake(btn, 0.05, 0.4);
+				{
+					FlxTween.completeTweensOf();
+					FlxTween.color(btn, 0.4, 0xFFFF0000, 0xFFFFFFFF);
+					FlxTween.shake(btn, 0.05, 0.4);
 			}*/
 		});
 
