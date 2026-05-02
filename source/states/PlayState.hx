@@ -847,7 +847,9 @@ class PlayState extends MusicBeatState implements Playable
 
 	override public function callScript(fun:String, ?args:Array<Dynamic>):Dynamic
 	{
-		var retValues:Array<Dynamic> = super.callScript(fun, args) ?? [];
+		var retValues:Array<Dynamic> = super.callScript(fun, args);
+		if (retValues == null)
+			retValues = [];
 		if (stageBuild != null)
 			retValues.push(stageBuild.callScript(fun, args));
 		return retValues;
