@@ -33,6 +33,7 @@ class FreeplayState extends MusicBeatState
 	static var songFilter:Array<String> = [];
 
 	var songs:Array<FreeplaySong> = [];
+	var weeks:Array<String> = [];
 
 	var bg:FlxSprite;
 	var bgPosY:Float = 0;
@@ -67,9 +68,11 @@ class FreeplayState extends MusicBeatState
 	var disableInputs:Bool = false;
 	var darkMode:Bool = Save.data.darkMode;
 
-	public function new()
+	public function new(?weeks:Array<String>)
 	{
 		super();
+		if (weeks != null)
+			this.weeks = weeks;
 		loadScript();
 	}
 
@@ -153,8 +156,13 @@ class FreeplayState extends MusicBeatState
 			}
 		];
 
+		var count:Int = 0;
 		for (week in Week.weekList(false, true))
 		{
+			if (weeks.length > 0 && !weeks.contains(week.weekFile))
+				continue;
+
+			count++;
 			for (song in week.songs)
 			{
 				songs.push({
@@ -177,6 +185,14 @@ class FreeplayState extends MusicBeatState
 				}
 			}
 		}
+
+		if (count == 0)
+		{
+			weeks = [];
+			reloadSongs();
+			return;
+		}
+
 		callScript("reloadSongs");
 		namesGrp.killMembers();
 		var i = 0;

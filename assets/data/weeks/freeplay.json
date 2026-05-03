@@ -8,5 +8,6 @@
     ],
     "freeplayOnly": true,
     "freeplayName": "extra songs",
+    "weekFile": "freeplay",
     "diffs": ["hard"]
 }
