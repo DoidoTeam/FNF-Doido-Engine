@@ -45,6 +45,7 @@ class DoidoIris extends Iris
 		set("Logs", Logs);
 		set("MathUtil", MathUtil);
 		set("ZIndex", ZIndex);
+		set("Main", Main);
 
 		// abstracts
 		set("FlxTextBorderStyle", flixel.text.FlxText.FlxTextBorderStyle);

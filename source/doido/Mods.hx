@@ -72,10 +72,10 @@ class Mods
 	public static var modConfigs:Map<String, ModConfig> = [];
 	public static var enabledMods:Array<String> = [];
 
-	public static final API_VERSION:Version = "0.2.0";
+	public static final API_VERSION:Version = "0.2.1";
 	public static final MOD_ROOT:String = "mods";
 	public static final ASSETS_ROOT:String = "assets";
-	public static final VERSION_RULE:VersionRule = VersionUtil.anyPatch(API_VERSION);
+	public static final VERSION_RULE:VersionRule = '>=${API_VERSION.major}.${API_VERSION.minor}.0 <=${API_VERSION}';
 
 	public static final ignoredFiles:Array<String> = [
 		'assets/data/weeks/order.json',

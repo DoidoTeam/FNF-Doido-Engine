@@ -20,9 +20,9 @@ typedef MenuOption =
 
 class MainMenuState extends MusicBeatState
 {
-	var options:Array<MenuOption> = [];
-	var curSelected:Int = 0;
+	static var curSelected:Int = 0;
 
+	var options:Array<MenuOption> = [];
 	var grpOptions:FlxTypedGroup<FlxSprite>;
 	var splashTxt:FlxText;
 	var bg:FlxSprite;
@@ -218,14 +218,14 @@ class MainMenuState extends MusicBeatState
 
 	public function changeSelection(change:Int = 0)
 	{
-		if (change != 0)
-			FlxG.sound.play(Assets.sound('scroll'));
-
 		curSelected += change;
 		curSelected = FlxMath.wrap(curSelected, 0, options.length - 1);
 
 		if (callScript("changeSelection", [change]) ?? true)
 		{
+			if (change != 0)
+				FlxG.sound.play(Assets.sound('scroll'));
+
 			bgPosY = FlxMath.lerp(-bgBounds[0], -(bg.height - FlxG.height) + bgBounds[1], curSelected / (options.length - 1));
 			for (item in grpOptions.members)
 			{

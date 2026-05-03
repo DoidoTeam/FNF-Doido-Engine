@@ -22,6 +22,8 @@ typedef FreeplaySong =
 	var week:String;
 	var ?icon:String;
 	var ?diffs:Array<String>;
+	var ?color:FlxColor;
+	var ?song:Bool;
 }
 
 class FreeplayState extends MusicBeatState
@@ -35,6 +37,7 @@ class FreeplayState extends MusicBeatState
 	var bg:FlxSprite;
 	var bgPosY:Float = 0;
 	var curBGColor:Null<FlxColor> = null;
+	var fallbackColor:Null<FlxColor> = null;
 	var randomHue:Float = 0.0;
 	var randomSaturation:Float = switch (Save.data.flashingLights)
 		{
@@ -62,6 +65,13 @@ class FreeplayState extends MusicBeatState
 	var lerpMisses:Float = 0;
 
 	var disableInputs:Bool = false;
+	var darkMode:Bool = Save.data.darkMode;
+
+	public function new()
+	{
+		super();
+		loadScript();
+	}
 
 	override function create()
 	{
@@ -70,22 +80,26 @@ class FreeplayState extends MusicBeatState
 		MusicBeat.playMusic("freakyMenu");
 		DiscordIO.changePresence("In the Freeplay Menu");
 
-		bg = new FlxSprite().loadGraphic(Assets.image(Save.data.darkMode ? 'menuInvert' : 'menuDesat'));
+		bg = new FlxSprite().loadGraphic(Assets.image(darkMode ? 'menuInvert' : 'menuDesat'));
 		bg.scale.set(1.2, 1.2);
 		bg.updateHitbox();
 		bg.screenCenter(X);
 		bg.x -= 50;
+		bg.setZ(0);
 		add(bg);
 
 		add(namesGrp = new FlxTypedGroup<FreeplayAlphabet>());
+		namesGrp.setZ(10);
 
 		topBar = new FlxSprite().makeColor(FlxG.width + 10, 50, 0xFF000000);
 		topBar.screenCenter(X);
+		topBar.setZ(100);
 		add(topBar);
 
 		bottomBar = new FlxSprite().makeColor(FlxG.width + 10, 50, 0xFF000000);
 		bottomBar.screenCenter(X);
 		bottomBar.y = FlxG.height - bottomBar.height;
+		bottomBar.setZ(100);
 		add(bottomBar);
 
 		diffSelector = new DiffSelector(FREEPLAY);
@@ -94,29 +108,36 @@ class FreeplayState extends MusicBeatState
 		diffSelector.updateHitbox();
 		diffSelector.arrowL.x = diffSelector.leftX;
 		diffSelector.arrowR.x = diffSelector.rightX;
+		diffSelector.setZ(20);
 		add(diffSelector);
 
 		titleTxt = new FlxText(8, 6, 0, "FREEPLAY");
 		titleTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, LEFT);
+		titleTxt.setZ(110);
 		add(titleTxt);
 
 		nameTxt = new FlxText(8, 6, 0, "WEEK 1");
 		nameTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, RIGHT);
 		nameTxt.x = FlxG.width - nameTxt.width - 6;
+		nameTxt.setZ(110);
 		add(nameTxt);
 
 		scoreTxt = new FlxText(8, 8, 0, "HIGHSCORE: ");
 		scoreTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, LEFT);
 		scoreTxt.y = FlxG.height - scoreTxt.height - 8;
+		scoreTxt.setZ(110);
 		add(scoreTxt);
 
 		missesTxt = new FlxText(8, 8, 0, "0 MISSES");
 		missesTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, LEFT);
 		missesTxt.y = FlxG.height - missesTxt.height - 6;
 		missesTxt.x = FlxG.width - missesTxt.width - 6;
+		missesTxt.setZ(110);
 		add(missesTxt);
 
+		callScript("createPost");
 		reloadSongs();
+		sort(ZIndex.sort);
 	}
 
 	public function reloadSongs()
@@ -127,6 +148,8 @@ class FreeplayState extends MusicBeatState
 				week: "play any song",
 				icon: "-",
 				diffs: [],
+				color: null,
+				song: false
 			}
 		];
 
@@ -139,6 +162,8 @@ class FreeplayState extends MusicBeatState
 					week: week.freeplayName,
 					icon: song.icon,
 					diffs: week.diffs,
+					color: null,
+					song: true
 				});
 
 				// preloading and adding every difficulty to RANDOM!
@@ -152,7 +177,7 @@ class FreeplayState extends MusicBeatState
 				}
 			}
 		}
-
+		callScript("reloadSongs");
 		namesGrp.killMembers();
 		var i = 0;
 		for (song in songs)
@@ -162,56 +187,63 @@ class FreeplayState extends MusicBeatState
 			name.text = song.name;
 			name.reloadIcon(song.icon);
 			name.ID = i;
+			if (song.song)
+				song.color = name.icon.barColor;
 
 			if (!namesGrp.members.contains(name))
 				namesGrp.add(name);
 			i++;
 		}
+
+		callScript("reloadSongsPost");
 		changeSelection();
 		updatePos();
 	}
 
 	public function updatePos(lerp:Float = 1)
 	{
-		bg.y = FlxMath.lerp(bg.y, bgPosY, lerp);
-
-		namesGrp.forEachAlive((alphabet) ->
+		if (callScript("updatePos", [lerp]) ?? true)
 		{
-			var daPos:Int = (alphabet.ID - curSelected);
+			bg.y = FlxMath.lerp(bg.y, bgPosY, lerp);
 
-			var xOffset:Float = Math.pow(3, Math.min(Math.abs(daPos), 3)) * 10;
-			var yOffset:Float = (150 * daPos);
+			namesGrp.forEachAlive((alphabet) ->
+			{
+				var daPos:Int = (alphabet.ID - curSelected);
 
-			alphabet.setPosition(FlxMath.lerp(alphabet.x, 280 - xOffset, lerp), FlxMath.lerp(alphabet.y, (FlxG.height / 2) - 30 + yOffset, lerp));
-		});
+				var xOffset:Float = Math.pow(3, Math.min(Math.abs(daPos), 3)) * 10;
+				var yOffset:Float = (150 * daPos);
+
+				alphabet.setPosition(FlxMath.lerp(alphabet.x, 280 - xOffset, lerp), FlxMath.lerp(alphabet.y, (FlxG.height / 2) - 30 + yOffset, lerp));
+			});
+		}
 	}
 
 	public function changeSelection(?change:Int = 0)
 	{
-		if (change != 0)
-			FlxG.sound.play(Assets.sound("scroll"));
-
 		var prevDiff = diff;
 		curSelected += change;
 		curSelected = FlxMath.wrap(curSelected, 0, songs.length - 1);
-		bgPosY = FlxMath.lerp(40, -(bg.height - FlxG.height) - 40, curSelected / (songs.length - 1));
 
-		curBGColor = null;
-		namesGrp.forEachAlive((alphabet) ->
+		if (callScript("changeSelection", [change]) ?? true)
 		{
-			if (alphabet.ID == curSelected)
-			{
-				alphabet.alpha = 1.0;
-				if (curSelected != 0)
-					curBGColor = alphabet.icon.barColor;
-			}
-			else
-				alphabet.alpha = 0.4;
-		});
+			if (change != 0)
+				FlxG.sound.play(Assets.sound("scroll"));
 
-		FlxTween.cancelTweensOf(bg);
-		if (curBGColor != null)
-			FlxTween.color(bg, 0.4, bg.color, curBGColor);
+			namesGrp.forEachAlive((alphabet) ->
+			{
+				if (alphabet.ID == curSelected)
+					alphabet.alpha = 1.0;
+				else
+					alphabet.alpha = 0.4;
+			});
+
+			bgPosY = FlxMath.lerp(40, -(bg.height - FlxG.height) - 40, curSelected / (songs.length - 1));
+			curBGColor = curSong.color ?? fallbackColor;
+			updateBGColor();
+
+			nameTxt.text = curSong.week.toUpperCase();
+			nameTxt.x = FlxG.width - nameTxt.width - 6;
+		}
 
 		if (diff != prevDiff)
 		{
@@ -221,10 +253,17 @@ class FreeplayState extends MusicBeatState
 				curDiff = curSong.diffs.indexOf(prevDiff);
 		}
 
-		nameTxt.text = curSong.week.toUpperCase();
-		nameTxt.x = FlxG.width - nameTxt.width - 6;
-
 		changeDiff();
+	}
+
+	public function updateBGColor()
+	{
+		if (callScript("updateBGColor") ?? true)
+		{
+			FlxTween.cancelTweensOf(bg);
+			if (curBGColor != null)
+				FlxTween.color(bg, 0.4, bg.color, curBGColor);
+		}
 	}
 
 	public function changeDiff(change:Int = 0)
@@ -233,39 +272,41 @@ class FreeplayState extends MusicBeatState
 		if (curDiff == -1)
 			curDiff = middleDiff;
 
-		var diffLength = curSong.diffs.length - 1;
-		if (change != 0 && diffLength > 0)
-			FlxG.sound.play(Assets.sound('scroll'));
-
 		curDiff += change;
 		curDiff = FlxMath.wrap(curDiff, 0, diffLength);
 
-		diffSelector.changeDiff(diff, curDiff, diffLength, change);
-		namesGrp.forEachAlive((alphabet) ->
+		if (callScript("changeDiff", [change]) ?? true)
 		{
-			var thisScore:ScoreData = Highscore.getScore(songs[alphabet.ID].name + '-' + songs[alphabet.ID].diffs[curDiff]);
-			var rank = Timings.getRank(thisScore.accuracy, thisScore.misses, false, true);
+			if (change != 0 && diffLength > 0)
+				FlxG.sound.play(Assets.sound('scroll'));
 
-			if (alphabet.ID == curSelected)
+			diffSelector.changeDiff(diff, curDiff, diffLength, change);
+			namesGrp.forEachAlive((alphabet) ->
 			{
-				curScore = Math.floor(thisScore.score);
-				curAccuracy = thisScore.accuracy;
-				curMisses = thisScore.misses;
-			}
+				var thisScore:ScoreData = Highscore.getScore(songs[alphabet.ID].name + '-' + songs[alphabet.ID].diffs[curDiff]);
+				var rank = Timings.getRank(thisScore.accuracy, thisScore.misses, false, true);
 
-			var color = switch (rank.toUpperCase())
-			{
-				case "PP": '#FFFD62';
-				case "P": '#FDAAFC';
-				case "S" | "S+": '#EBE9A7';
-				case "A" | "A+": '#94EBEB';
-				case "B" | "B+" | "C" | "C+" | "D" | "D+": '#EFA07F';
-				default: '#7496FF';
-			}
+				if (alphabet.ID == curSelected)
+				{
+					curScore = Math.floor(thisScore.score);
+					curAccuracy = thisScore.accuracy;
+					curMisses = thisScore.misses;
+				}
 
-			alphabet.rankTxt.visible = (rank != "?");
-			alphabet.rankTxt.text = '<color value=${color}>${rank}</color>';
-		});
+				var color = switch (rank.toUpperCase())
+				{
+					case "PP": '#FFFD62';
+					case "P": '#FDAAFC';
+					case "S" | "S+": '#EBE9A7';
+					case "A" | "A+": '#94EBEB';
+					case "B" | "B+" | "C" | "C+" | "D" | "D+": '#EFA07F';
+					default: '#7496FF';
+				}
+
+				alphabet.rankTxt.visible = (rank != "?");
+				alphabet.rankTxt.text = '<color value=${color}>${rank}</color>';
+			});
+		}
 	}
 
 	var holdTimer:Float = 0.0;
@@ -316,33 +357,41 @@ class FreeplayState extends MusicBeatState
 		else
 			lerpAccuracy = FlxMath.lerp(lerpAccuracy, curAccuracy, elapsed * 8);
 
-		// drawing score + accuracy
-		var scoreText = 'HIGHSCORE: ' + FlxStringUtil.formatMoney(Math.floor(lerpScore), false, true);
-		scoreText += ' [${FlxMath.roundDecimal(lerpAccuracy, 2)}%]';
-		if (scoreTxt.text != scoreText)
-			scoreTxt.text = scoreText;
-
 		// misses
 		if (Math.abs(lerpMisses - curMisses) <= 1)
 			lerpMisses = curMisses;
 		else
 			lerpMisses = FlxMath.lerp(lerpMisses, curMisses, elapsed * 6);
 
-		// drawing misses
-		var missesText = Math.floor(lerpMisses) + ' MISSES';
-		if (missesTxt.text != missesText)
+		if (scoreTxt != null && scoreTxt.visible)
 		{
-			missesTxt.text = missesText;
-			missesTxt.x = FlxG.width - missesTxt.width - 8;
+			// drawing score + accuracy
+			var scoreText = 'HIGHSCORE: ' + FlxStringUtil.formatMoney(Math.floor(lerpScore), false, true);
+			scoreText += ' [${FlxMath.roundDecimal(lerpAccuracy, 2)}%]';
+			if (scoreTxt.text != scoreText)
+				scoreTxt.text = scoreText;
 		}
 
-		updatePos(elapsed * 8);
+		if (scoreTxt != null && scoreTxt.visible)
+		{
+			// drawing misses
+			var missesText = Math.floor(lerpMisses) + ' MISSES';
+			if (missesTxt.text != missesText)
+			{
+				missesTxt.text = missesText;
+				missesTxt.x = FlxG.width - missesTxt.width - 8;
+			}
+		}
+
 		if (curBGColor == null)
 		{
 			randomHue += elapsed * 60 * 5;
 			randomHue %= 360;
 			bg.color = FlxColor.interpolate(bg.color, FlxColor.fromHSB(randomHue, randomSaturation, 1.0), elapsed * 8);
 		}
+
+		updatePos(elapsed * 8);
+		callScript("updatePost", [elapsed]);
 	}
 
 	public function startSong()
@@ -378,34 +427,38 @@ class FreeplayState extends MusicBeatState
 		}
 
 		disableInputs = true;
-		FlxG.sound.play(Assets.sound('confirm'));
-		namesGrp.forEachAlive((alphabet) ->
+		if (callScript("startSong") ?? true)
 		{
-			if (alphabet.ID == curSelected)
+			FlxG.sound.play(Assets.sound('confirm'));
+			namesGrp.forEachAlive((alphabet) ->
 			{
-				alphabet.icon.setAnim(2);
-				FlxTween.flicker(alphabet, 1.2, 0.1);
-			}
-			else
+				if (alphabet.ID == curSelected)
+				{
+					alphabet.icon.setAnim(2);
+					FlxTween.flicker(alphabet, 1.2, 0.1);
+				}
+				else
+				{
+					alphabet.icon.setAnim(0);
+					FlxTween.tween(alphabet, {alpha: 0}, 0.4);
+				}
+			});
+
+			new FlxTimer().start(1.2, (tmr) ->
 			{
-				alphabet.icon.setAnim(0);
-				FlxTween.tween(alphabet, {alpha: 0}, 0.4);
-			}
-		});
+				if (FlxG.keys.pressed.SHIFT)
+					PlayState.startPos = 50000;
 
-		new FlxTimer().start(1.2, (tmr) ->
-		{
-			if (FlxG.keys.pressed.SHIFT)
-				PlayState.startPos = 50000;
-
-			MusicBeat.stopMusic();
-			MusicBeat.switchState(new states.LoadingState());
-		});
+				MusicBeat.stopMusic();
+				MusicBeat.switchState(new states.LoadingState());
+			});
+		}
 	}
 
 	var curSong(get, never):FreeplaySong;
 	var diff(get, never):String;
 	var middleDiff(get, never):Int;
+	var diffLength(get, never):Int;
 
 	function get_curSong():FreeplaySong
 		return songs[curSelected];
@@ -415,12 +468,18 @@ class FreeplayState extends MusicBeatState
 
 	function get_middleDiff()
 		return Std.int((curSong.diffs.length - 1) / 2);
+
+	function get_diffLength()
+		return curSong.diffs.length - 1;
 }
 
 class FreeplayAlphabet extends Alphabet
 {
 	public var icon:HealthIcon;
 	public var rankTxt:Alphabet;
+
+	public var iconPos:DoidoPoint = {x: 0, y: 0};
+	public var rankPos:DoidoPoint = {x: 16, y: 0};
 
 	public function new()
 	{
@@ -450,7 +509,7 @@ class FreeplayAlphabet extends Alphabet
 		if (icon.visible)
 		{
 			icon.alpha = alpha;
-			icon.setPosition(x - icon.width, y + (height - icon.height) / 2);
+			icon.setPosition(x - icon.width + iconPos.x, y + ((height - icon.height) / 2) + iconPos.y);
 			icon.draw();
 		}
 		if (rankTxt.visible)
@@ -460,7 +519,7 @@ class FreeplayAlphabet extends Alphabet
 			{
 				letter.alpha = alpha;
 			});
-			rankTxt.setPosition(x + width + 16, y + (height - rankTxt.height) / 2);
+			rankTxt.setPosition(x + width + rankPos.x, y + ((height - rankTxt.height) / 2) + rankPos.y);
 			rankTxt.draw();
 		}
 		super.draw();
