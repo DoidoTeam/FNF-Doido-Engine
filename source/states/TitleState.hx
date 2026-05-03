@@ -23,7 +23,7 @@ class TitleState extends MusicBeatState
 
 	var enterTxt:FlxSprite;
 
-	static var introEnded:Bool = false;
+	public static var introEnded:Bool = false;
 
 	public function new()
 	{

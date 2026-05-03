@@ -118,12 +118,12 @@ class MusicBeat
 
 	public static var curMusic:String = "none";
 
-	public static function playMusic(?key:String, ?forceRestart:Bool = false, ?vol:Float = 0.5):Void
+	public static function playMusic(?key:String = "none", ?forceRestart:Bool = false, ?vol:Float = 0.5):Void
 	{
 		if (curMusic != "none" && curMusic != key)
 			Assets.queueMusicClear(key);
 
-		if (key == null || key == "none")
+		if (key == "none")
 		{
 			curMusic = "none";
 			if (FlxG.sound.music != null)

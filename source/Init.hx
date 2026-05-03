@@ -69,6 +69,7 @@ class Init extends MusicBeatState
 			}
 		}
 		#end
+		TitleState.introEnded = false;
 		MusicBeat.switchState(new TitleState());
 	}
 }

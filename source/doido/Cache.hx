@@ -216,8 +216,11 @@ class Cache
 
 	public static function killFrames(frames:FlxFramesCollection)
 	{
-		frames.destroy();
-		frames = null;
+		if (frames != null)
+		{
+			frames.destroy();
+			frames = null;
+		}
 	}
 
 	public static function isFramesCached(key:String)
