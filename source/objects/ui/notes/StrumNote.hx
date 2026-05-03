@@ -16,6 +16,7 @@ class StrumNote extends DoidoSprite
 	public var rgb:Bool = false;
 	public var colorShader:RGBPalette;
 	public var colorFallback:Array<FlxColor> = [0xFF87a3ad, 0xFFFFFFFF, 0xFF000000];
+	public var lastColors:Array<FlxColor> = [];
 
 	public function new()
 	{
@@ -94,22 +95,24 @@ class StrumNote extends DoidoSprite
 		if (anim == "static")
 		{
 			shader = null;
+			lastColors = [];
 			return;
 		}
 		else
 		{
-			if (shader != colorShader)
-				shader = colorShader;
-
 			var colorArray:Array<FlxColor> = [];
 			if (note == null)
 				colorArray = colorFallback;
 			else
 				colorArray = note.rgbColors;
 
-			if (colorArray.length < 3)
+			if (colorArray.length < 3 || lastColors == colorArray)
 				return;
 
+			if (shader != colorShader)
+				shader = colorShader;
+
+			lastColors = colorArray;
 			colorShader.setColor(colorArray[0], colorArray[1], colorArray[2]);
 		}
 	}

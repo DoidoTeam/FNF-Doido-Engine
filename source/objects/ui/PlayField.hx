@@ -273,7 +273,15 @@ class PlayField extends FlxGroup
 							if (strumline.botplay)
 								isPressing = true;
 							else if (strumline.isPlayer)
-								isPressing = pressed[hold.data.lane];
+							{
+								if (pressed[hold.data.lane])
+									isPressing = true;
+								else if (hold.holdCoyote > 0.0)
+								{
+									isPressing = true;
+									hold.holdCoyote -= FlxG.elapsed;
+								}
+							}
 
 							if (holdPercent >= 1.0)
 								isPressing = false;
@@ -372,7 +380,7 @@ class PlayField extends FlxGroup
 		var strum = strumline.strums[note.data.lane];
 
 		if (canPlayHoldAnims)
-			strum.playAnim("confirm");
+			strum.playConfirm(note);
 
 		strumline.holdingNotes[strum.lane] = true;
 

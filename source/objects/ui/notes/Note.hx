@@ -21,6 +21,7 @@ class Note extends FlxSprite
 	public var holdIndex:Float = -1;
 	public var holdStep:Float = -1;
 	public var holdHitPercent:Float = 0.0;
+	public var holdCoyote:Float = 0.2;
 
 	// noteskin stuff
 	public var noteScale:Float = 1.0;
@@ -66,6 +67,7 @@ class Note extends FlxSprite
 		holdIndex = 0;
 		holdStep = 0;
 		holdHitPercent = 0.0;
+		holdCoyote = 0.2;
 
 		// noteskin stuff
 		noteScale = 1.0;
