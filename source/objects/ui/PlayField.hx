@@ -69,8 +69,12 @@ class PlayField extends FlxGroup
 
 	public function updateNotes(?curStepFloat:Float)
 	{
+		var elapsed:Float = FlxG.elapsed;
 		if (curStepFloat == null)
+		{
 			curStepFloat = this.curStepFloat;
+			elapsed = 0.0;
+		}
 		else
 			this.curStepFloat = curStepFloat;
 
@@ -275,11 +279,14 @@ class PlayField extends FlxGroup
 							else if (strumline.isPlayer)
 							{
 								if (pressed[hold.data.lane])
+								{
 									isPressing = true;
+									hold.resetCoyote();
+								}
 								else if (hold.holdCoyote > 0.0)
 								{
 									isPressing = true;
-									hold.holdCoyote -= FlxG.elapsed;
+									hold.holdCoyote -= elapsed;
 								}
 							}
 

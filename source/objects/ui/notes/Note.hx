@@ -67,7 +67,7 @@ class Note extends FlxSprite
 		holdIndex = 0;
 		holdStep = 0;
 		holdHitPercent = 0.0;
-		holdCoyote = 0.2;
+		resetCoyote();
 
 		// noteskin stuff
 		noteScale = 1.0;
@@ -78,6 +78,10 @@ class Note extends FlxSprite
 		noteSpeedMult = 1.0;
 
 		// noteSpeed = (FlxG.random.bool(50) ? null : 1.0);
+	}
+
+	public function resetCoyote():Void {
+		holdCoyote = 0.2;
 	}
 
 	public function reloadSprite()
