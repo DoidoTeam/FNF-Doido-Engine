@@ -1,0 +1,29 @@
+/*
+* =========================
+* =                       =
+* =                       =
+* =      FUNCTIONS        =
+* =                       =
+* =                       =
+* =========================
+*/
+function create() {}
+function createPost() {}
+function update(elapsed:Float) {}
+function updatePost(elapsed:Float) {}
+
+function gameOverCreate() {}
+function gameOverCreatePost() {}
+function gameOverUpdate(elapsed:Float) {}
+function gameOverConfirm() {}
+function gameOverLeave() {}
+
+function onNoteHit(note:Note, strumline:Strumline) {}
+function onNoteMiss(note:Note, strumline:Strumline) {}
+function onNoteHold(note:Note, strumline:Strumline) {}
+function onGhostTap(lane:Int, strumline:Strumline, punished:Bool) {}
+
+function playEvent(name:String, data:Array<Dynamic>) {}
+
+function stepHit(curStep:Int) {}
+function beatHit(curBeat:Int) {}

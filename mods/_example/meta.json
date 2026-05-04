@@ -1,0 +1,7 @@
+{
+	"title": "Example Mod",
+	"description": "Use this mod as a guide to develop your own mods.",
+	"author": "Doido Team",
+	"api_version": "0.2.1",
+	"mod_version": "1.0.0"
+}

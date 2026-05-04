@@ -1,0 +1,10 @@
+{
+    "image": "example-icon",
+    "color": "0xFFFFFFFF",
+    "scale": 1,
+    "pixel": false,
+    "gridWidth": 150,
+    "gridFrames": 2,
+    "flipX": false,
+    "flipY": false
+}

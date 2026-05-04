@@ -81,6 +81,8 @@ class Mods
 		'assets/data/weeks/order.json',
 		'assets/data/credits/order.json',
 		'assets/data/credits/doido.json',
+		'assets/data/credits/github/contributors.json',
+		'assets/data/credits/github/blacklist.txt',
 		'$MOD_ROOT/mods.json'
 	];
 	public static final ignoredStates:Array<String> = [
@@ -129,12 +131,8 @@ class Mods
 		var scanned:Array<String> = [];
 		for (meta in modMetas)
 		{
-			if (!VersionUtil.match(meta.apiVersion, VERSION_RULE))
-			{
-				Logs.print('Mod "${meta.id}" was built for incompatible API version ${meta.apiVersion.toString()}, expected "${VERSION_RULE.toString()}"',
-					POLYMOD);
+			if (!validateMod(meta))
 				continue;
-			}
 			if (!exists(meta.id))
 				setMod(meta.id, false); // just to be safe
 			scanned.push(meta.id);
@@ -147,6 +145,22 @@ class Mods
 
 		saveJson();
 		loadMods();
+	}
+
+	public static function validateMod(meta:ModMetadata):Bool
+	{
+		if (!VersionUtil.match(meta.apiVersion, VERSION_RULE))
+		{
+			Logs.print('Mod "${meta.id}" was built for incompatible API version ${meta.apiVersion.toString()}, expected "${VERSION_RULE.toString()}"', POLYMOD);
+			return false;
+		}
+		if (meta.id.startsWith("_"))
+		{
+			Logs.print('Mod "${meta.id}" ignored', POLYMOD);
+			return false;
+		}
+
+		return true;
 	}
 
 	public static function loadJson()

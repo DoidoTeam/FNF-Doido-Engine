@@ -1,0 +1,34 @@
+{
+    "category": "Example Team",
+    "classic": false,
+    "credits": [
+        {
+            "name": "Example Person A",
+            "icon": "null",
+            "color": "0xFFFFFFFF",
+            "info": "Example Info",
+            "link": "https://google.com"
+        },
+        {
+            "name": "Example Person B",
+            "icon": "null",
+            "color": "0xFFFFFFFF",
+            "info": "Example Info",
+            "link": "https://google.com"
+        },
+        {
+            "name": "Example Person C",
+            "icon": "null",
+            "color": "0xFFFFFFFF",
+            "info": "Example Info",
+            "link": "https://google.com"
+        },
+        {
+            "name": "Example Person D",
+            "icon": "null",
+            "color": "0xFFFFFFFF",
+            "info": "Example Info",
+            "link": "https://google.com"
+        }
+    ]
+}

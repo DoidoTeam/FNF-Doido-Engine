@@ -1,0 +1,37 @@
+{
+    "reload": false,
+    "initialState": "states.TitleState",
+    "redirects": [
+        {
+            "origin": "states.menus.MainMenuState",
+            "target": "ExampleState"
+        }
+    ],
+    "options": [
+        {
+            "name": "Test Checkmark",
+            "value": false,
+            "desc": "Test Description"
+        },
+        {
+            "name": "Test Selector",
+            "value": "Option 1",
+            "options": [
+                "Option 1",
+                "Option 2",
+                "Option 3"
+            ]
+        },
+        {
+            "name": "Test Slider",
+            "value": 50,
+            "limits": [
+                0,
+                100
+            ],
+            "step": 1,
+            "hold": 2,
+            "playStateWarning": true
+        }
+    ]
+}
