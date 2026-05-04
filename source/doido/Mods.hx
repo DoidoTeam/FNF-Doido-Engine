@@ -72,7 +72,7 @@ class Mods
 	public static var modConfigs:Map<String, ModConfig> = [];
 	public static var enabledMods:Array<String> = [];
 
-	public static final API_VERSION:Version = "0.2.1";
+	public static final API_VERSION:Version = "0.2.2";
 	public static final MOD_ROOT:String = "mods";
 	public static final ASSETS_ROOT:String = "assets";
 	public static final VERSION_RULE:VersionRule = '>=${API_VERSION.major}.${API_VERSION.minor}.0 <=${API_VERSION}';
@@ -137,7 +137,6 @@ class Mods
 				setMod(meta.id, false); // just to be safe
 			scanned.push(meta.id);
 		}
-		trace(scanned);
 
 		for (mod in modList.mods)
 			if (!scanned.contains(mod.name))
@@ -149,14 +148,17 @@ class Mods
 
 	public static function validateMod(meta:ModMetadata):Bool
 	{
+		var error:PolymodError = null;
+
 		if (!VersionUtil.match(meta.apiVersion, VERSION_RULE))
-		{
-			Logs.print('Mod "${meta.id}" was built for incompatible API version ${meta.apiVersion.toString()}, expected "${VERSION_RULE.toString()}"', POLYMOD);
-			return false;
-		}
+			error = new PolymodError(ERROR, VERSION_CONFLICT_API,
+				'Mod "${meta.id}" was built for an incompatible API version ${meta.apiVersion.toString()}, expected "${VERSION_RULE.toString()}"', SCAN);
 		if (meta.id.startsWith("_"))
+			error = new PolymodError(WARNING, CUSTOM_HIDE, 'Mod "${meta.id}" ignored', SCAN);
+
+		if (error != null)
 		{
-			Logs.print('Mod "${meta.id}" ignored', POLYMOD);
+			onError(error);
 			return false;
 		}
 
@@ -171,7 +173,7 @@ class Mods
 		}
 		catch (e)
 		{
-			Logs.print('Error loading Mod List: $e', ERROR);
+			onError(new PolymodError(ERROR, CUSTOM_SHOW, 'Error loading Mod List: $e', SCAN));
 			modList = {mods: []};
 		}
 	}
@@ -200,7 +202,7 @@ class Mods
 			}
 			catch (e)
 			{
-				Logs.print('MOD CONFIG LOAD ERROR: $e', POLYMOD);
+				onError(new PolymodError(WARNING, CUSTOM_HIDE, 'Error loading Mod Config: $e', SCAN));
 			}
 
 			config.redirects = config.redirects ?? [];
@@ -308,11 +310,23 @@ class Mods
 	}
 
 	static var skippedErrors:Array<PolymodErrorType> = [NOTICE];
+	public static var queuedErrors:Array<String> = [];
 
 	public static function onError(err:PolymodError):Void
 	{
 		if (skippedErrors.contains(err.severity))
 			return;
+
+		if (!queuedErrors.contains(err.message))
+		{
+			switch (err.code)
+			{
+				case CUSTOM_HIDE | MISSING_ICON:
+					//
+				default:
+					queuedErrors.push(err.message);
+			}
+		}
 
 		Logs.print('Polymod.${(cast err.origin).toUpperCase()} | ${err.message}', POLYMOD, true, true, false);
 	}

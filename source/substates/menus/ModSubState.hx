@@ -1,13 +1,13 @@
 package substates.menus;
 
 #if MODS_FOLDER
-import flixel.graphics.FlxGraphic;
 import flixel.FlxSprite;
 import doido.objects.Alphabet;
 import doido.Mods;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
+import flixel.util.FlxTimer;
 
 typedef ModOption =
 {
@@ -36,19 +36,24 @@ class ModSubState extends MusicBeatSubState
 
 		add(namesGrp = new FlxTypedGroup<ModAlphabet>());
 
-		var bottomBar = new FlxSprite().makeColor(FlxG.width + 10, 50, 0xFF000000);
-		bottomBar.screenCenter(X);
-		bottomBar.y = FlxG.height - bottomBar.height;
-		bottomBar.alpha = 0.4;
-		add(bottomBar);
-
-		var reorderTxt = new FlxText(8, 8, 0, "HOLD SHIFT TO REORDER MODS");
-		reorderTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, CENTER);
-		reorderTxt.screenCenter(X);
-		reorderTxt.y = FlxG.height - reorderTxt.height - 8;
-		add(reorderTxt);
+		var resetTxt = new FlxText(0, 0, 0, "PRESS RESET TO DELETE SONG SCORE");
+		resetTxt.setFormat(Main.globalFont, 28, 0xFFFFFFFF, FlxTextAlign.RIGHT);
+		var resetBg = new FlxSprite().makeGraphic(Math.floor(FlxG.width * 1.5), Math.floor(resetTxt.height + 8), 0xFF000000);
+		resetBg.alpha = 0.4;
+		resetBg.screenCenter(X);
+		resetBg.y = FlxG.height - resetBg.height;
+		resetTxt.screenCenter(X);
+		resetTxt.y = resetBg.y + 4;
+		add(resetBg);
+		add(resetTxt);
 
 		reloadMods();
+
+		new FlxTimer().start(0.1, function(tmr:FlxTimer)
+		{
+			if (Mods.queuedErrors.length > 0)
+				showErrors();
+		});
 	}
 
 	public function reloadMods()
@@ -177,6 +182,8 @@ class ModSubState extends MusicBeatSubState
 					curSelected = mods.length - 2;
 					changeSelection();
 					updatePos();
+					if (Mods.queuedErrors.length > 0)
+						showErrors();
 			}
 		}
 		else
@@ -189,6 +196,17 @@ class ModSubState extends MusicBeatSubState
 					alphabet.checkmark.animation.play(Std.string(curMod.enabled));
 			});
 		}
+	}
+
+	function showErrors()
+	{
+		var text = "Found errors while loading Mods:\n";
+		for (error in Mods.queuedErrors)
+		{
+			text += '- $error\n';
+		}
+		Main.alert(text, "Mod Load Error");
+		Mods.queuedErrors = [];
 	}
 
 	var curMod(get, never):ModOption;
