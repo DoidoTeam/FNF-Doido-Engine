@@ -91,7 +91,7 @@ class Stage
 				bg.updateHitbox();
 				bg.scrollFactor.set();
 				bg.screenCenter();
-				bg.setZ(0);
+				bg.zIndex = 0;
 				add(bg);
 		}
 	}

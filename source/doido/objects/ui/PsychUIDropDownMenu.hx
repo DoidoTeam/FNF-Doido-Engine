@@ -48,7 +48,7 @@ class PsychUIDropDownMenu extends PsychUIInputText
 		button = new DoidoAnimatedButton('editors/charting/drop$ups', 'buttondrop$ups');
 		button.x = bg.width - button.width;
 		button.y = -1;
-		button.setZ(10);
+		button.zIndex = 10;
 		add(button);
 
 		fieldWidth -= Std.int(button.width);

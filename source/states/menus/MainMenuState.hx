@@ -54,18 +54,18 @@ class MainMenuState extends MusicBeatState
 		bg.scale.set(1.1, 1.1);
 		bg.updateHitbox();
 		bg.screenCenter(X);
-		bg.setZ(0);
+		bg.zIndex = 0;
 		add(bg);
 
 		bgMag = new FlxSprite().loadGraphic(Assets.image('menuBGMagenta'));
 		bgMag.scale.set(bg.scale.x, bg.scale.y);
 		bgMag.updateHitbox();
 		bgMag.visible = false;
-		bgMag.setZ(1);
+		bgMag.zIndex = 1;
 		add(bgMag);
 
 		grpOptions = new FlxTypedGroup<FlxSprite>();
-		grpOptions.setZ(10);
+		grpOptions.zIndex = 10;
 		add(grpOptions);
 
 		var optionSize:Float = 1;
@@ -117,7 +117,7 @@ class MainMenuState extends MusicBeatState
 		splashTxt.setFormat(Main.globalFont, 18, 0xFFFFFFFF, LEFT);
 		splashTxt.setBorderStyle(OUTLINE, 0xFF000000, 1.5);
 		splashTxt.y = FlxG.height - splashTxt.height - 4;
-		splashTxt.setZ(20);
+		splashTxt.zIndex = 20;
 		add(splashTxt);
 
 		callScript("createPost");

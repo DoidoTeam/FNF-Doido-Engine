@@ -88,21 +88,21 @@ class FreeplayState extends MusicBeatState
 		bg.updateHitbox();
 		bg.screenCenter(X);
 		bg.x -= 50;
-		bg.setZ(0);
+		bg.zIndex = 0;
 		add(bg);
 
 		add(namesGrp = new FlxTypedGroup<FreeplayAlphabet>());
-		namesGrp.setZ(10);
+		namesGrp.zIndex = 10;
 
 		topBar = new FlxSprite().makeColor(FlxG.width + 10, 50, 0xFF000000);
 		topBar.screenCenter(X);
-		topBar.setZ(100);
+		topBar.zIndex = 100;
 		add(topBar);
 
 		bottomBar = new FlxSprite().makeColor(FlxG.width + 10, 50, 0xFF000000);
 		bottomBar.screenCenter(X);
 		bottomBar.y = FlxG.height - bottomBar.height;
-		bottomBar.setZ(100);
+		bottomBar.zIndex = 100;
 		add(bottomBar);
 
 		diffSelector = new DiffSelector(FREEPLAY);
@@ -111,31 +111,31 @@ class FreeplayState extends MusicBeatState
 		diffSelector.updateHitbox();
 		diffSelector.arrowL.x = diffSelector.leftX;
 		diffSelector.arrowR.x = diffSelector.rightX;
-		diffSelector.setZ(20);
+		diffSelector.zIndex = 20;
 		add(diffSelector);
 
 		titleTxt = new FlxText(8, 6, 0, "FREEPLAY");
 		titleTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, LEFT);
-		titleTxt.setZ(110);
+		titleTxt.zIndex = 110;
 		add(titleTxt);
 
 		nameTxt = new FlxText(8, 6, 0, "WEEK 1");
 		nameTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, RIGHT);
 		nameTxt.x = FlxG.width - nameTxt.width - 6;
-		nameTxt.setZ(110);
+		nameTxt.zIndex = 110;
 		add(nameTxt);
 
 		scoreTxt = new FlxText(8, 8, 0, "HIGHSCORE: ");
 		scoreTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, LEFT);
 		scoreTxt.y = FlxG.height - scoreTxt.height - 8;
-		scoreTxt.setZ(110);
+		scoreTxt.zIndex = 110;
 		add(scoreTxt);
 
 		missesTxt = new FlxText(8, 8, 0, "0 MISSES");
 		missesTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, LEFT);
 		missesTxt.y = FlxG.height - missesTxt.height - 6;
 		missesTxt.x = FlxG.width - missesTxt.width - 6;
-		missesTxt.setZ(110);
+		missesTxt.zIndex = 110;
 		add(missesTxt);
 
 		callScript("createPost");

@@ -293,7 +293,7 @@ class CreditsState extends MusicBeatState
 
 			char.x = ((FlxG.width - char.width) / 2) + Math.sin(daAngle) * 400;
 			char.y = (nameTxt.y - 160 - char.height) + Math.cos(daAngle) * 80;
-			char.setZ(Math.floor(char.y + char.height));
+			char.zIndex = (Math.floor(char.y + char.height));
 		});
 		creditGuys.sort(ZIndex.sort);
 	}

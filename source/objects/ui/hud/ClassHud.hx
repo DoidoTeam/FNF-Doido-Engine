@@ -32,7 +32,7 @@ class ClassHud extends FlxGroup
 
 	public function updateAlphaList(list:Array<FlxSprite>)
 	{
-		for(spr in list)
+		for (spr in list)
 			alphaList.set(spr, spr.alpha);
 	}
 
@@ -73,7 +73,7 @@ class ClassHud extends FlxGroup
 		if (!ratingGrp.members.contains(rating))
 			ratingGrp.add(rating);
 
-		rating.setZ(ratingCount);
+		rating.zIndex = ratingCount;
 		ratingCount++;
 		ratingGrp.members.sort(ZIndex.sortAscending);
 		return rating;
@@ -100,7 +100,7 @@ class ClassHud extends FlxGroup
 			if (!numberGrp.members.contains(number))
 				numberGrp.add(number);
 
-			number.setZ(comboCount);
+			number.zIndex = comboCount;
 			numberArray.push(number);
 		}
 		positionCombo(numberArray);

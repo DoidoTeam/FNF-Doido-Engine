@@ -56,7 +56,7 @@ class Strumline extends FlxGroup
 		{
 			var strum = new StrumNote();
 			strum.reloadStrum(i, skin);
-			strum.setZ(0);
+			strum.zIndex = 0;
 			strums.push(strum);
 			add(strum);
 		}
@@ -68,12 +68,13 @@ class Strumline extends FlxGroup
 	public function addNote(noteData:NoteData)
 	{
 		var holdResolution:Float = this.holdResolution;
-		if (Save.data.lowQuality) holdResolution = 1;
+		if (Save.data.lowQuality)
+			holdResolution = 1;
 
 		var note:Note = cast recycle(Note);
 		note.loadData(noteData, skin);
 		note.reloadSprite();
-		note.setZ(2);
+		note.zIndex = 2;
 		notes.push(note);
 		if (!members.contains(note))
 			add(note);
@@ -100,7 +101,7 @@ class Strumline extends FlxGroup
 				}
 				else if (hold.isHoldEnd)
 					step = 0.5;
-				
+
 				hold.holdStep = step / (hold.isHoldEnd ? 1 : holdResolution);
 
 				hold.holdIndex = holdIndex;
@@ -108,7 +109,7 @@ class Strumline extends FlxGroup
 
 				hold.reloadSprite();
 				hold.holdParent = note;
-				hold.setZ(1);
+				hold.zIndex = 1;
 				notes.push(hold);
 				if (!members.contains(hold))
 					add(hold);
@@ -192,7 +193,7 @@ class Strumline extends FlxGroup
 	{
 		var splash:Splash = cast recycle(Splash);
 		splash.loadData(note, skin);
-		splash.setZ(3);
+		splash.zIndex = 3;
 		splash.x = strums[note.data.lane].x;
 		splash.y = strums[note.data.lane].y;
 		splash.reloadSplash();
@@ -205,7 +206,7 @@ class Strumline extends FlxGroup
 	{
 		var cover:Cover = cast recycle(Cover);
 		cover.loadData(note, skin);
-		cover.setZ(3);
+		cover.zIndex = 3;
 		cover.x = strums[note.data.lane].x;
 		cover.y = strums[note.data.lane].y;
 		cover.strum = strums[note.data.lane];

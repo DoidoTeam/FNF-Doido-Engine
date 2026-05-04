@@ -158,15 +158,15 @@ class PlayState extends MusicBeatState implements Playable
 
 		bf = new CharGroup(true);
 		bf.addChar(META.player1, true);
-		bf.setZ(10);
+		bf.zIndex = 10;
 
 		dad = new CharGroup(false);
 		dad.addChar(META.player2, true);
-		dad.setZ(9);
+		dad.zIndex = 9;
 
 		gf = new CharGroup(false);
 		gf.addChar(META.gf, true);
-		gf.setZ(8);
+		gf.zIndex = 8;
 
 		characters.push(gf);
 		characters.push(dad);

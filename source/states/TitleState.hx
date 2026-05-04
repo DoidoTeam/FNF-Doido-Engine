@@ -57,7 +57,7 @@ class TitleState extends MusicBeatState
 		gf.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 		gf.x = FlxG.width - gf.width - 20;
 		gf.screenCenter(Y);
-		gf.setZ(0);
+		gf.zIndex = 0;
 		add(gf);
 		gf.animation.play('danceLeft');
 
@@ -65,7 +65,7 @@ class TitleState extends MusicBeatState
 		logoBump.loadSparrow('menu/title/logoBumpin');
 		logoBump.animation.addByPrefix('bump', 'logo bumpin', 24, false);
 		logoBump.animation.play('bump');
-		logoBump.setZ(10);
+		logoBump.zIndex = 10;
 		add(logoBump);
 
 		enterTxt = new FlxSprite(500 / 4);
@@ -74,16 +74,16 @@ class TitleState extends MusicBeatState
 		enterTxt.animation.addByPrefix('pressed', 'ENTER PRESSED', 24, true);
 		enterTxt.animation.play('idle');
 		enterTxt.y = FlxG.height - enterTxt.height - 60;
-		enterTxt.setZ(20);
+		enterTxt.zIndex = 20;
 		add(enterTxt);
 
 		blackScreen = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFF000000);
 		blackScreen.screenCenter();
-		blackScreen.setZ(100);
+		blackScreen.zIndex = 100;
 		add(blackScreen);
 
 		textGroup = new FlxTypedGroup<Alphabet>();
-		textGroup.setZ(110);
+		textGroup.zIndex = 110;
 		add(textGroup);
 
 		var ngPostFix:String = FlxG.random.getObject(["", "_classic", "_animated"], [1, 0.2, 0.1]);
@@ -97,7 +97,7 @@ class TitleState extends MusicBeatState
 		}
 		ngSpr.screenCenter(X);
 		ngSpr.visible = false;
-		ngSpr.setZ(120);
+		ngSpr.zIndex = 120;
 		add(ngSpr);
 
 		callScript("createPost");

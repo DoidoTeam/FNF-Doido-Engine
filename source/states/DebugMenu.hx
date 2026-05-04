@@ -78,7 +78,7 @@ class DebugMenu extends MusicBeatState
 
 		// zindex test...
 		var bg2 = new FlxSprite().loadGraphic(Assets.image('menuDesat'));
-		bg2.setZ(-1);
+		bg2.zIndex = -1;
 		add(bg2);
 
 		sort(ZIndex.sort);

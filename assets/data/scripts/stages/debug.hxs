@@ -24,7 +24,7 @@ function create()
     bandu.antialiasing = false;
     add(bandu);
 
-    setZ(playState.bf, 16);
+    playState.bf.zIndex = 16;
 
     // preload
     Assets.sound("editors/clank");
@@ -75,7 +75,7 @@ function update(elapsed)
     punchDir = (bandu.x > prevX) ? 1 : -1;
 
     bandu.scale.x = bandu.scale.y = 1.0 + Math.cos(elapsedtime) * 0.3;
-    setZ(bandu, bandu.scale.x < 1.0 ? 15 : 17);
+    bandu.zIndex = bandu.scale.x < 1.0 ? 15 : 17;
 }
 
 // good job you made him sad

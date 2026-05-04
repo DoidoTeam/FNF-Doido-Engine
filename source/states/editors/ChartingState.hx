@@ -1563,7 +1563,7 @@ class ChartingState extends MusicBeatState
 			if (noteData.stepTime < curStepFloat)
 				note.alpha = 0.4;
 
-			note.setZ(2);
+			note.zIndex = 2;
 			note.setPosition(grid.gridX + (note.data.lane * GRID_SIZE) + (note.data.strumline * GRID_SIZE * GRID_LANES / 2), noteY);
 
 			if (!renderNotes.members.contains(note))
@@ -1584,7 +1584,7 @@ class ChartingState extends MusicBeatState
 				hold.shader = note.shader;
 
 				hold.holdParent = note; // idk you might need it
-				hold.setZ(1);
+				hold.zIndex = 1;
 
 				if (!renderNotes.members.contains(hold))
 					renderNotes.add(hold);

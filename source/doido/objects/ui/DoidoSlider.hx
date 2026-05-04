@@ -45,7 +45,7 @@ class DoidoSlider extends FlxSpriteGroup
 		slider = new FlxSprite().loadImage("editors/charting/slider" + (vertical ? "-vertical" : ""));
 		slider.x = (bar.width / 2) - (slider.width / 2);
 		slider.y = (bar.height / 2) - (slider.height / 2);
-		slider.setZ(10);
+		slider.zIndex = 10;
 		add(slider);
 
 		value = defValue;
