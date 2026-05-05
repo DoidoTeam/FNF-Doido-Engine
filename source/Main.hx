@@ -42,6 +42,12 @@ class Main extends Sprite
 
 	function initGame()
 	{
+		#if android
+		Sys.setCwd(haxe.io.Path.addTrailingSlash(extension.androidtools.content.Context.getExternalFilesDir()));
+		if (!sys.FileSystem.isDirectory("mods"))
+			sys.FileSystem.createDirectory("mods");
+		#end
+
 		// adding the crash handler
 		openfl.Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 

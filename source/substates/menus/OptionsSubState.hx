@@ -365,7 +365,7 @@ class OptionsSubState extends MusicBeatSubState
 				},
 			],
 			#if MODS_FOLDER
-			"Mods" => getModOptions()
+			"Mods" => getModOptions(),
 			#end
 			#if TOUCH_CONTROLS
 			"Mobile" => [

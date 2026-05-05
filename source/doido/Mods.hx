@@ -74,7 +74,7 @@ class Mods
 
 	public static final API_VERSION:Version = "0.2.2";
 	public static final MOD_ROOT:String = "mods";
-	public static final ASSETS_ROOT:String = "assets";
+	public static final ASSETS_ROOT:Null<String> = null; // null defaults to assets, android only works like this
 	public static final VERSION_RULE:VersionRule = '>=${API_VERSION.major}.${API_VERSION.minor}.0 <=${API_VERSION}';
 
 	public static final ignoredFiles:Array<String> = [
@@ -169,11 +169,11 @@ class Mods
 	{
 		try
 		{
-			modList = cast haxe.Json.parse(openfl.Assets.getText("mods/mods.json").trim());
+			modList = cast getJSON("mods");
 		}
 		catch (e)
 		{
-			onError(new PolymodError(ERROR, CUSTOM_SHOW, 'Error loading Mod List: $e', SCAN));
+			onError(new PolymodError(ERROR, CUSTOM_HIDE, 'Error loading Mod List: $e', SCAN));
 			modList = {mods: []};
 		}
 	}
@@ -417,10 +417,10 @@ class Mods
 		return options;
 	}
 
-	public static function getJSON(key:String, mod:String):Dynamic
+	public static function getJSON(key:String, ?mod:String):Dynamic
 		return haxe.Json.parse(Polymod.getFileSystem().getFileContent(getPath('$key.json', mod)).trim());
 
-	public static inline function getPath(key:String, mod:String):String
-		return 'mods/$mod/$key';
+	public static inline function getPath(key:String, ?mod:String):String
+		return 'mods/${mod == null ? '' : '$mod/'}$key';
 }
 #end

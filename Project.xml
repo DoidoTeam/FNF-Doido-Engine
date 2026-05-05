@@ -33,7 +33,7 @@
 	<define name="TOUCH_CONTROLS"		if="mobile"/>
 	<define name="SCREENSHOT_FEATURE" 	if="cpp" unless="mobile"/>
 	<define name="THREAD_LOADING" 	    if="cpp"/>
-	<define name="MODS_FOLDER" 	    	if="cpp" unless="mobile"/>
+	<define name="MODS_FOLDER" 	    	if="cpp" />
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
