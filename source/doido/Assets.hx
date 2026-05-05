@@ -59,6 +59,27 @@ class Assets
 	public static inline function fileExists(path:String, ?library:String = "", type:Asset = OTHER):Bool
 		return whichExists(getPath(path, library), type) >= 0;
 
+	public static function createDir(path:String)
+	{
+		#if sys
+		if (!sys.FileSystem.exists(path))
+			sys.FileSystem.createDirectory(path);
+		#else
+		Logs.print("Operation not supported on this target");
+		#end
+	}
+
+	public static function openFolder(path:String)
+	{
+		#if android
+		doido.system.android.Android.openFolder(path);
+		#elseif windows
+		Sys.command("explorer.exe /n, /e, \"" + Sys.getCwd().substring(0, Sys.getCwd().length - 1) + "\\" + path + "\"");
+		#else
+		Logs.print("Operation not supported on this target");
+		#end
+	}
+
 	public static function fileBrowse(onComplete:openfl.net.FileReference->Void, ?filter:openfl.net.FileFilter, ?onError:String->Void):Void
 	{
 		var fr = new openfl.net.FileReference();

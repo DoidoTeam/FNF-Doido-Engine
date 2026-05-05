@@ -21,13 +21,7 @@ jobs:
 
       - uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.3
-
-      - name: Read Version
-        id: ver
-        uses: jaywcjlove/github-action-read-file@v2.0.0
-        with:
-          path: ver.txt
+          haxe-version: 4.3.7
             
       # Runs a set of commands using the runners shell
       - name: Install Haxelib
@@ -36,11 +30,11 @@ jobs:
             haxelib --global run hxpkg install --force
         shell: cmd
       - name: Compile
-        run: haxelib run lime build windows --app-version="${{ steps.ver.outputs.content }}-${{ github.run_id}}"
+        run: haxelib run lime build windows
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.4.0
         with:
-          name: DoidoEngine-Windows-${{ steps.ver.outputs.content }}-${{ github.run_id}}
+          name: DoidoEngine-Windows-${{ github.run_id}}
           path: export/release/windows/bin
 
   build-android:
@@ -52,13 +46,8 @@ jobs:
 
       - uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.6
+          haxe-version: 4.3.7
 
-      - name: Read Version
-        id: ver
-        uses: jaywcjlove/github-action-read-file@v2.0.0
-        with:
-          path: ver.txt
       # Runs a set of commands using the runners shell
       - name: Install Haxelib
         run: |
@@ -72,9 +61,9 @@ jobs:
           haxelib run lime config ANDROID_SETUP true
       - name: Compile
         run:
-          haxelib run lime build android --app-version="${{ steps.ver.outputs.content }}-${{ github.run_id}}"
+          haxelib run lime build android
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.4.0
         with:
-          name: DoidoEngine-android-${{ steps.ver.outputs.content }}-${{ github.run_id}}
+          name: DoidoEngine-android-${{ github.run_id}}
           path: 'export/release/android/bin/app/build/outputs/apk/debug'

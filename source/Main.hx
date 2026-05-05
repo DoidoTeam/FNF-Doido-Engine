@@ -23,6 +23,7 @@ class Main extends Sprite
 	var framerate:Int = 60;
 	var skipSplash:Bool = true;
 
+	public static final sysPath:String = "DoidoEngine";
 	public static final savePath:String = "DiogoTV/DEPudim";
 	public static final internalVer:String = "Alpha 1";
 	public static var fpsCounter:FPSCounter;
@@ -31,26 +32,16 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+		#if android initAndroid(); #end
 		initGame();
-
-		#if desktop
-		addChild(fpsCounter = new FPSCounter());
-		#end
-
+		#if desktop addChild(fpsCounter = new FPSCounter()); #end
 		fixes();
 	}
 
 	function initGame()
 	{
-		#if android
-		Sys.setCwd(haxe.io.Path.addTrailingSlash(extension.androidtools.content.Context.getExternalFilesDir()));
-		if (!sys.FileSystem.isDirectory("mods"))
-			sys.FileSystem.createDirectory("mods");
-		#end
-
 		// adding the crash handler
 		openfl.Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
-
 		Logs.init(); // custom logging shit
 
 		game = new FlxGame(gameWidth, gameHeight, Init, framerate, framerate, skipSplash);
@@ -59,6 +50,21 @@ class Main extends Sprite
 		game._customSoundTray = SoundTray;
 		addChild(game);
 	}
+
+	#if android
+	function initAndroid()
+	{
+		if (!extension.androidtools.os.Environment.isExternalStorageManager())
+		{
+			extension.androidtools.Settings.requestSetting('MANAGE_APP_ALL_FILES_ACCESS_PERMISSION');
+			Sys.exit(0);
+		}
+
+		var path = '${extension.androidtools.os.Environment.getExternalStorageDirectory()}/$sysPath';
+		Assets.createDir(path);
+		Sys.setCwd(path);
+	}
+	#end
 
 	function onUncaughtError(e:UncaughtErrorEvent):Void
 	{
@@ -248,8 +254,12 @@ class Main extends Sprite
 
 	public static function alert(?message:String, ?title:String)
 	{
+		#if android
+		extension.androidtools.Tools.showAlertDialog(title, message, {name: "Ok", func: null});
+		#else
 		var window = lime.app.Application.current.window;
 		window.alert(message, title);
+		#end
 	}
 }
 

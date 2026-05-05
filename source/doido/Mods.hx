@@ -72,7 +72,7 @@ class Mods
 	public static var modConfigs:Map<String, ModConfig> = [];
 	public static var enabledMods:Array<String> = [];
 
-	public static final API_VERSION:Version = "0.2.2";
+	public static final API_VERSION:Version = "0.2.3";
 	public static final MOD_ROOT:String = "mods";
 	public static final ASSETS_ROOT:Null<String> = null; // null defaults to assets, android only works like this
 	public static final VERSION_RULE:VersionRule = '>=${API_VERSION.major}.${API_VERSION.minor}.0 <=${API_VERSION}';
@@ -105,6 +105,7 @@ class Mods
 
 	public static function init()
 	{
+		Assets.createDir("mods");
 		PolymodConfig.modMetadataFile = 'meta.json';
 		PolymodConfig.modIconFile = 'icon.png';
 		Polymod.init({
@@ -152,9 +153,9 @@ class Mods
 
 		if (!VersionUtil.match(meta.apiVersion, VERSION_RULE))
 			error = new PolymodError(ERROR, VERSION_CONFLICT_API,
-				'Mod "${meta.id}" was built for an incompatible API version ${meta.apiVersion.toString()}, expected "${VERSION_RULE.toString()}"', SCAN);
+				'"${meta.id}" API version ${meta.apiVersion.toString()} is incompatible, expected "${VERSION_RULE.toString()}"', SCAN);
 		if (meta.id.startsWith("_"))
-			error = new PolymodError(WARNING, CUSTOM_HIDE, 'Mod "${meta.id}" ignored', SCAN);
+			error = new PolymodError(WARNING, CUSTOM_HIDE, '"${meta.id}" ignored', SCAN);
 
 		if (error != null)
 		{

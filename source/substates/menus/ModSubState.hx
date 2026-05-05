@@ -22,7 +22,7 @@ class ModSubState extends MusicBeatSubState
 	public var bg:FlxSprite;
 	public var namesGrp:FlxTypedGroup<ModAlphabet>;
 	public var mods:Array<ModOption>;
-	public var systemOptions:Array<String> = ["reload list", #if windows "open folder" #end];
+	public var systemOptions:Array<String> = ["reload list", #if (windows || android) "open folder" #end];
 
 	var curSelected:Int = 0;
 
@@ -173,9 +173,7 @@ class ModSubState extends MusicBeatSubState
 			switch (curMod.id)
 			{
 				case "open folder":
-					#if windows
-					Sys.command("explorer.exe /n, /e, \"" + Sys.getCwd().substring(0, Sys.getCwd().length - 1) + "\\" + Mods.MOD_ROOT + "\"");
-					#end
+					Assets.openFolder(Mods.MOD_ROOT);
 				case "reload list":
 					Mods.scan();
 					reloadMods();
