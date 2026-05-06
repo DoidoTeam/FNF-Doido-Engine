@@ -7,7 +7,7 @@ import flixel.util.FlxSort;
 class ZIndex
 {
 	public static inline function sort(a:Int, bas1:FlxBasic, bas2:FlxBasic):Int
-		return FlxSort.byValues(a, bas1.zIndex, bas2.zIndex);
+		return FlxSort.byValues(a, bas1?.zIndex, bas2?.zIndex);
 
 	public static inline function sortAscending(bas1:FlxBasic, bas2:FlxBasic):Int
 		return sort(-1, bas1, bas2);
