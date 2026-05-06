@@ -34,6 +34,7 @@
 	<define name="SCREENSHOT_FEATURE" 	if="cpp" unless="mobile"/>
 	<define name="THREAD_LOADING" 	    if="cpp"/>
 	<define name="MODS_FOLDER" 	    	if="cpp" />
+	<define name="EXTERNAL_PATH" 	    if="MODS_FOLDER" unless="desktop"/>
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
@@ -80,7 +81,6 @@
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!-- <haxeflag name="macro" value="addMetadata('@:build(doido.system.DoidoMacro.buildFlxBasic())', 'flixel.FlxBasic')" /> -->
-
 
 	<section if="android">
 		<java path="source/doido/system/android/java" />

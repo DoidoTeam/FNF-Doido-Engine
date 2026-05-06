@@ -38,7 +38,7 @@ class MainMenuState extends MusicBeatState
 		super();
 		addOption("story mode", () -> switchState(new states.menus.StoryMenuState()));
 		addOption("freeplay", () -> switchState(new FreeplayState()));
-		addOption("donate", () -> #if android openSubState(new substates.menus.ModSubState()) #else switchState(new DebugMenu()) #end);
+		addOption("donate", () -> #if (android && MODS_FOLDER) openSubState(new substates.menus.ModSubState()) #else switchState(new DebugMenu()) #end);
 		addOption("options", () -> openSubState(new substates.menus.OptionsSubState()));
 		addOption("credits", () -> switchState(new states.menus.CreditsState()));
 		loadScript();

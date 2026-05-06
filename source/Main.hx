@@ -54,15 +54,23 @@ class Main extends Sprite
 	#if android
 	function initAndroid()
 	{
-		if (!extension.androidtools.os.Environment.isExternalStorageManager())
+		#if EXTERNAL_PATH
+		var launched:Bool = false;
+		while (!extension.androidtools.os.Environment.isExternalStorageManager())
 		{
-			extension.androidtools.Settings.requestSetting('MANAGE_APP_ALL_FILES_ACCESS_PERMISSION');
-			Sys.exit(0);
+			if (!launched)
+			{
+				launched = true;
+				extension.androidtools.Settings.requestSetting('MANAGE_APP_ALL_FILES_ACCESS_PERMISSION');
+			}
 		}
 
 		var path = '${extension.androidtools.os.Environment.getExternalStorageDirectory()}/$sysPath';
 		Assets.createDir(path);
 		Sys.setCwd(path);
+		#else
+		Sys.setCwd(haxe.io.Path.addTrailingSlash(extension.androidtools.content.Context.getExternalFilesDir()));
+		#end
 	}
 	#end
 
