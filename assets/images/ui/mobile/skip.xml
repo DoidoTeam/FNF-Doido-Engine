@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="skip.png">
+	<!-- Created with Adobe Animate version 20.0.3.25487 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="skip0000" x="2" y="2" width="121" height="118"/>
+	<SubTexture name="skip0001" x="125" y="2" width="121" height="118"/>
+</TextureAtlas>
