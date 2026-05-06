@@ -380,6 +380,7 @@ class OptionsSubState extends MusicBeatSubState
 						else
 							return "Note layout inspired by older FNF mobile engines,\nwith Hitboxes that cover the whole screen.";
 					},
+					playStateWarning: true
 				},
 				{
 					name: "Invert Swipe X",
