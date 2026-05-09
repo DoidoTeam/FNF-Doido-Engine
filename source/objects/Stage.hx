@@ -101,14 +101,22 @@ class Stage
 		stageItems.push(obj);
 	}
 
-	inline function getZ(bas:FlxBasic)
-		ZIndex.getZ(bas);
+	inline function getZ(bas:FlxBasic):Int
+	{
+		Logs.print(ZIndex.deprecatedWarning, WARNING);
+		return bas.zIndex;
+	}
 
 	inline function setZ(bas:FlxBasic, val:Int)
-		ZIndex.setZ(bas, val);
+	{
+		Logs.print(ZIndex.deprecatedWarning, WARNING);
+		bas.zIndex = val;
+	}
 
 	inline function removeZ(bas:FlxBasic)
-		ZIndex.removeZ(bas);
+	{
+		Logs.print(ZIndex.deprecatedWarning, WARNING);
+	}
 
 	// Scripts
 	public var loadedScript:Iris = null;

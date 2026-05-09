@@ -259,6 +259,21 @@ class OptionsSubState extends MusicBeatSubState
 					},
 				},
 				{
+					name: "Splash Notes",
+					get: () -> Save.data.splashNotes,
+					set: (s:String) -> Save.data.splashNotes = s,
+					options: ["ALWAYS", "PLAYER ONLY", "OFF"],
+					desc: (s:String) ->
+					{
+						if (s == "OFF") return "";
+						return "Spawns a splash on your strumline if you press a note with a sick rating." + switch (s.toLowerCase())
+						{
+							case "player only": "\nOpponents only spawn";
+							default: "\nSpawns a splash on your opponent";
+						}
+					},
+				},
+				{
 					name: "Hitsound SFX",
 					get: () -> Save.data.hitsound,
 					set: (s:String) -> Save.data.hitsound = s,

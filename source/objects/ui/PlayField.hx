@@ -356,11 +356,21 @@ class PlayField extends FlxGroup
 				strum.playConfirm(note);
 			}
 
-			if (diff <= Timings.getTiming("sick").diff)
-				strumline.addSplash(note);
+			var splashEnabled:Bool = true;
+			switch(Save.data.splashNotes)
+			{
+				case "PLAYER ONLY": if (!strumline.isPlayer) splashEnabled = false;
+				case "OFF": splashEnabled = false;
+			}
+
+			if (splashEnabled)
+			{
+				if (diff <= Timings.getTiming("sick").diff || strumline.botplay)
+					strumline.addSplash(note);
+			}
 
 			if (note.data.length > 0)
-				strumline.addCover(note);
+				strumline.addCover(note, splashEnabled);
 		}
 		else
 		{

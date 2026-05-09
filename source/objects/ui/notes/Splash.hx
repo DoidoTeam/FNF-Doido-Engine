@@ -65,6 +65,7 @@ class Splash extends BaseSplash
 
 class Cover extends BaseSplash
 {
+	public var splashEnabled:Bool = true;
 	public var strum:StrumNote = null;
 
 	override public function reloadSplash()
@@ -140,7 +141,7 @@ class Cover extends BaseSplash
 				if (animation.curAnim.name != "splash")
 				{
 					// trace(note.holdHitPercent);
-					if (note.holdHitPercent < Timings.timings.get("sick").hold)
+					if (note.holdHitPercent < Timings.timings.get("sick").hold || !splashEnabled)
 						kill();
 					else
 						playAnim("splash");

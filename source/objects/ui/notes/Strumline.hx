@@ -202,10 +202,11 @@ class Strumline extends FlxGroup
 		sort(ZIndex.sort);
 	}
 
-	public function addCover(note:Note)
+	public function addCover(note:Note, splashEnabled:Bool = true)
 	{
 		var cover:Cover = cast recycle(Cover);
 		cover.loadData(note, skin);
+		cover.splashEnabled = splashEnabled;
 		cover.zIndex = 3;
 		cover.x = strums[note.data.lane].x;
 		cover.y = strums[note.data.lane].y;
