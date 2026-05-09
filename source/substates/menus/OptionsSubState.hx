@@ -102,6 +102,21 @@ class OptionsSubState extends MusicBeatSubState
 					playStateWarning: true,
 				},
 				{
+					name: "Splash Notes",
+					get: () -> Save.data.splashNotes,
+					set: (s:String) -> Save.data.splashNotes = s,
+					options: ["ALWAYS", "PLAYER ONLY", "OFF"],
+					desc: (s:String) ->
+					{
+						if (s == "OFF") return "";
+
+						if (s == "PLAYER ONLY") return "Spawns a splash on your strumline if\nyou press a note with a sick rating.";
+
+						return "Spawns a splash on your strumline if you press a\nnote with a sick rating."
+						+ " Every note your opponent hit\nwill spawn a splash on their strumline.";
+					},
+				},
+				{
 					name: "Downscroll",
 					get: () -> Save.data.downscroll,
 					set: (b:Bool) -> Save.data.downscroll = b,
@@ -256,21 +271,6 @@ class OptionsSubState extends MusicBeatSubState
 							return "Transitions between states will play faster.";
 						else
 							return "Transitions between states will play slower.";
-					},
-				},
-				{
-					name: "Splash Notes",
-					get: () -> Save.data.splashNotes,
-					set: (s:String) -> Save.data.splashNotes = s,
-					options: ["ALWAYS", "PLAYER ONLY", "OFF"],
-					desc: (s:String) ->
-					{
-						if (s == "OFF") return "";
-						return "Spawns a splash on your strumline if you press a note with a sick rating." + switch (s.toLowerCase())
-						{
-							case "player only": "\nOpponents only spawn";
-							default: "\nSpawns a splash on your opponent";
-						}
 					},
 				},
 				{
