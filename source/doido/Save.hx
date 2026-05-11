@@ -34,6 +34,7 @@ class SaveVariables
 	public var gpuCaching:Bool = false;
 	public var antialiasing:Bool = true;
 	public var lowQuality:Bool = false;
+	public var shaders:Bool = true;
 
 	// mobile
 	public var modernControls:Bool = #if TOUCH_CONTROLS true #else false #end;

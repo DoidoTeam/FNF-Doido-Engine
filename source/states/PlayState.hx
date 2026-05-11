@@ -1,5 +1,6 @@
 package states;
 
+import shaders.ShaderCache;
 import doido.objects.DoidoCamera;
 import doido.utils.LerpUtil;
 import flixel.FlxSprite;
@@ -48,6 +49,7 @@ class PlayState extends MusicBeatState implements Playable
 	public var camHUD:DoidoCamera;
 	public var camStrum:DoidoCamera;
 	public var camOther:DoidoCamera;
+	public var shaders:ShaderCache;
 
 	public var camFollow:LerpPoint;
 	public var camDisplace:LerpPoint;
@@ -151,6 +153,7 @@ class PlayState extends MusicBeatState implements Playable
 		camStrum = new DoidoCamera(true, false);
 		camOther = new DoidoCamera(true, false);
 
+		shaders = new ShaderCache();
 		camFollow = new LerpPoint(true);
 		camDisplace = new LerpPoint(true);
 

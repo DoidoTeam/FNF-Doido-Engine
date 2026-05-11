@@ -15,6 +15,7 @@ import openfl.display.BitmapData;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.media.Sound;
+import flixel.addons.display.FlxRuntimeShader;
 
 // am i gonna do something with this?
 enum Asset
@@ -26,6 +27,7 @@ enum Asset
 	JSON;
 	XML;
 	SCRIPT;
+	SHADER;
 	BINARY;
 	OTHER;
 }
@@ -43,6 +45,7 @@ class Assets
 		JSON => ["json"],
 		XML => ["xml"],
 		SCRIPT => ["hx", "hxs", "hxc", "hscript"],
+		SHADER => ["frag", "vert"],
 		BINARY => [""],
 		OTHER => [""] // ?
 	];
@@ -194,6 +197,10 @@ class Assets
 				if (path == null)
 					path = resolvePath('sounds/beep', SOUND);
 				return cast Cache.getSound(path, persist);
+			case SHADER:
+				var shaderArr:Array<String> = [null, null];
+				shaderArr[path.endsWith('frag') ? 0 : 1] = OpenFLAssets.getText(path).trim();
+				return cast new FlxRuntimeShader(shaderArr[0], shaderArr[1]);
 			case TEXT | JSON | XML | SCRIPT:
 				if (path == null)
 					return cast "";
@@ -322,6 +329,9 @@ class Assets
 
 	public static inline function script(key:String, ?library:String = ""):String
 		return getAsset('$key', library, SCRIPT, true);
+
+	public static inline function shader(key:String, ?library:String = ""):FlxRuntimeShader
+		return getAsset('data/shaders/$key', library, SHADER, true);
 
 	public static inline function font(key:String, ?library:String = ""):String
 		return getAsset('fonts/$key', library, FONT);

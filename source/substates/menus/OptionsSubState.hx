@@ -71,7 +71,7 @@ class OptionsSubState extends MusicBeatSubState
 	{
 		super();
 		this.playState = playState;
-		
+
 		#if MODS_FOLDER
 		if (doido.Mods.modOptions.length > 0)
 			optionOrder.push("Mods");
@@ -108,12 +108,14 @@ class OptionsSubState extends MusicBeatSubState
 					options: ["ALWAYS", "PLAYER ONLY", "OFF"],
 					desc: (s:String) ->
 					{
-						if (s == "OFF") return "";
+						if (s == "OFF")
+							return "";
 
-						if (s == "PLAYER ONLY") return "Spawns a splash on your strumline if\nyou press a note with a sick rating.";
+						if (s == "PLAYER ONLY")
+							return "Spawns a splash on your strumline if\nyou press a note with a sick rating.";
 
 						return "Spawns a splash on your strumline if you press a\nnote with a sick rating."
-						+ " Every note your opponent hit\nwill spawn a splash on their strumline.";
+							+ " Every note your opponent hit\nwill spawn a splash on their strumline.";
 					},
 				},
 				{
@@ -209,7 +211,8 @@ class OptionsSubState extends MusicBeatSubState
 				{
 					name: "Change Controls",
 					get: () -> null,
-					set: (s:String) -> {
+					set: (s:String) ->
+					{
 						openSubState(new ControlsSubState(this));
 					},
 				},
@@ -351,6 +354,21 @@ class OptionsSubState extends MusicBeatSubState
 						else
 							return "Every graphic will be stored on your system RAM.\nEnable this if you have a decent graphics card.";
 					},
+				}, {
+					name: "Shaders",
+					get: () -> Save.data.shaders,
+					set: (b:Bool) -> Save.data.shaders = b,
+					desc: (b:Bool) ->
+					{
+						if (b)
+							return "Fancy graphical effects will be displayed.\nDisable this if you experience crashes and other issues.";
+						else
+							return "Fancy graphical effects will not be displayed.\nKeep this off if you experience crashes and other issues.";
+					},
+					updatePlayState: (playState) ->
+					{
+						playState.shaders.enabled = Save.data.shaders;
+					}
 				},
 				#end
 				{
@@ -834,11 +852,7 @@ class OptionsSubState extends MusicBeatSubState
 				lastAlphabet = alphabet.y + alphabet.height;
 			if (alphabet.ID == 0)
 				return;
-			alphabet.x = FlxMath.lerp(
-				alphabet.x,
-				bg.x + (alphabet.hasAttachment ? (bg.width - bgWidth) :  (bg.width - alphabet.width)) / 2,
-				elapsed * 8
-			);
+			alphabet.x = FlxMath.lerp(alphabet.x, bg.x + (alphabet.hasAttachment ? (bg.width - bgWidth) : (bg.width - alphabet.width)) / 2, elapsed * 8);
 		});
 
 		descTxt.y = FlxMath.lerp(descTxt.y, lastAlphabet + 20, elapsed * 8);
