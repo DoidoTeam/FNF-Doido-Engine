@@ -67,3 +67,38 @@ jobs:
         with:
           name: DoidoEngine-android-${{ github.run_id}}
           path: 'export/release/android/bin/app/build/outputs/apk/debug'
+
+  release:
+    needs: [build-windows, build-android]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Delete Previous Dev Release
+        run: |
+          gh release delete 4.0-alpha-latest --yes --cleanup-tag || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: DoidoEngine-Windows-${{ github.run_id }}
+          path: artifacts/windows
+
+      - name: Download Android Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: DoidoEngine-Android-${{ github.run_id }}
+          path: artifacts/android
+
+      - name: Create Pre-Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: 4.0-alpha-latest
+          name: "4.0 Alpha (Latest)"
+          prerelease: true
+          generate_release_notes: true
+          files: |
+            artifacts/windows/DoidoEngine-Windows.zip
+            artifacts/android/DoidoEngine-Android.zip
