@@ -395,6 +395,7 @@ class OptionsSubState extends MusicBeatSubState
 						else
 							return "";
 					},
+					playStateWarning: true
 				},
 			],
 			#if MODS_FOLDER
