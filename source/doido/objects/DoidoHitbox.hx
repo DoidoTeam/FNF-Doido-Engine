@@ -84,14 +84,11 @@ class DoidoHitbox extends FlxSprite implements IFlxInput
 
 		if (FlxG.mouse.pressed)
 		{
-			for (camera in cameras)
-			{
-				var pos:FlxPoint = FlxG.mouse.getViewPosition(camera);
-				var overlap = overlapsPoint(pos);
-				pos.put();
-				if (overlap)
-					return true;
-			}
+			var pos:FlxPoint = FlxG.mouse.getViewPosition(MusicBeat.getTopCamera());
+			var overlap = overlapsPoint(pos);
+			pos.put();
+			if (overlap)
+				return true;
 		}
 
 		return false;
@@ -103,16 +100,13 @@ class DoidoHitbox extends FlxSprite implements IFlxInput
 		var touches:Array<FlxTouch> = FlxG.touches.list;
 		if (touches != null && touches.length != 0)
 		{
-			for (camera in cameras)
+			for (touch in touches)
 			{
-				for (touch in touches)
-				{
-					var pos:FlxPoint = touch.getViewPosition(camera);
-					var overlap = overlapsPoint(pos);
-					pos.put();
-					if (overlap)
-						return true;
-				}
+				var pos:FlxPoint = touch.getViewPosition(MusicBeat.getTopCamera());
+				var overlap = overlapsPoint(pos);
+				pos.put();
+				if (overlap)
+					return true;
 			}
 		}
 		return false;

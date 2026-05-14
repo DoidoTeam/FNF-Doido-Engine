@@ -100,5 +100,5 @@ jobs:
           prerelease: true
           generate_release_notes: true
           files: |
-            artifacts/windows/DoidoEngine-Windows.zip
-            artifacts/android/DoidoEngine-Android.zip
+            artifacts/windows/DoidoEngine-Windows-${{ github.run_id }}.zip
+            artifacts/android/DoidoEngine-Android-${{ github.run_id }}.zip

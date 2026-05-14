@@ -25,7 +25,7 @@ class TouchInput extends FlxSpriteGroup
 			var buttonSize = NoteUtil.noteWidth(true);
 			for (i in 0...directions.length)
 			{
-				var button = new DoidoHitbox(0, 0, buttonSize + 50, buttonSize - 10, 0);
+				var button = new DoidoHitbox(0, 0, buttonSize + 50, buttonSize + 50, 0);
 				buttonMap.set(directions[i], button);
 				add(button);
 
