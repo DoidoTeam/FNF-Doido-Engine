@@ -92,6 +92,11 @@ jobs:
           name: DoidoEngine-Android-${{ github.run_id }}
           path: artifacts/android
 
+      - name: Zip Artifacts
+        run: |
+          cd artifacts/windows && zip -r ../../DoidoEngine-Windows-${{ github.run_id }}.zip . && cd ../..
+          cd artifacts/android && zip -r ../../DoidoEngine-Android-${{ github.run_id }}.zip . && cd ../..
+
       - name: Create Pre-Release
         uses: softprops/action-gh-release@v2
         with:
@@ -100,5 +105,5 @@ jobs:
           prerelease: true
           generate_release_notes: true
           files: |
-            artifacts/windows/DoidoEngine-Windows-${{ github.run_id }}.zip
-            artifacts/android/DoidoEngine-Android-${{ github.run_id }}.zip
+            DoidoEngine-Windows-${{ github.run_id }}.zip
+            DoidoEngine-Android-${{ github.run_id }}.zip
