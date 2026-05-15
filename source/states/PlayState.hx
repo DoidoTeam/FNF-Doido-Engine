@@ -456,6 +456,13 @@ class PlayState extends MusicBeatState implements Playable
 		gf.setScrollFactor(stageBuild.gfScrollFactor.x, stageBuild.gfScrollFactor.y);
 	}
 
+	public function changeChar(char:CharGroup, newChar:String = "bf", ?iconToo:Bool = true)
+	{
+		char.setActive(newChar);
+		if (iconToo)
+			hudClass.changeIcon(char.curChar, char.isPlayer ? PLAYER : ENEMY);
+	}
+
 	override function draw()
 	{
 		members.sort(ZIndex.sortAscending);
@@ -573,10 +580,42 @@ class PlayState extends MusicBeatState implements Playable
 		callScript("playEvent", [name, data]);
 		switch (name)
 		{
+			case "Play Animation":
+				var char = strToChar(data[0]);
+				char.playAnim(data[1], true);
+			// char.char.specialAnim = (CoolUtil.stringToBool(daEvent.value3) ? 2 : 1);
+			case "Change Character":
+				var char = strToChar(data[0]);
+				changeChar(char, data[1], (char != gf));
+			case "Freeze Notes":
+				for (strumline in playField.strumlines)
+					strumline.pauseNotes = data[0];
+			case "Change Note Speed":
+				for (strumline in playField.strumlines)
+				{
+					if (strumline.scrollTween != null)
+						strumline.scrollTween.cancel();
+					var newSpeed:Float = data[0];
+					var duration:Float = Conductor.getTimeAtStep(data[1]);
+					if (duration <= 0)
+						strumline.scrollSpeed = newSpeed;
+					else
+					{
+						strumline.scrollTween = FlxTween.tween(strumline, {scrollSpeed: newSpeed}, duration, {
+							// ease: CoolUtil.stringToEase(daEvent.value3),
+						});
+					}
+				}
+			case "Change Cam Zoom":
+				camZoom = data[0];
+			case "Flash Screen":
+				MusicBeat.flash(camGame, Conductor.getTimeAtStep(data[0]), SpriteUtil.getColor(data[1]));
+			case 'Fade Screen':
+				camGame.fade(SpriteUtil.getColor(data[2]), Conductor.getTimeAtStep(data[1]), data[0]);
 			case "Change Stage":
 				changeStage(data[0]);
 			case "Camera Focus":
-				followCamera(data[0]);
+				followCamera(data[0], {x: data[1], y: data[2]});
 		}
 	}
 
@@ -896,6 +935,13 @@ class PlayState extends MusicBeatState implements Playable
 
 	public static function get_META():DoidoMeta
 		return SONG.META;
+
+	override private function resetState()
+	{
+		if (FlxG.keys.pressed.CONTROL)
+			loadSong(CHART.song, songDiff, isStoryMode);
+		super.resetState();
+	}
 }
 
 interface Playable

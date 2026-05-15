@@ -7,6 +7,7 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import objects.ui.notes.Splash.Cover;
+import flixel.tweens.FlxTween;
 
 class Strumline extends FlxGroup
 {
@@ -17,6 +18,7 @@ class Strumline extends FlxGroup
 	public var wide:Bool = false;
 
 	public var scrollSpeed:Float = 1.0;
+	public var scrollTween:FlxTween;
 
 	public var hasModchart:Bool = false;
 	public var pauseNotes:Bool = false;
@@ -35,6 +37,8 @@ class Strumline extends FlxGroup
 	public var notes:Array<Note> = [];
 
 	public var skin:String = "base";
+
+
 
 	public function new(xOffset:Float, downscroll:Bool = false, isPlayer:Bool = false, botplay:Bool = false, wide:Bool = false, ?skin:String = "base")
 	{
