@@ -135,6 +135,7 @@ class PlayState extends MusicBeatState implements Playable
 		for (path in scriptPaths)
 			loadScript(path);
 		setScript("playState", instance);
+		callScript("create");
 
 		Conductor.initialBPM = CHART.bpm;
 		Conductor.mapBPMChanges(EVENTS.events);
