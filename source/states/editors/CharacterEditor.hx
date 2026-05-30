@@ -511,9 +511,10 @@ class CharacterEditor extends MusicBeatState
 				}
 				else
 				{
-					char.data.anims.push(DoidoSprite.copyAnim(animEditing));
+					var newAnim = DoidoSprite.copyAnim(animEditing);
+					char.data.anims.push(newAnim);
 					curEditing = animEditing.name;
-					char.addAnim(animEditing);
+					char.addAnim(newAnim);
 				}
 
 				char.playAnim(curEditing);
@@ -827,8 +828,8 @@ class CharacterEditor extends MusicBeatState
 		var loopAnimName:String = char.curAnimName.endsWith("-loop") ? char.curAnimName.replace("-loop", "") : char.curAnimName + "-loop";
 		if (char.animExists(loopAnimName))
 		{
-			if (char.animExists(loopAnimName))
-				char.addOffset(loopAnimName, char.getOffset(char.curAnimName));
+			var off = char.getOffset(char.curAnimName);
+			char.addOffset(loopAnimName, {x: off.x, y: off.y});
 		}
 
 		char.playAnim(char.curAnimName, true);
