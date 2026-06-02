@@ -650,14 +650,14 @@ class ChartingState extends MusicBeatState
 		filter.textObj.x += glass.width + 2;
 		filter.fieldWidth -= Std.int(glass.width + 2);
 
-		tab.add(createText(getX(), getY(12) + 10, "Player:", 0xFFD8DAF6));
-		tab.add(createText(getX("center", 145), getY(12) + 10, "Opponent:", 0xFFD8DAF6));
-		tab.add(createText(getX("margin_right", 145), getY(12) + 10, "Girlfriend:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(12) + 10, "Opponent:", 0xFFD8DAF6));
+		tab.add(createText(getX("center", 145), getY(12) + 10, "Girlfriend:", 0xFFD8DAF6));
+		tab.add(createText(getX("margin_right", 145), getY(12) + 10, "Player:", 0xFFD8DAF6));
 
 		var bfIcon = new HealthIcon();
 		bfIcon.setIcon(META.player1, false);
 		bfIcon.globalScale = 0.33;
-		bfIcon.setPosition(getX() + 145 - bfIcon.width, getY(12));
+		bfIcon.setPosition(getX("margin_right", 145) + 145 - bfIcon.width, getY(12));
 		tab.add(bfIcon);
 
 		var bfButton = new DoidoTextButton("");
@@ -687,7 +687,7 @@ class ChartingState extends MusicBeatState
 				};
 			}
 		});
-		bfButton.x = getX(); // bfButton.width
+		bfButton.x = getX("margin_right", bfButton.width); // bfButton.width
 		bfButton.y = getY(12) + 32;
 		bfButton.button.setColorTransform(bfIcon.barColor.redFloat, bfIcon.barColor.greenFloat, bfIcon.barColor.blueFloat);
 		bfButton.text = META.player1;
@@ -697,7 +697,7 @@ class ChartingState extends MusicBeatState
 		var oppIcon = new HealthIcon();
 		oppIcon.setIcon(META.player2, false);
 		oppIcon.globalScale = 0.33;
-		oppIcon.setPosition(getX("center", 145) + 145 - oppIcon.width, getY(12));
+		oppIcon.setPosition(getX() + 145 - oppIcon.width, getY(12));
 		tab.add(oppIcon);
 
 		var oppButton = new DoidoTextButton("",);
@@ -727,7 +727,7 @@ class ChartingState extends MusicBeatState
 				};
 			}
 		});
-		oppButton.x = getX("center", oppButton.width); // bfButton.width
+		oppButton.x = getX(); // bfButton.width
 		oppButton.y = getY(12) + 32;
 		oppButton.button.setColorTransform(oppIcon.barColor.redFloat, oppIcon.barColor.greenFloat, oppIcon.barColor.blueFloat);
 		oppButton.text = META.player2;
@@ -737,7 +737,7 @@ class ChartingState extends MusicBeatState
 		var gfIcon = new HealthIcon();
 		gfIcon.setIcon(META.gf, false);
 		gfIcon.globalScale = 0.33;
-		gfIcon.setPosition(getX("margin_right", 145) + 145 - gfIcon.width, getY(12));
+		gfIcon.setPosition(getX("center", 145) + 145 - gfIcon.width, getY(12));
 		tab.add(gfIcon);
 
 		var gfButton = new DoidoTextButton("");
@@ -766,7 +766,8 @@ class ChartingState extends MusicBeatState
 				};
 			}
 		});
-		gfButton.x = getX("margin_right", gfButton.width); // bfButton.width
+		
+		gfButton.x = getX("center", gfButton.width); // bfButton.width
 		gfButton.y = getY(12) + 32;
 		gfButton.button.setColorTransform(gfIcon.barColor.redFloat, gfIcon.barColor.greenFloat, gfIcon.barColor.blueFloat);
 		gfButton.text = META.gf;
