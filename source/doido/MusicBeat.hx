@@ -21,7 +21,6 @@ class MusicBeat
 {
 	public static var activeState:FlxState;
 	public static var nextTransition:String = '';
-
 	public static function switchState(?target:MusicBeatState, tOut:String = 'funkin', ?tIn:String)
 	{
 		#if SCREENSHOT_FEATURE Screenshot.clearScreenshot(); #end
@@ -178,6 +177,7 @@ class MusicBeatState extends FlxUIState
 {
 	public var onInputChange(default, null):InputSignal = new InputSignal();
 	public var loadedScripts:Array<Iris> = [];
+	public static var disableHotReload:Bool = false;
 
 	override function create()
 	{
@@ -229,7 +229,7 @@ class MusicBeatState extends FlxUIState
 		MusicBeat.updateConductor();
 		updateStep();
 
-		if (FlxG.keys.justPressed.F5)
+		if (FlxG.keys.justPressed.F5 && !disableHotReload)
 			resetState();
 	}
 

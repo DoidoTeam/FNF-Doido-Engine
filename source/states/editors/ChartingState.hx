@@ -45,7 +45,6 @@ import doido.song.SongHandler;
 class ChartingNote extends Note
 {
 	public var selected:Bool = false;
-
 	public function new()
 	{
 		super();
@@ -113,6 +112,7 @@ class ChartingState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+		MusicBeatState.disableHotReload = true;
 		setFpsPos(18, FlxG.height - 125 - Main.fpsHeight);
 		FlxG.mouse.visible = true;
 		Conductor.initialBPM = CHART.bpm;
@@ -237,7 +237,7 @@ class ChartingState extends MusicBeatState
 		// fileWindow.addSeparator();
 
 		// fileWindow.addButton("Open Events", "Ctrl + Alt + O");
-		// fileWindow.addSeparator();
+		// fileWindow.addSeparator();  
 		fileWindow.addButton("Open Song", () ->
 		{
 			var newSong:String = CHART.song;
@@ -657,7 +657,7 @@ class ChartingState extends MusicBeatState
 		var bfIcon = new HealthIcon();
 		bfIcon.setIcon(META.player1, false);
 		bfIcon.globalScale = 0.33;
-		bfIcon.setPosition(getX() + 145 - bfIcon.width, getY(12));
+		bfIcon.setPosition(getX() + 145 - bfIcon.width, getY(12) - 10);
 		tab.add(bfIcon);
 
 		var bfButton = new DoidoTextButton("");
@@ -697,7 +697,7 @@ class ChartingState extends MusicBeatState
 		var oppIcon = new HealthIcon();
 		oppIcon.setIcon(META.player2, false);
 		oppIcon.globalScale = 0.33;
-		oppIcon.setPosition(getX("center", 145) + 145 - oppIcon.width, getY(12));
+		oppIcon.setPosition(getX("center", 145) + 145 - oppIcon.width, getY(12) - 10);
 		tab.add(oppIcon);
 
 		var oppButton = new DoidoTextButton("",);
@@ -737,7 +737,7 @@ class ChartingState extends MusicBeatState
 		var gfIcon = new HealthIcon();
 		gfIcon.setIcon(META.gf, false);
 		gfIcon.globalScale = 0.33;
-		gfIcon.setPosition(getX("margin_right", 145) + 145 - gfIcon.width, getY(12));
+		gfIcon.setPosition(getX("margin_right", 145) + 145 - gfIcon.width, getY(12) - 10);
 		tab.add(gfIcon);
 
 		var gfButton = new DoidoTextButton("");
@@ -1400,6 +1400,7 @@ class ChartingState extends MusicBeatState
 	{
 		if (testHere)
 			PlayState.startPos = Conductor.songPos;
+
 		PlayState.SONG = SONG;
 		MusicBeat.switchState(new LoadingState());
 		FlxG.mouse.visible = false;
@@ -1550,7 +1551,6 @@ class ChartingState extends MusicBeatState
 			var note:ChartingNote = cast renderNotes.recycle(ChartingNote);
 			note.loadData(noteData, noteskin + (quantNotes ? '-quant' : ''));
 			note.reloadSprite();
-
 			note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 			note.updateHitbox();
 

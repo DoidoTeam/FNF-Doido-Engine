@@ -22,6 +22,7 @@ class CrashHandler extends MusicBeatState
 	override function create()
 	{
 		super.create();
+		MusicBeatState.disableHotReload = true;
 		var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
 		bg.screenCenter();
 		bg.alpha = 0.4;
@@ -63,17 +64,18 @@ class CrashHandler extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if (FlxG.keys.justPressed.ANY)
+	
+		if (FlxG.keys.justPressed.ESCAPE)
 		{
-			if (FlxG.keys.justPressed.ESCAPE)
-			{
-				MusicBeat.skipTrans = true;
-				MusicBeat.switchState(new states.menus.MainMenuState());
-			}
-			if (FlxG.keys.justPressed.F1)
-			{
-				FlxG.openURL('https://github.com/DoidoTeam/FNF-Doido-Engine/issues');
-			}
+			MusicBeatState.disableHotReload = false;
+			MusicBeat.skipTrans = true;
+			MusicBeat.switchState(new states.menus.MainMenuState());
+		}
+		if (FlxG.keys.justPressed.F1)
+		{
+			FlxG.openURL('https://github.com/DoidoTeam/FNF-Doido-Engine/issues');
 		}
 	}
+	
 }
+

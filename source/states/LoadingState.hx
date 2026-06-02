@@ -41,6 +41,7 @@ class LoadingState extends MusicBeatState
 	{
 		super.create();
 		persistentUpdate = true;
+		MusicBeatState.disableHotReload = true;
 
 		loadingTxtColor = (Save.data.darkMode ? "FFFFFF" : "000000");
 
