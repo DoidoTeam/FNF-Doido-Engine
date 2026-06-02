@@ -45,6 +45,7 @@ import doido.song.SongHandler;
 class ChartingNote extends Note
 {
 	public var selected:Bool = false;
+
 	public function new()
 	{
 		super();
@@ -112,7 +113,7 @@ class ChartingState extends MusicBeatState
 	override function create()
 	{
 		super.create();
-		MusicBeatState.disableHotReload = true;
+		hotReload = false;
 		setFpsPos(18, FlxG.height - 125 - Main.fpsHeight);
 		FlxG.mouse.visible = true;
 		Conductor.initialBPM = CHART.bpm;
@@ -237,7 +238,7 @@ class ChartingState extends MusicBeatState
 		// fileWindow.addSeparator();
 
 		// fileWindow.addButton("Open Events", "Ctrl + Alt + O");
-		// fileWindow.addSeparator();  
+		// fileWindow.addSeparator();
 		fileWindow.addButton("Open Song", () ->
 		{
 			var newSong:String = CHART.song;
@@ -766,7 +767,7 @@ class ChartingState extends MusicBeatState
 				};
 			}
 		});
-		
+
 		gfButton.x = getX("center", gfButton.width); // bfButton.width
 		gfButton.y = getY(12) + 32;
 		gfButton.button.setColorTransform(gfIcon.barColor.redFloat, gfIcon.barColor.greenFloat, gfIcon.barColor.blueFloat);

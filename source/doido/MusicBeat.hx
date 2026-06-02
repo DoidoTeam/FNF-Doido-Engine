@@ -177,7 +177,6 @@ class MusicBeatState extends FlxUIState
 {
 	public var onInputChange(default, null):InputSignal = new InputSignal();
 	public var loadedScripts:Array<Iris> = [];
-	public static var disableHotReload:Bool = false;
 
 	override function create()
 	{
@@ -217,6 +216,7 @@ class MusicBeatState extends FlxUIState
 	}
 
 	private var _curStep = 0; // actual curStep
+	private var hotReload:Bool = true;
 
 	public var curStep = 0;
 	public var curStepFloat:Float = 0;
@@ -229,7 +229,7 @@ class MusicBeatState extends FlxUIState
 		MusicBeat.updateConductor();
 		updateStep();
 
-		if (FlxG.keys.justPressed.F5 && !disableHotReload)
+		if (FlxG.keys.justPressed.F5 && hotReload)
 			resetState();
 	}
 

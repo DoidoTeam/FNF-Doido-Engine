@@ -22,7 +22,8 @@ class CrashHandler extends MusicBeatState
 	override function create()
 	{
 		super.create();
-		MusicBeatState.disableHotReload = true;
+		hotReload = false;
+
 		var bg = new FlxSprite().loadGraphic(Assets.image('menuInvert'));
 		bg.screenCenter();
 		bg.alpha = 0.4;
@@ -67,7 +68,6 @@ class CrashHandler extends MusicBeatState
 	
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
-			MusicBeatState.disableHotReload = false;
 			MusicBeat.skipTrans = true;
 			MusicBeat.switchState(new states.menus.MainMenuState());
 		}

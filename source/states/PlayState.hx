@@ -129,7 +129,6 @@ class PlayState extends MusicBeatState implements Playable
 		DiscordIO.changePresence("Playing - " + CHART.song);
 		persistentDraw = true;
 		persistentUpdate = false;
-		MusicBeatState.disableHotReload = false;
 		MusicBeat.stopMusic();
 
 		var scriptPaths:Array<String> = Assets.getScriptArray(CHART.song);
