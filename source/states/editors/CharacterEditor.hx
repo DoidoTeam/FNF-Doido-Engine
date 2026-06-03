@@ -1,5 +1,7 @@
 package states.editors;
 
+import doido.utils.CharacterUtil;
+import doido.utils.CharacterUtil.PsychCharacter;
 import doido.objects.DoidoSprite.Animation;
 import doido.objects.ui.window.DoidoWindow;
 import doido.objects.DoidoCamera;
@@ -7,7 +9,6 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.FlxObject;
 import flixel.math.FlxMath;
-import objects.Character;
 import objects.Character;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.text.FlxBitmapText;
@@ -21,6 +22,7 @@ import haxe.Json;
 import doido.objects.DoidoSprite;
 import doido.objects.ui.window.*;
 import doido.objects.ui.buttons.*;
+import doido.objects.ui.window.DoidoMenu.MenuWindow;
 
 class CharacterEditor extends MusicBeatState
 {
@@ -64,6 +66,7 @@ class CharacterEditor extends MusicBeatState
 	{
 		super.create();
 		DiscordIO.changePresence("In the Character Editor");
+		setFpsPos(5, FlxG.height - 5 - Main.fpsHeight);
 		FlxG.mouse.visible = true;
 
 		camChar = new DoidoCamera(false, true);
@@ -108,7 +111,53 @@ class CharacterEditor extends MusicBeatState
 		animWindow.cameras = [camHUD];
 		add(animWindow);
 
+		addMenu();
 		addMain();
+	}
+
+	function addMenu()
+	{
+		var x = 20;
+		var y = 20;
+		var width = 318;
+		var height = 22;
+
+		var fileWindow = new MenuWindow(x, y + 30, width, null);
+		fileWindow.title = "File";
+		fileWindow.cameras = [camHUD];
+		fileWindow.addButton("Save", "Ctrl + S", () ->
+		{
+			save();
+		});
+		fileWindow.addSeparator();
+		fileWindow.addButton("Import from Psych", () ->
+		{
+			Assets.fileBrowse((fr) ->
+			{
+				var name = fr.name.split(".")[0];
+				var psychChar:PsychCharacter = cast Json.parse(fr.data.toString());
+				var doidoChar:DoidoCharacter = CharacterUtil.fromPsych(psychChar);
+				var data:String = Json.stringify(doidoChar, "\t");
+				if (data != null && data.length > 0)
+				{
+					Assets.fileSave(data.trim(), '$name-converted.json');
+				}
+			}, new openfl.net.FileFilter("JSON Files", "*.json"));
+		});
+		fileWindow.addButton("Export to Psych", () ->
+		{
+			var psychChar:PsychCharacter = CharacterUtil.toPsych(char.data);
+			var data:String = Json.stringify(psychChar, "\t");
+			if (data != null && data.length > 0)
+			{
+				Assets.fileSave(data.trim(), '${char.curChar}-converted.json');
+			}
+		});
+		fileWindow.updateBg();
+
+		var menuBox = new DoidoBox(x, y, width, height, 0, false, [fileWindow /*, editWindow, viewWindow*/], null);
+		menuBox.cameras = [camHUD];
+		add(menuBox);
 	}
 
 	function createBasic(title:String = "test"):DoidoWindow
@@ -753,7 +802,7 @@ class CharacterEditor extends MusicBeatState
 	function mouseOverlapsOffset(_char:Character)
 	{
 		var mousePos = FlxG.mouse.getWorldPosition(camChar);
-		var offsets:DoidoPoint = char.animOffsets.get(char.curAnimName);
+		var offsets:DoidoPoint = _char.animOffsets.get(_char.curAnimName);
 		mousePos.x += offsets.x;
 		mousePos.y += offsets.y;
 		return _char.overlapsPoint(mousePos);
@@ -797,6 +846,7 @@ class CharacterEditor extends MusicBeatState
 					break;
 				}
 			}
+			setDescs();
 		}
 	}
 

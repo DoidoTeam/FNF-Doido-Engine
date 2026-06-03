@@ -194,7 +194,7 @@ class Character extends DoidoSprite
 		return {
 			spritesheet: "face",
 			spriteType: "ATLAS",
-			singType: "LOOP",
+			singType: "LAST",
 			anims: [
 				{
 					name: "idle",

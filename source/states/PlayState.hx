@@ -19,7 +19,7 @@ import objects.play.*;
 import objects.ui.*;
 import objects.ui.hud.*;
 import objects.ui.notes.*;
-import states.editors.ChartingState;
+import states.editors.*;
 import substates.GameOverSubState;
 import substates.PauseSubState;
 import doido.song.Week.WeekData;
@@ -510,6 +510,17 @@ class PlayState extends MusicBeatState implements Playable
 
 		if (FlxG.keys.justPressed.SEVEN)
 			MusicBeat.switchState(new ChartingState(SONG));
+
+		if(FlxG.keys.justPressed.EIGHT)
+		{
+			var char = dad;
+			if(FlxG.keys.pressed.SHIFT)
+				char = bf;
+			if(FlxG.keys.pressed.CONTROL)
+				char = gf;
+			
+			MusicBeat.switchState(new CharacterEditor(char.curChar, true));
+		}
 
 		if (FlxG.keys.justPressed.ONE)
 			endSong();
