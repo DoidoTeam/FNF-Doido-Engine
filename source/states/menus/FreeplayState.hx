@@ -388,7 +388,7 @@ class FreeplayState extends MusicBeatState
 				scoreTxt.text = scoreText;
 		}
 
-		if (scoreTxt != null && scoreTxt.visible)
+		if (missesTxt != null && missesTxt.visible)
 		{
 			// drawing misses
 			var missesText = Math.floor(lerpMisses) + ' MISSES';
