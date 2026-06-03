@@ -519,7 +519,7 @@ class PlayState extends MusicBeatState implements Playable
 			if(FlxG.keys.pressed.CONTROL)
 				char = gf;
 			
-			MusicBeat.switchState(new CharacterEditor(char.curChar, true));
+			MusicBeat.switchState(new CharacterEditor(char.curChar, char == bf, true));
 		}
 
 		if (FlxG.keys.justPressed.ONE)

@@ -174,7 +174,7 @@ class MainMenuState extends MusicBeatState
 			if(FlxG.keys.justPressed.EIGHT)
 			{
 				FlxG.sound.play(Assets.sound("cancel"));
-				MusicBeat.switchState(new states.editors.CharacterEditor("face", false));
+				MusicBeat.switchState(new states.editors.CharacterEditor("face", false, false));
 			}
 		}
 		else

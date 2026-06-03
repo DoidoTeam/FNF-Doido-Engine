@@ -89,7 +89,7 @@ class CharacterUtil
 		};
 	}
 
-	public static function toPsych(char:DoidoCharacter):PsychCharacter
+	public static function toPsych(char:DoidoCharacter, name:String = "face"):PsychCharacter
 	{
 		var scale:Float = char.scale?.x ?? 1.0;
 		var anims:Array<PsychAnim> = [];
@@ -111,7 +111,7 @@ class CharacterUtil
 			animations: anims,
 			scale: scale,
 			sing_duration: (char.singLength ?? 0.7) / (Conductor.calcStep(DEFAULT_BPM) * 0.0011),
-			healthicon: "face",
+			healthicon: name,
 			position: [char.globalOffset?.x ?? 0, char.globalOffset?.y ?? 0],
 			camera_position: [char.cameraOffset?.x ?? 0, char.cameraOffset?.y ?? 0],
 			flip_x: char.flipX ?? false,

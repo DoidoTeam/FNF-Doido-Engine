@@ -115,7 +115,7 @@ class DebugMenu extends MusicBeatState
 				case "credits":
 					MusicBeat.switchState(new states.menus.CreditsState());
 				case "character editor":
-					MusicBeat.switchState(new CharacterEditor("face", FlxG.keys.pressed.SHIFT));
+					MusicBeat.switchState(new CharacterEditor("face", FlxG.keys.pressed.SHIFT, false));
 				case "main menu":
 					MusicBeat.switchState(new states.menus.MainMenuState());
 				case "story mode":

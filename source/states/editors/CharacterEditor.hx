@@ -28,11 +28,13 @@ class CharacterEditor extends MusicBeatState
 {
 	var curChar:String = "";
 	var isPlayer:Bool = false;
+	var wasPlayState:Bool = false;
 
-	public function new(curChar:String, isPlayer:Bool = false)
+	public function new(curChar:String, isPlayer:Bool = false, wasPlayState:Bool = false)
 	{
 		this.curChar = curChar;
 		this.isPlayer = isPlayer;
+		this.wasPlayState = wasPlayState;
 		super();
 	}
 
@@ -146,7 +148,7 @@ class CharacterEditor extends MusicBeatState
 		});
 		fileWindow.addButton("Export to Psych", () ->
 		{
-			var psychChar:PsychCharacter = CharacterUtil.toPsych(char.data);
+			var psychChar:PsychCharacter = CharacterUtil.toPsych(char.data, char.curChar);
 			var data:String = Json.stringify(psychChar, "\t");
 			if (data != null && data.length > 0)
 			{
@@ -711,7 +713,14 @@ class CharacterEditor extends MusicBeatState
 		if (!overlapsWindow && !clickedOnWindow && !typing && focused)
 		{
 			if (Controls.justPressed(BACK))
-				MusicBeat.switchState(new states.DebugMenu());
+			{
+				MusicBeat.stopMusic();
+				FlxG.mouse.visible = false;
+				if (wasPlayState)
+					MusicBeat.switchState(new LoadingState());
+				else
+					MusicBeat.switchState(new states.menus.MainMenuState());
+			}
 
 			var speed:Float = elapsed * 400;
 			if (FlxG.keys.anyPressed([A, D, W, S]))
