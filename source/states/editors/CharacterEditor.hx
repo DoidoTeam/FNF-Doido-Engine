@@ -93,6 +93,7 @@ class CharacterEditor extends MusicBeatState
 		char.zIndex = 10;
 		ghost = new Ghost(char);
 		ghost.zIndex = ghostOverlay ? 11 : 9;
+		ghost.color = tint ? 0xFF0000FF : 0xFFFFFFFF;
 
 		add(ghost);
 		add(char);
@@ -271,6 +272,17 @@ class CharacterEditor extends MusicBeatState
 		});
 		tab.add(ghostOver);
 		tab.add(createText(ghostOver.x - 55, getY(3) + 2, "Over:", 0xFFD8DAF6));
+
+		var tintCheck:DoidoCheckmark = new DoidoCheckmark(true);
+		tintCheck.x = getX("margin_right", tintCheck.width);
+		tintCheck.y = getY(4) - 2;
+		tintCheck.onUp.add(() ->
+		{
+			tint = tintCheck.value;
+			ghost.color = tint ? 0xFF0000FF : 0xFFFFFFFF;
+		});
+		tab.add(tintCheck);
+		tab.add(createText(tintCheck.x - 45, getY(4) + 2, "Tint:", 0xFFD8DAF6));
 
 		// getX() + 120
 		var spriteType:PsychUIDropDownMenu;
@@ -738,6 +750,7 @@ class CharacterEditor extends MusicBeatState
 
 	static var camZoom:Float = 0.9;
 	static var ghostOverlay:Bool = false;
+	static var tint:Bool = true;
 
 	var draggingCharacter:Bool = false;
 	var typing(get, never):Bool;
