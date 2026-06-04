@@ -89,8 +89,10 @@ class CharacterEditor extends MusicBeatState
 		middlePoint.setPosition((FlxG.width - middlePoint.width) / 2, FlxG.height - 200 - (middlePoint.height / 2));
 		middlePoint.color = 0xFFFF0000;
 
-		char = new Character(curChar, isPlayer);
+		char = new Character(curChar);
+		char.zIndex = 10;
 		ghost = new Ghost(char);
+		ghost.zIndex = ghostOverlay ? 11 : 9;
 
 		add(ghost);
 		add(char);
@@ -101,6 +103,7 @@ class CharacterEditor extends MusicBeatState
 		{
 			char.debugMode = true;
 			updatePos(char);
+			flipCheck(char);
 		}
 
 		for (anim in char.animList)
@@ -206,13 +209,15 @@ class CharacterEditor extends MusicBeatState
 		sprite.cameras = [camHUD];
 		tab.add(sprite);
 
-		var player:DoidoCheckmark = new DoidoCheckmark(char.isPlayer);
+		var player:DoidoCheckmark = new DoidoCheckmark(isPlayer);
 		player.x = getX("margin_right", player.width);
 		player.y = getY(1) - 2;
 		player.onUp.add(() ->
 		{
-			char.isPlayer = player.value;
+			isPlayer = player.value;
+			// char.isPlayer = player.value;
 			flipCheck(char);
+			flipCheck(ghost);
 		});
 		tab.add(player);
 		tab.add(createText(player.x - 60, getY(1) + 2, "Player:", 0xFFD8DAF6));
@@ -237,7 +242,7 @@ class CharacterEditor extends MusicBeatState
 		{
 			char.clearAnims();
 			char.loadCharacter(true);
-			ghost.syncGhost();
+			syncGhost();
 			updatePos(char);
 			updatePos(ghost);
 		});
@@ -254,6 +259,18 @@ class CharacterEditor extends MusicBeatState
 		});
 		tab.add(pixel);
 		tab.add(createText(pixel.x - 45, getY(3) + 2, "Pixel:", 0xFFD8DAF6));
+
+		var ghostOver:DoidoCheckmark = new DoidoCheckmark(ghostOverlay);
+		ghostOver.x = pixel.x - 60 - ghostOver.width - 5;
+		ghostOver.y = getY(3) - 2;
+		ghostOver.onUp.add(() ->
+		{
+			ghostOverlay = ghostOver.value;
+			ghost.zIndex = ghostOverlay ? 11 : 9;
+			sort(ZIndex.sort);
+		});
+		tab.add(ghostOver);
+		tab.add(createText(ghostOver.x - 55, getY(3) + 2, "Over:", 0xFFD8DAF6));
 
 		// getX() + 120
 		var spriteType:PsychUIDropDownMenu;
@@ -284,7 +301,7 @@ class CharacterEditor extends MusicBeatState
 			char.data.scale.x = scaleX.value;
 			char.scale.set(char.data.scale.x, char.data.scale.y);
 			updatePos(char);
-			ghost.syncGhost();
+			syncGhost();
 			updatePos(ghost);
 		}
 		scaleX.cameras = [camHUD];
@@ -296,7 +313,7 @@ class CharacterEditor extends MusicBeatState
 			char.data.scale.y = scaleY.value;
 			char.scale.set(char.data.scale.x, char.data.scale.y);
 			updatePos(char);
-			ghost.syncGhost();
+			syncGhost();
 			updatePos(ghost);
 		}
 		scaleY.cameras = [camHUD];
@@ -308,10 +325,9 @@ class CharacterEditor extends MusicBeatState
 		ghosts = new PsychUIDropDownMenu(getX() + 120, getY(1), characterList, (i, s) ->
 		{
 			ghost.curChar = s;
-			ghost.syncGhost();
+			syncGhost();
 			updatePos(ghost);
-
-			setDescs();
+			ghostAnims.options = ghost.animList;
 			updateAnim(false);
 		}, 100, false);
 		ghosts.selectedLabel = char.curChar;
@@ -321,23 +337,26 @@ class CharacterEditor extends MusicBeatState
 		var characters:PsychUIDropDownMenu;
 		characters = new PsychUIDropDownMenu(getX(), getY(1), characterList, (i, s) ->
 		{
-			if (ghost.curChar == char.curChar)
-			{
-				ghost.curChar = s;
-				ghosts.selectedLabel = s;
-			}
+			MusicBeat.switchState(new CharacterEditor(s, isPlayer, wasPlayState));
+			/*
+				if (ghost.curChar == char.curChar)
+				{
+					ghost.curChar = s;
+					ghosts.selectedLabel = s;
+				}
 
-			char.curChar = s;
-			char.clearAnims();
-			char.loadCharacter(false);
-			updatePos(char);
-			ghost.syncGhost();
-			updatePos(ghost);
+				char.curChar = s;
+				char.clearAnims();
+				char.loadCharacter(false);
+				updatePos(char);
+				syncGhost();
+				updatePos(ghost);
 
-			sprite.text = char.data.spritesheet;
-			spriteType.selectedLabel = char.data.spriteType ?? "SPARROW";
-			anims.options = char.animList.concat(["Add New"]);
-			updateAnim(false);
+				sprite.text = char.data.spritesheet;
+				spriteType.selectedLabel = char.data.spriteType ?? "SPARROW";
+				anims.options = char.animList.concat(["Add New"]);
+				updateAnim(false);
+			 */
 		}, 100, false);
 		characters.selectedLabel = char.curChar;
 		characters.cameras = [camHUD];
@@ -357,9 +376,65 @@ class CharacterEditor extends MusicBeatState
 		return tab;
 	}
 
+	function createGhost()
+	{
+		var tab = createBasic("Ghost");
+
+		function getX(place:String = "margin_left", width:Float = 0)
+		{
+			return switch (place)
+			{
+				case "margin_first": tab.bg.x + 80;
+				case "margin_first_search": tab.bg.x + 80;
+				case "margin_second": tab.bg.x + 229 + 8;
+				case "margin_right": tab.bg.x + tab.bg.width - width - 8;
+				case "center": tab.bg.x + (tab.bg.width / 2) - (width / 2);
+				case "center_left": tab.bg.x + (tab.bg.width / 4) - (width / 2);
+				case "center_right": tab.bg.x + ((tab.bg.width / 4) * 3) - (width / 2);
+				default: tab.bg.x + 8;
+			}
+		}
+
+		function getY(i:Int = 0)
+			return tab.bg.y + 8 + (spacingH * i);
+
+		tab.add(createText(getX(), getY(0) + 3, "Search:", 0xFFD8DAF6));
+
+		ghostAnims = new ChooserWindow(getX("center", 440), getY(1) + 5, 440, 265, [], null);
+		ghostAnims.view = LIST;
+		ghostAnims.type = NONE;
+		ghostAnims.options = ghost.animList;
+		ghostAnims.onClick = (str) ->
+		{
+			ghost.playAnim(str);
+		};
+		ghostAnims.cameras = [camHUD];
+		tab.add(ghostAnims);
+
+		var filter:PsychUIInputText;
+		filter = new PsychUIInputText(getX("margin_first_search"), getY(0), 372, "", 14);
+		filter.onChange.add((old, cur, input) -> ghostAnims.filter = cur);
+		filter.behindText.color = 0xFFD8DAF6;
+		filter.cameras = [camHUD];
+		tab.add(filter);
+
+		var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
+		glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
+		glass.x = filter.behindText.x + 1;
+		glass.y = filter.behindText.y + 1;
+		tab.add(glass);
+
+		filter.textObj.x += glass.width + 2;
+		filter.fieldWidth -= Std.int(glass.width + 2);
+
+		return tab;
+	}
+
 	function flipCheck(char:Character)
 	{
 		char.flipX = char.data.flipX;
+		if (isPlayer)
+			char.flipX = !char.flipX;
 		if (char.isPlayer)
 			char.flipX = !char.flipX;
 	}
@@ -367,6 +442,7 @@ class CharacterEditor extends MusicBeatState
 	var spacingH:Float = 30;
 
 	var anims:ChooserWindow;
+	var ghostAnims:ChooserWindow;
 
 	function setDescs()
 	{
@@ -655,12 +731,13 @@ class CharacterEditor extends MusicBeatState
 
 	function addMain()
 	{
-		menuMain = new DoidoBox(803, 19, 458, 32, 0, true, [createAnimations(), createCharacter()], null);
+		menuMain = new DoidoBox(803, 19, 458, 32, 0, true, [createAnimations(), createGhost(), createCharacter()], null);
 		menuMain.cameras = [camHUD];
 		add(menuMain);
 	}
 
 	static var camZoom:Float = 0.9;
+	static var ghostOverlay:Bool = false;
 
 	var draggingCharacter:Bool = false;
 	var typing(get, never):Bool;
@@ -845,7 +922,7 @@ class CharacterEditor extends MusicBeatState
 
 		if (updateData)
 		{
-			ghost.syncGhost();
+			syncGhost();
 			updatePos(ghost);
 			for (anim in char.data.anims)
 			{
@@ -903,6 +980,12 @@ class CharacterEditor extends MusicBeatState
 		{
 			Assets.fileSave(data.trim(), '${char.curChar}.json');
 		}
+	}
+
+	function syncGhost()
+	{
+		ghost.syncGhost();
+		flipCheck(ghost);
 	}
 }
 
@@ -1017,10 +1100,11 @@ class AnimWindow extends DoidoWindow
 class Ghost extends Character
 {
 	public var char:Character = null;
+	var loadedChar:String = "";
 
 	public function new(char:Character)
 	{
-		super(char.curChar, char.isPlayer);
+		super(char.curChar);
 		this.char = char;
 		ghostAlpha = 0.4;
 		syncGhost();
@@ -1028,12 +1112,27 @@ class Ghost extends Character
 
 	public function syncGhost()
 	{
+		if (curChar != char.curChar && curChar == loadedChar)
+			return;
+
+		var prevAnim = {name: "", frame: 0};
+		if (animation?.curAnim == null || curChar != loadedChar)
+			prevAnim = null;
+		else
+			prevAnim = {
+				name: animation.curAnim.name,
+				frame: animation.curAnim.curFrame
+			};
+
 		clearAnims();
-		if (curChar == char.curChar)
-			data = char.data;
+		data = char.data;
 
 		loadCharacter(curChar == char.curChar);
+		loadedChar = curChar;
 		alpha = (data.alpha ?? 1.0) * ghostAlpha;
+
+		if (prevAnim != null)
+			playAnim(prevAnim.name, true, prevAnim.frame);
 	}
 
 	public var ghostAlpha(default, set):Float;
