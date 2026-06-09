@@ -170,14 +170,12 @@ class MainMenuState extends MusicBeatState
 				openSubState(new substates.menus.ModSubState());
 			//	MusicBeat.switchState(new states.DebugMenu.ModManager());
 			#end
-			if(Save.data.developerMode)
+
+			if (Save.data.developerMode && FlxG.keys.justPressed.EIGHT)
 			{
-				if(FlxG.keys.justPressed.EIGHT)
-				{
-					FlxG.sound.play(Assets.sound("cancel"));
-					MusicBeat.switchState(new states.editors.CharacterEditor("face", false, false));
-				}
-			}	
+				FlxG.sound.play(Assets.sound("cancel"));
+				MusicBeat.switchState(new states.editors.CharacterEditor("face", false, false));
+			}
 		}
 		else
 		{

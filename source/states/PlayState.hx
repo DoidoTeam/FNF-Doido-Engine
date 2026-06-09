@@ -569,11 +569,8 @@ class PlayState extends MusicBeatState implements Playable
 
 		if (FlxG.keys.justPressed.ONE)
 			endSong();
-		//	changeStage(stageBuild.curStage == "stage" ? "school" : "stage");
-
 		if (FlxG.keys.justPressed.NINE)
 			camZoom = 0.2;
-
 		if (FlxG.keys.justPressed.F9)
 			audio.speed = 10;
 		if (FlxG.keys.justReleased.F9)

@@ -429,7 +429,7 @@ class FreeplayState extends MusicBeatState
 		{
 			PlayState.loadSong(curSong.name, curSong.diffs[curDiff]);
 
-			if (FlxG.keys.justPressed.SEVEN)
+			if (Save.data.developerMode && FlxG.keys.justPressed.SEVEN)
 			{
 				MusicBeat.switchState(new states.editors.ChartingState(PlayState.SONG));
 				return;
