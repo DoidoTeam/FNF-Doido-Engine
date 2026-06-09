@@ -507,33 +507,10 @@ class PlayState extends MusicBeatState implements Playable
 			persistentDraw = persistentUpdate = false;
 			openSubState(new GameOverSubState(SONG.META.assets.gameOverPath, bf));
 		}
-
-		if (FlxG.keys.justPressed.SEVEN)
-			MusicBeat.switchState(new ChartingState(SONG));
-
-		if(FlxG.keys.justPressed.EIGHT)
-		{
-			var char = dad;
-			if(FlxG.keys.pressed.SHIFT)
-				char = bf;
-			if(FlxG.keys.pressed.CONTROL)
-				char = gf;
-			
-			MusicBeat.switchState(new CharacterEditor(char.curChar, char == bf, true));
-		}
-
-		if (FlxG.keys.justPressed.ONE)
-			endSong();
-		//	changeStage(stageBuild.curStage == "stage" ? "school" : "stage");
-
-		if (FlxG.keys.justPressed.NINE)
-			camZoom = 0.2;
-
-		if (FlxG.keys.justPressed.F9)
-			audio.speed = 10;
-		if (FlxG.keys.justReleased.F9)
-			audio.speed = defaultSongSpeed;
-
+		
+		if(Save.data.developerMode)
+			debugKeys();
+	
 		if (canPause)
 		{
 			if (Controls.justPressed(PAUSE) #if TOUCH_CONTROLS || pauseButton.justPressed #end)
@@ -574,6 +551,35 @@ class PlayState extends MusicBeatState implements Playable
 		callScript("updatePost", [elapsed]);
 	}
 
+	function debugKeys()
+	{
+		if (FlxG.keys.justPressed.SEVEN)
+			MusicBeat.switchState(new ChartingState(SONG));
+
+		if(FlxG.keys.justPressed.EIGHT)
+		{
+			var char = dad;
+			if(FlxG.keys.pressed.SHIFT)
+				char = bf;
+			if(FlxG.keys.pressed.CONTROL)
+				char = gf;
+			
+			MusicBeat.switchState(new CharacterEditor(char.curChar, char == bf, true));
+		}
+
+		if (FlxG.keys.justPressed.ONE)
+			endSong();
+		//	changeStage(stageBuild.curStage == "stage" ? "school" : "stage");
+
+		if (FlxG.keys.justPressed.NINE)
+			camZoom = 0.2;
+
+		if (FlxG.keys.justPressed.F9)
+			audio.speed = 10;
+		if (FlxG.keys.justReleased.F9)
+			audio.speed = defaultSongSpeed;
+	}
+	
 	function preloadEvent(name:String, data:Array<Dynamic>)
 	{
 		switch (name)
