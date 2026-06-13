@@ -27,6 +27,10 @@
 				"version": "1.4.0"
 			},
 			{
+				"name": "hxvlc",
+				"version": "2.2.6"
+			},
+			{
 				"name": "hscript-iris",
 				"link": "https://github.com/DoidoTeam/hscript-iris",
 				"branch": "master"
