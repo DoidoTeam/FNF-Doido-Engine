@@ -29,6 +29,7 @@ enum Asset
 	SCRIPT;
 	SHADER;
 	BINARY;
+	VIDEO;
 	OTHER;
 }
 
@@ -47,6 +48,7 @@ class Assets
 		SCRIPT => ["hx", "hxs", "hxc", "hscript"],
 		SHADER => ["frag", "vert"],
 		BINARY => [""],
+		VIDEO => ["mp4"], // adding webm would be funny ngl
 		OTHER => [""] // ?
 	];
 	public static final mainPath:String = 'assets';
@@ -336,6 +338,9 @@ class Assets
 	public static inline function font(key:String, ?library:String = ""):String
 		return getAsset('fonts/$key', library, FONT);
 
+	public static inline function video(key:String, ?library:String = "", persist:Bool = false)
+		return getAsset('videos/$key', library, VIDEO, true, persist);
+
 	public static inline function textToArray(key:String, ?library:String = ""):Array<String>
 	{
 		var rawList:Array<String> = text(key, library).split('\n');
@@ -382,6 +387,7 @@ class Assets
 	public static inline function bitmapFont(key:String, ?library:String = "fonts"):FlxBitmapFont
 		return cast framesCollection(key, library, FONT);
 
+	
 	public static inline function framesCollection(key:String, ?extrasheets:Array<String>, ?library:String = "", type:SpriteType,
 			persist:Bool = false):FlxFramesCollection
 	{

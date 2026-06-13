@@ -23,6 +23,7 @@ import states.editors.*;
 import substates.GameOverSubState;
 import substates.PauseSubState;
 import doido.song.Week.WeekData;
+import subStates.VideoPlayerSubState;
 #if TOUCH_CONTROLS
 import doido.objects.DoidoHitbox;
 #end
