@@ -327,6 +327,18 @@ class OptionsSubState extends MusicBeatSubState
 					},
 					options: ["ON", "REDUCED", "OFF"]
 				},
+				{
+					name: "Developer Mode",
+					get: () -> Save.data.developerMode,
+					set: (b:Bool) -> Save.data.developerMode = b,
+					desc: (b:Bool) ->
+					{
+						if (b)
+							return "Gives access to the engine's editors.";
+						else
+							return "If enabled, will give access to the engine's editors.";
+					},
+				},
 			],
 			"Graphics" => [
 				#if desktop

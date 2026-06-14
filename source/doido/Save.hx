@@ -27,6 +27,7 @@ class SaveVariables
 	public var hitsoundVolume:Float = 0.4;
 	public var flashingLights:String = "ON";
 	public var splashNotes:String = "ALWAYS";
+	public var developerMode:Bool = false;
 
 	// graphics
 	public var fps:Int = 60;
