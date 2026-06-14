@@ -5,7 +5,7 @@ import openfl.system.System;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.display.Sprite;
-import flixel.util.FlxStringUtil;
+import doido.utils.MemoryUtil;
 
 class FPSCounter extends Sprite
 {
@@ -75,12 +75,12 @@ class FPSCounter extends Sprite
 		fpsField.text = '$fps';
 		labelField.x = fpsField.x + fpsField.getLineMetrics(0).width + 4;
 
-		memField.text = FlxStringUtil.formatBytes(System.totalMemoryNumber);
+		memField.text = MemoryUtil.formatMemory(System.totalMemoryNumber);
 
 		if (debug)
 		{
 			#if windows
-			memField.text += ' / ${FlxStringUtil.formatBytes(doido.system.Windows.getMem())}';
+			memField.text += ' / ${MemoryUtil.formatMemory(doido.system.Windows.getMem())}';
 			#end
 
 			memField.text += '\n${Type.getClassName(Type.getClass(FlxG.state))}';
@@ -101,6 +101,7 @@ class FPSCounter extends Sprite
 		bg.width = bgWidth;
 		bg.height = bgHeight;
 	}
+
 }
 
 class CounterField extends TextField
