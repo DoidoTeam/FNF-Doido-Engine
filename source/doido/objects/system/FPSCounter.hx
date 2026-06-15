@@ -6,23 +6,29 @@ import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.display.Sprite;
 import doido.utils.MemoryUtil;
+import flixel.math.FlxMath;
 
 class FPSCounter extends Sprite
 {
-	@:noCompletion private var times:Array<Float>;
-	@:noCompletion private var deltaTimeout:Float = 0.0;
-
 	var bg:Sprite;
 	var fpsField:CounterField;
 	var labelField:CounterField;
 	var memField:CounterField;
 
-	// Use this if you want to add a watermark to the counter!
-	var watermark:String = "";
-	var debug:Bool = #if debug true #else false #end;
-
 	public var bgWidth:Float = 80;
 	public var bgHeight:Float = 50;
+	public var fps:Float = 0;
+
+	// used for frame calculations
+	private var frameCount:Int = 0;
+	private var frameTime:Float = 0;
+
+	// used so the counter doesnt update as often
+	private var lastFps:Float = -1;
+	private var lastMem:Float = -1;
+
+	// how often the counter updates
+	private final updateTime:Float = 150;
 
 	public function new(x:Float = 0, y:Float = 0)
 	{
@@ -46,9 +52,6 @@ class FPSCounter extends Sprite
 		addChild(memField);
 
 		visible = Save.data.fpsCounter;
-		// watermark = 'DE-Pudim ${Main.internalVer}';
-
-		times = [];
 	}
 
 	private override function __enterFrame(deltaTime:Float)
@@ -56,52 +59,53 @@ class FPSCounter extends Sprite
 		if (!visible)
 			return;
 
-		final now:Float = Timer.stamp() * 1000;
-		times.push(now);
-		while (times[0] < now - 1000)
-			times.shift();
+		frameCount++;
+		frameTime += deltaTime;
 
-		// prevents the overlay from updating every frame, why would you need to anyways @crowplexus
-		if (deltaTimeout < 50)
-		{
-			deltaTimeout += deltaTime;
+		if (frameTime < updateTime || deltaTime <= 0)
 			return;
-		}
 
-		var fps:Int = times.length;
-		if (fps > FlxG.updateFramerate)
-			fps = FlxG.updateFramerate;
+		fps = frameCount * (1000 / frameTime);
+		frameTime = 0;
+		frameCount = 0;
 
-		fpsField.text = '$fps';
-		labelField.x = fpsField.x + fpsField.getLineMetrics(0).width + 4;
+		var displayFps = fps;
+		if (displayFps > FlxG.updateFramerate)
+			displayFps = FlxG.updateFramerate;
 
-		memField.text = MemoryUtil.formatMemory(System.totalMemoryNumber);
+		if (displayFps != lastFps)
+			drawFps(displayFps);
 
-		if (debug)
+		var mem:Float = System.totalMemoryNumber;
+		if (Math.abs(mem - lastMem) > 51200)
+			drawMem(mem);
+
+		var expectedWidth = Math.max(labelField.x + labelField.textWidth, memField.x + memField.textWidth) + 12;
+		var expectedHeight = memField.y + memField.textHeight + 12;
+
+		if (expectedWidth != bgWidth || expectedHeight != bgHeight)
 		{
-			#if windows
-			memField.text += ' / ${MemoryUtil.formatMemory(doido.system.Windows.getMem())}';
-			#end
-
-			memField.text += '\n${Type.getClassName(Type.getClass(FlxG.state))}';
+			bgWidth = expectedWidth;
+			bgHeight = expectedHeight;
+			bg.width = bgWidth;
+			bg.height = bgHeight;
 		}
-
-		memField.text += '\n${watermark}';
-
-		if (fps < 30 || fps > 360)
-			fpsField.textColor = 0xFF0000;
-		else
-			fpsField.textColor = 0xFFFFFF;
-
-		graphics.clear();
-
-		bgWidth = Math.max(labelField.x + labelField.textWidth, memField.x + memField.textWidth) + 12;
-		bgHeight = memField.y + memField.textHeight + 12;
-
-		bg.width = bgWidth;
-		bg.height = bgHeight;
 	}
 
+	inline function drawFps(fps:Float)
+	{
+		lastFps = fps;
+		fpsField.text = '${Math.round(fps)}';
+		labelField.x = fpsField.x + fpsField.getLineMetrics(0).width + 4;
+		fpsField.textColor = (fps < 30) ? 0xFF0000 : 0xFFFFFF;
+	}
+
+	inline function drawMem(mem:Float)
+	{
+		lastMem = mem;
+		memField.text = MemoryUtil.formatMemory(mem);
+		memField.textColor = (mem > 1024 * 1024 * 1024) ? 0xFF0000 : 0xFFFFFF;
+	}
 }
 
 class CounterField extends TextField

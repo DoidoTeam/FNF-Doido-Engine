@@ -17,7 +17,7 @@ class MemoryUtil
 			bytes /= 1024;
 			curUnit++;
 		}
-		
-		return (Math.fround(bytes * 100) / 100) + units[curUnit];
+
+		return (Math.round(bytes * 100) / 100) + (units[curUnit] ?? "");
 	}
 }

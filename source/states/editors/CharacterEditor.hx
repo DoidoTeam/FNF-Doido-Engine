@@ -439,6 +439,43 @@ class CharacterEditor extends MusicBeatState
 		filter.textObj.x += glass.width + 2;
 		filter.fieldWidth -= Std.int(glass.width + 2);
 
+		var bottomY = 15;
+
+		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
+		balls.setPosition(getX("center", balls.width), getY(bottomY - 5) + 12);
+		tab.add(balls);
+
+		tab.add(createText(getX(), getY(bottomY) + 3, "Alpha:", 0xFFD8DAF6));
+		var ghostVis:DoidoCheckmark = new DoidoCheckmark(true);
+		ghostVis.onUp.add(() ->
+		{
+			ghost.visible = ghostVis.value;
+		});
+		ghostVis.x = getX("margin_first");
+		ghostVis.y = getY(bottomY) - 1;
+		tab.add(ghostVis);
+
+		var ghostStepper = new PsychUINumericStepper(getX("margin_right", 100), getY(bottomY), 0.1, ghost.ghostAlpha, 0, 1.0, 1, 100, false);
+		tab.add(ghostStepper);
+
+		var ghostSlider:DoidoSlider = new DoidoSlider(getX("margin_second"), getY(bottomY) + 9, 160, 6, ghost.ghostAlpha, 0, 1, 3, 0.02);
+		ghostSlider.onScrub.add((sld) ->
+		{
+			ghost.visible = true;
+			ghostVis.value = true;
+			ghostStepper.value = ghostSlider.value;
+			ghost.ghostAlpha = ghostSlider.value;
+		});
+		tab.add(ghostSlider);
+
+		ghostStepper.onValueChange = (() ->
+		{
+			ghost.visible = true;
+			ghostVis.value = true;
+			ghostStepper.value = ghostStepper.value;
+			ghost.ghostAlpha = ghostStepper.value;
+		});
+
 		return tab;
 	}
 
