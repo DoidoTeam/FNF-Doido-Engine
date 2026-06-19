@@ -268,7 +268,7 @@ class ChooserButton extends FlxSpriteGroup
 		_label.color = 0xFFFFFFFF;
 		_label.alignment = CENTER;
 		_label.text = label;
-		_label.scale.set(textScale, textScale);
+		_label.scale.set(0.625, 0.625);
 		_label.updateHitbox();
 		add(_label);
 
@@ -276,7 +276,7 @@ class ChooserButton extends FlxSpriteGroup
 		_desc.color = 0xFFD8DAF6;
 		_desc.alignment = CENTER;
 		_desc.text = desc;
-		_desc.scale.set(textScale, textScale);
+		_desc.scale.set(0.625, 0.625);
 		_desc.updateHitbox();
 		add(_desc);
 
