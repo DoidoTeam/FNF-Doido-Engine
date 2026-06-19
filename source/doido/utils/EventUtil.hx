@@ -15,12 +15,54 @@ typedef EventValue =
 	var name:String;
 	var ?info:String;
 	var defaultValue:Dynamic;
+
+	// dropdown
 	var ?options:Array<Dynamic>;
+
+	// steppers
+	var ?step:Float;
+	var ?min:Float;
+	var ?max:Float;
+	var ?decimals:Int;
 }
 
 class EventUtil
 {
 	public static var events:Array<Event> = [
+		/*{
+			name: "Test Event",
+			desc: "Event with the sole purpose of testing value fields.",
+			values: [
+				{
+					name: "Dropdown",
+					info: "Which Character to play animation on.",
+					defaultValue: "dad",
+					options: PlayState.availableCharacters
+				},
+				{
+					name: "Text",
+					info: "Which animation to play.",
+					defaultValue: "idle",
+				},
+				{
+					name: "Float",
+					info: "Speed at which the notes should scroll at.",
+					defaultValue: 2.0,
+				},
+				{
+					name: "Int",
+					info: "Speed but as an int",
+					defaultValue: 5,
+					step: 1,
+					min: 0,
+					max: 10
+				},
+				{
+					name: "Checkmark",
+					defaultValue: false
+				},
+			]
+		},*/
 		{
 			name: "Play Animation",
 			desc: "Make a Character play a specific animation.",
@@ -83,4 +125,13 @@ class EventUtil
 			]
 		}
 	];
+
+	public static function getEvent(name:String):Event
+	{
+		for (e in events)
+			if (e.name == name)
+				return e;
+
+		return null;
+	}
 }

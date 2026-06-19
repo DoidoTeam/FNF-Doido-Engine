@@ -253,6 +253,8 @@ class ChooserButton extends FlxSpriteGroup
 				var uhhh = new HealthIcon();
 				uhhh.setIcon(label, false);
 				icon.loadGraphicFromSprite(uhhh);
+			case EVENT:
+				icon.loadImage(getEventSprite(label));
 			default:
 				icon.visible = false;
 		}
@@ -266,7 +268,7 @@ class ChooserButton extends FlxSpriteGroup
 		_label.color = 0xFFFFFFFF;
 		_label.alignment = CENTER;
 		_label.text = label;
-		_label.scale.set(0.625, 0.625);
+		_label.scale.set(textScale, textScale);
 		_label.updateHitbox();
 		add(_label);
 
@@ -274,7 +276,7 @@ class ChooserButton extends FlxSpriteGroup
 		_desc.color = 0xFFD8DAF6;
 		_desc.alignment = CENTER;
 		_desc.text = desc;
-		_desc.scale.set(0.625, 0.625);
+		_desc.scale.set(textScale, textScale);
 		_desc.updateHitbox();
 		add(_desc);
 
@@ -298,4 +300,15 @@ class ChooserButton extends FlxSpriteGroup
 					+ ((button.height / 2) - (_desc.height / 2)));
 		}
 	}
+
+	// funny
+    public static function getEventSprite(name:String):String
+    {
+        var eventName:String = name.toLowerCase().replace(' ', '_');
+
+        if(!Assets.fileExists('images/editors/charting/events/$eventName', IMAGE))
+            eventName = "unknown_event";
+
+        return 'editors/charting/events/$eventName';
+    }
 }

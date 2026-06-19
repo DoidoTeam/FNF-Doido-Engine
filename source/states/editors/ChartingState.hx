@@ -41,6 +41,7 @@ import flixel.util.FlxColor;
 import doido.objects.ui.buttons.DoidoTextButton;
 import flixel.graphics.frames.FlxFrame;
 import doido.song.SongHandler;
+import doido.utils.EventUtil;
 
 class ChartingNote extends Note
 {
@@ -901,14 +902,107 @@ class ChartingState extends MusicBeatState
 		{
 			return switch (place)
 			{
+				case "margin_first_search": tab.bg.x + 80;
 				case "center": tab.bg.x + (tab.bg.width / 2) - (width / 2);
 				case "margin_first": tab.bg.x + 110;
 				default: tab.bg.x + 8;
 			}
 		}
 
+		var spacingE = spacingH - 3;
 		function getY(i:Int = 0)
-			return tab.bg.y + 8 + (spacingH * i);
+			return tab.bg.y + 8 + (spacingE * i);
+
+		var valueTabs:FlxGroup = new FlxGroup();
+		tab.add(valueTabs);
+
+		var bottomY = 12;
+
+		function createValues(?event:Event)
+		{
+			valueTabs.clear();
+
+			if (event == null)
+				return;
+
+			valueTabs.add(createText(getX(), getY(bottomY - 2), event.name + ":", 0xFFFFFFFF));
+
+			for (i in 0...event.values.length)
+			{
+				var value = event.values[i];
+				var index = event.values.length - i;
+
+				var x = getX((i % 2 == 0) ? "" : "center");
+				var y = getY((bottomY) + (Math.floor(i / 2) * 2));
+
+				valueTabs.add(createText(x, y - spacingE + 3, value.name + ":", 0xFFD8DAF6));
+				if (Std.isOfType(value.defaultValue, String))
+				{
+					if (value.options != null)
+					{
+						// drop down
+						var dropdown = new PsychUIDropDownMenu(x, y, cast value.options, (i, s) -> {}, 100, false);
+						dropdown.selectedLabel = value.defaultValue;
+						dropdown.zIndex = index;
+						valueTabs.add(dropdown);
+					}
+					else
+					{
+						var textfield = new PsychUIInputText(x, y, 145, value.defaultValue, 14);
+						textfield.onChange.add((old, cur, input) -> {});
+						textfield.zIndex = index;
+						valueTabs.add(textfield);
+					}
+				}
+				else if (Std.isOfType(value.defaultValue, Float) || Std.isOfType(value.defaultValue, Int))
+				{
+					var stepper = new PsychUINumericStepper(x, y, value.step ?? 0.25, value.defaultValue, value.min ?? 0, value.max ?? 4, value.decimals ?? 2,
+						100, false);
+					stepper.onValueChange = () -> {};
+					stepper.zIndex = index;
+					valueTabs.add(stepper);
+				}
+				else if (Std.isOfType(value.defaultValue, Bool))
+				{
+					var checkmark = new DoidoCheckmark(false);
+					checkmark.onUp.add(() -> {});
+					checkmark.x = x;
+					checkmark.y = y;
+					checkmark.zIndex = index;
+					valueTabs.add(checkmark);
+				}
+			}
+
+			valueTabs.sort(ZIndex.sort);
+		}
+
+		tab.add(createText(getX(), getY(0) + 3, "Search:", 0xFFD8DAF6));
+
+		var events = new ChooserWindow(getX("center", 440), getY(1) + 5, 440, 200, [], null);
+		events.view = GRID;
+		events.type = EVENT;
+		events.options = [for (event in EventUtil.events) event.name];
+		events.onClick = (str) ->
+		{
+			createValues(EventUtil.getEvent(str));
+		};
+		tab.add(events);
+
+		var filter:PsychUIInputText;
+		filter = new PsychUIInputText(getX("margin_first_search"), getY(0), 372, "", 14);
+		filter.onChange.add((old, cur, input) -> events.filter = cur);
+		filter.behindText.color = 0xFFD8DAF6;
+		tab.add(filter);
+
+		var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
+		glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
+		glass.x = filter.behindText.x + 1;
+		glass.y = filter.behindText.y + 1;
+		tab.add(glass);
+
+		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
+		balls.setPosition(getX("center", balls.width), getY(bottomY - 3) + 3);
+		tab.add(balls);
 
 		return tab;
 	}
