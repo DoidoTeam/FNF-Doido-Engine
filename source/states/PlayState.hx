@@ -507,10 +507,10 @@ class PlayState extends MusicBeatState implements Playable
 			persistentDraw = persistentUpdate = false;
 			openSubState(new GameOverSubState(SONG.META.assets.gameOverPath, bf));
 		}
-		
-		if(Save.data.developerMode)
+
+		if (Save.data.developerMode)
 			debugKeys();
-	
+
 		if (canPause)
 		{
 			if (Controls.justPressed(PAUSE) #if TOUCH_CONTROLS || pauseButton.justPressed #end)
@@ -556,14 +556,14 @@ class PlayState extends MusicBeatState implements Playable
 		if (FlxG.keys.justPressed.SEVEN)
 			MusicBeat.switchState(new ChartingState(SONG));
 
-		if(FlxG.keys.justPressed.EIGHT)
+		if (FlxG.keys.justPressed.EIGHT)
 		{
 			var char = dad;
-			if(FlxG.keys.pressed.SHIFT)
+			if (FlxG.keys.pressed.SHIFT)
 				char = bf;
-			if(FlxG.keys.pressed.CONTROL)
+			if (FlxG.keys.pressed.CONTROL)
 				char = gf;
-			
+
 			MusicBeat.switchState(new CharacterEditor(char.curChar, char == bf, true));
 		}
 
@@ -576,7 +576,7 @@ class PlayState extends MusicBeatState implements Playable
 		if (FlxG.keys.justReleased.F9)
 			audio.speed = defaultSongSpeed;
 	}
-	
+
 	function preloadEvent(name:String, data:Array<Dynamic>)
 	{
 		switch (name)
@@ -680,6 +680,8 @@ class PlayState extends MusicBeatState implements Playable
 				camDisplace.point = {x: 0, y: 0};
 		}
 	}
+
+	public static var availableCharacters:Array<String> = ['dad', 'bf', 'gf'];
 
 	function strToChar(str:String, nullable:Bool = false):CharGroup
 	{
