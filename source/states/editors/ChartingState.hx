@@ -979,7 +979,7 @@ class ChartingState extends MusicBeatState
 		tab.add(createText(getX(), getY(0) + 3, "Search:", 0xFFD8DAF6));
 
 		var events = new ChooserWindow(getX("center", 440), getY(1) + 5, 440, 200, [], null);
-		events.view = GRID;
+		events.view = LIST;
 		events.type = EVENT;
 		events.options = [for (event in EventUtil.events) event.name];
 		events.onClick = (str) ->

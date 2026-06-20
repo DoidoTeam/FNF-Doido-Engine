@@ -258,10 +258,6 @@ class ChooserButton extends FlxSpriteGroup
 			default:
 				icon.visible = false;
 		}
-		icon.setGraphicSize(width - 20, height - 20);
-		icon.updateHitbox();
-		icon.x = button.x + (button.width - icon.width) / 2;
-		icon.y = button.y + 5;
 		add(icon);
 
 		_label = new FlxBitmapText(0, 0, Assets.bitmapFont("phantommuff"));
@@ -285,6 +281,12 @@ class ChooserButton extends FlxSpriteGroup
 			case GRID:
 				_label.x = button.x + (button.width - _label.width) / 2;
 				_label.y = button.y + button.height - _label.height - 2;
+
+				var ratio = icon.width / icon.height;
+				icon.setGraphicSize(width - 20, (width / ratio) - 20);
+				icon.updateHitbox();
+				icon.x = button.x + (button.width - icon.width) / 2;
+				icon.y = button.y + (button.height - icon.height) / 2;
 			default:
 				_label.setPosition(button.x
 					+ ((button.width / 2) - (_label.width / 2))
@@ -298,17 +300,23 @@ class ChooserButton extends FlxSpriteGroup
 					+ 1,
 					button.y
 					+ ((button.height / 2) - (_desc.height / 2)));
+
+				var ratio = icon.width / icon.height;
+				icon.setGraphicSize(height, (height / ratio));
+				icon.updateHitbox();
+				icon.x = button.x + width - icon.width;
+				icon.y = button.y + (button.height - icon.height) / 2;
 		}
 	}
 
 	// funny
-    public static function getEventSprite(name:String):String
-    {
-        var eventName:String = name.toLowerCase().replace(' ', '_');
+	public static function getEventSprite(name:String):String
+	{
+		var eventName:String = name.toLowerCase().replace(' ', '_');
 
-        if(!Assets.fileExists('images/editors/charting/events/$eventName', IMAGE))
-            eventName = "unknown_event";
+		if (!Assets.fileExists('images/editors/charting/events/$eventName', IMAGE))
+			eventName = "unknown_event";
 
-        return 'editors/charting/events/$eventName';
-    }
+		return 'editors/charting/events/$eventName';
+	}
 }
