@@ -1,5 +1,6 @@
 package doido.song;
 
+import doido.utils.EventUtil;
 import objects.Character.DoidoCharacter;
 import doido.utils.NoteUtil;
 import doido.song.compat.Legacy;
@@ -152,7 +153,7 @@ class SongHandler
 
 	private static function formatEvents(EVENTS:DoidoEvents):DoidoEvents
 	{
-		EVENTS.events.sort(NoteUtil.sortEvents);
+		EVENTS.events.sort(EventUtil.sortEvents);
 		return EVENTS;
 	}
 

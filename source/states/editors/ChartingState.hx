@@ -1,5 +1,6 @@
 package states.editors;
 
+import openfl.events.RenderEvent;
 import substates.editors.ChartTestSubState;
 import substates.editors.PopupSubState;
 import doido.Cache;
@@ -53,6 +54,24 @@ class ChartingNote extends Note
 	}
 }
 
+class ChartingEvent extends FlxSprite
+{
+	public var selected:Bool = false;
+	public var event:EventData;
+
+	public function new()
+	{
+		super();
+	}
+
+	public function reloadEvent(event:EventData)
+	{
+		this.event = event;
+		this.loadImage(EventUtil.getEventSprite(event.name));
+		this.setHitbox(ChartingState.EVENT_SIZE, ChartingState.EVENT_SIZE);
+	}
+}
+
 class ChartingState extends MusicBeatState
 {
 	public static var GRID_SIZE:Int = 40;
@@ -61,6 +80,10 @@ class ChartingState extends MusicBeatState
 	public static var GRID_SNAP:Int = 16;
 	public static var GRID_ZOOM:Float = 1.0;
 
+	public static var EVENT_SIZE:Float = 40;
+	public static var EVENT_PADDING:Int = 10;
+
+	public static var centerEvents:Bool = true;
 	public static var noFunAllowed:Bool = false; // reduced animations
 	public static var quantNotes:Bool = Save.data.quantNotes;
 
@@ -75,13 +98,18 @@ class ChartingState extends MusicBeatState
 	public var grid:ChartingGrid;
 	public var timeBar:FlxSprite;
 	public var renderNotes:FlxTypedGroup<ChartingNote>;
+	public var renderEvents:FlxTypedGroup<ChartingEvent>;
 	public var selectedColor:FlxColor = FlxColor.BLACK;
 
 	// editor stuff
 	public var selectedNotes:Array<NoteData> = [];
+	public var selectedEvents:Array<EventData> = [];
+	public var lastEdited:EventData;
+	public var eventAmounts:Map<String, Int> = []; // how many events are in each step
 	public var draggingSelectedNotes:Bool = false;
 	public var hoverSquare:FlxSprite;
 	public var selectSquare:FlxSprite;
+	public var addEvent:ChartingEvent;
 
 	public var lastClicked:DoidoPoint = {x: 0, y: 0};
 	public var lastClickedOffset:Float = 0.0;
@@ -145,6 +173,14 @@ class ChartingState extends MusicBeatState
 
 		renderNotes = new FlxTypedGroup<ChartingNote>();
 		add(renderNotes);
+
+		renderEvents = new FlxTypedGroup<ChartingEvent>();
+		add(renderEvents);
+
+		addEvent = new ChartingEvent();
+		addEvent.reloadEvent({name: "add", stepTime: 0, data: []});
+		addEvent.visible = false;
+		add(addEvent);
 
 		timeBar = new FlxSprite(grid.gridX).makeColor(GRID_SIZE * GRID_LANES, 4, 0xFFFF0000);
 		timeBar.screenCenter(Y);
@@ -918,65 +954,16 @@ class ChartingState extends MusicBeatState
 
 		var bottomY = 12;
 
-		function createValues(?event:Event)
-		{
-			valueTabs.clear();
+		var warnSpr = new FlxSprite();
+		warnSpr.loadImage("editors/charting/events/warning");
+		warnSpr.x = getX("center", warnSpr.width);
+		warnSpr.y = getY(6);
+		tab.add(warnSpr);
 
-			if (event == null)
-				return;
-
-			valueTabs.add(createText(getX(), getY(bottomY - 2), event.name + ":", 0xFFFFFFFF));
-
-			for (i in 0...event.values.length)
-			{
-				var value = event.values[i];
-				var index = event.values.length - i;
-
-				var x = getX((i % 2 == 0) ? "" : "center");
-				var y = getY((bottomY) + (Math.floor(i / 2) * 2));
-
-				valueTabs.add(createText(x, y - spacingE + 3, value.name + ":", 0xFFD8DAF6));
-				if (Std.isOfType(value.defaultValue, String))
-				{
-					if (value.options != null)
-					{
-						// drop down
-						var dropdown = new PsychUIDropDownMenu(x, y, cast value.options, (i, s) -> {}, 100, false);
-						dropdown.selectedLabel = value.defaultValue;
-						dropdown.zIndex = index;
-						valueTabs.add(dropdown);
-					}
-					else
-					{
-						var textfield = new PsychUIInputText(x, y, 145, value.defaultValue, 14);
-						textfield.onChange.add((old, cur, input) -> {});
-						textfield.zIndex = index;
-						valueTabs.add(textfield);
-					}
-				}
-				else if (Std.isOfType(value.defaultValue, Float) || Std.isOfType(value.defaultValue, Int))
-				{
-					var stepper = new PsychUINumericStepper(x, y, value.step ?? 0.25, value.defaultValue, value.min ?? 0, value.max ?? 4, value.decimals ?? 2,
-						100, false);
-					stepper.onValueChange = () -> {};
-					stepper.zIndex = index;
-					valueTabs.add(stepper);
-				}
-				else if (Std.isOfType(value.defaultValue, Bool))
-				{
-					var checkmark = new DoidoCheckmark(false);
-					checkmark.onUp.add(() -> {});
-					checkmark.x = x;
-					checkmark.y = y;
-					checkmark.zIndex = index;
-					valueTabs.add(checkmark);
-				}
-			}
-
-			valueTabs.sort(ZIndex.sort);
-		}
-
-		tab.add(createText(getX(), getY(0) + 3, "Search:", 0xFFD8DAF6));
+		var warnTxt = createText(0, 0, "Select an event to edit.", 0xFFD8DAF6);
+		warnTxt.x = getX("center", warnTxt.width);
+		warnTxt.y = warnSpr.y + warnSpr.height + 10;
+		tab.add(warnTxt);
 
 		var events = new ChooserWindow(getX("center", 440), getY(1) + 5, 440, 200, [], null);
 		events.view = LIST;
@@ -984,9 +971,17 @@ class ChartingState extends MusicBeatState
 		events.options = [for (event in EventUtil.events) event.name];
 		events.onClick = (str) ->
 		{
-			createValues(EventUtil.getEvent(str));
+			if (lastEdited != null)
+			{
+				lastEdited.name = str;
+				lastEdited.data = [for (v in EventUtil.getEvent(str).values) v.defaultValue];
+			}
+			tab.updateCallback.dispatch();
 		};
+		events.active = false;
 		tab.add(events);
+
+		var search = tab.add(createText(getX(), getY(0) + 3, "Search:", 0xFFD8DAF6));
 
 		var filter:PsychUIInputText;
 		filter = new PsychUIInputText(getX("margin_first_search"), getY(0), 372, "", 14);
@@ -1004,14 +999,100 @@ class ChartingState extends MusicBeatState
 		balls.setPosition(getX("center", balls.width), getY(bottomY - 3) + 3);
 		tab.add(balls);
 
+		function toggleStuff(b:Bool)
+		{
+			for (obj in [events, filter, glass, balls, search])
+			{
+				obj.active = b;
+				obj.visible = b;
+			}
+			for (obj in [warnSpr, warnTxt])
+			{
+				obj.active = !b;
+				obj.visible = !b;
+			}
+		}
+		toggleStuff(false);
+
+		tab.updateCallback.add(() ->
+		{
+			valueTabs.clear();
+
+			if (lastEdited == null)
+			{
+				toggleStuff(false);
+				return;
+			}
+
+			toggleStuff(true);
+
+			var event = EventUtil.getEvent(lastEdited.name);
+			if (event == null)
+				return;
+
+			valueTabs.add(createText(getX(), getY(bottomY - 2), event.name + ":", 0xFFFFFFFF));
+			for (i in 0...event.values.length)
+			{
+				var value = event.values[i];
+				var index = event.values.length - i;
+
+				var x = getX((i % 2 == 0) ? "" : "center");
+				var y = getY((bottomY) + (Math.floor(i / 2) * 2));
+
+				var current:Dynamic = (lastEdited.data != null && lastEdited.data[i] != null) ? lastEdited.data[i] : value.defaultValue;
+
+				valueTabs.add(createText(x, y - spacingE + 3, value.name + ":", 0xFFD8DAF6));
+				if (Std.isOfType(value.defaultValue, String))
+				{
+					if (value.options != null)
+					{
+						// drop down
+						var dropdown = new PsychUIDropDownMenu(x, y, cast value.options, (i2, s) ->
+						{
+							lastEdited.data[i] = s;
+						}, 100, false);
+						dropdown.selectedLabel = current;
+						dropdown.zIndex = index;
+						valueTabs.add(dropdown);
+					}
+					else
+					{
+						var textfield = new PsychUIInputText(x, y, 145, current, 14);
+						textfield.onChange.add((old, cur, input) -> lastEdited.data[i] = cur);
+						textfield.zIndex = index;
+						valueTabs.add(textfield);
+					}
+				}
+				else if (Std.isOfType(value.defaultValue, Float) || Std.isOfType(value.defaultValue, Int))
+				{
+					var stepper = new PsychUINumericStepper(x, y, value.step ?? 0.25, current, value.min ?? 0, value.max ?? 4, value.decimals ?? 2, 100, false);
+					stepper.onValueChange = () -> lastEdited.data[i] = stepper.value;
+					stepper.zIndex = index;
+					valueTabs.add(stepper);
+				}
+				else if (Std.isOfType(value.defaultValue, Bool))
+				{
+					var checkmark = new DoidoCheckmark(current);
+					checkmark.onUp.add(() -> lastEdited.data[i] = checkmark.value);
+					checkmark.x = x;
+					checkmark.y = y;
+					checkmark.zIndex = index;
+					valueTabs.add(checkmark);
+				}
+			}
+
+			valueTabs.sort(ZIndex.sort);
+		});
 		return tab;
 	}
+
+	var eventsTab:DoidoWindow;
 
 	function addMain()
 	{
 		menuMain = new DoidoBox(803, 19, 458, 32, 4, [
 			createChartingTab(),
-			createEventsTab(),
+			eventsTab = createEventsTab(),
 			createBasic("Note"),
 			createBasic("Functions"),
 			createSongTab()
@@ -1121,43 +1202,149 @@ class ChartingState extends MusicBeatState
 				}
 			}
 
-			if (selectedNotes.length > 0)
+			if (selectedEvents.length < 2 && selectedEvents[0] != lastEdited)
+			{
+				lastEdited = selectedEvents[0];
+				eventsTab.updateCallback.dispatch();
+			}
+
+			if (selectedNotes.length > 0 || selectedEvents.length > 0)
 			{
 				var selColor:Float = 0.8 + Math.sin(FlxG.game.ticks / 100) * 2;
 				selectedColor.redFloat = selColor;
 				selectedColor.greenFloat = selColor;
 				selectedColor.blueFloat = selColor;
-				for (note in renderNotes.members)
+
+				renderNotes.forEachAlive((note) ->
 				{
 					if (note.selected)
 						note.color = selectedColor;
-				}
+				});
 
-				if (FlxG.keys.justPressed.Q || FlxG.keys.justPressed.E)
+				renderEvents.forEachAlive((event) ->
 				{
-					playSfx("editors/click");
-					var dir:Int = FlxG.keys.justPressed.Q ? -1 : 1;
-					if (FlxG.keys.pressed.SHIFT)
-						dir *= 4;
-					for (note in selectedNotes)
+					if (event.selected)
+						event.color = selectedColor;
+				});
+
+				if (selectedNotes.length > 0)
+				{
+					if (FlxG.keys.justPressed.Q || FlxG.keys.justPressed.E)
 					{
-						note.length += dir;
-						if (note.length < 0)
-							note.length = 0;
+						playSfx("editors/click");
+						var dir:Int = FlxG.keys.justPressed.Q ? -1 : 1;
+						if (FlxG.keys.pressed.SHIFT)
+							dir *= 4;
+						for (note in selectedNotes)
+						{
+							note.length += dir;
+							if (note.length < 0)
+								note.length = 0;
+						}
+					}
+
+					if (FlxG.keys.justPressed.DELETE)
+					{
+						for (note in selectedNotes)
+						{
+							playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
+							CHART.notes.remove(note);
+						}
+						selectedNotes = [];
+						sortNotes();
 					}
 				}
 
-				if (FlxG.keys.justPressed.DELETE)
+				if (selectedEvents.length > 0)
 				{
-					for (note in selectedNotes)
+					if (FlxG.keys.justPressed.DELETE)
 					{
-						playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
-						CHART.notes.remove(note);
+						for (event in selectedEvents)
+						{
+							playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
+							EVENTS.events.remove(event);
+						}
+						selectedEvents = [];
+						sortEvents();
 					}
-					selectedNotes = [];
-					sortNotes();
 				}
 			}
+
+			if (FlxG.mouse.x < grid.gridX)
+			{
+				var zoomSnap:Float = (GRID_SNAP * GRID_ZOOM);
+				var realSnap:Float = (zoomSnap / 16);
+				var sizeTimed:Float = (GRID_SIZE / realSnap) * GRID_ZOOM;
+				var mouseY:Float = Math.floor((FlxG.mouse.y + (EVENT_SIZE / 2) - grid.gridY) / sizeTimed) * sizeTimed;
+				var curStep:Float = mouseY / GRID_SIZE / GRID_ZOOM;
+				var eventOrder:Int = eventAmounts.get(Std.string(curStep)) ?? 1;
+
+				addEvent.x = grid.gridX - ((EVENT_SIZE + EVENT_PADDING) * eventOrder) - EVENT_PADDING;
+				addEvent.y = grid.gridY + mouseY;
+				addEvent.visible = true;
+				if (GRID_SNAP == 0)
+					addEvent.y = FlxG.mouse.y;
+				if (centerEvents)
+					addEvent.y -= (EVENT_SIZE / 2);
+
+				if (FlxG.mouse.overlaps(addEvent))
+				{
+					addEvent.alpha = 1;
+
+					if (FlxG.mouse.justReleased)
+					{
+						if (!draggingSelectedNotes && !heldOnNoteHold)
+						{
+							playSfx("editors/click");
+							var newEvent:EventData = {
+								stepTime: curStep,
+								name: "New Event",
+								data: []
+							};
+							EVENTS.events.push(newEvent);
+							selectedEvents = [newEvent];
+							sortEvents();
+						}
+					}
+				}
+				else
+				{
+					addEvent.alpha = 0.5;
+
+					if (FlxG.mouse.justPressedRight)
+					{
+						var removed:Bool = false;
+
+						renderEvents.forEachAlive((event) ->
+						{
+							if (FlxG.mouse.overlaps(event))
+							{
+								removed = true;
+								EVENTS.events.remove(event.event);
+								if (selectedEvents.contains(event.event))
+									selectedEvents.remove(event.event);
+							}
+						});
+						if (removed)
+						{
+							playSfx("editors/pop");
+							sortEvents();
+						}
+					}
+					else if (FlxG.mouse.justPressed)
+					{
+						renderEvents.forEachAlive((event) ->
+						{
+							if (FlxG.mouse.overlaps(event))
+							{
+								selectedEvents = [event.event];
+							}
+						});
+					}
+				}
+			}
+			else
+				addEvent.visible = false;
 
 			if (selectSquare.visible)
 			{
@@ -1613,6 +1800,11 @@ class ChartingState extends MusicBeatState
 		CHART.notes.sort(NoteUtil.sortNotes);
 	}
 
+	public function sortEvents()
+	{
+		EVENTS.events.sort(EventUtil.sortEvents);
+	}
+
 	public function playSfx(key:String, pitchShift:Bool = true, startDelay:Float = 0.0)
 	{
 		var sfx = FlxG.sound.load(Assets.sound(key));
@@ -1629,10 +1821,8 @@ class ChartingState extends MusicBeatState
 
 	override function draw()
 	{
-		for (note in renderNotes.members)
-		{
-			note.kill();
-		}
+		renderNotes.killMembers();
+		renderEvents.killMembers();
 
 		for (noteData in CHART.notes)
 		{
@@ -1688,6 +1878,31 @@ class ChartingState extends MusicBeatState
 		}
 
 		renderNotes.sort(ZIndex.sort);
+
+		eventAmounts.clear();
+		for (eventData in EVENTS.events)
+		{
+			var eventY:Float = grid.gridY + (eventData.stepTime * GRID_SIZE * GRID_ZOOM);
+			var eventOrder:Int = eventAmounts.get(Std.string(eventData.stepTime)) ?? 1;
+			if (eventY < -GRID_SIZE || eventY > FlxG.height)
+				continue;
+
+			var event:ChartingEvent = cast renderEvents.recycle(ChartingEvent);
+			event.reloadEvent(eventData);
+			event.x = grid.gridX - ((event.width + EVENT_PADDING) * eventOrder) - EVENT_PADDING;
+			event.y = eventY - (centerEvents ? event.height / 2 : 0);
+
+			event.selected = false;
+			if (!selectedEvents.contains(eventData))
+				event.color = 0xFFFFFFFF;
+			else
+				event.selected = true;
+
+			if (!renderEvents.members.contains(event))
+				renderEvents.add(event);
+
+			eventAmounts.set(Std.string(eventData.stepTime), eventOrder + 1);
+		}
 
 		super.draw();
 

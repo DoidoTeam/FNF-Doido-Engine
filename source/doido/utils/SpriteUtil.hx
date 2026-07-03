@@ -31,11 +31,7 @@ class SpriteUtil
 
 	public static function loadImage(spr:FlxSprite, key:String, animated:Bool = false, frameWidth:Float = 0, frameHeight:Float = 0):FlxSprite
 	{
-		spr.loadGraphic(
-			Assets.image(key), animated,
-			animated ? Math.floor(frameWidth) : 0,
-			animated ? Math.floor(frameHeight) : 0
-		);
+		spr.loadGraphic(Assets.image(key), animated, animated ? Math.floor(frameWidth) : 0, animated ? Math.floor(frameHeight) : 0);
 		return spr;
 	}
 
@@ -93,6 +89,13 @@ class SpriteUtil
 		}
 		spr.clipRect = clipRect;
 		return spr;
+	}
+
+	public static function setHitbox(spr:FlxSprite, width:Float, height:Float)
+	{
+		spr.width = width;
+		spr.height = height;
+		spr.offset.set((spr.frameWidth - width) / 2, (spr.frameHeight - height) / 2);
 	}
 
 	public static function getColor(clr:Dynamic):FlxColor

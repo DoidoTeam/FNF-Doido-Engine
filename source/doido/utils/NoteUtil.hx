@@ -181,7 +181,4 @@ class NoteUtil
 
 	public static function sortNotes(Obj1:NoteData, Obj2:NoteData):Int
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.stepTime, Obj2.stepTime);
-
-	public static function sortEvents(Obj1:EventData, Obj2:EventData):Int
-		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.stepTime, Obj2.stepTime);
 }

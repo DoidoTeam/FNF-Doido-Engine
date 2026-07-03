@@ -1,6 +1,8 @@
 package doido.utils;
 
 import states.PlayState;
+import doido.song.SongHandler;
+import flixel.util.FlxSort;
 
 typedef Event =
 {
@@ -134,4 +136,17 @@ class EventUtil
 
 		return null;
 	}
+
+	public static function getEventSprite(name:String):String
+	{
+		var eventName:String = name.toLowerCase().replace(' ', '_');
+
+		if (!Assets.fileExists('images/editors/charting/events/$eventName', IMAGE))
+			eventName = "unknown_event";
+
+		return 'editors/charting/events/$eventName';
+	}
+
+	public static function sortEvents(Obj1:EventData, Obj2:EventData):Int
+		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.stepTime, Obj2.stepTime);
 }

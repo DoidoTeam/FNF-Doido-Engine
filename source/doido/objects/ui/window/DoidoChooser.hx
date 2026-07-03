@@ -9,6 +9,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxBitmapText;
 import doido.objects.ui.buttons.DoidoButton;
 import objects.ui.HealthIcon;
+import doido.utils.EventUtil;
 
 enum ChooserView
 {
@@ -254,7 +255,7 @@ class ChooserButton extends FlxSpriteGroup
 				uhhh.setIcon(label, false);
 				icon.loadGraphicFromSprite(uhhh);
 			case EVENT:
-				icon.loadImage(getEventSprite(label));
+				icon.loadImage(EventUtil.getEventSprite(label));
 			default:
 				icon.visible = false;
 		}
@@ -307,16 +308,5 @@ class ChooserButton extends FlxSpriteGroup
 				icon.x = button.x + width - icon.width;
 				icon.y = button.y + (button.height - icon.height) / 2;
 		}
-	}
-
-	// funny
-	public static function getEventSprite(name:String):String
-	{
-		var eventName:String = name.toLowerCase().replace(' ', '_');
-
-		if (!Assets.fileExists('images/editors/charting/events/$eventName', IMAGE))
-			eventName = "unknown_event";
-
-		return 'editors/charting/events/$eventName';
 	}
 }
