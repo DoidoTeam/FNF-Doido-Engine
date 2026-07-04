@@ -101,9 +101,15 @@ class SpriteUtil
 	public static function getColor(clr:Dynamic):FlxColor
 	{
 		if (Std.isOfType(clr, String))
-			return FlxColor.fromString(clr);
+		{
+			var str:String = cast clr;
+			if (str.contains(","))
+				return getColor(str.split(","))
+			else
+				return FlxColor.fromString(clr);
+		}
 		else if (Std.isOfType(clr, Array))
-			return FlxColor.fromRGB(clr[0], clr[1], clr[2]);
+			return FlxColor.fromRGB(Std.parseInt(clr[0] ?? "0") ?? 0, Std.parseInt(clr[1] ?? "0") ?? 0, Std.parseInt(clr[2] ?? "0") ?? 0);
 		else
 			return 0xFFA1A1A1;
 	}

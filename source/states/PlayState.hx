@@ -582,7 +582,7 @@ class PlayState extends MusicBeatState implements Playable
 		switch (name)
 		{
 			case 'Change Character':
-				strToChar(data[0]).addChar(data[1]);
+				strToChar(data[0]).addChar(data[1], false);
 			case 'Change Stage':
 				stageBuild.reloadStage(data[0]);
 				if (stageBuild.gfVersion != "")
@@ -611,7 +611,7 @@ class PlayState extends MusicBeatState implements Playable
 					if (strumline.scrollTween != null)
 						strumline.scrollTween.cancel();
 					var newSpeed:Float = data[0];
-					var duration:Float = Conductor.getTimeAtStep(data[1]);
+					var duration:Float = Conductor.getStepDuration(curStepFloat, data[1]);
 					if (duration <= 0)
 						strumline.scrollSpeed = newSpeed;
 					else
@@ -624,9 +624,9 @@ class PlayState extends MusicBeatState implements Playable
 			case "Change Cam Zoom":
 				camZoom = data[0];
 			case "Flash Screen":
-				MusicBeat.flash(camGame, Conductor.getTimeAtStep(data[0]), SpriteUtil.getColor(data[1]));
+				MusicBeat.flash(strToCam(data[2]), Conductor.getStepDuration(curStepFloat, data[0]), SpriteUtil.getColor(data[1]));
 			case 'Fade Screen':
-				camGame.fade(SpriteUtil.getColor(data[2]), Conductor.getTimeAtStep(data[1]), data[0]);
+				strToCam(data[3]).fade(SpriteUtil.getColor(data[2]), Conductor.getStepDuration(curStepFloat, data[1]), data[0]);
 			case "Change Stage":
 				changeStage(data[0]);
 			case "Camera Focus":
@@ -685,12 +685,25 @@ class PlayState extends MusicBeatState implements Playable
 
 	function strToChar(str:String, nullable:Bool = false):CharGroup
 	{
-		return switch (str)
+		return switch (str.toLowerCase())
 		{
 			default: nullable ? null : dad;
 			case 'dad': dad;
 			case 'bf' | 'boyfriend': bf;
 			case 'gf' | 'girlfriend': gf;
+		}
+	}
+
+	public static var availableCameras:Array<String> = ['Game', 'HUD', 'Strum', 'Other'];
+
+	function strToCam(str:String):DoidoCamera
+	{
+		return switch (str.toLowerCase())
+		{
+			default: camGame;
+			case 'camHUD' | 'hud' | 'ui': camHUD;
+			case 'camStrum' | 'strum' | 'notes': camStrum;
+			case 'camOther' | 'other' | 'camOthers' | 'others': camOther;
 		}
 	}
 

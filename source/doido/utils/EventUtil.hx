@@ -20,6 +20,7 @@ typedef EventValue =
 
 	// dropdown
 	var ?options:Array<Dynamic>;
+	var ?getOptions:Void->Array<Dynamic>;
 
 	// steppers
 	var ?step:Float;
@@ -126,8 +127,77 @@ class EventUtil
 					name: "New Character",
 					info: "Which Character to change to.",
 					defaultValue: "face",
-					// options: PlayState.availableCharacters // nota, mudar para lista dos personagens
+					getOptions: () -> return Assets.list("data/characters/", true, JSON).concat(["face"]),
 				},
+			]
+		},
+		{
+			name: "Change Stage",
+			desc: "Change to specific Stage.",
+			values: [
+				{
+					name: "New Stage",
+					info: "Which Stage to change to.",
+					defaultValue: "stage",
+					getOptions: () -> return Assets.list("data/scripts/stages/", true, SCRIPT),
+				},
+			]
+		},
+		{
+			name: "Flash Screen",
+			desc: "Flash a Camera with a specific color.",
+			values: [
+				{
+					name: "Duration",
+					info: "How long the flash will take, in steps.",
+					defaultValue: 5,
+					min: 1,
+					max: 128,
+					step: 1,
+					decimals: 0
+				},
+				{
+					name: "Color",
+					info: "What color to flash the screen with.",
+					defaultValue: "WHITE"
+				},
+				{
+					name: "Camera",
+					info: "Which camera to flash.",
+					defaultValue: "Game",
+					options: PlayState.availableCameras
+				}
+			]
+		},
+		{
+			name: "Fade Screen",
+			desc: "Fade to or from a screen.",
+			values: [
+				{
+					name: "Fade In",
+					info: "If enabled, will fade in from the selected color.",
+					defaultValue: false
+				},
+				{
+					name: "Duration",
+					info: "How long the fade will take, in steps.",
+					defaultValue: 16,
+					min: 1,
+					max: 128,
+					step: 1,
+					decimals: 0
+				},
+				{
+					name: "Color",
+					info: "What color to fade the screen with.",
+					defaultValue: "BLACK"
+				},
+				{
+					name: "Camera",
+					info: "Which camera to fade.",
+					defaultValue: "Game",
+					options: PlayState.availableCameras
+				}
 			]
 		},
 		{
@@ -148,11 +218,19 @@ class EventUtil
 					name: "Speed",
 					info: "Speed at which the notes should scroll at.",
 					defaultValue: 2.0,
+					min: 0.1,
+					max: 10,
+					step: 0.1,
+					decimals: 1
 				},
 				{
 					name: "Duration",
 					info: "How long the tween will take, in steps. Setting to 0 will disable tween.",
-					defaultValue: 4.0,
+					defaultValue: 4,
+					min: 0,
+					max: 128,
+					step: 1,
+					decimals: 0
 				}
 			]
 		}
@@ -160,11 +238,40 @@ class EventUtil
 
 	public static function getEvent(name:String):Event
 	{
+		var event:Event = null;
 		for (e in events)
+		{
 			if (e.name == name)
-				return e;
+			{
+				event = e;
+				break;
+			}
+		}
 
-		return null;
+		if (event != null)
+		{
+			for (value in event.values)
+			{
+				if (value.getOptions != null)
+					value.options = value.getOptions();
+			}
+		}
+
+		return event;
+	}
+
+	public static function getLength(data:EventData)
+	{
+		var event:Event = getEvent(data.name);
+
+		if (event != null)
+		{
+			for (i in 0...event.values.length)
+				if (event.values[i].name == "Duration" || event.values[i].name == "Length")
+					return data.data[i];
+		}
+
+		return -1;
 	}
 
 	public static function getEventSprite(name:String):String

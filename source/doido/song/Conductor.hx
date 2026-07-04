@@ -252,6 +252,10 @@ class Conductor
 		return getStepAtTime(time) / 4;
 	}
 
+	//note: in SECONDS
+	public static function getStepDuration(step:Float, length:Float)
+		return (getTimeAtStep(step + length) - getTimeAtStep(step)) / 1000;
+
 	static function getEventRampDuration(event:BPMChangeEvent):Float
 	{
 		var avgBPM = (event.startBPM + event.targetBPM) / 2;

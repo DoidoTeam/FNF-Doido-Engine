@@ -58,17 +58,34 @@ class ChartingEvent extends FlxSprite
 {
 	public var selected:Bool = false;
 	public var event:EventData;
+	public var isHold:Bool = false;
 
 	public function new()
 	{
 		super();
 	}
 
+	public function resetEvent()
+	{
+		scale.set(1,1);
+		antialiasing = true;
+		updateHitbox();
+	}
+
 	public function reloadEvent(event:EventData)
 	{
+		resetEvent();
+		isHold = false;
 		this.event = event;
 		this.loadImage(EventUtil.getEventSprite(event.name));
 		this.setHitbox(ChartingState.EVENT_SIZE, ChartingState.EVENT_SIZE);
+	}
+
+	public function reloadHold(length:Float)
+	{
+		resetEvent();
+		isHold = true;
+		this.makeColor(ChartingState.GRID_SIZE * 0.25, ChartingState.GRID_SIZE * ChartingState.GRID_ZOOM * length);
 	}
 }
 
@@ -1315,6 +1332,9 @@ class ChartingState extends MusicBeatState
 					var removed:Bool = false;
 					renderEvents.forEachAlive((event) ->
 					{
+						if (event.isHold)
+							return;
+
 						if (FlxG.mouse.overlaps(event))
 						{
 							curCursor = POINTER;
@@ -1871,8 +1891,6 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
-		renderNotes.sort(ZIndex.sort);
-
 		eventAmounts.clear();
 		for (eventData in EVENTS.events)
 		{
@@ -1885,6 +1903,7 @@ class ChartingState extends MusicBeatState
 			event.reloadEvent(eventData);
 			event.x = grid.gridX - ((event.width + EVENT_PADDING) * eventOrder) - EVENT_PADDING;
 			event.y = eventY - (centerEvents ? event.height / 2 : 0);
+			event.zIndex = 2;
 
 			event.selected = false;
 			if (!selectedEvents.contains(eventData))
@@ -1895,8 +1914,27 @@ class ChartingState extends MusicBeatState
 			if (!renderEvents.members.contains(event))
 				renderEvents.add(event);
 
+			var eventLength = EventUtil.getLength(eventData);
+			if (eventLength >= 0)
+			{
+				//
+				var hold:ChartingEvent = cast renderEvents.recycle(ChartingEvent);
+				hold.reloadHold(eventLength);
+				hold.x = event.x + (event.width/2) - (hold.width/2);
+				hold.y = event.y + (event.height/2);
+				hold.selected = event.selected;
+				hold.zIndex = 1;
+				if(!hold.selected)
+					hold.color = 0xFFFFFFFF;
+				if (!renderEvents.members.contains(hold))
+					renderEvents.add(hold);
+			}
+
 			eventAmounts.set(Std.string(eventData.stepTime), eventOrder + 1);
 		}
+
+		renderNotes.sort(ZIndex.sort);
+		renderEvents.sort(ZIndex.sort);
 
 		super.draw();
 
