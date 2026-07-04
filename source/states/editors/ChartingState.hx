@@ -1290,6 +1290,7 @@ class ChartingState extends MusicBeatState
 				if (FlxG.mouse.overlaps(addEvent))
 				{
 					addEvent.alpha = 1;
+					curCursor = POINTER;
 
 					if (FlxG.mouse.justReleased)
 					{
@@ -1311,35 +1312,28 @@ class ChartingState extends MusicBeatState
 				{
 					addEvent.alpha = 0.5;
 
-					if (FlxG.mouse.justPressedRight)
+					var removed:Bool = false;
+					renderEvents.forEachAlive((event) ->
 					{
-						var removed:Bool = false;
-
-						renderEvents.forEachAlive((event) ->
+						if (FlxG.mouse.overlaps(event))
 						{
-							if (FlxG.mouse.overlaps(event))
+							curCursor = POINTER;
+							if (FlxG.mouse.justPressed)
+								selectedEvents = [event.event];
+							else if (FlxG.mouse.justPressedRight)
 							{
 								removed = true;
 								EVENTS.events.remove(event.event);
 								if (selectedEvents.contains(event.event))
 									selectedEvents.remove(event.event);
 							}
-						});
-						if (removed)
-						{
-							playSfx("editors/pop");
-							sortEvents();
 						}
-					}
-					else if (FlxG.mouse.justPressed)
+					});
+
+					if (removed)
 					{
-						renderEvents.forEachAlive((event) ->
-						{
-							if (FlxG.mouse.overlaps(event))
-							{
-								selectedEvents = [event.event];
-							}
-						});
+						playSfx("editors/pop");
+						sortEvents();
 					}
 				}
 			}

@@ -66,6 +66,36 @@ class EventUtil
 			]
 		},*/
 		{
+			name: "Camera Focus",
+			desc: "Focus the camera on a specific character.",
+			values: [
+				{
+					name: "Character",
+					info: "Which Character to focus on.",
+					defaultValue: "dad",
+					options: PlayState.availableCharacters
+				},
+				{
+					name: "X Offset",
+					info: "Offset along the x axis.",
+					defaultValue: 0,
+					min: 0,
+					max: 2000,
+					step: 50,
+					decimals: 0
+				},
+				{
+					name: "Y Offset",
+					info: "Offset along the y axis.",
+					defaultValue: 0,
+					min: 0,
+					max: 2000,
+					step: 50,
+					decimals: 0
+				}
+			]
+		},
+		{
 			name: "Play Animation",
 			desc: "Make a Character play a specific animation.",
 			values: [
