@@ -10,6 +10,7 @@ import flixel.text.FlxBitmapText;
 import doido.objects.ui.buttons.DoidoButton;
 import objects.ui.HealthIcon;
 import doido.utils.EventUtil;
+import flixel.util.FlxTimer;
 
 enum ChooserView
 {
@@ -55,6 +56,7 @@ class ChooserWindow extends DoidoWindow
 	public var buttonId:String = "";
 
 	var gridCount:Int = 4;
+	var locked:Bool = false;
 
 	public function new(x:Float = 0, y:Float = 0, width:Int = 440, height:Int = 185, list:Array<String>, chartState:ChartingState)
 	{
@@ -95,8 +97,14 @@ class ChooserWindow extends DoidoWindow
 		{
 			var button:ChooserButton = new ChooserButton(filtered[i], descs[i] ?? "", type, view, buttonWidth, buttonHeight, () ->
 			{
+				if (locked)
+					return;
+
 				if (onClick != null)
 					onClick(filtered[i]);
+
+				locked = true;
+				new FlxTimer().start(0.1, (tmr) -> locked = false);
 			});
 
 			if (view == GRID)

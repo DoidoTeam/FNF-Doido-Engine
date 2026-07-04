@@ -31,41 +31,16 @@ typedef EventValue =
 
 class EventUtil
 {
+	public static var eventLists:Map<String, Array<String>> = [
+		"Main" => ["Camera", "Objects", "Screen", "Gameplay", "Misc"],
+		"Camera" => ["Camera Focus", "Change Cam Zoom"],
+		"Objects" => ["Change Character", "Play Animation", "Change Stage"],
+		"Screen" => ["Flash Screen", "Fade Screen"],
+		"Gameplay" => ["Change Note Speed", "Freeze Notes"],
+		"Misc" => ["Trigger Tag"]
+	];
+
 	public static var events:Array<Event> = [
-		/*{
-			name: "Test Event",
-			desc: "Event with the sole purpose of testing value fields.",
-			values: [
-				{
-					name: "Dropdown",
-					info: "Which Character to play animation on.",
-					defaultValue: "dad",
-					options: PlayState.availableCharacters
-				},
-				{
-					name: "Text",
-					info: "Which animation to play.",
-					defaultValue: "idle",
-				},
-				{
-					name: "Float",
-					info: "Speed at which the notes should scroll at.",
-					defaultValue: 2.0,
-				},
-				{
-					name: "Int",
-					info: "Speed but as an int",
-					defaultValue: 5,
-					step: 1,
-					min: 0,
-					max: 10
-				},
-				{
-					name: "Checkmark",
-					defaultValue: false
-				},
-			]
-		},*/
 		{
 			name: "Camera Focus",
 			desc: "Focus the camera on a specific character.",
@@ -94,6 +69,47 @@ class EventUtil
 					step: 50,
 					decimals: 0
 				}
+			]
+		},
+		{
+			name: "Change Cam Zoom",
+			desc: "Change the Camera Zoom.",
+			values: [
+				{
+					name: "New Zoom",
+					info: "How much zoom to change to.",
+					defaultValue: 1,
+					min: 0.1,
+					max: 3,
+					step: 0.05,
+					decimals: 2
+				},
+				{
+					name: "Duration",
+					info: "How long the zoom will take, in steps. If 0, zoom will be instant or lerp.",
+					defaultValue: 4,
+					min: 0,
+					max: 128,
+					step: 1,
+					decimals: 0
+				},
+				{
+					name: "Easing",
+					info: "Easing function to make your tweens smoother.",
+					defaultValue: "linear",
+					options: TweenUtil.availableEases
+				},
+				{
+					name: "Modifier",
+					info: "Modifier that declares where the easing is applied to the tween.",
+					defaultValue: "InOut",
+					options: TweenUtil.availableModifiers
+				},
+				/*{
+					name: "Lerping",
+					info: "If enabled, will use a classic lerp smoothing.",
+					defaultValue: false
+				},*/
 			]
 		},
 		{
@@ -231,14 +247,96 @@ class EventUtil
 					max: 128,
 					step: 1,
 					decimals: 0
+				},
+				{
+					name: "Easing",
+					info: "Easing function to make your tweens smoother.",
+					defaultValue: "linear",
+					options: TweenUtil.availableEases
+				},
+				{
+					name: "Modifier",
+					info: "Modifier that declares where the easing is applied to the tween.",
+					defaultValue: "InOut",
+					options: TweenUtil.availableModifiers
 				}
 			]
-		}
+		},
+		{
+			name: "Trigger Tag",
+			desc: "Create a custom event.",
+			values: [
+				{
+					name: "Tag",
+					info: "Tag which declares which custom event to play.",
+					defaultValue: ""
+				},
+				{
+					name: "Value 1",
+					info: "Value 1",
+					defaultValue: ""
+				},
+				{
+					name: "Value 2",
+					info: "Value 2",
+					defaultValue: ""
+				},
+				{
+					name: "Value 3",
+					info: "Value 3",
+					defaultValue: ""
+				},
+				{
+					name: "Value 4",
+					info: "Value 4",
+					defaultValue: ""
+				},
+				{
+					name: "Value 5",
+					info: "Value 5",
+					defaultValue: ""
+				},
+			]
+		},
+		/*{
+			name: "Test Event",
+			desc: "Event with the sole purpose of testing value fields.",
+			values: [
+				{
+					name: "Dropdown",
+					info: "Which Character to play animation on.",
+					defaultValue: "dad",
+					options: PlayState.availableCharacters
+				},
+				{
+					name: "Text",
+					info: "Which animation to play.",
+					defaultValue: "idle",
+				},
+				{
+					name: "Float",
+					info: "Speed at which the notes should scroll at.",
+					defaultValue: 2.0,
+				},
+				{
+					name: "Int",
+					info: "Speed but as an int",
+					defaultValue: 5,
+					step: 1,
+					min: 0,
+					max: 10
+				},
+				{
+					name: "Checkmark",
+					defaultValue: false
+				},
+			]
+		},*/
 	];
 
 	public static function getEvent(name:String):Event
 	{
-		//because i dont want this one in the list lol
+		// because i dont want this one in the list lol
 		if (name == "New Event")
 		{
 			return {

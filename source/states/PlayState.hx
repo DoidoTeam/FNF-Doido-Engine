@@ -1,5 +1,6 @@
 package states;
 
+import doido.utils.TweenUtil;
 import shaders.ShaderCache;
 import doido.objects.DoidoCamera;
 import doido.utils.LerpUtil;
@@ -56,6 +57,8 @@ class PlayState extends MusicBeatState implements Playable
 	public var defaultHudZoom:Float = 1.0;
 
 	public var camZoom:Float = 0.9;
+	public var beatCamZoom:Float = 0.0;
+	public var zoomTween:FlxTween;
 
 	public var curFocus:String = "";
 	public var maxDisplace:DoidoPoint = {x: 0, y: 0};
@@ -488,7 +491,8 @@ class PlayState extends MusicBeatState implements Playable
 			{x: -FlxG.width / 2, y: -FlxG.height / 2}
 		]);
 
-		camGame.zoom = FlxMath.lerp(camGame.zoom, camZoom, elapsed * 6);
+		camGame.zoom = camZoom + beatCamZoom;
+		beatCamZoom = FlxMath.lerp(beatCamZoom, 0, elapsed * 6);
 		for (cam in [camHUD, camStrum])
 			cam.zoom = FlxMath.lerp(cam.zoom, defaultHudZoom, elapsed * 6);
 
@@ -617,12 +621,23 @@ class PlayState extends MusicBeatState implements Playable
 					else
 					{
 						strumline.scrollTween = FlxTween.tween(strumline, {scrollSpeed: newSpeed}, duration, {
-							// ease: CoolUtil.stringToEase(daEvent.value3),
+							ease: TweenUtil.fromString(data[2], data[3]),
 						});
 					}
 				}
 			case "Change Cam Zoom":
-				camZoom = data[0];
+				if (zoomTween != null)
+					zoomTween.cancel();
+				var newZoom:Float = data[0];
+				var duration:Float = Conductor.getStepDuration(curStepFloat, data[1]);
+				if (duration <= 0)
+					camZoom = newZoom;
+				else
+				{
+					zoomTween = FlxTween.tween(this, {camZoom: newZoom}, duration, {
+						ease: TweenUtil.fromString(data[2], data[3]),
+					});
+				}
 			case "Flash Screen":
 				MusicBeat.flash(strToCam(data[2]), Conductor.getStepDuration(curStepFloat, data[0]), SpriteUtil.getColor(data[1]));
 			case 'Fade Screen':
@@ -751,9 +766,9 @@ class PlayState extends MusicBeatState implements Playable
 
 	public function beatCamera(gameZoom:Float, hudZoom:Float)
 	{
-		camGame.zoom *= gameZoom;
+		beatCamZoom += gameZoom;
 		for (cam in [camHUD, camStrum])
-			cam.zoom *= hudZoom;
+			cam.zoom += hudZoom;
 	}
 
 	var endedSong:Bool = false;
@@ -912,7 +927,7 @@ class PlayState extends MusicBeatState implements Playable
 		}
 
 		if (curBeat % 4 == 0)
-			beatCamera(1.05, 1.02);
+			beatCamera(0.05, 0.02);
 
 		hudClass.beatHit(curBeat);
 	}

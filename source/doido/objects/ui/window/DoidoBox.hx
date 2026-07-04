@@ -13,6 +13,7 @@ class DoidoBox extends FlxGroup implements IWindow
 	public var chartState:ChartingState;
 	public var tabs:Array<DoidoWindow> = [];
 	public var buttons:Array<BoxLabel> = [];
+	public var tabMap:Map<String, Int> = [];
 
 	public var x:Float = 0;
 	public var y:Float = 0;
@@ -51,6 +52,7 @@ class DoidoBox extends FlxGroup implements IWindow
 
 	function addButton(title:String, i:Int, centerButtons:Bool)
 	{
+		tabMap.set(title, i);
 		var newBtn = new BoxLabel(title, buttonWidth, buttonHeight, centerButtons, () ->
 		{
 			cur = (cur == i ? -1 : i);
@@ -94,6 +96,12 @@ class DoidoBox extends FlxGroup implements IWindow
 			return tabs[cur].overlapping;
 
 		return false;
+	}
+
+	public function setTab(title:String)
+	{
+		cur = tabMap.get(title) ?? -1;
+		toggleButtons();
 	}
 }
 

@@ -67,7 +67,7 @@ class ChartingEvent extends FlxSprite
 
 	public function resetEvent()
 	{
-		scale.set(1,1);
+		scale.set(1, 1);
 		antialiasing = true;
 		updateHitbox();
 	}
@@ -981,20 +981,40 @@ class ChartingState extends MusicBeatState
 		var warnTxt = createText(0, 0, "Select an event to edit.", 0xFFD8DAF6);
 		warnTxt.x = getX("center", warnTxt.width);
 		warnTxt.y = warnSpr.y + warnSpr.height + 10;
+		warnTxt.scale.set(0.8, 0.8);
 		tab.add(warnTxt);
 
 		var events = new ChooserWindow(getX("center", 440), getY(1) + 5, 440, 200, [], null);
-		events.view = LIST;
+		events.view = GRID;
 		events.type = EVENT;
-		events.options = [for (event in EventUtil.events) event.name];
+		events.options = EventUtil.eventLists.get("Main");
+		var list:Bool = true;
 		events.onClick = (str) ->
 		{
-			if (lastEdited != null)
+			if (list)
 			{
-				lastEdited.name = str;
-				lastEdited.data = [for (v in EventUtil.getEvent(str).values) v.defaultValue];
+				events.view = LIST;
+				events.options = ["Back"].concat(EventUtil.eventLists.get(str));
+				list = false;
 			}
-			tab.updateCallback.dispatch();
+			else
+			{
+				if (str == "Back")
+				{
+					events.view = GRID;
+					events.options = EventUtil.eventLists.get("Main");
+					list = true;
+				}
+				else
+				{
+					if (lastEdited != null)
+					{
+						lastEdited.name = str;
+						lastEdited.data = [for (v in EventUtil.getEvent(str).values) v.defaultValue];
+					}
+					tab.updateCallback.dispatch();
+				}
+			}
 		};
 		events.active = false;
 		tab.add(events);
@@ -1173,6 +1193,26 @@ class ChartingState extends MusicBeatState
 		if (FlxG.mouse.justPressed)
 			clickedOnWindow = overlapsWindow;
 
+		if (selectedNotes.length > 0 || selectedEvents.length > 0)
+		{
+			var selColor:Float = 0.8 + Math.sin(FlxG.game.ticks / 100) * 2;
+			selectedColor.redFloat = selColor;
+			selectedColor.greenFloat = selColor;
+			selectedColor.blueFloat = selColor;
+
+			renderNotes.forEachAlive((note) ->
+			{
+				if (note.selected)
+					note.color = selectedColor;
+			});
+
+			renderEvents.forEachAlive((event) ->
+			{
+				if (event.selected)
+					event.color = selectedColor;
+			});
+		}
+
 		var cursorText:String = "";
 
 		if (!clickedOnWindow && !typing)
@@ -1235,67 +1275,49 @@ class ChartingState extends MusicBeatState
 			{
 				lastEdited = selectedEvents[0];
 				eventsTab.updateCallback.dispatch();
+				if (lastEdited != null)
+					menuMain.setTab("Events");
 			}
 
-			if (selectedNotes.length > 0 || selectedEvents.length > 0)
+			if (selectedNotes.length > 0)
 			{
-				var selColor:Float = 0.8 + Math.sin(FlxG.game.ticks / 100) * 2;
-				selectedColor.redFloat = selColor;
-				selectedColor.greenFloat = selColor;
-				selectedColor.blueFloat = selColor;
-
-				renderNotes.forEachAlive((note) ->
+				if (FlxG.keys.justPressed.Q || FlxG.keys.justPressed.E)
 				{
-					if (note.selected)
-						note.color = selectedColor;
-				});
-
-				renderEvents.forEachAlive((event) ->
-				{
-					if (event.selected)
-						event.color = selectedColor;
-				});
-
-				if (selectedNotes.length > 0)
-				{
-					if (FlxG.keys.justPressed.Q || FlxG.keys.justPressed.E)
+					playSfx("editors/click");
+					var dir:Int = FlxG.keys.justPressed.Q ? -1 : 1;
+					if (FlxG.keys.pressed.SHIFT)
+						dir *= 4;
+					for (note in selectedNotes)
 					{
-						playSfx("editors/click");
-						var dir:Int = FlxG.keys.justPressed.Q ? -1 : 1;
-						if (FlxG.keys.pressed.SHIFT)
-							dir *= 4;
-						for (note in selectedNotes)
-						{
-							note.length += dir;
-							if (note.length < 0)
-								note.length = 0;
-						}
-					}
-
-					if (FlxG.keys.justPressed.DELETE)
-					{
-						for (note in selectedNotes)
-						{
-							playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
-							CHART.notes.remove(note);
-						}
-						selectedNotes = [];
-						sortNotes();
+						note.length += dir;
+						if (note.length < 0)
+							note.length = 0;
 					}
 				}
 
-				if (selectedEvents.length > 0)
+				if (FlxG.keys.justPressed.DELETE)
 				{
-					if (FlxG.keys.justPressed.DELETE)
+					for (note in selectedNotes)
 					{
-						for (event in selectedEvents)
-						{
-							playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
-							EVENTS.events.remove(event);
-						}
-						selectedEvents = [];
-						sortEvents();
+						playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
+						CHART.notes.remove(note);
 					}
+					selectedNotes = [];
+					sortNotes();
+				}
+			}
+
+			if (selectedEvents.length > 0)
+			{
+				if (FlxG.keys.justPressed.DELETE)
+				{
+					for (event in selectedEvents)
+					{
+						playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
+						EVENTS.events.remove(event);
+					}
+					selectedEvents = [];
+					sortEvents();
 				}
 			}
 
@@ -1308,7 +1330,7 @@ class ChartingState extends MusicBeatState
 				var curStep:Float = mouseY / GRID_SIZE / GRID_ZOOM;
 				var eventOrder:Int = eventAmounts.get(Std.string(curStep)) ?? 1;
 
-				addEvent.x = grid.gridX - ((EVENT_SIZE + EVENT_PADDING) * eventOrder) - EVENT_PADDING;
+				addEvent.x = grid.gridX - ((EVENT_SIZE + EVENT_PADDING) * eventOrder) - (EVENT_PADDING / 2);
 				addEvent.y = grid.gridY + mouseY;
 				addEvent.visible = true;
 				if (GRID_SNAP == 0)
@@ -1325,14 +1347,31 @@ class ChartingState extends MusicBeatState
 					{
 						if (!draggingSelectedNotes && !heldOnNoteHold)
 						{
-							playSfx("editors/click");
-							var newEvent:EventData = {
-								stepTime: curStep,
-								name: "New Event",
-								data: []
-							};
-							EVENTS.events.push(newEvent);
-							selectedEvents = [newEvent];
+							var multiple:Bool = selectedEvents.length > 0;
+							var eventList:Array<EventData> = [
+								{
+									stepTime: 0,
+									name: "New Event",
+									data: []
+								}
+							];
+							if (multiple)
+								eventList = selectedEvents;
+
+							selectedEvents = [];
+							for (event in eventList)
+							{
+								var newEvent:EventData = {
+									stepTime: curStep,
+									name: event.name,
+									data: event.data.copy()
+								};
+
+								EVENTS.events.push(newEvent);
+								selectedEvents.push(newEvent);
+								playSfx("editors/click", multiple ? FlxG.random.float(0.0, 0.4) : 0);
+							}
+
 							sortEvents();
 						}
 					}
@@ -1351,7 +1390,16 @@ class ChartingState extends MusicBeatState
 						{
 							curCursor = POINTER;
 							if (FlxG.mouse.justPressed)
-								selectedEvents = [event.event];
+							{
+								var exists = selectedEvents.contains(event.event);
+								if (!FlxG.keys.pressed.CONTROL)
+									selectedEvents = [];
+
+								if (selectedEvents.contains(event.event))
+									selectedEvents.remove(event.event);
+								else if (!exists)
+									selectedEvents.push(event.event);
+							}
 							else if (FlxG.mouse.justPressedRight)
 							{
 								removed = true;
@@ -1932,11 +1980,11 @@ class ChartingState extends MusicBeatState
 				//
 				var hold:ChartingEvent = cast renderEvents.recycle(ChartingEvent);
 				hold.reloadHold(eventLength);
-				hold.x = event.x + (event.width/2) - (hold.width/2);
+				hold.x = event.x + (event.width / 2) - (hold.width / 2);
 				hold.y = event.y + (centerEvents ? event.height / 2 : 0);
 				hold.selected = event.selected;
 				hold.zIndex = 1;
-				if(!hold.selected)
+				if (!hold.selected)
 					hold.color = 0xFFFFFFFF;
 				if (!renderEvents.members.contains(hold))
 					renderEvents.add(hold);
