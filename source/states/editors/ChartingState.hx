@@ -958,6 +958,7 @@ class ChartingState extends MusicBeatState
 				case "margin_first_search": tab.bg.x + 80;
 				case "center": tab.bg.x + (tab.bg.width / 2) - (width / 2);
 				case "margin_first": tab.bg.x + 110;
+				case "margin_right": tab.bg.x + tab.bg.width - width - 8;
 				default: tab.bg.x + 8;
 			}
 		}
@@ -1047,7 +1048,7 @@ class ChartingState extends MusicBeatState
 			if (event == null)
 				return;
 
-			valueTabs.add(createText(getX(), getY(bottomY - 2), event.name + ":", 0xFFFFFFFF));
+			valueTabs.add(createText(getX(), getY(bottomY - 2), "Editing: " + event.name, 0xFFFFFFFF));
 			for (i in 0...event.values.length)
 			{
 				var value = event.values[i];
@@ -1100,6 +1101,17 @@ class ChartingState extends MusicBeatState
 
 			valueTabs.sort(ZIndex.sort);
 		});
+
+		var centerCheck:DoidoCheckmark = new DoidoCheckmark(centerEvents);
+		centerCheck.onUp.add(() ->
+		{
+			centerEvents = centerCheck.value;
+		});
+		centerCheck.x = getX("margin_right", centerCheck.width);
+		centerCheck.y = tab.bg.y + tab.bg.height - centerCheck.height - 8;
+		tab.add(centerCheck);
+		tab.add(createText(centerCheck.x - 70, centerCheck.y + 5, "Center:"));
+
 		return tab;
 	}
 
@@ -1292,7 +1304,7 @@ class ChartingState extends MusicBeatState
 				var zoomSnap:Float = (GRID_SNAP * GRID_ZOOM);
 				var realSnap:Float = (zoomSnap / 16);
 				var sizeTimed:Float = (GRID_SIZE / realSnap) * GRID_ZOOM;
-				var mouseY:Float = Math.floor((FlxG.mouse.y + (EVENT_SIZE / 2) - grid.gridY) / sizeTimed) * sizeTimed;
+				var mouseY:Float = Math.floor((FlxG.mouse.y + (centerEvents ? (EVENT_SIZE / 2) : 0) - grid.gridY) / sizeTimed) * sizeTimed;
 				var curStep:Float = mouseY / GRID_SIZE / GRID_ZOOM;
 				var eventOrder:Int = eventAmounts.get(Std.string(curStep)) ?? 1;
 
@@ -1921,7 +1933,7 @@ class ChartingState extends MusicBeatState
 				var hold:ChartingEvent = cast renderEvents.recycle(ChartingEvent);
 				hold.reloadHold(eventLength);
 				hold.x = event.x + (event.width/2) - (hold.width/2);
-				hold.y = event.y + (event.height/2);
+				hold.y = event.y + (centerEvents ? event.height / 2 : 0);
 				hold.selected = event.selected;
 				hold.zIndex = 1;
 				if(!hold.selected)

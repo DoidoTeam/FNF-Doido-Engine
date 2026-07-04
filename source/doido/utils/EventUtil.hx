@@ -238,6 +238,16 @@ class EventUtil
 
 	public static function getEvent(name:String):Event
 	{
+		//because i dont want this one in the list lol
+		if (name == "New Event")
+		{
+			return {
+				name: "New Event",
+				desc: "Please choose an event from the list to begin.",
+				values: []
+			};
+		}
+
 		var event:Event = null;
 		for (e in events)
 		{
