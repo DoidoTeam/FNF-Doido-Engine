@@ -48,9 +48,37 @@ class ChartingNote extends Note
 {
 	public var selected:Bool = false;
 
+	public var typeTxt:FlxBitmapText;
+	public var typeIndex:Int = 0;
+
 	public function new()
 	{
 		super();
+
+		typeTxt = new FlxBitmapText(0, 0, Assets.bitmapFont("phantommuff"));
+		typeTxt.setOutline(0xFF000000, 2);
+		typeTxt.alignment = LEFT;
+		typeTxt.scale.set(0.7, 0.7);
+		typeTxt.updateHitbox();
+	}
+
+	override function draw()
+	{
+		super.draw();
+
+		if (typeIndex != 0 && !isHold)
+		{
+			typeTxt.x = x;
+			typeTxt.y = y;
+			typeTxt.draw();
+		}
+	}
+
+	public override function loadData(data:NoteData, skin:String)
+	{
+		super.loadData(data, skin);
+		typeIndex = NoteUtil.noteTypes.indexOf(data.type);
+		typeTxt.text = typeIndex == -1 ? '?' : Std.string(typeIndex);
 	}
 }
 
@@ -121,12 +149,14 @@ class ChartingState extends MusicBeatState
 	// editor stuff
 	public var selectedNotes:Array<NoteData> = [];
 	public var selectedEvents:Array<EventData> = [];
-	public var lastEdited:EventData;
-	public var eventAmounts:Map<String, Int> = []; // how many events are in each step
 	public var draggingSelectedNotes:Bool = false;
 	public var hoverSquare:FlxSprite;
 	public var selectSquare:FlxSprite;
 	public var addEvent:ChartingEvent;
+
+	public var curNoteType:String = "none";
+	public var lastEdited:EventData;
+	public var eventAmounts:Map<String, Int> = []; // how many events are in each step
 
 	public var lastClicked:DoidoPoint = {x: 0, y: 0};
 	public var lastClickedOffset:Float = 0.0;
@@ -947,6 +977,141 @@ class ChartingState extends MusicBeatState
 		return tab;
 	}
 
+	function createNotesTab()
+	{
+		var tab = createBasic("Notes");
+
+		function getX(place:String = "margin_left", width:Float = 0)
+		{
+			return switch (place)
+			{
+				case "margin_first": tab.bg.x + 120;
+				case "margin_first_search": tab.bg.x + 80;
+				case "margin_right": tab.bg.x + tab.bg.width - width - 8;
+				case "center": tab.bg.x + (tab.bg.width / 2) - (width / 2);
+				default: tab.bg.x + 8;
+			}
+		}
+
+		function getY(i:Int = 0)
+			return tab.bg.y + 8 + (spacingH * i);
+
+		tab.add(createText(getX(), getY(0), "Timings:"));
+		tab.add(createText(getX(), getY(1) + 3, "Note Step:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(2) + 3, "Note Length:", 0xFFD8DAF6));
+
+		var noteSteps = new PsychUINumericStepper(getX("margin_first"), getY(1), 1, 0, 0, 999999, 2);
+		noteSteps.onValueChange = (() ->
+		{
+			if (selectedNotes.length == 1)
+				selectedNotes[0].stepTime = noteSteps.value;
+		});
+		noteSteps.onValueStep = ((step) ->
+		{
+			if (selectedNotes.length > 1)
+				for (note in selectedNotes)
+					note.stepTime += step;
+		});
+		tab.add(noteSteps);
+
+		var noteLength = new PsychUINumericStepper(getX("margin_first"), getY(2), 1, 0, 0, 999999, 1);
+		noteLength.onValueChange = (() ->
+		{
+			if (selectedNotes.length == 1)
+				selectedNotes[0].length = noteLength.value;
+			else if (selectedNotes.length > 1) {}
+		});
+		noteLength.onValueStep = ((step) ->
+		{
+			if (selectedNotes.length > 1)
+				for (note in selectedNotes)
+					note.length += step;
+		});
+		tab.add(noteLength);
+
+		var curTypeTxt:FlxBitmapText;
+		tab.add(curTypeTxt = createText(0, 0, 'Current Type: $curNoteType'));
+		curTypeTxt.x = getX();
+		curTypeTxt.y = tab.bg.y + tab.bg.height - curTypeTxt.height - 8;
+
+		tab.updateCallback.add(() ->
+		{
+			curTypeTxt.text = 'Current Type: ${TextUtil.titleCase(curNoteType)}';
+
+			if (selectedNotes.length == 0)
+			{
+				for (stepper in [noteSteps, noteLength])
+				{
+					stepper.disableInput = true;
+					stepper.disableSteppers = true;
+					stepper.value = 0;
+				}
+			}
+			else if (selectedNotes.length == 1)
+			{
+				for (stepper in [noteSteps, noteLength])
+				{
+					stepper.disableInput = false;
+					stepper.disableSteppers = false;
+				}
+
+				noteSteps.value = selectedNotes[0].stepTime;
+				noteLength.value = selectedNotes[0].length;
+			}
+			else
+			{
+				for (stepper in [noteSteps, noteLength])
+				{
+					stepper.disableInput = true;
+					stepper.disableSteppers = false;
+					stepper.value = 0;
+				}
+			}
+		});
+		tab.updateCallback.dispatch();
+
+		var bottomY = 4;
+
+		var notes = new ChooserWindow(getX("center", 440), getY(bottomY + 1) + 5, 440, 300, [], null);
+		notes.view = LIST;
+		notes.type = NOTETYPE;
+		notes.descOnly = true;
+		notes.align = LEFT;
+		notes.options = NoteUtil.noteTypes;
+		notes.descs = [
+			for (i in 0...NoteUtil.noteTypes.length)
+				'$i. ${TextUtil.titleCase(NoteUtil.noteTypes[i])}'
+		];
+		notes.onClick = (str) ->
+		{
+			curNoteType = str;
+			for (note in selectedNotes)
+				note.type = str;
+			tab.updateCallback.dispatch();
+		};
+		tab.add(notes);
+
+		var search = tab.add(createText(getX(), getY(bottomY) + 3, "Search:", 0xFFD8DAF6));
+
+		var filter:PsychUIInputText;
+		filter = new PsychUIInputText(getX("margin_first_search"), getY(bottomY), 372, "", 14);
+		filter.onChange.add((old, cur, input) -> notes.filter = cur);
+		filter.behindText.color = 0xFFD8DAF6;
+		tab.add(filter);
+
+		var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
+		glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
+		glass.x = filter.behindText.x + 1;
+		glass.y = filter.behindText.y + 1;
+		tab.add(glass);
+
+		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
+		balls.setPosition(getX("center", balls.width), getY(bottomY - 1) + 3);
+		tab.add(balls);
+
+		return tab;
+	}
+
 	function createEventsTab()
 	{
 		var tab = createBasic("Events");
@@ -1136,13 +1301,14 @@ class ChartingState extends MusicBeatState
 	}
 
 	var eventsTab:DoidoWindow;
+	var notesTab:DoidoWindow;
 
 	function addMain()
 	{
 		menuMain = new DoidoBox(803, 19, 458, 32, 4, [
 			createChartingTab(),
 			eventsTab = createEventsTab(),
-			createBasic("Note"),
+			notesTab = createNotesTab(),
 			createBasic("Functions"),
 			createSongTab()
 		], this);
@@ -1293,6 +1459,7 @@ class ChartingState extends MusicBeatState
 						if (note.length < 0)
 							note.length = 0;
 					}
+					notesTab.updateCallback.dispatch();
 				}
 
 				if (FlxG.keys.justPressed.DELETE)
@@ -1303,6 +1470,7 @@ class ChartingState extends MusicBeatState
 						CHART.notes.remove(note);
 					}
 					selectedNotes = [];
+					notesTab.updateCallback.dispatch();
 					sortNotes();
 				}
 			}
@@ -1455,11 +1623,15 @@ class ChartingState extends MusicBeatState
 						if (note.stepTime > startY - 1 && note.stepTime < endY + 1 && rawLane > startX - 1 && rawLane < endX + 1)
 						{
 							if (!selectedNotes.contains(note))
+							{
 								selectedNotes.push(note);
+								curNoteType = note.type;
+							}
 						}
 					}
 
 					selectSquare.visible = false;
+					notesTab.updateCallback.dispatch();
 				}
 			}
 			else
@@ -1482,7 +1654,10 @@ class ChartingState extends MusicBeatState
 					var mouseStep:Float = (hoverSquare.y - grid.gridY) / GRID_SIZE / GRID_ZOOM;
 
 					if (FlxG.mouse.justPressedRight)
+					{
 						selectedNotes = [];
+						notesTab.updateCallback.dispatch();
+					}
 
 					if (FlxG.mouse.overlaps(renderNotes))
 					{
@@ -1562,6 +1737,7 @@ class ChartingState extends MusicBeatState
 							if (clearNote != null)
 								selectedNotes = [clearNote];
 
+							notesTab.updateCallback.dispatch();
 							sortNotes();
 						}
 					}
@@ -1576,12 +1752,13 @@ class ChartingState extends MusicBeatState
 									stepTime: mouseStep,
 									lane: (mouseLane % 4),
 									strumline: (mouseLane >= 4) ? 1 : 0,
-									type: "none",
+									type: curNoteType,
 									length: 0.0,
 								};
 								// trace('added lane ${newNote.lane} to strumline ${newNote.strumline}');
 								CHART.notes.push(newNote);
 								selectedNotes = [newNote];
+								notesTab.updateCallback.dispatch();
 								sortNotes();
 							}
 						}
@@ -1600,6 +1777,7 @@ class ChartingState extends MusicBeatState
 								if (note.length < 0)
 									note.length = 0;
 							}
+							notesTab.updateCallback.dispatch();
 						}
 					}
 
@@ -1635,6 +1813,7 @@ class ChartingState extends MusicBeatState
 										note.strumline = 0;
 								}
 							}
+							notesTab.updateCallback.dispatch();
 							sortNotes();
 						}
 					}
@@ -1778,6 +1957,7 @@ class ChartingState extends MusicBeatState
 		selectedNotes = [];
 		for (note in CHART.notes)
 			selectedNotes.push(note);
+		notesTab.updateCallback.dispatch();
 	}
 
 	public function getMouseLane():Int

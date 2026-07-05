@@ -70,6 +70,7 @@ class PsychUIInputText extends FlxSpriteGroup
 	public var customFilterPattern(default, set):EReg;
 
 	public var selectedFormat:FlxTextFormat = new FlxTextFormat(FlxColor.WHITE);
+	public var disableInput(default, set):Bool = false;
 
 	public function new(x:Float = 0, y:Float = 0, wid:Int = 100, ?text:String = '', size:Int = 8)
 	{
@@ -438,6 +439,9 @@ class PsychUIInputText extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
+		if(disableInput)
+			return;
+
 		if (FlxG.mouse.justPressed)
 		{
 			if (FlxG.mouse.overlaps(behindText, camera))
@@ -792,5 +796,11 @@ class PsychUIInputText extends FlxSpriteGroup
 			text = pattern.replace(text, "");
 		}
 		return text;
+	}
+
+	public function set_disableInput(b:Bool) {
+		disableInput = b;
+		textObj.visible = !disableInput;
+		return disableInput;
 	}
 }

@@ -323,10 +323,18 @@ class PlayState extends MusicBeatState implements Playable
 
 			if (!note.isHold || note.missed)
 			{
-				for (char in characters)
+				switch (note.data.type)
 				{
-					if (char.strumline == strumline)
-						char.playSingAnim(note.data.lane, note.missed);
+					case "no animation":
+						//
+					case "gf note":
+						gf.playSingAnim(note.data.lane, note.missed);
+					default:
+						for (char in characters)
+						{
+							if (char.strumline == strumline)
+								char.playSingAnim(note.data.lane, note.missed);
+						}
 				}
 			}
 
@@ -367,10 +375,18 @@ class PlayState extends MusicBeatState implements Playable
 			if (note.isHold && !note.isHoldEnd)
 				return;
 
-			for (char in characters)
+			switch (note.data.type)
 			{
-				if (char.strumline == strumline)
-					char.playSingAnim(note.data.lane, true);
+				case "no animation":
+					//
+				case "gf note":
+					gf.playSingAnim(note.data.lane, true);
+				default:
+					for (char in characters)
+					{
+						if (char.strumline == strumline)
+							char.playSingAnim(note.data.lane, true);
+					}
 			}
 
 			if (strumline.isPlayer)
@@ -382,15 +398,31 @@ class PlayState extends MusicBeatState implements Playable
 		};
 		playField.onNoteHold = (note, strumline) ->
 		{
-			for (char in characters)
+			switch (note.data.type)
 			{
-				if (char.strumline == strumline)
-				{
-					if (char.singType == LAST)
-						char.resetSingStep();
-					else if (char.curAnimFrame == char.singLoop || char.singType == FIRST)
-						char.playSingAnim(note.data.lane);
-				}
+				case "no animation":
+					//
+				case "gf note":
+					// weird formatter bug here sorry...
+					if (gf.singType == LAST)
+					{
+						gf.resetSingStep();
+					}
+					else if (gf.curAnimFrame == gf.singLoop || gf.singType == FIRST)
+					{
+						gf.playSingAnim(note.data.lane);
+					}
+				default:
+					for (char in characters)
+					{
+						if (char.strumline == strumline)
+						{
+							if (char.singType == LAST)
+								char.resetSingStep();
+							else if (char.curAnimFrame == char.singLoop || char.singType == FIRST)
+								char.playSingAnim(note.data.lane);
+						}
+					}
 			}
 
 			if (strumline.isPlayer)

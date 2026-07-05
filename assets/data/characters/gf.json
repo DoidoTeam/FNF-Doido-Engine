@@ -1,38 +1,169 @@
 {
-    "spritesheet": "gf",
-    "spriteType": "ATLAS",
-    "quickDancer": true,
-    "idleAnims": ["danceLeft", "danceRight"],
-    "anims": [
-        {
-            "name": "danceLeft",
-            "prefix": "GF Dancing Beat",
-            "indices": [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-            "offset": {"x": 0, "y": 0}
-        },
-        {
-            "name": "danceRight",
-            "prefix": "GF Dancing Beat",
-            "indices": [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
-            "offset": {"x": 0, "y": 0}
-        },
-        {
-            "name": "sad",
-            "prefix": "gf sad",
-            "indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-            "offset": {"x": -2, "y": -18}
-        },
-        {
-            "name": "sad-loop",
-            "prefix": "gf sad",
-            "indices": [14,15,16,17,18,19,20,21],
-            "loop": true,
-            "offset": {"x": -2, "y": -18}
-        },
-        {
-            "name": "cheer",
-            "prefix": "GF Cheer",
-            "offset": {"x": -2, "y": -18}
-        }
-    ]
+	"quickDancer": true,
+	"scale": {
+		"x": 1,
+		"y": 1
+	},
+	"anims": [
+		{
+			"prefix": "GF Dancing Beat",
+			"offset": {
+				"x": 0,
+				"y": 0
+			},
+			"indices": [
+				30,
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14
+			],
+			"name": "danceLeft"
+		},
+		{
+			"prefix": "GF Dancing Beat",
+			"offset": {
+				"x": 0,
+				"y": 0
+			},
+			"indices": [
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				29
+			],
+			"name": "danceRight"
+		},
+		{
+			"prefix": "gf sad",
+			"offset": {
+				"x": -2,
+				"y": -18
+			},
+			"indices": [
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13
+			],
+			"name": "sad"
+		},
+		{
+			"loop": true,
+			"prefix": "gf sad",
+			"offset": {
+				"x": -2,
+				"y": -18
+			},
+			"name": "sad-loop",
+			"indices": [
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21
+			]
+		},
+		{
+			"prefix": "GF Cheer",
+			"offset": {
+				"x": -1,
+				"y": -18
+			},
+			"name": "cheer"
+		},
+		{
+			"prefix": "GF left note",
+			"indices": [],
+			"flipX": false,
+			"flipY": false,
+			"loop": false,
+			"name": "singLEFT",
+			"framerate": 24,
+			"offset": {
+				"x": 0,
+				"y": -2
+			}
+		},
+		{
+			"prefix": "GF Right Note",
+			"indices": [],
+			"flipX": false,
+			"flipY": false,
+			"loop": false,
+			"name": "singRIGHT",
+			"framerate": 24,
+			"offset": {
+				"x": 0,
+				"y": -6
+			}
+		},
+		{
+			"prefix": "GF Up Note",
+			"indices": [],
+			"flipX": false,
+			"flipY": false,
+			"loop": false,
+			"name": "singUP",
+			"framerate": 24,
+			"offset": {
+				"x": 0,
+				"y": -10
+			}
+		},
+		{
+			"prefix": "GF Down Note",
+			"indices": [],
+			"flipX": false,
+			"flipY": false,
+			"loop": false,
+			"name": "singDOWN",
+			"framerate": 24,
+			"offset": {
+				"x": 0,
+				"y": -31
+			}
+		}
+	],
+	"spritesheet": "gf",
+	"idleAnims": [
+		"danceLeft",
+		"danceRight"
+	],
+	"spriteType": "ATLAS"
 }

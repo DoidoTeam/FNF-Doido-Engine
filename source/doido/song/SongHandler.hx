@@ -114,6 +114,9 @@ class SongHandler
 		var removed:Int = 0;
 		for (note in CHART.notes)
 		{
+			if (note.type == null || note.type == "")
+				note.type = "none";
+
 			for (doubleNote in CHART.notes)
 			{
 				if (note != doubleNote
