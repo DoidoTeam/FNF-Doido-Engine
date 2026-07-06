@@ -605,15 +605,114 @@ class ChartingState extends MusicBeatState
 		balls.setPosition(getX("center", balls.width), getY(4) + 5);
 		tab.add(balls);
 
+		tab.add(createText(getX(), getY(5) + 3, "Hitsounds:"));
+		tab.add(createText(getX(), getY(6) + 3, "Player:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(7) + 3, "Opponent:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(8) + 3, "Metronome:", 0xFFD8DAF6));
+
+		var playerHitVol:DoidoCheckmark = new DoidoCheckmark(playerHitSounds);
+		playerHitVol.onUp.add(() ->
+		{
+			playerHitSounds = playerHitVol.value;
+		});
+		playerHitVol.x = getX("margin_first");
+		playerHitVol.y = getY(6) - 1;
+		tab.add(playerHitVol);
+
+		var playerHitStepper = new PsychUINumericStepper(getX("margin_right", 100), getY(6), 0.01, playerHitVolume, 0, 1.0, 2, 100, true);
+		tab.add(playerHitStepper);
+
+		var oppHitVol:DoidoCheckmark = new DoidoCheckmark(oppHitSounds);
+		oppHitVol.onUp.add(() ->
+		{
+			oppHitSounds = oppHitVol.value;
+		});
+		oppHitVol.x = getX("margin_first");
+		oppHitVol.y = getY(7) - 1;
+		tab.add(oppHitVol);
+
+		var oppHitStepper = new PsychUINumericStepper(getX("margin_right", 100), getY(7), 0.01, oppHitVolume, 0, 1.0, 2, 100, true);
+		tab.add(oppHitStepper);
+
+		var metVol:DoidoCheckmark = new DoidoCheckmark(metronome);
+		metVol.onUp.add(() ->
+		{
+			metronome = metVol.value;
+		});
+		metVol.x = getX("margin_first");
+		metVol.y = getY(8) - 1;
+		tab.add(metVol);
+
+		var metStepper = new PsychUINumericStepper(getX("margin_right", 100), getY(8), 0.01, metronomeVolume, 0, 1.0, 2, 100, true);
+		tab.add(metStepper);
+
+		var playerHitSlider:DoidoSlider = new DoidoSlider(getX("margin_second"), getY(6) + 9, 160, 6, playerHitVolume, 0, 1, 3, 0.02);
+		playerHitSlider.onScrub.add((sld) ->
+		{
+			playerHitSounds = true;
+			playerHitVol.value = true;
+			playerHitStepper.value = playerHitSlider.value;
+			playerHitVolume = playerHitSlider.value;
+		});
+		tab.add(playerHitSlider);
+
+		var oppHitSlider:DoidoSlider = new DoidoSlider(getX("margin_second"), getY(7) + 9, 160, 6, oppHitVolume, 0, 1, 3, 0.02);
+		oppHitSlider.onScrub.add((sld) ->
+		{
+			oppHitSounds = true;
+			oppHitVol.value = true;
+			oppHitStepper.value = oppHitSlider.value;
+			oppHitVolume = oppHitSlider.value;
+		});
+		tab.add(oppHitSlider);
+
+		var metSlider:DoidoSlider = new DoidoSlider(getX("margin_second"), getY(8) + 9, 160, 6, metronomeVolume, 0, 1, 3, 0.02);
+		metSlider.onScrub.add((sld) ->
+		{
+			metronome = true;
+			metVol.value = true;
+			metStepper.value = metSlider.value;
+			metronomeVolume = metSlider.value;
+		});
+		tab.add(metSlider);
+
+		playerHitStepper.onValueChange = (() ->
+		{
+			playerHitSounds = true;
+			playerHitVol.value = true;
+			playerHitSlider.value = playerHitStepper.value;
+			playerHitVolume = playerHitStepper.value;
+		});
+
+		oppHitStepper.onValueChange = (() ->
+		{
+			oppHitSounds = true;
+			oppHitVol.value = true;
+			oppHitSlider.value = oppHitStepper.value;
+			oppHitVolume = oppHitStepper.value;
+		});
+
+		metStepper.onValueChange = (() ->
+		{
+			metronome = true;
+			metVol.value = true;
+			metSlider.value = metStepper.value;
+			metronomeVolume = metStepper.value;
+		});
+
+		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
+		balls.setPosition(getX("center", balls.width), getY(9) + 5);
+		tab.add(balls);
+
 		// playback
-		tab.add(createText(getX(), getY(5) + 3, "Playback:"));
+		tab.add(createText(getX(), getY(10) + 3, "Playback:"));
 
-		tab.add(createText(getX(), getY(6) + 3, "Speed:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(11) + 3, "Speed:", 0xFFD8DAF6));
 
-		var playbackStepper = new PsychUINumericStepper(getX("margin_right", 152), getY(6), 0.1, 1, 0, 2.0, 2, 100, false, true);
+		var playbackStepper = new PsychUINumericStepper(getX("margin_right", 152), getY(11), 0.1, 1, 0, 2.0, 2, 100, false, true);
 		tab.add(playbackStepper);
 
-		var playbackSlider:DoidoSlider = new DoidoSlider(getX("margin_first_small"), getY(6) + 9, 210, 6, 1, 0, 2, 5, 0.03);
+		var playbackSlider:DoidoSlider = new DoidoSlider(getX("margin_first_small"), getY(11) + 9, 210, 6, 1, 0, 2, 5, 0.03);
 		playbackSlider.onScrub.add((sld) ->
 		{
 			if (playbackSlider.value <= 0)
@@ -1315,6 +1414,25 @@ class ChartingState extends MusicBeatState
 		add(menuMain);
 	}
 
+	public var playerHitSounds:Bool = true;
+	public var oppHitSounds:Bool = true;
+	public var metronome:Bool = false;
+
+	public var playerHitVolume:Float = 1;
+	public var oppHitVolume:Float = 1;
+	public var metronomeVolume:Float = 0;
+
+	public function onNoteHit(note:NoteData)
+	{
+		if (note.strumline == 0 && oppHitSounds || note.strumline == 1 && playerHitSounds)
+		{
+			var key = Save.data.hitsound;
+			if (key == "OFF")
+				key = "OSU";
+			NoteUtil.playHitsound(key, note.strumline == 0 ? oppHitVolume : playerHitVolume);
+		}
+	}
+
 	public var tweeningSongPos:Bool = false;
 	public var curCursor:lime.ui.MouseCursor = DEFAULT;
 
@@ -1876,7 +1994,19 @@ class ChartingState extends MusicBeatState
 			if (!audio.playing && Conductor.songPos >= 0)
 				audio.play(Conductor.songPos);
 
+			var prevPos = Conductor.songPos;
 			Conductor.songPos += elapsed * 1000 * audio.speed;
+
+			for (note in CHART.notes)
+			{
+				var noteTime:Float = Conductor.getTimeAtStep(note.stepTime);
+				if (noteTime < prevPos)
+					continue;
+				else if (noteTime > Conductor.songPos)
+					break;
+				else
+					onNoteHit(note);
+			}
 		}
 		else
 		{
@@ -2073,6 +2203,13 @@ class ChartingState extends MusicBeatState
 			});
 	}
 
+	public function playMetronome(pitchShift:Bool = true)
+	{
+		var sfx = FlxG.sound.load(Assets.sound("metronome"), metronomeVolume);
+		sfx.pitch = pitchShift ? 1.12 : 1;
+		sfx.play();
+	}
+
 	override function draw()
 	{
 		renderNotes.killMembers();
@@ -2193,6 +2330,13 @@ class ChartingState extends MusicBeatState
 		super.stepHit();
 		if (audio.playing && Conductor.songPos >= 0)
 			audio.sync();
+	}
+
+	override function beatHit()
+	{
+		super.beatHit();
+		if (playingSong && metronome)
+			playMetronome(curBeat % 4 == 0);
 	}
 
 	public var CHART(get, never):DoidoChart;
