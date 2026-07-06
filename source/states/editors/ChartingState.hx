@@ -128,6 +128,7 @@ class ChartingState extends MusicBeatState
 	public static var EVENT_SIZE:Float = 40;
 	public static var EVENT_PADDING:Int = 10;
 
+	// settings
 	public static var centerEvents:Bool = true;
 	public static var noFunAllowed:Bool = false; // reduced animations
 	public static var quantNotes:Bool = Save.data.quantNotes;
@@ -319,8 +320,66 @@ class ChartingState extends MusicBeatState
 
 		var fileWindow = new MenuWindow(x, y + 30, width, this);
 		fileWindow.title = "File";
-		// fileWindow.addButton("New", "Ctrl + N");
-		// fileWindow.addSeparator();
+		fileWindow.addButton("New", "Ctrl + N", () ->
+		{
+			var newSong:String = CHART.song;
+			var newDiff:String = PlayState.songDiff;
+
+			var openStuff:Array<FlxSprite> = [];
+			openStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22, "Song:", 0xFFD8DAF6));
+			openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22, "Diff:", 0xFFD8DAF6));
+
+			var songField:PsychUIInputText;
+			songField = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2), 145, newSong, 14);
+			songField.onChange.add((old, cur, input) -> newSong = cur);
+			openStuff.push(songField);
+
+			var diffField:PsychUIInputText;
+			diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2), 145, newDiff, 14);
+			diffField.onChange.add((old, cur, input) -> newDiff = cur);
+			openStuff.push(diffField);
+
+			var ok = new DoidoTextButton("Ok", "small");
+			ok.screenCenter();
+			ok.y += 50;
+			openStuff.push(ok);
+
+			var popup = new PopupSubState("New Song:", 320, 150, openStuff);
+			openSubState(popup);
+
+			ok.button.onUp.add(() ->
+			{
+				PlayState.SONG = {
+					CHART: {
+						song: newSong,
+						notes: [],
+						bpm: 100,
+						speed: 2
+					},
+					EVENTS: {events: []},
+					META: {
+						player1: "bf",
+						player2: "face",
+						gf: "gf",
+						stage: "stage",
+						composer: "Unknown",
+						charter: "Unknown",
+						assets: {
+							playerNotes: "base",
+							opponentNotes: "base",
+							hudType: "base",
+							ratings: "base",
+							countdown: "base",
+							gameOverPath: "base",
+						}
+					}
+				};
+				PlayState.songDiff = newDiff;
+				PlayState.isStoryMode = false;
+				MusicBeat.switchState(new ChartingState(PlayState.SONG));
+			});
+		});
+		fileWindow.addSeparator();
 
 		// fileWindow.addButton("Open Events", "Ctrl + Alt + O");
 		// fileWindow.addSeparator();
@@ -393,12 +452,13 @@ class ChartingState extends MusicBeatState
 		// editWindow.addSeparator();
 		editWindow.addButton("Copy", "Ctrl + C", () -> copy(false));
 		editWindow.addButton("Paste", "Ctrl + V", () -> paste());
-		editWindow.addButton("Cut", "Ctrl + X", () -> copy(true));
 		editWindow.addSeparator();
+		editWindow.addButton("Cut", "Ctrl + X", () -> copy(true));
 		editWindow.addButton("Delete", "Delete", () -> delete());
 		editWindow.addSeparator();
-		editWindow.addButton("Select All", "Ctrl + A", () -> selectAll());
-		editWindow.addButton("Deselect", "Ctrl + Shift + A", () -> deselect());
+		editWindow.addButton("Select Section", "Ctrl + A", () -> selectSection());
+		editWindow.addButton("Select All", "Ctrl + Shift + A", () -> selectAll());
+		editWindow.addButton("Deselect", "Ctrl + D", () -> deselect());
 		editWindow.addSeparator();
 		editWindow.addButton("Chart Converter", () ->
 		{
@@ -460,6 +520,11 @@ class ChartingState extends MusicBeatState
 		// viewWindow.addSeparator();
 		viewWindow.addButton("Go to Song Start", "Ctrl + R", () -> goToSong(0));
 		viewWindow.addButton("Go to Song End", "Ctrl + Shift + R", () -> goToSong(audio.length - 1));
+		viewWindow.addSeparator();
+		viewWindow.addCheck("Reduced Animations", noFunAllowed, (b) -> noFunAllowed = b);
+		viewWindow.addCheck("Center Events", centerEvents, (b) -> centerEvents = b);
+		viewWindow.addCheck("Old Timer", TimeWindow.oldTimer, (b) -> TimeWindow.oldTimer = b);
+		viewWindow.addCheck("Quant Notes", quantNotes, (b) -> quantNotes = b);
 		// viewWindow.addButton("Go to...");
 		viewWindow.updateBg();
 
@@ -744,15 +809,14 @@ class ChartingState extends MusicBeatState
 			audio.speed = playbackStepper.value;
 		});
 
-		var quantCheck:DoidoCheckmark = new DoidoCheckmark(quantNotes);
-		quantCheck.onUp.add(() ->
-		{
-			quantNotes = quantCheck.value;
-		});
-		quantCheck.x = getX("margin_right", quantCheck.width);
-		quantCheck.y = tab.bg.y + tab.bg.height - quantCheck.height - 8;
-		tab.add(quantCheck);
-		tab.add(createText(quantCheck.x - 70, quantCheck.y + 5, "Quants:"));
+		/*
+			var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
+			balls.setPosition(getX("center", balls.width), getY(12) + 5);
+			tab.add(balls);
+
+			// playback
+			tab.add(createText(getX(), getY(13) + 3, "Functions:"));
+		 */
 
 		return tab;
 	}
@@ -792,6 +856,7 @@ class ChartingState extends MusicBeatState
 		{
 			Conductor.initialBPM = bpmStepper.value;
 			CHART.bpm = Conductor.bpm;
+			Conductor.mapBPMChanges(EVENTS.events);
 		});
 		tab.add(bpmStepper);
 
@@ -1394,16 +1459,6 @@ class ChartingState extends MusicBeatState
 			valueTabs.sort(ZIndex.sort);
 		});
 
-		var centerCheck:DoidoCheckmark = new DoidoCheckmark(centerEvents);
-		centerCheck.onUp.add(() ->
-		{
-			centerEvents = centerCheck.value;
-		});
-		centerCheck.x = getX("margin_right", centerCheck.width);
-		centerCheck.y = tab.bg.y + tab.bg.height - centerCheck.height - 8;
-		tab.add(centerCheck);
-		tab.add(createText(centerCheck.x - 70, centerCheck.y + 5, "Center:"));
-
 		return tab;
 	}
 
@@ -1412,11 +1467,11 @@ class ChartingState extends MusicBeatState
 
 	function addMain()
 	{
-		menuMain = new DoidoBox(803, 19, 458, 32, 4, [
+		menuMain = new DoidoBox(803, 19, 458, 32, 3, [
 			createChartingTab(),
 			eventsTab = createEventsTab(),
 			notesTab = createNotesTab(),
-			createBasic("Functions"),
+			// createBasic("Functions"),
 			createSongTab()
 		], this);
 		add(menuMain);
@@ -1777,20 +1832,31 @@ class ChartingState extends MusicBeatState
 						notesTab.updateCallback.dispatch();
 					}
 
-					if (FlxG.mouse.overlaps(renderNotes))
+					var overlapsNotes:Bool = false;
+					renderNotes.forEachAlive((note) ->
+					{
+						if (overlapsNotes)
+							return;
+
+						if (FlxG.mouse.overlaps(note))
+							overlapsNotes = true;
+					});
+
+					if (overlapsNotes)
 					{
 						var mightBeHold:Bool = false;
 						var noteExists:Bool = false;
 
 						curCursor = POINTER;
-						for (note in renderNotes.members)
+
+						renderNotes.forEachAlive((note) ->
 						{
 							if (FlxG.mouse.overlaps(note))
 							{
 								if (CHART.notes.contains(note.data))
 									noteExists = true;
 								else
-									continue;
+									return;
 
 								// hold hitbox
 								if ((note.isHold && FlxG.mouse.y > note.y + GRID_SIZE / 2)
@@ -1800,12 +1866,12 @@ class ChartingState extends MusicBeatState
 									mightBeHold = true;
 								}
 							}
-						}
+						});
 
 						if (FlxG.mouse.pressedRight)
 						{
 							var removed:Bool = false;
-							for (note in renderNotes.members)
+							renderNotes.forEachAlive((note) ->
 							{
 								if (FlxG.mouse.overlaps(note) && noteExists)
 								{
@@ -1815,7 +1881,7 @@ class ChartingState extends MusicBeatState
 									else
 										CHART.notes.remove(note.data);
 								}
-							}
+							});
 							if (removed)
 							{
 								playSfx("editors/pop");
@@ -1830,7 +1896,7 @@ class ChartingState extends MusicBeatState
 								heldOnNote = true;
 
 							var clearNote:NoteData = null;
-							for (note in renderNotes.members)
+							renderNotes.forEachAlive((note) ->
 							{
 								if (FlxG.mouse.overlaps(note) && noteExists)
 								{
@@ -1847,7 +1913,7 @@ class ChartingState extends MusicBeatState
 											clearNote = note.data;
 									}
 								}
-							}
+							});
 
 							lastMouseStep = mouseStep;
 							lastMouseLane = mouseLane;
@@ -1958,12 +2024,17 @@ class ChartingState extends MusicBeatState
 			if (FlxG.keys.justPressed.A || FlxG.keys.justPressed.D)
 			{
 				var wasA:Bool = FlxG.keys.justPressed.A;
-				if (wasA && FlxG.keys.pressed.CONTROL)
+				if (FlxG.keys.pressed.CONTROL)
 				{
-					if (FlxG.keys.pressed.SHIFT)
-						deselect();
+					if (wasA)
+					{
+						if (FlxG.keys.pressed.SHIFT)
+							selectAll();
+						else
+							selectSection();
+					}
 					else
-						selectAll();
+						deselect();
 				}
 				else
 					changeSection(wasA ? -1 : 1);
@@ -2103,6 +2174,25 @@ class ChartingState extends MusicBeatState
 		selectedNotes = [];
 		for (note in CHART.notes)
 			selectedNotes.push(note);
+		notesTab.updateCallback.dispatch();
+	}
+
+	public function selectSection()
+	{
+		selectedNotes = [];
+
+		var startStep = Std.int(curBeat / 4) * 16;
+		var endStep = startStep + 16;
+		for (note in CHART.notes)
+		{
+			if (note.stepTime < startStep)
+				continue;
+
+			if (note.stepTime >= endStep)
+				break;
+
+			selectedNotes.push(note);
+		}
 		notesTab.updateCallback.dispatch();
 	}
 
@@ -2611,13 +2701,12 @@ class GridWindow extends DoidoWindow
 
 class TimeWindow extends DoidoWindow
 {
+	public static var oldTimer:Bool = false;
+
 	public var timeTxt:FlxBitmapText;
 	public var infoTxt:FlxBitmapText;
 	public var timeBar:DoidoBar;
 	public var timeBall:FlxSprite;
-	public var oldMark:DoidoCheckmark;
-	public var oldTxt:FlxBitmapText;
-
 	public var buttons:Array<FlxSprite> = [];
 
 	public function new(chartState:ChartingState)
@@ -2675,24 +2764,6 @@ class TimeWindow extends DoidoWindow
 		{
 			chartState.resetSection();
 		});
-
-		oldMark = new DoidoCheckmark(false);
-		oldMark.onUp.add(() ->
-		{
-			oldTimer = oldMark.value;
-		});
-		oldMark.x = bg.x + bg.width - oldMark.width - 8;
-		oldMark.y = bg.y + 8;
-		add(oldMark);
-
-		oldTxt = new FlxBitmapText(0, bg.y + 8 + 3, Assets.bitmapFont("phantommuff"));
-		oldTxt.color = 0xFFD8DAF6;
-		oldTxt.alignment = LEFT;
-		oldTxt.scale.set(0.625, 0.625);
-		oldTxt.updateHitbox();
-		oldTxt.text = "Old Timer:";
-		oldTxt.x = oldMark.x - oldTxt.width - 8;
-		add(oldTxt);
 	}
 
 	override function draw()
@@ -2755,8 +2826,6 @@ class TimeWindow extends DoidoWindow
 				scrubbing = false;
 		}
 	}
-
-	public var oldTimer:Bool = false;
 
 	public function getTime(time:Float):String
 	{

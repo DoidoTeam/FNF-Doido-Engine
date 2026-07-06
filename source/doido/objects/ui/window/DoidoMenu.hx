@@ -45,6 +45,22 @@ class MenuWindow extends DoidoWindow
 		yOffset += newBtn.height;
 	}
 
+	public function addCheck(label:String, defaultValue:Bool, func:Bool->Void)
+	{
+		var newBtn = new MenuButton(label, defaultValue, width);
+		newBtn.button.onUp.add(() ->
+		{
+			newBtn.value = !newBtn.value;
+			func(newBtn.value);
+		});
+		buttons.push(newBtn);
+		add(newBtn);
+
+		newBtn.x = bg.x;
+		newBtn.y = bg.y + yOffset;
+		yOffset += newBtn.height;
+	}
+
 	public function addSeparator()
 	{
 		var separator:FlxSprite = new FlxSprite().makeColor(width, 3, 0xFF000000);
@@ -59,11 +75,14 @@ class MenuWindow extends DoidoWindow
 
 class MenuButton extends FlxSpriteGroup
 {
+	public var value(default, set):Bool;
+	public var button:DoidoButton;
+
 	var _label:FlxBitmapText;
 	var _bind:FlxBitmapText;
-	var button:DoidoButton;
+	var check:FlxSprite;
 
-	public function new(label:String, ?bind:String, width:Float = 318, height:Float = 22, ?onUp:Void->Void, ?onDown:Void->Void)
+	public function new(label:String, ?bind:String, ?defaultValue:Bool, width:Float = 318, height:Float = 22, ?onUp:Void->Void, ?onDown:Void->Void)
 	{
 		super();
 
@@ -104,5 +123,26 @@ class MenuButton extends FlxSpriteGroup
 			_bind.setPosition(button.x + button.width - _bind.width - 2, button.y + ((button.height / 2) - (_bind.height / 2)));
 			add(_bind);
 		}
+
+		if (defaultValue != null)
+		{
+			check = new FlxSprite();
+			check.loadSparrow("editors/charting/checkmark");
+			check.animation.addByPrefix("off", "button checkmark" + "0000", 0, false);
+			check.animation.addByPrefix("on", "button checkmark" + "0001", 0, false);
+			check.scale.set(0.76, 0.76);
+			check.updateHitbox();
+			check.setPosition(button.x + button.width - check.width - 2, button.y + ((button.height / 2) - (check.height / 2)));
+			add(check);
+			
+			value = defaultValue;
+		}
+	}
+
+	public function set_value(b:Bool)
+	{
+		value = b;
+		check.animation.play((b ? "on" : "off"));
+		return value;
 	}
 }
