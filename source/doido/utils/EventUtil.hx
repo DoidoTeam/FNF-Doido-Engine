@@ -32,15 +32,31 @@ typedef EventValue =
 class EventUtil
 {
 	public static var eventLists:Map<String, Array<String>> = [
-		"Main" => ["Camera", "Objects", "Screen", "Gameplay", "Misc"],
+		"Main" => ["Camera", "Objects", "Screen", "Gameplay", "Song", "Misc"],
 		"Camera" => ["Camera Focus", "Change Cam Zoom"],
 		"Objects" => ["Change Character", "Play Animation", "Change Stage"],
 		"Screen" => ["Flash Screen", "Fade Screen"],
 		"Gameplay" => ["Change Note Speed", "Freeze Notes"],
+		"Song" => ["BPM Change"],
 		"Misc" => ["Trigger Tag"]
 	];
 
 	public static var events:Array<Event> = [
+		{
+			name: "BPM Change",
+			desc: "Change the BPM of a song",
+			values: [
+				{
+					name: "BPM",
+					info: "New BPM value.",
+					defaultValue: 150,
+					step: 1,
+					min: 1,
+					max: 339,
+					decimals: 0
+				}
+			]
+		},
 		{
 			name: "Camera Focus",
 			desc: "Focus the camera on a specific character.",

@@ -149,6 +149,7 @@ class ChartingState extends MusicBeatState
 	// editor stuff
 	public var selectedNotes:Array<NoteData> = [];
 	public var selectedEvents:Array<EventData> = [];
+	public var noteClipboard:Array<NoteData> = [];
 	public var draggingSelectedNotes:Bool = false;
 	public var hoverSquare:FlxSprite;
 	public var selectSquare:FlxSprite;
@@ -390,7 +391,14 @@ class ChartingState extends MusicBeatState
 		// editWindow.addButton("Undo", "Ctrl + Z");
 		// editWindow.addButton("Redo", "Ctrl + Y");
 		// editWindow.addSeparator();
+		editWindow.addButton("Copy", "Ctrl + C", () -> copy(false));
+		editWindow.addButton("Paste", "Ctrl + V", () -> paste());
+		editWindow.addButton("Cut", "Ctrl + X", () -> copy(true));
+		editWindow.addSeparator();
+		editWindow.addButton("Delete", "Delete", () -> delete());
+		editWindow.addSeparator();
 		editWindow.addButton("Select All", "Ctrl + A", () -> selectAll());
+		editWindow.addButton("Deselect", "Ctrl + Shift + A", () -> deselect());
 		editWindow.addSeparator();
 		editWindow.addButton("Chart Converter", () ->
 		{
@@ -451,7 +459,7 @@ class ChartingState extends MusicBeatState
 		// viewWindow.addButton("Go to Section...");
 		// viewWindow.addSeparator();
 		viewWindow.addButton("Go to Song Start", "Ctrl + R", () -> goToSong(0));
-		viewWindow.addButton("Go to Song End", null, () -> goToSong(audio.length - 1));
+		viewWindow.addButton("Go to Song End", "Ctrl + Shift + R", () -> goToSong(audio.length - 1));
 		// viewWindow.addButton("Go to...");
 		viewWindow.updateBg();
 
@@ -1420,7 +1428,7 @@ class ChartingState extends MusicBeatState
 
 	public var playerHitVolume:Float = 1;
 	public var oppHitVolume:Float = 1;
-	public var metronomeVolume:Float = 0;
+	public var metronomeVolume:Float = 1;
 
 	public function onNoteHit(note:NoteData)
 	{
@@ -1435,8 +1443,6 @@ class ChartingState extends MusicBeatState
 
 	public var tweeningSongPos:Bool = false;
 	public var curCursor:lime.ui.MouseCursor = DEFAULT;
-
-	var clickedOnWindow:Bool = false;
 
 	var autoScrolling:Bool = false;
 	var scrollAutoY:Float = 0;
@@ -1461,6 +1467,15 @@ class ChartingState extends MusicBeatState
 				playingSong = !playingSong;
 		}
 
+		for (event in EVENTS.events)
+		{
+			if (event.name == "BPM Change" || event.name == "Linear BPM Change")
+			{
+				Conductor.mapBPMChanges(EVENTS.events);
+				break;
+			}
+		}
+
 		var overlapsWindow:Bool = false;
 
 		for (basic in members)
@@ -1473,9 +1488,6 @@ class ChartingState extends MusicBeatState
 				}
 			}
 		}
-
-		if (FlxG.mouse.justPressed)
-			clickedOnWindow = overlapsWindow;
 
 		if (selectedNotes.length > 0 || selectedEvents.length > 0)
 		{
@@ -1499,7 +1511,7 @@ class ChartingState extends MusicBeatState
 
 		var cursorText:String = "";
 
-		if (!clickedOnWindow && !typing)
+		if (!overlapsWindow && !typing)
 		{
 			if (FlxG.keys.pressed.SHIFT)
 				cursorText = "4x";
@@ -1578,18 +1590,6 @@ class ChartingState extends MusicBeatState
 							note.length = 0;
 					}
 					notesTab.updateCallback.dispatch();
-				}
-
-				if (FlxG.keys.justPressed.DELETE)
-				{
-					for (note in selectedNotes)
-					{
-						playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
-						CHART.notes.remove(note);
-					}
-					selectedNotes = [];
-					notesTab.updateCallback.dispatch();
-					sortNotes();
 				}
 			}
 
@@ -1959,10 +1959,26 @@ class ChartingState extends MusicBeatState
 			{
 				var wasA:Bool = FlxG.keys.justPressed.A;
 				if (wasA && FlxG.keys.pressed.CONTROL)
-					selectAll();
+				{
+					if (FlxG.keys.pressed.SHIFT)
+						deselect();
+					else
+						selectAll();
+				}
 				else
 					changeSection(wasA ? -1 : 1);
 			}
+
+			if (FlxG.keys.pressed.CONTROL)
+			{
+				if ((FlxG.keys.justPressed.C || FlxG.keys.justPressed.X))
+					copy(FlxG.keys.justPressed.X);
+				if (FlxG.keys.justPressed.V)
+					paste();
+			}
+
+			if (FlxG.keys.justPressed.DELETE)
+				delete();
 
 			if (FlxG.keys.justPressed.R)
 				resetSection();
@@ -2082,12 +2098,71 @@ class ChartingState extends MusicBeatState
 		openSubState(new ChartTestSubState(SONG, Conductor.songPos));
 	}
 
-	function selectAll()
+	public function selectAll()
 	{
 		selectedNotes = [];
 		for (note in CHART.notes)
 			selectedNotes.push(note);
 		notesTab.updateCallback.dispatch();
+	}
+
+	public function deselect()
+	{
+		selectedNotes = [];
+		notesTab.updateCallback.dispatch();
+	}
+
+	public function delete()
+	{
+		if (selectedNotes.length < 1)
+			return;
+
+		for (note in selectedNotes)
+		{
+			playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
+			CHART.notes.remove(note);
+		}
+		selectedNotes = [];
+		notesTab.updateCallback.dispatch();
+		sortNotes();
+	}
+
+	public function copy(cut:Bool)
+	{
+		if (selectedNotes.length < 1)
+			return;
+
+		noteClipboard = selectedNotes.copy();
+		noteClipboard.sort(NoteUtil.sortNotes);
+
+		if (cut)
+			delete();
+		else
+			playSfx("editors/click");
+	}
+
+	public function paste()
+	{
+		if (noteClipboard.length < 1)
+			return;
+
+		playSfx("editors/pop");
+		selectedNotes = [];
+		var firstStep = noteClipboard[0].stepTime;
+		for (note in noteClipboard)
+		{
+			var newNote = {
+				stepTime: curStep + (note.stepTime - firstStep),
+				lane: note.lane,
+				strumline: note.strumline,
+				type: note.type,
+				length: note.length
+			};
+			CHART.notes.push(newNote);
+			selectedNotes.push(newNote);
+		}
+		notesTab.updateCallback.dispatch();
+		sortNotes();
 	}
 
 	public function getMouseLane():Int
@@ -2119,9 +2194,12 @@ class ChartingState extends MusicBeatState
 
 	public function resetSection()
 	{
-		if (FlxG.keys.pressed.SHIFT)
+		if (FlxG.keys.pressed.CONTROL)
 		{
-			goToSong(0);
+			if (FlxG.keys.pressed.SHIFT)
+				goToSong(audio.length - 1)
+			else
+				goToSong(0);
 		}
 		else
 		{
