@@ -357,8 +357,9 @@ class FreeplayState extends MusicBeatState
 				MusicBeat.switchState(new states.menus.MainMenuState());
 			}
 
-			if (Controls.justPressed(ACCEPT) || FlxG.keys.justPressed.SEVEN)
-				startSong();
+			var charting:Bool = (FlxG.keys.justPressed.SEVEN && Save.data.developerMode);
+			if (Controls.justPressed(ACCEPT) || charting)
+				startSong(charting);
 		}
 
 		// score
@@ -410,7 +411,7 @@ class FreeplayState extends MusicBeatState
 		callScript("updatePost", [elapsed]);
 	}
 
-	public function startSong()
+	public function startSong(charting:Bool = false)
 	{
 		if (curSong.name.toLowerCase() == "random")
 		{
@@ -429,7 +430,7 @@ class FreeplayState extends MusicBeatState
 		{
 			PlayState.loadSong(curSong.name, curSong.diffs[curDiff]);
 
-			if (Save.data.developerMode && FlxG.keys.justPressed.SEVEN)
+			if (charting)
 			{
 				MusicBeat.switchState(new states.editors.ChartingState(PlayState.SONG));
 				return;
