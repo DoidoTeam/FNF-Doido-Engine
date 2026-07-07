@@ -439,7 +439,7 @@ class PsychUIInputText extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
-		if(disableInput)
+		if (disableInput)
 			return;
 
 		if (FlxG.mouse.justPressed)
@@ -610,6 +610,32 @@ class PsychUIInputText extends FlxSpriteGroup
 		return v;
 	}
 
+	// currently breaking dropdowns but also fixes popup clipping
+	/*override public function setGraphicSize(width:Float = 0, height:Float = 0)
+	{
+		super.setGraphicSize(width, height);
+
+		var _width = Std.int(width);
+		var _height = Std.int(height);
+
+		bg.makeGraphic(_width, _height, FlxColor.BLACK);
+		bg.scale.set(1, 1);
+		bg.updateHitbox();
+
+		behindText.makeGraphic(_width - 6, _height - 6, FlxColor.WHITE);
+		behindText.scale.set(1, 1);
+		behindText.updateHitbox();
+
+		if (textObj != null && textObj.exists)
+		{
+			textObj.scale.x = 1;
+			textObj.scale.y = 1;
+			if (caret != null && caret.exists)
+				caret.setGraphicSize(1, textObj.height - 4);
+		}
+	}*/
+
+	// old
 	override public function setGraphicSize(width:Float = 0, height:Float = 0)
 	{
 		super.setGraphicSize(width, height);
@@ -798,7 +824,8 @@ class PsychUIInputText extends FlxSpriteGroup
 		return text;
 	}
 
-	public function set_disableInput(b:Bool) {
+	public function set_disableInput(b:Bool)
+	{
 		disableInput = b;
 		textObj.visible = !disableInput;
 		return disableInput;

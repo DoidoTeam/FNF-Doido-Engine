@@ -48,9 +48,8 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 		audio.pause();
 		Conductor.songPos = startPos;
 		Main.setFpsPos(18, FlxG.height - 125 - Std.int(Main.fpsCounter.bgHeight));
-		MusicBeat.activeState.persistentDraw = true;
-
 		super.close();
+		MusicBeat.activeState.persistentDraw = true;
 	}
 
 	override function create()

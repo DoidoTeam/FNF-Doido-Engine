@@ -4,6 +4,7 @@ import doido.utils.EventUtil;
 import objects.Character.DoidoCharacter;
 import doido.utils.NoteUtil;
 import doido.song.compat.Legacy;
+import haxe.Json;
 
 typedef DoidoSong =
 {
@@ -171,11 +172,9 @@ class SongHandler
 		return formatEvents({events: a.events.concat(b.events)});
 	}
 
-	/* --- METAS --- */
-	public static function loadMeta(jsonInput:String, ?diff:String = "normal"):DoidoMeta
+	public static function defaultMeta():DoidoMeta
 	{
-		// default
-		var meta:DoidoMeta = {
+		return {
 			player1: "bf",
 			player2: "face",
 			gf: "gf",
@@ -191,7 +190,13 @@ class SongHandler
 				gameOverPath: "base",
 			}
 		};
+	}
 
+	/* --- METAS --- */
+	public static function loadMeta(jsonInput:String, ?diff:String = "normal"):DoidoMeta
+	{
+		// default
+		var meta:DoidoMeta = defaultMeta();
 		var metaPath:String = 'songs/$jsonInput/meta';
 		if (Assets.fileExists(metaPath, JSON))
 			meta = mergeMetas(meta, cast Assets.json(metaPath));
@@ -256,4 +261,13 @@ class SongHandler
 
 	public static function formatName(name:String)
 		return name.toLowerCase().replace(" ", "-");
+
+	inline public static function parseChart(str:String):DoidoChart
+		return formatChart(cast Json.parse(str));
+
+	inline public static function parseEvents(str:String):DoidoEvents
+		return formatEvents(cast Json.parse(str));
+
+	inline public static function parseMeta(str:String):DoidoMeta
+		return mergeMetas(cast Json.parse(str), defaultMeta());
 }
