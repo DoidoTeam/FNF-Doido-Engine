@@ -540,6 +540,7 @@ class ChartingState extends MusicBeatState
 		if (save)
 			addAutoSave();
 
+		playingSong = false;
 		var openStuff:Array<FlxBasic> = [];
 
 		var text = createText(0, 0, "Are you sure?\nUnsaved changes may be lost.", 0xFFD8DAF6);
@@ -1637,8 +1638,11 @@ class ChartingState extends MusicBeatState
 				{
 					if (lastEdited != null)
 					{
+						var mapBPM:Bool = Conductor.isMappable(lastEdited.name) || Conductor.isMappable(str);
 						lastEdited.name = str;
 						lastEdited.data = [for (v in EventUtil.getEvent(str).values) v.defaultValue];
+						if (mapBPM)
+							Conductor.mapBPMChanges(EVENTS.events);
 					}
 					tab.updateCallback.dispatch();
 				}
@@ -1716,6 +1720,9 @@ class ChartingState extends MusicBeatState
 						var dropdown = new PsychUIDropDownMenu(x, y, cast value.options, (i2, s) ->
 						{
 							lastEdited.data[i] = s;
+
+							if (Conductor.isMappable(lastEdited.name))
+								Conductor.mapBPMChanges(EVENTS.events);
 						}, 100, false);
 						dropdown.selectedLabel = current;
 						dropdown.zIndex = index;
@@ -1724,7 +1731,12 @@ class ChartingState extends MusicBeatState
 					else
 					{
 						var textfield = new PsychUIInputText(x, y, 145, current, 14);
-						textfield.onChange.add((old, cur, input) -> lastEdited.data[i] = cur);
+						textfield.onChange.add((old, cur, input) ->
+						{
+							lastEdited.data[i] = cur;
+							if (Conductor.isMappable(lastEdited.name))
+								Conductor.mapBPMChanges(EVENTS.events);
+						});
 						textfield.zIndex = index;
 						valueTabs.add(textfield);
 					}
@@ -1732,14 +1744,24 @@ class ChartingState extends MusicBeatState
 				else if (Std.isOfType(value.defaultValue, Float) || Std.isOfType(value.defaultValue, Int))
 				{
 					var stepper = new PsychUINumericStepper(x, y, value.step ?? 0.25, current, value.min ?? 0, value.max ?? 4, value.decimals ?? 2, 100, false);
-					stepper.onValueChange = () -> lastEdited.data[i] = stepper.value;
+					stepper.onValueChange = () ->
+					{
+						lastEdited.data[i] = stepper.value;
+						if (Conductor.isMappable(lastEdited.name))
+							Conductor.mapBPMChanges(EVENTS.events);
+					};
 					stepper.zIndex = index;
 					valueTabs.add(stepper);
 				}
 				else if (Std.isOfType(value.defaultValue, Bool))
 				{
 					var checkmark = new DoidoCheckmark(current);
-					checkmark.onUp.add(() -> lastEdited.data[i] = checkmark.value);
+					checkmark.onUp.add(() ->
+					{
+						lastEdited.data[i] = checkmark.value;
+						if (Conductor.isMappable(lastEdited.name))
+							Conductor.mapBPMChanges(EVENTS.events);
+					});
 					checkmark.x = x;
 					checkmark.y = y;
 					checkmark.zIndex = index;
@@ -1816,16 +1838,6 @@ class ChartingState extends MusicBeatState
 		{
 			if (FlxG.keys.justPressed.SPACE && !typing && audio.speed > 0)
 				playingSong = !playingSong;
-		}
-
-		// to-do: find better way to do this
-		for (event in EVENTS.events)
-		{
-			if (event.name == "BPM Change" || event.name == "Linear BPM Change")
-			{
-				Conductor.mapBPMChanges(EVENTS.events);
-				break;
-			}
 		}
 
 		for (event in EVENTS.events)
@@ -2102,6 +2114,7 @@ class ChartingState extends MusicBeatState
 					{
 						if (!draggingSelectedNotes && !heldOnNoteHold)
 						{
+							var mapBPM:Bool = false;
 							var multiple:Bool = selectedEvents.length > 0;
 							var eventList:Array<EventData> = [
 								{
@@ -2122,12 +2135,15 @@ class ChartingState extends MusicBeatState
 									data: event.data.copy()
 								};
 
+								mapBPM = Conductor.isMappable(event.name);
 								EVENTS.events.push(newEvent);
 								selectedEvents.push(newEvent);
 								playSfx("editors/click", multiple ? FlxG.random.float(0.0, 0.4) : 0);
 							}
 
 							sortEvents();
+							if (mapBPM)
+								Conductor.mapBPMChanges(EVENTS.events);
 						}
 					}
 				}
@@ -2136,6 +2152,7 @@ class ChartingState extends MusicBeatState
 					addEvent.alpha = 0.5;
 
 					var removed:Bool = false;
+					var mapBPM:Bool = false;
 					renderEvents.forEachAlive((event) ->
 					{
 						if (event.isHold)
@@ -2158,6 +2175,7 @@ class ChartingState extends MusicBeatState
 							else if (FlxG.mouse.justPressedRight)
 							{
 								removed = true;
+								mapBPM = Conductor.isMappable(event.event.name);
 								EVENTS.events.remove(event.event);
 								if (selectedEvents.contains(event.event))
 									selectedEvents.remove(event.event);
@@ -2169,6 +2187,8 @@ class ChartingState extends MusicBeatState
 					{
 						playSfx("editors/pop");
 						sortEvents();
+						if (mapBPM)
+							Conductor.mapBPMChanges(EVENTS.events);
 					}
 				}
 			}
