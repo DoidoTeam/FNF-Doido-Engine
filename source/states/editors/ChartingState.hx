@@ -1867,7 +1867,7 @@ class ChartingState extends MusicBeatState
 			curCursor = POINTER;
 			tappedCam = FlxG.mouse.justPressed || FlxG.mouse.pressed || FlxG.mouse.justReleased;
 			if (FlxG.mouse.justPressed)
-				quickCam(focus != "bf");
+				quickCam();
 		}
 
 		if (noFunAllowed)
@@ -2486,23 +2486,35 @@ class ChartingState extends MusicBeatState
 
 	public function quickCam(?player:Bool)
 	{
-		if (player == null)
+		player = player ?? (focus != "bf");
+		selectedEvents = [];
+		var foundEvent:EventData = null;
+		for (event in EVENTS.events)
 		{
-			// idea here is to get the last camera section
-			// so we can make the next one be opposite
-			// for now its gonna be opp by default
-			player = false;
+			if (event.stepTime == curStep)
+			{
+				foundEvent = event;
+				break;
+			}
 		}
 
-		selectedEvents = [];
-		var newEvent:EventData = {
-			stepTime: curStep,
-			name: "Camera Focus",
-			data: [player ? "bf" : "dad", 0, 0]
-		};
+		if (foundEvent != null)
+		{
+			foundEvent.data = [player ? "bf" : "dad", 0, 0];
+			selectedEvents = [foundEvent];
+		}
+		else
+		{
+			var newEvent:EventData = {
+				stepTime: curStep,
+				name: "Camera Focus",
+				data: [player ? "bf" : "dad", 0, 0]
+			};
 
-		EVENTS.events.push(newEvent);
-		selectedEvents.push(newEvent);
+			EVENTS.events.push(newEvent);
+			selectedEvents.push(newEvent);
+		}
+
 		sortEvents();
 		playSfx("editors/click");
 	}
