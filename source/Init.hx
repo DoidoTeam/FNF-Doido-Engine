@@ -1,11 +1,11 @@
 package;
 
-import doido.utils.AutoSave;
 import flixel.FlxState;
 import doido.Cache;
 import doido.MusicBeat.MusicBeatState;
 import doido.song.Highscore;
 import doido.system.Discord.DiscordIO;
+import doido.utils.EditorUtil.EditorSave;
 import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import states.*;
@@ -21,7 +21,7 @@ class Init extends MusicBeatState
 		Save.init();
 		Controls.load();
 		Highscore.load();
-		AutoSave.load();
+		EditorSave.load();
 		DiscordIO.check();
 
 		Main.setWindowSize(Save.data.windowSize);

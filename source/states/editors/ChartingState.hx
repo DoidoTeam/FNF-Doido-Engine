@@ -1,7 +1,7 @@
 package states.editors;
 
+import states.menus.MainMenuState;
 import flixel.FlxObject;
-import doido.utils.AutoSave;
 import openfl.events.RenderEvent;
 import substates.editors.ChartTestSubState;
 import substates.editors.PopupSubState;
@@ -135,7 +135,8 @@ class ChartingState extends MusicBeatState
 	public static var soundEffects:Bool = true;
 	public static var centerEvents:Bool = true;
 	public static var noFunAllowed:Bool = false; // reduced animations
-	public static var quantNotes:Bool = Save.data.quantNotes;
+	public static var quantNotes:Bool = false;
+	public static var darkMode:Bool = false;
 
 	public var audio:AudioHandler;
 	public var playingSong:Bool = false;
@@ -150,6 +151,9 @@ class ChartingState extends MusicBeatState
 	public var renderNotes:FlxTypedGroup<ChartingNote>;
 	public var renderEvents:FlxTypedGroup<ChartingEvent>;
 	public var selectedColor:FlxColor = FlxColor.BLACK;
+
+	public var bgLight:FlxSprite;
+	public var bgDark:FlxSprite;
 
 	// editor stuff
 	public var borderAreas:FlxGroup;
@@ -205,6 +209,15 @@ class ChartingState extends MusicBeatState
 		persistentUpdate = false;
 		MusicBeat.stopMusic();
 
+		MusicBeat.preventClosing = true;
+		MusicBeat.onClosing = () -> confirmPopup("Close", () -> Sys.exit(0));
+
+		noFunAllowed = EditorSave.data.reducedAnimations;
+		soundEffects = EditorSave.data.soundEffects;
+		centerEvents = EditorSave.data.centerEvents;
+		quantNotes = EditorSave.data.quantNotes;
+		darkMode = EditorSave.data.darkMode;
+
 		characters = Assets.list("data/characters/", true, JSON).concat(["face"]);
 
 		audio = new AudioHandler(CHART.song, PlayState.songDiff);
@@ -214,7 +227,7 @@ class ChartingState extends MusicBeatState
 
 		// areas excluded from mouse dragging
 		// [x, y], [width, height]
-		var borderList:Array<Array<Array<Int>>> = [[[0, 0], [338, 41]], [[0, 597], [338, 123]], [[803, 0], [477, 720]]];
+		var borderList:Array<Array<Array<Int>>> = [[[0, 0], [338, 51]], [[0, 597], [338, 123]], [[803, 0], [477, 720]]];
 		borderAreas = new FlxGroup();
 		for (border in borderList)
 		{
@@ -222,9 +235,14 @@ class ChartingState extends MusicBeatState
 			borderAreas.add(borderHbx);
 		}
 
-		var bg = new FlxSprite().loadGraphic(Assets.image('editors/charting/bg/light'));
-		bg.screenCenter();
-		add(bg);
+		bgLight = new FlxSprite().loadGraphic(Assets.image('editors/charting/bg/light'));
+		bgLight.screenCenter();
+		add(bgLight);
+
+		bgDark = new FlxSprite().loadGraphic(Assets.image('editors/charting/bg/dark'));
+		bgDark.screenCenter();
+		bgDark.visible = EditorSave.data.darkMode;
+		add(bgDark);
 
 		hoverSquare = new FlxSprite().makeColor(GRID_SIZE, GRID_SIZE, 0xFFFFFFFF);
 		hoverSquare.visible = false;
@@ -300,6 +318,13 @@ class ChartingState extends MusicBeatState
 		reloadIcons();
 	}
 
+	override function destroy()
+	{
+		MusicBeat.preventClosing = false;
+		MusicBeat.onClosing = null;
+		super.destroy();
+	}
+
 	function reloadIcons()
 	{
 		iconBf.setIcon(META.player1, true);
@@ -350,35 +375,37 @@ class ChartingState extends MusicBeatState
 
 		ok.button.onUp.add(() ->
 		{
-			addAutoSave();
-			PlayState.SONG = {
-				CHART: {
-					song: newSong,
-					notes: [],
-					bpm: 100,
-					speed: 2
-				},
-				EVENTS: {events: []},
-				META: {
-					player1: "bf",
-					player2: "face",
-					gf: "gf",
-					stage: "stage",
-					composer: "Unknown",
-					charter: "Unknown",
-					assets: {
-						playerNotes: "base",
-						opponentNotes: "base",
-						hudType: "base",
-						ratings: "base",
-						countdown: "base",
-						gameOverPath: "base",
+			confirmPopup("New Song:", () ->
+			{
+				PlayState.SONG = {
+					CHART: {
+						song: newSong,
+						notes: [],
+						bpm: 100,
+						speed: 2
+					},
+					EVENTS: {events: []},
+					META: {
+						player1: "bf",
+						player2: "face",
+						gf: "gf",
+						stage: "stage",
+						composer: "Unknown",
+						charter: "Unknown",
+						assets: {
+							playerNotes: "base",
+							opponentNotes: "base",
+							hudType: "base",
+							ratings: "base",
+							countdown: "base",
+							gameOverPath: "base",
+						}
 					}
-				}
-			};
-			PlayState.songDiff = newDiff;
-			PlayState.isStoryMode = false;
-			MusicBeat.switchState(new ChartingState(PlayState.SONG));
+				};
+				PlayState.songDiff = newDiff;
+				PlayState.isStoryMode = false;
+				MusicBeat.switchState(new ChartingState(PlayState.SONG));
+			});
 		});
 	}
 
@@ -411,19 +438,20 @@ class ChartingState extends MusicBeatState
 
 		ok.button.onUp.add(() ->
 		{
-			addAutoSave();
-			try
+			confirmPopup("Open Song:", () ->
 			{
-				PlayState.loadSong(newSong, newDiff);
-				MusicBeat.switchState(new ChartingState(PlayState.SONG));
-			}
-			catch (e)
-			{
-				FlxG.sound.play(Assets.sound('beep'));
-				Logs.print(e);
-			}
-
-			// popup.close();
+				try
+				{
+					PlayState.loadSong(newSong, newDiff);
+					MusicBeat.switchState(new ChartingState(PlayState.SONG));
+				}
+				catch (e)
+				{
+					FlxG.sound.play(Assets.sound('beep'));
+					Logs.print(e);
+					openSong();
+				}
+			});
 		});
 	}
 
@@ -431,9 +459,9 @@ class ChartingState extends MusicBeatState
 	{
 		var openStuff:Array<FlxBasic> = [];
 		var saves:Array<String> = [];
-		var selected:Int = 0;
+		var selected:Int = -1;
 
-		for (save in AutoSave.savedSongs)
+		for (save in EditorSave.savedSongs)
 			saves.push('${save.song} - ${save.diff} (${save.date})');
 
 		var ok = new DoidoTextButton("Open", "small");
@@ -460,26 +488,35 @@ class ChartingState extends MusicBeatState
 
 		ok.button.onUp.add(() ->
 		{
-			var saveData = AutoSave.savedSongs[selected];
-			var CHART = SongHandler.parseChart(saveData.CHART);
-			var EVENTS = SongHandler.parseEvents(saveData.EVENTS);
-			var META = SongHandler.parseMeta(saveData.META);
-			var diff = saveData.diff;
-			addAutoSave();
+			if (selected < 0)
+				return;
 
-			PlayState.SONG = {
-				CHART: CHART,
-				EVENTS: EVENTS,
-				META: META
-			};
-			PlayState.songDiff = diff;
-			PlayState.isStoryMode = false;
-			MusicBeat.switchState(new ChartingState(PlayState.SONG));
+			confirmPopup('Open Autosave', () ->
+			{
+				var saveData = EditorSave.savedSongs[selected];
+				var CHART = SongHandler.parseChart(saveData.CHART);
+				var EVENTS = SongHandler.parseEvents(saveData.EVENTS);
+				var META = SongHandler.parseMeta(saveData.META);
+				var diff = saveData.diff;
+				addAutoSave();
+
+				PlayState.SONG = {
+					CHART: CHART,
+					EVENTS: EVENTS,
+					META: META
+				};
+				PlayState.songDiff = diff;
+				PlayState.isStoryMode = false;
+				MusicBeat.switchState(new ChartingState(PlayState.SONG));
+			}, false);
 		});
 
 		export.button.onUp.add(() ->
 		{
-			var saveData = AutoSave.savedSongs[selected];
+			if (selected < 0)
+				return;
+
+			var saveData = EditorSave.savedSongs[selected];
 			var CHART = SongHandler.parseChart(saveData.CHART);
 			var EVENTS = SongHandler.parseEvents(saveData.EVENTS);
 			var META = SongHandler.parseMeta(saveData.META);
@@ -496,6 +533,33 @@ class ChartingState extends MusicBeatState
 			popup.titleText.text = 'Selected: ${saves[selected]}';
 			trace(selected);
 		};
+	}
+
+	function confirmPopup(titleText:String, func:Void->Void, ?save:Bool = true, ?close:Bool = false)
+	{
+		if (save)
+			addAutoSave();
+
+		var openStuff:Array<FlxBasic> = [];
+
+		var text = createText(0, 0, "Are you sure?\nUnsaved changes may be lost.", 0xFFD8DAF6);
+		text.alignment = CENTER;
+		text.updateHitbox();
+		text.screenCenter();
+		text.y -= 5;
+		openStuff.push(text);
+
+		var ok = new DoidoTextButton("Ok", "small");
+		ok.screenCenter();
+		ok.y += 50;
+		openStuff.push(ok);
+
+		var popup = new PopupSubState(titleText, 320, 150, openStuff, false);
+		openSubState(popup);
+
+		ok.button.onUp.add(func);
+		if (close)
+			ok.button.onUp.add(popup.close);
 	}
 
 	function addMenu()
@@ -530,6 +594,9 @@ class ChartingState extends MusicBeatState
 		fileWindow.addSeparator();
 		fileWindow.addButton("Play Song", "Enter", () -> play());
 		fileWindow.addButton("Play from Here", "Shift + Enter", () -> play(true));
+		fileWindow.addSeparator();
+		fileWindow.addButton("Exit", () -> confirmPopup("Exit", () -> MusicBeat.switchState(new MainMenuState())), 0xFFFF0000);
+
 		fileWindow.updateBg();
 
 		var editWindow = new MenuWindow(x, y + 30, width, this);
@@ -549,59 +616,87 @@ class ChartingState extends MusicBeatState
 		editWindow.addSeparator();
 		editWindow.addButton("Add Opponent Camera", "O", () -> quickCam(false));
 		editWindow.addButton("Add Player Camera", "P", () -> quickCam(true));
-		editWindow.addSeparator();
-		editWindow.addButton("Chart Converter", () ->
-		{
-			var newSong:String = CHART.song;
-			var newDiff:String = PlayState.songDiff;
-
-			var openStuff:Array<FlxBasic> = [];
-			openStuff.push(createText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2) - 22 - 5, "Songs:", 0xFFD8DAF6));
-			openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Diffs:", 0xFFD8DAF6));
-
-			var songField:PsychUIInputText;
-			songField = new PsychUIInputText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2) - 5, 245, newSong, 14);
-			songField.onChange.add((old, cur, input) -> newSong = cur);
-			openStuff.push(songField);
-
-			var diffField:PsychUIInputText;
-			diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 245, newDiff, 14);
-			diffField.onChange.add((old, cur, input) -> newDiff = cur);
-			openStuff.push(diffField);
-
-			var ok = new DoidoTextButton("Convert", "small");
-			ok.screenCenter();
-			ok.y += 50;
-			openStuff.push(ok);
-
-			var popup = new PopupSubState("Chart Converter", 520, 150, openStuff);
-			openSubState(popup);
-
-			ok.button.onUp.add(() ->
+		/*editWindow.addSeparator();
+			editWindow.addButton("Chart Converter", () ->
 			{
-				var songs:Array<String> = newSong.split(",").map(s -> s.trim());
-				var diffs:Array<String> = newDiff.split(",").map(s -> s.trim());
+				var newSong:String = CHART.song;
+				var newDiff:String = PlayState.songDiff;
 
-				for (input in songs)
+				var openStuff:Array<FlxBasic> = [];
+				openStuff.push(createText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2) - 22 - 5, "Songs:", 0xFFD8DAF6));
+				openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Diffs:", 0xFFD8DAF6));
+
+				var songField:PsychUIInputText;
+				songField = new PsychUIInputText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2) - 5, 245, newSong, 14);
+				songField.onChange.add((old, cur, input) -> newSong = cur);
+				openStuff.push(songField);
+
+				var diffField:PsychUIInputText;
+				diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 245, newDiff, 14);
+				diffField.onChange.add((old, cur, input) -> newDiff = cur);
+				openStuff.push(diffField);
+
+				var ok = new DoidoTextButton("Convert", "small");
+				ok.screenCenter();
+				ok.y += 50;
+				openStuff.push(ok);
+
+				var popup = new PopupSubState("Chart Converter", 520, 150, openStuff);
+				openSubState(popup);
+
+				ok.button.onUp.add(() ->
 				{
-					for (diff in diffs)
+					var songs:Array<String> = newSong.split(",").map(s -> s.trim());
+					var diffs:Array<String> = newDiff.split(",").map(s -> s.trim());
+
+					for (input in songs)
 					{
-						trace(diff);
-						var song = SongHandler.loadSong(input, diff);
-						var export:Array<Dynamic> = [song.CHART, song.EVENTS, song.META];
-						var names = ["", "events-", "meta-"];
-						for (i in 0...export.length)
+						for (diff in diffs)
 						{
-							var data:String = Json.stringify(export[i], "\t");
-							if (data != null && data.length > 0)
+							trace(diff);
+							var song = SongHandler.loadSong(input, diff);
+							var export:Array<Dynamic> = [song.CHART, song.EVENTS, song.META];
+							var names = ["", "events-", "meta-"];
+							for (i in 0...export.length)
 							{
-								Assets.fileSave(data.trim(), '$input-${names[i]}$diff.json');
+								var data:String = Json.stringify(export[i], "\t");
+								if (data != null && data.length > 0)
+								{
+									Assets.fileSave(data.trim(), '$input-${names[i]}$diff.json');
+								}
 							}
 						}
 					}
-				}
-			});
-		});
+				});
+		});*/
+		editWindow.addSeparator();
+		editWindow.addButton("Clear Notes", () ->
+		{
+			confirmPopup("Clear Notes", () ->
+			{
+				CHART.notes = [];
+				selectedNotes = [];
+			}, true, true);
+		}, 0xFFFF0000);
+		editWindow.addButton("Clear Events", () ->
+		{
+			confirmPopup("Clear Events", () ->
+			{
+				EVENTS.events = [];
+				selectedEvents = [];
+			}, true, true);
+		}, 0xFFFF0000);
+		editWindow.addButton("Clear Song", () ->
+		{
+			confirmPopup("Clear Song", () ->
+			{
+				CHART.notes = [];
+				selectedNotes = [];
+
+				EVENTS.events = [];
+				selectedEvents = [];
+			}, true, true);
+		}, 0xFFFF0000);
 		editWindow.updateBg();
 
 		var viewWindow = new MenuWindow(x, y + 30, width, this);
@@ -634,12 +729,44 @@ class ChartingState extends MusicBeatState
 		viewWindow.addButton("Go to Song End", "Ctrl + Shift + R", () -> goToSong(audio.length - 1));
 		viewWindow.addSeparator();
 		viewWindow.addButton("Reset Time Bar", () -> timeBar.screenCenter(Y));
-		viewWindow.addCheck("Reduced Animations", noFunAllowed, (b) -> noFunAllowed = b);
-		viewWindow.addCheck("Sound Effects", soundEffects, (b) -> soundEffects = b);
+		viewWindow.addCheck("Dark Mode", darkMode, (b) ->
+		{
+			darkMode = b;
+			EditorSave.data.darkMode = b;
+			bgDark.visible = b;
+			EditorSave.save();
+		});
+		viewWindow.addCheck("Reduced Animations", noFunAllowed, (b) ->
+		{
+			noFunAllowed = b;
+			EditorSave.data.reducedAnimations = b;
+			EditorSave.save();
+		});
+		viewWindow.addCheck("Sound Effects", soundEffects, (b) ->
+		{
+			soundEffects = b;
+			EditorSave.data.soundEffects = b;
+			EditorSave.save();
+		});
 		viewWindow.addSeparator();
-		viewWindow.addCheck("Center Events", centerEvents, (b) -> centerEvents = b);
-		viewWindow.addCheck("Old Timer", TimeWindow.oldTimer, (b) -> TimeWindow.oldTimer = b);
-		viewWindow.addCheck("Quant Notes", quantNotes, (b) -> quantNotes = b);
+		viewWindow.addCheck("Center Events", centerEvents, (b) ->
+		{
+			centerEvents = b;
+			EditorSave.data.centerEvents = b;
+			EditorSave.save();
+		});
+		viewWindow.addCheck("Old Timer", TimeWindow.oldTimer, (b) ->
+		{
+			TimeWindow.oldTimer = b;
+			EditorSave.data.oldTimer = b;
+			EditorSave.save();
+		});
+		viewWindow.addCheck("Quant Notes", quantNotes, (b) ->
+		{
+			quantNotes = b;
+			EditorSave.data.quantNotes = b;
+			EditorSave.save();
+		});
 		// viewWindow.addSeparator();
 		// viewWindow.addButton("Theme");
 		viewWindow.updateBg();
@@ -2303,7 +2430,10 @@ class ChartingState extends MusicBeatState
 			}
 		}
 		else
+		{
 			selectSquare.visible = false;
+			addEvent.visible = false;
+		}
 
 		if (playingSong && audio.speed > 0)
 		{
@@ -2363,7 +2493,7 @@ class ChartingState extends MusicBeatState
 
 	public function addAutoSave()
 	{
-		AutoSave.addSong(SONG, PlayState.songDiff);
+		EditorSave.addSong(SONG, PlayState.songDiff);
 	}
 
 	public function play(testHere:Bool = false)
@@ -2870,7 +3000,7 @@ class ChartingGrid extends FlxSprite
 			// grid squares
 			for (_x in 0...8)
 			{
-				color = (((_x + _y) % 2 == 0) ? 0xFFEBEFFE : 0xFFD7D9F6);
+				color = getSquareColor((_x + _y) % 2 == 0);
 				x = gridX + (GRID_SIZE * _x);
 				y = gridY;
 				super.draw();
@@ -2888,7 +3018,7 @@ class ChartingGrid extends FlxSprite
 			// beat lines and section numbers
 			if (zoomedY % 4 == 0)
 			{
-				beatLine.color = (zoomedY % 16 == 0) ? 0xFF1C1A24 : 0xFFA5B1E4;
+				beatLine.color = getBeatLineColor(zoomedY % 16 == 0);
 				beatLine.scale.y = (zoomedY % 16 == 0) ? 8 : 4;
 				beatLine.updateHitbox();
 
@@ -2917,6 +3047,12 @@ class ChartingGrid extends FlxSprite
 		}
 		midLine.draw();
 	}
+
+	function getBeatLineColor(b:Bool)
+		return ChartingState.darkMode ? (b ? 0xFF1C1A24 : 0xFF2E303A) : (b ? 0xFF1C1A24 : 0xFFA5B1E4);
+
+	function getSquareColor(b:Bool)
+		return ChartingState.darkMode ? (b ? 0xFF5C6074 : 0xFF4D5161) : (b ? 0xFFEBEFFE : 0xFFD7D9F6);
 }
 
 class GridWindow extends DoidoWindow
@@ -2994,6 +3130,8 @@ class TimeWindow extends DoidoWindow
 	public function new(chartState:ChartingState)
 	{
 		super(chartState);
+		oldTimer = EditorSave.data.oldTimer;
+
 		bg.scale.set(458, 138);
 		bg.updateHitbox();
 		bg.setPosition(FlxG.width - bg.width - 18, FlxG.height - bg.height - 18);

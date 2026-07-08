@@ -8,6 +8,7 @@ import haxe.CallStack;
 import haxe.io.Path;
 import openfl.display.Sprite;
 import openfl.events.UncaughtErrorEvent;
+import openfl.Lib;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
@@ -41,7 +42,7 @@ class Main extends Sprite
 	function initGame()
 	{
 		// adding the crash handler
-		openfl.Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 		Logs.init(); // custom logging shit
 
 		game = new FlxGame(gameWidth, gameHeight, Init, framerate, framerate, skipSplash);
@@ -126,6 +127,18 @@ class Main extends Sprite
 		FlxG.plugins.addPlugin(new InputDelayHandler());
 		#if SCREENSHOT_FEATURE
 		FlxG.plugins.addPlugin(new doido.system.Screenshot());
+		#end
+
+		#if desktop
+		Lib.application.window.onClose.add(function()
+		{
+			if (MusicBeat.preventClosing)
+			{
+				Lib.application.window.onClose.cancel();
+			}
+			if (MusicBeat.onClosing != null)
+				MusicBeat.onClosing();
+		});
 		#end
 	}
 

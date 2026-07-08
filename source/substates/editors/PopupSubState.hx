@@ -23,6 +23,8 @@ class PopupSubState extends MusicBeatSubState
 	public var width:Float = 300;
 	public var height:Float = 150;
 
+	public var onClose:Void->Void;
+
 	var objects:Array<FlxBasic> = [];
 
 	public function new(title:String = "", width:Float = 300, height:Float = 150, ?objects:Array<FlxBasic>, ?clipped:Bool = false)
@@ -131,13 +133,20 @@ class PopupSubState extends MusicBeatSubState
 		super.update(elapsed);
 
 		if ((FlxG.keys.justPressed.ESCAPE || (FlxG.mouse.justReleased && !FlxG.mouse.overlaps(bg))) && PsychUIInputText.focusOn == null)
-		{
-			if (ChartingState.soundEffects)
-				FlxG.sound.play(Assets.sound("options/options-close"));
 			close();
-		}
 
 		if (clipped)
 			positionBg(elapsed);
+	}
+
+	override function close()
+	{
+		if (onClose != null)
+			onClose();
+
+		if (ChartingState.soundEffects)
+			FlxG.sound.play(Assets.sound("options/options-close"));
+
+		super.close();
 	}
 }
