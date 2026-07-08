@@ -179,8 +179,7 @@ class ChartingState extends MusicBeatState
 	public var menuMain:DoidoBox;
 
 	// border
-	public var borderLeft:FlxSprite;
-	public var borderRight:FlxSprite;
+	public var border:ColoredBorder;
 	public var cameraIcon:FlxSprite;
 	public var iconBf:HealthIcon;
 	public var iconDad:HealthIcon;
@@ -232,7 +231,7 @@ class ChartingState extends MusicBeatState
 		hoverSquare.alpha = 0.7;
 		// add(hoverSquare);
 
-		grid = new ChartingGrid(358, audio.length, hoverSquare);
+		grid = new ChartingGrid(415, audio.length, hoverSquare);
 		add(grid);
 
 		renderNotes = new FlxTypedGroup<ChartingNote>();
@@ -284,18 +283,13 @@ class ChartingState extends MusicBeatState
 			icon.destroy();
 		}
 
-		borderLeft = new FlxSprite().loadGraphic(Assets.image('editors/charting/border_left'));
-		borderLeft.x -= 2;
-		add(borderLeft);
-
-		borderRight = new FlxSprite().loadGraphic(Assets.image('editors/charting/border_right'));
-		borderRight.x = FlxG.width - borderRight.width + 2;
-		add(borderRight);
+		border = new ColoredBorder(grid.gridX + (GRID_SIZE * GRID_LANES / 2));
+		add(border);
 
 		cameraIcon = new FlxSprite().loadGraphic(Assets.image('editors/charting/camera'));
 		cameraIcon.scale.set(-0.38, 0.38);
 		cameraIcon.updateHitbox();
-		cameraIcon.x = 518 - (cameraIcon.width / 2);
+		cameraIcon.x = grid.gridX + (GRID_SIZE * GRID_LANES / 2) - cameraIcon.width / 2;
 		cameraIcon.y = 44 - cameraIcon.height;
 		add(cameraIcon);
 
@@ -311,19 +305,20 @@ class ChartingState extends MusicBeatState
 		iconBf.setIcon(META.player1, true);
 		iconDad.setIcon(META.player2, false);
 
-		borderLeft.color = iconDad.barColor;
-		borderRight.color = iconBf.barColor;
+		border.setColor(false, iconDad.barColor);
+		border.setColor(true, iconBf.barColor);
 
 		for (icon in [iconBf, iconDad])
 		{
 			icon.setGraphicSize(82, 82);
 			icon.updateHitbox();
+			icon.setHitbox(62, 62);
 			icon.scrollFactor.set();
 			icon.y = 35 - (icon.height / 2);
 		}
 
-		iconDad.x = 518 - iconDad.width - 15;
-		iconBf.x = 518 + 15;
+		iconDad.x = grid.gridX + (GRID_SIZE * GRID_LANES / 2) - iconDad.width - 35;
+		iconBf.x = grid.gridX + (GRID_SIZE * GRID_LANES / 2) + 35;
 	}
 
 	function newSong()
@@ -649,7 +644,7 @@ class ChartingState extends MusicBeatState
 		// viewWindow.addButton("Theme");
 		viewWindow.updateBg();
 
-		menuBox = new DoidoBox(x, y, width, height, 0, false, [fileWindow, editWindow, viewWindow], this);
+		menuBox = new DoidoBox(x, y, width, height, -1, false, [fileWindow, editWindow, viewWindow], this);
 		add(menuBox);
 	}
 
@@ -1862,26 +1857,34 @@ class ChartingState extends MusicBeatState
 			Conductor.songPos += (FlxG.mouse.getWorldPosition().y - scrollAutoY) * 10 * elapsed * (FlxG.keys.pressed.SHIFT ? 4 : 1);
 
 		var tappedCam = false;
-		if (FlxG.mouse.overlaps(cameraIcon) && !overlapsWindow && !typing)
+		var camObjects = FlxG.mouse.overlaps(cameraIcon) || FlxG.mouse.overlaps(iconBf) || FlxG.mouse.overlaps(iconDad);
+		if (camObjects && !overlapsWindow && !typing)
 		{
 			curCursor = POINTER;
 			tappedCam = FlxG.mouse.justPressed || FlxG.mouse.pressed || FlxG.mouse.justReleased;
 			if (FlxG.mouse.justPressed)
-				quickCam();
+			{
+				if (FlxG.mouse.overlaps(cameraIcon))
+					quickCam();
+				else if (FlxG.mouse.overlaps(iconBf))
+					quickCam(true);
+				else
+					quickCam(false);
+			}
 		}
 
 		if (noFunAllowed)
 		{
 			cameraIcon.scale.x = (focus == "dad" ? 0.38 : -0.38);
 			cameraIcon.updateHitbox();
-			cameraIcon.x = 518 - (cameraIcon.width / 2);
+			cameraIcon.x = grid.gridX + (GRID_SIZE * GRID_LANES / 2) - cameraIcon.width / 2;
 		}
 		else
 		{
 			cameraIcon.scale.x = FlxMath.lerp(cameraIcon.scale.x, (focus == "dad" ? 1 : -1) * (tappedCam ? 0.42 : 0.38), elapsed * 16);
 			cameraIcon.scale.y = FlxMath.lerp(cameraIcon.scale.y, (tappedCam ? 0.33 : 0.38), elapsed * 8);
 			cameraIcon.updateHitbox();
-			cameraIcon.x = 518 - (cameraIcon.width / 2);
+			cameraIcon.x = grid.gridX + (GRID_SIZE * GRID_LANES / 2) - cameraIcon.width / 2;
 			cameraIcon.y = 45 - cameraIcon.height;
 		}
 
@@ -3113,5 +3116,59 @@ class TimeWindow extends DoidoWindow
 			return FlxStringUtil.formatTime(time, true);
 		else // old timer
 			return '${Math.floor(time * 100) / 100}';
+	}
+}
+
+class ColoredBorder extends FlxGroup
+{
+	// only the white lines get added here
+	var left:FlxTypedGroup<FlxSprite>;
+	var right:FlxTypedGroup<FlxSprite>;
+
+	public function new(center:Float)
+	{
+		super();
+
+		left = new FlxTypedGroup<FlxSprite>();
+		add(left);
+
+		right = new FlxTypedGroup<FlxSprite>();
+		add(right);
+
+		for (i in 0...2)
+		{
+			var side = [left, right][i];
+			createLine([0, center][i], 0, [center, FlxG.width][i], 12, side);
+			createLine([0, center][i], FlxG.height - 12, [center, FlxG.width][i], 12, side);
+			createLine([0, FlxG.width - 12][i], 0, 12, FlxG.height, side);
+
+			var cam:FlxSprite = new FlxSprite();
+			cam.loadImage("editors/charting/camera_border");
+			cam.flipX = i == 1;
+			cam.setPosition(center - [cam.width, 0][i], 0);
+			side.add(cam);
+		}
+		sort(ZIndex.sort);
+	}
+
+	function createLine(x:Float, y:Float, width:Float, height:Float, group:FlxTypedGroup<FlxSprite>)
+	{
+		var black = new FlxSprite();
+		black.makeColor(width + 6, height + 6, 0xFF000000);
+		black.setPosition(x - 3, y - 3);
+		black.zIndex = -1;
+		add(black);
+
+		var color = new FlxSprite();
+		color.makeColor(width, height, 0xFFFFFFFF);
+		color.setPosition(x, y);
+		color.zIndex = 1;
+		group.add(color);
+	}
+
+	public function setColor(isRight:Bool, color:FlxColor)
+	{
+		for (side in (isRight ? right : left).members)
+			side.color = color;
 	}
 }
