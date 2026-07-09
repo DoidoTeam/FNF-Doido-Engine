@@ -2867,7 +2867,12 @@ class ChartingState extends MusicBeatState
 		{
 			var eventY:Float = grid.gridY + (eventData.stepTime * GRID_SIZE * GRID_ZOOM);
 			var eventOrder:Int = eventAmounts.get(Std.string(eventData.stepTime)) ?? 1;
-			if (eventY < -GRID_SIZE || eventY > FlxG.height)
+			if (eventY > FlxG.height)
+				break;
+
+			var eventLength = EventUtil.getLength(eventData);
+			var eventHeight = eventY + (ChartingState.GRID_SIZE * ChartingState.GRID_ZOOM * eventLength);
+			if (eventY < -GRID_SIZE && (eventLength <= 0 || eventHeight < -GRID_SIZE))
 				continue;
 
 			var event:ChartingEvent = cast renderEvents.recycle(ChartingEvent);
@@ -2892,7 +2897,6 @@ class ChartingState extends MusicBeatState
 			if (!renderEvents.members.contains(event))
 				renderEvents.add(event);
 
-			var eventLength = EventUtil.getLength(eventData);
 			if (eventLength >= 0)
 			{
 				//
