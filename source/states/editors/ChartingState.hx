@@ -220,7 +220,7 @@ class ChartingState extends MusicBeatState
 
 		characters = Assets.list("data/characters/", true, JSON).concat(["face"]);
 
-		audio = new AudioHandler(CHART.song, PlayState.songDiff);
+		audio = new AudioHandler(CHART.song, CHART.postfix);
 
 		if (NoteUtil.directions.length == 0)
 			NoteUtil.setUpDirections(4);
@@ -249,7 +249,7 @@ class ChartingState extends MusicBeatState
 		hoverSquare.alpha = 0.7;
 		// add(hoverSquare);
 
-		grid = new ChartingGrid(415, audio.length, hoverSquare);
+		grid = new ChartingGrid(415, audio.songLength, hoverSquare);
 		add(grid);
 
 		renderNotes = new FlxTypedGroup<ChartingNote>();
@@ -727,7 +727,7 @@ class ChartingState extends MusicBeatState
 		});
 		viewWindow.addSeparator();
 		viewWindow.addButton("Go to Song Start", "Ctrl + R", () -> goToSong(0));
-		viewWindow.addButton("Go to Song End", "Ctrl + Shift + R", () -> goToSong(audio.length - 1));
+		viewWindow.addButton("Go to Song End", "Ctrl + Shift + R", () -> goToSong(audio.songLength - 1));
 		viewWindow.addSeparator();
 		viewWindow.addButton("Reset Time Bar", () -> timeBar.screenCenter(Y));
 		viewWindow.addCheck("Dark Mode", darkMode, (b) ->
@@ -1139,7 +1139,7 @@ class ChartingState extends MusicBeatState
 		tab.add(createText(getX(), getY(3) + 3, "Note Speed:", 0xFFD8DAF6));
 
 		var songName:PsychUIInputText;
-		songName = new PsychUIInputText(getX("margin_first"), getY(1), 342, CHART.song, 14);
+		songName = new PsychUIInputText(getX("margin_first"), getY(1), 340, CHART.song, 14);
 		songName.onChange.add((old, cur, input) -> CHART.song = cur);
 		tab.add(songName);
 
@@ -1159,15 +1159,21 @@ class ChartingState extends MusicBeatState
 		});
 		tab.add(speedStepper);
 
+		var postfix:PsychUIInputText;
+		postfix = new PsychUIInputText(getX("margin_right", 146), getY(2), 146, CHART.postfix, 14);
+		postfix.onChange.add((old, cur, input) -> CHART.postfix = cur);
+		tab.add(postfix);
+		tab.add(createText(postfix.x - 70, getY(2) + 3, "Postfix:", 0xFFD8DAF6));
+
 		var reloadButton = new DoidoTextButton("Reload Audio", () ->
 		{
 			playingSong = false;
 			audio.pause();
-			audio.reload(CHART.song, PlayState.songDiff);
-			grid.length = audio.length;
+			audio.reload(CHART.song, CHART.postfix);
+			grid.length = audio.songLength;
 		});
 		reloadButton.x = getX("margin_right", reloadButton.width);
-		reloadButton.y = getY(3) - 9;
+		reloadButton.y = getY(3) - 3;
 		reloadButton.button.setColorTransform(0.59, 0.78, 1);
 		reloadButton.label.color = 0xFFFFFFFF;
 		tab.add(reloadButton);
@@ -2482,9 +2488,9 @@ class ChartingState extends MusicBeatState
 
 		if (Conductor.songPos < 0)
 			Conductor.songPos = 0;
-		if (Conductor.songPos >= audio.length)
+		if (Conductor.songPos >= audio.songLength)
 		{
-			Conductor.songPos = audio.length;
+			Conductor.songPos = audio.songLength;
 			playingSong = false;
 		}
 
@@ -2704,7 +2710,7 @@ class ChartingState extends MusicBeatState
 		if (FlxG.keys.pressed.CONTROL)
 		{
 			if (FlxG.keys.pressed.SHIFT)
-				goToSong(audio.length - 1)
+				goToSong(audio.songLength - 1)
 			else
 				goToSong(0);
 		}
@@ -2740,7 +2746,7 @@ class ChartingState extends MusicBeatState
 
 	public function tweenSongPos(target:Float, duration:Float = 0.1, ?ease:EaseFunction, ?onComplete:FlxTween->Void)
 	{
-		target = FlxMath.bound(target, 0, audio.length);
+		target = FlxMath.bound(target, 0, audio.songLength);
 		if (noFunAllowed)
 			duration = 0;
 
@@ -3208,7 +3214,7 @@ class TimeWindow extends DoidoWindow
 
 	override function draw()
 	{
-		var timeText:String = "Time: " + getTime(Conductor.songPos) + " / " + getTime(chartState.audio.length);
+		var timeText:String = "Time: " + getTime(Conductor.songPos) + " / " + getTime(chartState.audio.songLength);
 		if (timeTxt.text != timeText)
 			timeTxt.text = timeText;
 
@@ -3219,7 +3225,7 @@ class TimeWindow extends DoidoWindow
 		if (infoTxt.text != infoText)
 			infoTxt.text = infoText;
 
-		timeBar.percent = (1.0 - (Conductor.songPos / chartState.audio.length)) * 100;
+		timeBar.percent = (1.0 - (Conductor.songPos / chartState.audio.songLength)) * 100;
 		timeBall.x = FlxMath.lerp(timeBar.x, timeBar.x + timeBar.width, 1 - (timeBar.percent / 100)) - (timeBall.width / 2);
 
 		// time button!!
@@ -3259,8 +3265,8 @@ class TimeWindow extends DoidoWindow
 			chartState.curCursor = POINTER;
 			chartState.playingSong = false;
 
-			Conductor.songPos = FlxMath.bound(FlxMath.remapToRange(FlxG.mouse.x, timeBar.x, timeBar.x + timeBar.width, 0, chartState.audio.length), 0,
-				chartState.audio.length);
+			Conductor.songPos = FlxMath.bound(FlxMath.remapToRange(FlxG.mouse.x, timeBar.x, timeBar.x + timeBar.width, 0, chartState.audio.songLength), 0,
+				chartState.audio.songLength);
 
 			if (!FlxG.mouse.pressed)
 				scrubbing = false;

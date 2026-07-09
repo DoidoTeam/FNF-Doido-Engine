@@ -19,6 +19,7 @@ typedef DoidoChart =
 	var notes:Array<NoteData>;
 	var bpm:Float;
 	var speed:Float;
+	var ?postfix:String;
 }
 
 typedef DoidoEvents =
@@ -110,6 +111,7 @@ class SongHandler
 	{
 		// Normalize song name to use only lowercases and no spaces
 		CHART.song = formatName(CHART.song);
+		CHART.postfix = CHART.postfix ?? "";
 
 		// cleaning multiple notes at the same place
 		var removed:Int = 0;

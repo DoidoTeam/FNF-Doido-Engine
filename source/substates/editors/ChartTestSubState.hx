@@ -73,7 +73,7 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 		add(bg);
 
 		downscroll = (#if TOUCH_CONTROLS Save.data.modernControls #else false #end ?true:Save.data.downscroll);
-		audio = new AudioHandler(CHART.song, PlayState.songDiff);
+		audio = new AudioHandler(CHART.song, CHART.song);
 		audio.play(Conductor.songPos);
 
 		hudClass = new TestHud(this);
@@ -233,9 +233,9 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 
 		if (!paused)
 		{
-			if (Conductor.songPos < audio.length - 2000)
+			if (Conductor.songPos < audio.songLength - 2000)
 				audio.sync();
-			else if (Conductor.songPos >= audio.length)
+			else if (Conductor.songPos >= audio.songLength)
 				close();
 		}
 
@@ -249,7 +249,7 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 		return META.player2;
 
 	public function get_songLength():Float
-		return audio.length;
+		return audio.songLength;
 
 	public function set_botplay(b:Bool):Bool
 	{

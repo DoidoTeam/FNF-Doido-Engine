@@ -1,93 +1,95 @@
 package doido.song;
 
 import flixel.sound.FlxSound;
+import flixel.group.FlxGroup;
 
-typedef AudioData =
+class AudioHandler extends FlxTypedGroup<FlxSound>
 {
-	var stem:FlxSound;
-	var variants:Array<String>;
-}
+	static final resyncThreshold:Int = 30;
 
-// class for handling song files (Inst, Voices)
-class AudioHandler
-{
-	// esse é que é o tal de "encapsulamento?"
 	public var inst:FlxSound;
-	public var voicesGlobal:FlxSound; // default
-	public var voicesOpp:FlxSound; // if the opponent has a voices file, play them too
+	public var voicesGlobal:FlxSound;
+	public var voicesOpp:FlxSound;
 
-	public function new(song:String, diff:String = "normal")
+	public var songLength:Float = -1;
+	public var playing(get, never):Bool;
+	public var time(get, set):Float;
+	public var speed(get, set):Float;
+
+	public var muteVoices(default, set):Bool;
+	public var muteOpponent(default, set):Bool;
+	public var muteInst(default, set):Bool;
+
+	public function new(song:String, postfix:String = "normal")
 	{
-		reload(song, diff);
+		super();
+		reload(song, postfix);
 	}
 
-	public function reload(song:String, diff:String = "normal")
+	public function reload(song:String, postfix:String = "")
 	{
-		if (diff == "nightmare")
-			diff = "erect";
+		killMembers();
 
-		if (!Assets.fileExists('songs/${song}/audio/Inst-$diff', SOUND))
-			diff = "";
-		else
-			diff = '-$diff';
+		inst = createStem(song, postfix, ['Inst']);
+		add(inst);
 
-		inst = FlxG.sound.load(Assets.inst(song, diff));
-		length = inst?.length;
+		voicesGlobal = createStem(song, postfix, ['Voices-player', 'Voices']);
+		add(voicesGlobal);
 
-		// global voices
-		if (Assets.fileExists('songs/${song}/audio/Voices$diff-player', SOUND))
-			voicesGlobal = FlxG.sound.load(Assets.voices(song, '$diff-player'));
-		else if (Assets.fileExists('songs/${song}/audio/Voices$diff', SOUND))
-			voicesGlobal = FlxG.sound.load(Assets.voices(song, diff));
-		else
-			voicesGlobal = null;
-
-		if (voicesGlobal != null)
-			if (voicesGlobal?.length < length)
-				length = voicesGlobal.length;
-
-		// opponent voices
-		if (Assets.fileExists('songs/${song}/audio/Voices$diff-opp', SOUND))
-			voicesOpp = FlxG.sound.load(Assets.voices(song, '$diff-opp'));
-		else if (Assets.fileExists('songs/${song}/audio/Voices$diff-opponent', SOUND))
-			voicesOpp = FlxG.sound.load(Assets.voices(song, '$diff-opponent'));
-		else
-			voicesOpp = null;
-
-		if (voicesOpp != null)
-			if (voicesOpp?.length < length)
-				length = voicesOpp.length;
+		voicesOpp = createStem(song, postfix, ['Voices-opp', 'Voices-opponent']);
+		add(voicesOpp);
 
 		muteVoices = false;
+		muteOpponent = false;
+		muteInst = false;
 	}
 
-	private function update(func:(snd:FlxSound) -> Void)
+	public function createStem(song:String, postfix:String, variants:Array<String>)
 	{
-		func(inst);
-		if (voicesGlobal != null)
-			func(voicesGlobal);
-		if (voicesOpp != null)
-			func(voicesOpp);
+		var snd:FlxSound = null;
+
+		for (variant in variants)
+		{
+			var path = 'songs/$song/audio/${buildPath(song, postfix, variant)}';
+			if (Assets.fileExists(path, SOUND))
+			{
+				snd = FlxG.sound.load(Assets.getAsset(path, SOUND, true));
+				if (snd?.length < songLength || songLength == -1)
+					songLength = snd.length;
+
+				break;
+			}
+		}
+
+		return snd;
 	}
 
-	public var resyncThreshold:Int = 30;
+	public function buildPath(song:String, postfix:String, variant:String)
+	{
+		var i = variant.indexOf('-');
+		var base = i == -1 ? variant : variant.substring(0, i);
+		var rest = i == -1 ? "" : variant.substring(i);
+		var suff = postfix == "" ? "" : '-$postfix';
+		return '${base}$suff$rest';
+	}
+
+	inline public function checkSync(timeA:Float, timeB:Float)
+		return Math.abs(timeA - timeB) >= resyncThreshold;
 
 	public function sync()
 	{
-		if (Math.abs(Conductor.songPos - inst.time) >= resyncThreshold)
-		{
-			Logs.print('FIXING DELAYED CONDUCTOR: ${Conductor.songPos} > ${inst.time}', WARNING);
+		if (checkSync(Conductor.songPos, inst.time))
 			Conductor.songPos = inst.time;
-		}
 
-		update((snd) ->
+		forEachAlive((snd) ->
 		{
 			if (snd == inst)
 				return;
-			if (Math.abs(Conductor.songPos - snd.time) >= resyncThreshold)
+
+			if (checkSync(Conductor.songPos, snd.time))
 			{
 				Logs.print('FIXING DELAYED MUSIC: ${snd.time} > ${Conductor.songPos}', WARNING);
-				update((fixSnd) ->
+				forEachAlive((fixSnd) ->
 				{
 					fixSnd.time = Conductor.songPos;
 				});
@@ -95,9 +97,21 @@ class AudioHandler
 		});
 	}
 
+	override function destroy()
+	{
+		stop();
+		super.destroy();
+	}
+
+	override function clear()
+	{
+		stop();
+		super.clear();
+	}
+
 	public function play(?time:Float)
 	{
-		update((snd) ->
+		forEachAlive((snd) ->
 		{
 			snd.play();
 			if (time != null)
@@ -105,54 +119,35 @@ class AudioHandler
 		});
 	}
 
+	public function stop()
+		forEachAlive((snd) -> snd.stop());
+
 	public function pause()
-	{
-		update((snd) ->
-		{
-			snd.pause();
-		});
-	}
+		forEachAlive((snd) -> snd.pause());
 
-	public var playing(get, never):Bool;
-
-	function get_playing():Bool
-	{
-		return inst.playing;
-	}
-
-	public var time(default, set):Float = 0.0;
+	public function get_time():Float
+		return inst?.time ?? 0;
 
 	public function set_time(v:Float)
 	{
-		// trace("before " + inst.time);
-		time = v;
-		update((snd) ->
-		{
-			snd.time = v;
-		});
+		forEachAlive((snd) -> snd.time = v);
 		sync();
-		return speed;
+		return v;
 	}
 
-	public var length:Float = 0.0;
-
-	public var speed(default, set):Float = 1.0;
+	public function get_speed():Float
+		return inst?.pitch ?? 1;
 
 	public function set_speed(v:Float)
 	{
-		speed = v;
-		update((snd) ->
-		{
-			snd.pitch = v;
-		});
-		return speed;
+		forEachAlive((snd) -> snd.pitch = v);
+		return v;
 	}
 
-	public var muteVoices(default, set):Bool;
-	public var muteOpponent(default, set):Bool;
-	public var muteInst(default, set):Bool;
+	public function get_playing():Bool
+		return inst?.playing ?? false;
 
-	function set_muteVoices(val:Bool):Bool
+	public function set_muteVoices(val:Bool):Bool
 	{
 		if (voicesGlobal != null)
 			voicesGlobal.volume = (val ? 0.0 : 1.0);
@@ -161,7 +156,7 @@ class AudioHandler
 		return val;
 	}
 
-	function set_muteOpponent(val:Bool):Bool
+	public function set_muteOpponent(val:Bool):Bool
 	{
 		if (voicesOpp != null)
 			voicesOpp.volume = (val ? 0.0 : 1.0);
@@ -170,7 +165,7 @@ class AudioHandler
 		return val;
 	}
 
-	function set_muteInst(val:Bool):Bool
+	public function set_muteInst(val:Bool):Bool
 	{
 		if (inst != null)
 			inst.volume = (val ? 0.0 : 1.0);

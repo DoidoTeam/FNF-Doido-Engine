@@ -150,7 +150,7 @@ class PlayState extends MusicBeatState implements Playable
 
 		spawnEvents = EVENTS.events;
 
-		audio = new AudioHandler(CHART.song, songDiff);
+		audio = new AudioHandler(CHART.song, CHART.postfix);
 
 		camGame = new DoidoCamera(false, true);
 		camHUD = new DoidoCamera(true, false);
@@ -781,7 +781,7 @@ class PlayState extends MusicBeatState implements Playable
 			snd.resume();
 		}
 		MusicBeat.activateTimers(true);
-		if (Conductor.songPos < audio.length)
+		if (Conductor.songPos < audio.songLength)
 		{
 			if (Conductor.songPos >= 0)
 				audio.play();
@@ -859,9 +859,9 @@ class PlayState extends MusicBeatState implements Playable
 
 		if (startedSong && !endedSong)
 		{
-			if (Conductor.songPos < audio.length - 2000)
+			if (Conductor.songPos < audio.songLength - 2000)
 				audio.sync();
-			else if (Conductor.songPos >= audio.length)
+			else if (Conductor.songPos >= audio.songLength)
 				endSong();
 		}
 
@@ -987,7 +987,7 @@ class PlayState extends MusicBeatState implements Playable
 	public var songLength(get, never):Float;
 
 	public function get_songLength():Float
-		return audio.length;
+		return audio.songLength;
 
 	public var botplay(default, set):Bool;
 
