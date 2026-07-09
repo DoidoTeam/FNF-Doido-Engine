@@ -73,7 +73,7 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 		add(bg);
 
 		downscroll = (#if TOUCH_CONTROLS Save.data.modernControls #else false #end ?true:Save.data.downscroll);
-		audio = new AudioHandler(CHART.song, CHART.song);
+		audio = new AudioHandler(CHART.song, CHART.postfix);
 		audio.play(Conductor.songPos);
 
 		hudClass = new TestHud(this);
@@ -211,7 +211,7 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 
 		if (!paused)
 		{
-			Conductor.songPos += elapsed * 1000 * audio.speed;
+			audio.sync(elapsed);
 			playField.updateNotes(curStepFloat);
 		}
 	}
@@ -233,9 +233,7 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 
 		if (!paused)
 		{
-			if (Conductor.songPos < audio.songLength - 2000)
-				audio.sync();
-			else if (Conductor.songPos >= audio.songLength)
+			if (Conductor.songPos >= audio.songLength)
 				close();
 		}
 

@@ -2467,7 +2467,7 @@ class ChartingState extends MusicBeatState
 				audio.play(Conductor.songPos);
 
 			var prevPos = Conductor.songPos;
-			Conductor.songPos += elapsed * 1000 * audio.speed;
+			audio.sync(elapsed);
 
 			for (note in CHART.notes)
 			{
@@ -2929,13 +2929,6 @@ class ChartingState extends MusicBeatState
 			if (autoScrolling)
 				scrollBall.draw();
 		}
-	}
-
-	override function stepHit()
-	{
-		super.stepHit();
-		if (audio.playing && Conductor.songPos >= 0)
-			audio.sync();
 	}
 
 	override function beatHit()

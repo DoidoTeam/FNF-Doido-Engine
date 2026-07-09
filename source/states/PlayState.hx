@@ -557,7 +557,7 @@ class PlayState extends MusicBeatState implements Playable
 
 		if (!paused)
 		{
-			Conductor.songPos += elapsed * 1000 * audio.speed;
+			audio.sync(elapsed);
 			FlxG.animationTimeScale = audio.speed;
 			if (!startedSong)
 			{
@@ -859,9 +859,7 @@ class PlayState extends MusicBeatState implements Playable
 
 		if (startedSong && !endedSong)
 		{
-			if (Conductor.songPos < audio.songLength - 2000)
-				audio.sync();
-			else if (Conductor.songPos >= audio.songLength)
+			if (Conductor.songPos >= audio.songLength)
 				endSong();
 		}
 

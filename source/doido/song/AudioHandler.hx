@@ -2,10 +2,12 @@ package doido.song;
 
 import flixel.sound.FlxSound;
 import flixel.group.FlxGroup;
+import flixel.math.FlxMath;
 
 class AudioHandler extends FlxTypedGroup<FlxSound>
 {
-	static final resyncThreshold:Int = 30;
+	static final audioResync:Int = 30;
+	static final conductorResync:Int = 1000;
 
 	public var inst:FlxSound;
 	public var voicesGlobal:FlxSound;
@@ -73,12 +75,18 @@ class AudioHandler extends FlxTypedGroup<FlxSound>
 		return '${base}$suff$rest';
 	}
 
-	inline public function checkSync(timeA:Float, timeB:Float)
-		return Math.abs(timeA - timeB) >= resyncThreshold;
+	inline public function checkSync(timeA:Float, timeB:Float, audio:Bool)
+		return Math.abs(timeA - timeB) >= (audio ? audioResync : conductorResync) * speed;
 
-	public function sync()
+	public function sync(elapsed:Float)
 	{
-		if (checkSync(Conductor.songPos, inst.time))
+		Conductor.songPos += elapsed * 1000 * speed;
+
+		if (Conductor.songPos < 0 || Conductor.songPos > songLength - 2000)
+			return;
+
+		Conductor.songPos = FlxMath.lerp(inst.time, Conductor.songPos, Math.exp(-elapsed * 5));
+		if (checkSync(Conductor.songPos, inst.time, false))
 			Conductor.songPos = inst.time;
 
 		forEachAlive((snd) ->
@@ -86,14 +94,8 @@ class AudioHandler extends FlxTypedGroup<FlxSound>
 			if (snd == inst)
 				return;
 
-			if (checkSync(Conductor.songPos, snd.time))
-			{
-				Logs.print('FIXING DELAYED MUSIC: ${snd.time} > ${Conductor.songPos}', WARNING);
-				forEachAlive((fixSnd) ->
-				{
-					fixSnd.time = Conductor.songPos;
-				});
-			}
+			if (checkSync(Conductor.songPos, snd.time, true))
+				snd.time = Conductor.songPos;
 		});
 	}
 
@@ -131,7 +133,7 @@ class AudioHandler extends FlxTypedGroup<FlxSound>
 	public function set_time(v:Float)
 	{
 		forEachAlive((snd) -> snd.time = v);
-		sync();
+		sync(0);
 		return v;
 	}
 
