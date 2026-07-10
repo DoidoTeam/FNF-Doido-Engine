@@ -1,5 +1,6 @@
 package states.menus;
 
+import substates.editors.WeekEditorSubState;
 import objects.Character;
 import doido.song.Highscore;
 import doido.song.Week;
@@ -39,10 +40,12 @@ class StoryMenuState extends MusicBeatState
 	override function create()
 	{
 		super.create();
-		setFpsPos(Main.fpsX, 60);
+		setFpsPos(Main.fpsX, 55);
 		MusicBeat.playMusic("freakyMenu");
 		DiscordIO.changePresence("In the Story Menu");
 		weekList = Week.weekList(true, false);
+		persistentDraw = true;
+		persistentUpdate = true;
 
 		grpWeeks = new FlxTypedGroup<WeekTitle>();
 		add(grpWeeks);
@@ -139,7 +142,7 @@ class StoryMenuState extends MusicBeatState
 	{
 		super.update(elapsed);
 
-		if (canSelect)
+		if (canSelect && subState == null)
 		{
 			var change:Int = (Controls.pressed(UI_DOWN) ? 1 : 0) - (Controls.pressed(UI_UP) ? 1 : 0);
 			if (change != 0)
@@ -170,6 +173,9 @@ class StoryMenuState extends MusicBeatState
 
 			if (Controls.justPressed(ACCEPT) && canSelect)
 				startWeek();
+
+			if (Save.data.developerMode && FlxG.keys.justPressed.SEVEN)
+				openSubState(new WeekEditorSubState(week, this));
 		}
 
 		for (week in grpWeeks.members)
