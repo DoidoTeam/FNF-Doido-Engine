@@ -1,5 +1,7 @@
 package substates.editors;
 
+import doido.objects.ui.PsychUIDropDownMenu;
+import doido.objects.ui.DoidoRadio;
 import doido.objects.ui.window.DoidoMenu.MenuWindow;
 import doido.objects.ui.buttons.DoidoTextButton;
 import doido.objects.ui.window.DoidoChooser.ChooserWindow;
@@ -28,6 +30,8 @@ class WeekEditorSubState extends MusicBeatSubState
 		this.storyMenu = storyMenu;
 		curWeek = copyWeek(week);
 		curSong = newSong();
+		storyMenu.editingWeek = curWeek;
+		storyMenu.reload();
 
 		Main.setFpsPos(Main.fpsX, FlxG.height - Main.fpsHeight - 5);
 		FlxG.mouse.visible = true;
@@ -37,8 +41,7 @@ class WeekEditorSubState extends MusicBeatSubState
 			return switch (place)
 			{
 				case "margin_first": 8 + 54;
-				case "margin_first_small": 8 + 76;
-				case "margin_second": 8 + 178;
+				case "margin_second": 8 + 54 + 50;
 				case "margin_right": 8 + bgWidth - width - 8;
 				case "center": 8 + (bgWidth / 2) - (width / 2);
 				default: 8 + 4;
@@ -73,7 +76,7 @@ class WeekEditorSubState extends MusicBeatSubState
 
 		var dataWindow:DoidoWindow = new DoidoWindow(null);
 		dataWindow.title = "Data";
-		dataWindow.bg.scale.set(bgWidth, 357 - 6);
+		dataWindow.bg.scale.set(bgWidth, 238);
 		dataWindow.bg.updateHitbox();
 		dataWindow.bg.setPosition(8, 55 + 22 + 8);
 
@@ -147,7 +150,7 @@ class WeekEditorSubState extends MusicBeatSubState
 		deleteButton.label.color = 0xFFFFFFFF;
 		songWindow.add(deleteButton);
 
-		function reload()
+		function reloadAnims()
 		{
 			selected.text = 'Selected: ${curSong.song == "" ? "New" : curSong.song}';
 			editingSong = curSong.song;
@@ -157,9 +160,8 @@ class WeekEditorSubState extends MusicBeatSubState
 			songList = [for (song in curWeek.songs) song.song];
 			songs.options = songList.concat(["Add New"]);
 			songs.descs = [for (song in curWeek.songs) '(${song.icon == "" ? "none" : song.icon})'];
+			storyMenu.reload();
 		}
-
-		reload();
 
 		function saveSong(update:Bool = true)
 		{
@@ -186,7 +188,7 @@ class WeekEditorSubState extends MusicBeatSubState
 					curWeek.songs.push(newSong);
 				}
 
-				reload();
+				reloadAnims();
 			}
 		}
 
@@ -208,8 +210,118 @@ class WeekEditorSubState extends MusicBeatSubState
 			}
 
 			curSong = newSong();
-			reload();
+			reloadAnims();
 		});
+
+		dataWindow.add(createText(getX(), getY(0) + 3, "Week File: ", 0xFFD8DAF6));
+		dataWindow.add(createText(getX(), getY(1) + 3, "Week Name: ", 0xFFD8DAF6));
+		dataWindow.add(createText(getX(), getY(2) + 3, "Alt. Name: ", 0xFFD8DAF6));
+		// dataWindow.add(createText(getX(), getY(3) + 3, "Chars: ", 0xFFD8DAF6));
+		dataWindow.add(createText(getX(), getY(3) + 3, "Diffs: ", 0xFFD8DAF6));
+		dataWindow.add(createText(getX(), getY(4) + 3, "Story Diffs: ", 0xFFD8DAF6));
+		dataWindow.add(createText(getX(), getY(5) + 3, "Story Color: ", 0xFFD8DAF6));
+
+		var file:PsychUIInputText;
+		file = new PsychUIInputText(getX("margin_second"), getY(0), 210, "", 14);
+		file.onChange.add((old, cur, input) ->
+		{
+			curWeek.weekFile = cur;
+			storyMenu.reload();
+		});
+		dataWindow.add(file);
+
+		var name:PsychUIInputText;
+		name = new PsychUIInputText(getX("margin_second"), getY(1), 210, "", 14);
+		name.onChange.add((old, cur, input) ->
+		{
+			curWeek.weekName = cur;
+			storyMenu.reload();
+		});
+		dataWindow.add(name);
+
+		var freeplay:PsychUIInputText;
+		freeplay = new PsychUIInputText(getX("margin_second"), getY(2), 210, "", 14);
+		freeplay.onChange.add((old, cur, input) ->
+		{
+			curWeek.freeplayName = cur;
+		});
+		dataWindow.add(freeplay);
+
+		var diffs:PsychUIInputText;
+		diffs = new PsychUIInputText(getX("margin_second"), getY(3), 210, "", 14);
+		diffs.onChange.add((old, cur, input) ->
+		{
+			curWeek.diffs = cur.split(",").map(s -> s.trim());
+		});
+		dataWindow.add(diffs);
+
+		var storyDiffs:PsychUIInputText;
+		storyDiffs = new PsychUIInputText(getX("margin_second"), getY(4), 210, "", 14);
+		storyDiffs.onChange.add((old, cur, input) ->
+		{
+			curWeek.storyDiffs = cur.split(",").map(s -> s.trim());
+			storyMenu.reload();
+		});
+		dataWindow.add(storyDiffs);
+
+		var storyColor:PsychUIInputText;
+		storyColor = new PsychUIInputText(getX("margin_second"), getY(5), 210, "", 14);
+		storyColor.onChange.add((old, cur, input) ->
+		{
+			curWeek.storyColor = cur;
+			storyMenu.reload();
+		});
+		dataWindow.add(storyColor);
+
+		var radio = new DoidoRadio(["Always", "Story", "Freeplay"], 0, (cur) ->
+		{
+			curWeek.storyModeOnly = cur == 1;
+			curWeek.freeplayOnly = cur == 2;
+		});
+		radio.x = getX();
+		radio.y = getY(6);
+		dataWindow.add(radio);
+
+		var characterList = Assets.list("data/storychars/", true, JSON).concat(["None"]);
+		var charWidth = 100;
+
+		var right = new PsychUIDropDownMenu(getX("margin_right", charWidth), getY(8), characterList, (i, s) ->
+		{
+			curWeek.chars[2] = s == "None" ? "" : s;
+			storyMenu.reload();
+		}, charWidth, false);
+		dataWindow.add(right);
+
+		var center = new PsychUIDropDownMenu(getX("margin_right", charWidth), getY(7), characterList, (i, s) ->
+		{
+			curWeek.chars[1] = s == "None" ? "" : s;
+			storyMenu.reload();
+		}, charWidth, false);
+		dataWindow.add(center);
+
+		var left = new PsychUIDropDownMenu(getX("margin_right", charWidth), getY(6), characterList, (i, s) ->
+		{
+			curWeek.chars[0] = s == "None" ? "" : s;
+			storyMenu.reload();
+		}, charWidth, false);
+		dataWindow.add(left);
+
+		function reloadData()
+		{
+			file.text = curWeek.weekFile;
+			name.text = curWeek.weekName;
+			freeplay.text = curWeek.freeplayName;
+			storyColor.text = curWeek.storyColor;
+			diffs.text = curWeek.diffs.join(', ');
+			storyDiffs.text = curWeek.storyDiffs.join(', ');
+			radio.cur = curWeek.storyModeOnly ? 1 : (curWeek.freeplayOnly ? 2 : 0);
+			left.selectedLabel = curWeek.chars[0] == "" ? "None" : curWeek.chars[0];
+			center.selectedLabel = curWeek.chars[1] == "" ? "None" : curWeek.chars[1];
+			right.selectedLabel = curWeek.chars[2] == "" ? "None" : curWeek.chars[2];
+			reloadAnims();
+		}
+
+		reloadData();
 
 		menu = new DoidoBox(8, 55, bgWidth, 22, 0, false, [fileWindow, songWindow, dataWindow], null);
 		add(menu);
@@ -259,6 +371,8 @@ class WeekEditorSubState extends MusicBeatSubState
 
 	override function close()
 	{
+		storyMenu.editingWeek = null;
+		storyMenu.reload();
 		FlxG.mouse.visible = false;
 		Main.setFpsPos(Main.fpsX, 55);
 		super.close();

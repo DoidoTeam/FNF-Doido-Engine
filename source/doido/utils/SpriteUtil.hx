@@ -98,19 +98,15 @@ class SpriteUtil
 		spr.offset.set((spr.frameWidth - width) / 2, (spr.frameHeight - height) / 2);
 	}
 
-	public static function getColor(clr:Dynamic):FlxColor
+	public static function getColor(clr:String):FlxColor
 	{
-		if (Std.isOfType(clr, String))
+		var str:String = cast clr;
+		if (str.contains(","))
 		{
-			var str:String = cast clr;
-			if (str.contains(","))
-				return getColor(str.split(","))
-			else
-				return FlxColor.fromString(clr);
+			var clr = str.split(",");
+			return FlxColor.fromRGB(Std.parseInt(clr[0] ?? "0") ?? 0, Std.parseInt(clr[1] ?? "0") ?? 0, Std.parseInt(clr[2] ?? "0") ?? 0) ?? 0xFFA1A1A1;
 		}
-		else if (Std.isOfType(clr, Array))
-			return FlxColor.fromRGB(Std.parseInt(clr[0] ?? "0") ?? 0, Std.parseInt(clr[1] ?? "0") ?? 0, Std.parseInt(clr[2] ?? "0") ?? 0);
 		else
-			return 0xFFA1A1A1;
+			return FlxColor.fromString(clr) ?? 0xFFA1A1A1;
 	}
 }

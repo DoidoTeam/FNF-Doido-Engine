@@ -11,7 +11,7 @@ typedef WeekData =
 	var ?chars:Array<String>;
 	var ?diffs:Array<String>;
 	var ?storyDiffs:Array<String>;
-	var ?storyColor:Dynamic;
+	var ?storyColor:String;
 	var ?freeplayOnly:Bool;
 	var ?storyModeOnly:Bool;
 }

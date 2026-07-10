@@ -72,7 +72,7 @@ class Mods
 	public static var modConfigs:Map<String, ModConfig> = [];
 	public static var enabledMods:Array<String> = [];
 
-	public static final API_VERSION:Version = "0.2.3";
+	public static final API_VERSION:Version = "0.2.4";
 	public static final MOD_ROOT:String = "mods";
 	public static final ASSETS_ROOT:Null<String> = null; // null defaults to assets, android only works like this
 	public static final VERSION_RULE:VersionRule = '>=${API_VERSION.major}.${API_VERSION.minor}.0 <=${API_VERSION}';

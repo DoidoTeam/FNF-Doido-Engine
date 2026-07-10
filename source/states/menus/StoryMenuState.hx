@@ -18,7 +18,10 @@ class StoryMenuState extends MusicBeatState
 	static var curWeek:Int = 0;
 	static var curDiff:Int = -1;
 
-	var weekList:Array<WeekData> = [];
+	public var editingWeek:WeekData;
+
+	var weekList(get, never):Array<WeekData>;
+	var _weekList:Array<WeekData> = []; // internal
 
 	var realScore:Float = 0;
 	var lerpedScore:Float = 0;
@@ -43,15 +46,12 @@ class StoryMenuState extends MusicBeatState
 		setFpsPos(Main.fpsX, 55);
 		MusicBeat.playMusic("freakyMenu");
 		DiscordIO.changePresence("In the Story Menu");
-		weekList = Week.weekList(true, false);
+		_weekList = Week.weekList(true, false);
 		persistentDraw = true;
 		persistentUpdate = true;
 
 		grpWeeks = new FlxTypedGroup<WeekTitle>();
 		add(grpWeeks);
-
-		for (i in 0...weekList.length)
-			grpWeeks.add(new WeekTitle(weekList[i].weekFile, i, curWeek));
 
 		topBar = new FlxSprite(0, 0).makeColor(FlxG.width + 10, 60, 0xFF000000);
 		topBar.screenCenter(X);
@@ -103,31 +103,42 @@ class StoryMenuState extends MusicBeatState
 		if (curDiff == -1)
 			curDiff = middleDiff;
 
-		preload();
+		reload();
+	}
+
+	public function reload()
+	{
+		preloadAssets();
+		grpWeeks.killMembers();
+		for (i in 0...weekList.length)
+			grpWeeks.add(new WeekTitle(weekList[i].weekFile, i, curWeek));
+
+		curWeek = 0;
 		changeWeek();
 	}
 
-	function preload()
+	var preloadedDiffs:Array<String> = [];
+	var preloadedChars:Array<String> = [];
+
+	function preloadAssets()
 	{
-		var diffs:Array<String> = [];
-		var chars:Array<String> = [];
 		for (week in weekList)
 		{
 			for (diff in week.storyDiffs)
 			{
-				if (!diffs.contains(diff))
+				if (!preloadedDiffs.contains(diff))
 				{
 					diffSelector.changeDiff(diff);
-					diffs.push(diff);
+					preloadedDiffs.push(diff);
 				}
 			}
 
 			for (char in week.chars)
 			{
-				if (!chars.contains(char) && char != "")
+				if (!preloadedChars.contains(char) && char != "")
 				{
 					grpChars.members[0].reloadChar(char);
-					chars.push(char);
+					preloadedChars.push(char);
 				}
 			}
 		}
@@ -293,6 +304,9 @@ class StoryMenuState extends MusicBeatState
 
 	function get_middleDiff()
 		return Std.int((week.storyDiffs.length - 1) / 2);
+
+	function get_weekList()
+		return editingWeek == null ? _weekList : [editingWeek];
 }
 
 enum StoryCharPos
