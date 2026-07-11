@@ -53,20 +53,6 @@ class WeekEditorSubState extends MusicBeatSubState
 
 		var fileWindow:MenuWindow = new MenuWindow(8, 55 + 22 + 8, bgWidth, null);
 		fileWindow.title = "File";
-		// fileWindow.addButton("New");
-		// fileWindow.addSeparator();
-		// fileWindow.addButton("Open Week");
-		fileWindow.addButton("Save Week", () ->
-		{
-			var data:String = haxe.Json.stringify(curWeek, "\t");
-			if (data != null && data.length > 0)
-			{
-				Assets.fileSave(data.trim(), '${curWeek.weekFile}.json');
-			}
-		});
-		fileWindow.addSeparator();
-		fileWindow.addButton("Exit", () -> close(), 0xFFFF0000);
-		fileWindow.updateBg();
 
 		var songWindow:DoidoWindow = new DoidoWindow(null);
 		songWindow.title = "Songs";
@@ -320,6 +306,27 @@ class WeekEditorSubState extends MusicBeatSubState
 			right.selectedLabel = curWeek.chars[2] == "" ? "None" : curWeek.chars[2];
 			reloadAnims();
 		}
+
+		fileWindow.addButton("New", () ->
+		{
+			curWeek = Week.defaultWeek();
+			curSong = newSong();
+			storyMenu.editingWeek = curWeek;
+			reloadData();
+			storyMenu.reload();
+		});
+		fileWindow.addSeparator();
+		fileWindow.addButton("Save Week", () ->
+		{
+			var data:String = haxe.Json.stringify(curWeek, "\t");
+			if (data != null && data.length > 0)
+			{
+				Assets.fileSave(data.trim(), '${curWeek.weekFile}.json');
+			}
+		});
+		fileWindow.addSeparator();
+		fileWindow.addButton("Exit", () -> close(), 0xFFFF0000);
+		fileWindow.updateBg();
 
 		reloadData();
 

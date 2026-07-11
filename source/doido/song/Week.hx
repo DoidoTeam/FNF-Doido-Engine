@@ -31,7 +31,7 @@ class Week
 			weekFile: "week1",
 			weekName: "unknown",
 			freeplayName: "unknown",
-			chars: ["dad", "bf", "gf"],
+			chars: ["", "", ""],
 			freeplayOnly: false,
 			storyModeOnly: false,
 			diffs: ['easy', 'normal', 'hard'],
