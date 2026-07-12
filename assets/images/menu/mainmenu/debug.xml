@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="debug.png">
+	<!-- Created with Adobe Animate version 24.0.3.19 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="debug basic0000" x="3" y="3" width="401" height="124"/>
+	<SubTexture name="debug basic0001" x="3" y="3" width="401" height="124"/>
+	<SubTexture name="debug basic0002" x="3" y="3" width="401" height="124"/>
+	<SubTexture name="debug basic0003" x="3" y="130" width="401" height="124"/>
+	<SubTexture name="debug basic0004" x="3" y="130" width="401" height="124"/>
+	<SubTexture name="debug basic0005" x="3" y="130" width="401" height="124"/>
+	<SubTexture name="debug basic0006" x="3" y="257" width="401" height="124"/>
+	<SubTexture name="debug basic0007" x="3" y="257" width="401" height="124"/>
+	<SubTexture name="debug basic0008" x="3" y="257" width="401" height="124"/>
+	<SubTexture name="debug white0000" x="3" y="384" width="524" height="156" frameX="0" frameY="0" frameWidth="525" frameHeight="156"/>
+	<SubTexture name="debug white0001" x="3" y="543" width="524" height="154" frameX="-1" frameY="-2" frameWidth="525" frameHeight="156"/>
+	<SubTexture name="debug white0002" x="3" y="700" width="521" height="151" frameX="-3" frameY="-1" frameWidth="525" frameHeight="156"/>
+</TextureAtlas>

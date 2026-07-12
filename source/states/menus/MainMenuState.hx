@@ -38,7 +38,9 @@ class MainMenuState extends MusicBeatState
 		super();
 		addOption("story mode", () -> switchState(new states.menus.StoryMenuState()));
 		addOption("freeplay", () -> switchState(new FreeplayState()));
-		addOption("donate", () -> #if (android && MODS_FOLDER) openSubState(new substates.menus.ModSubState()) #else switchState(new DebugMenu()) #end);
+		if (Save.data.developerMode) {
+		addOption("debug", () -> #if (android && MODS_FOLDER) openSubState(new substates.menus.ModSubState()) #else switchState(new DebugMenu()) #end);
+		}
 		addOption("options", () -> openSubState(new substates.menus.OptionsSubState()));
 		addOption("credits", () -> switchState(new states.menus.CreditsState()));
 		loadScript();
@@ -111,10 +113,10 @@ class MainMenuState extends MusicBeatState
 
 		var splash:String = 'Doido Engine 4.0 ${Main.internalVer}';
 		splash += '\nFriday Night Funkin\' Rewritten';
-
+		
 		#if MODS_FOLDER
 		#if mobile
-		splash += '\nPress DONATE to manage Mods';
+		splash += '\nPress DEBUG to manage Mods';
 		#elseif desktop
 		splash += '\nPress [TAB] to manage Mods';
 		#end
