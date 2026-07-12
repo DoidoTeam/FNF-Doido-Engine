@@ -54,6 +54,7 @@ class Character extends DoidoSprite
 	}
 
 	public var debugMode:Bool = false;
+	public var forceLoop:Bool = false;
 
 	public var idleAnims(default, set):Array<String> = ["idle"];
 	public var quickDancer:Bool = false;
@@ -176,6 +177,11 @@ class Character extends DoidoSprite
 		{
 			if (animExists(curAnimName + '-loop') && curAnimFinished)
 				playAnim(curAnimName + '-loop');
+		}
+		else
+		{
+			if (forceLoop && curAnimFinished)
+				playAnim(curAnimName);
 		}
 
 		if (singStep > 0)

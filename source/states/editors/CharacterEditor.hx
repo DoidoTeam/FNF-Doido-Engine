@@ -1,5 +1,6 @@
 package states.editors;
 
+import flixel.group.FlxGroup;
 import doido.utils.CharacterUtil;
 import doido.utils.CharacterUtil.PsychCharacter;
 import doido.objects.DoidoSprite.Animation;
@@ -43,6 +44,7 @@ class CharacterEditor extends MusicBeatState
 
 	public var char:Character;
 	public var ghost:Ghost;
+	public var charBox:Hitbox;
 
 	var middlePoint:FlxSprite;
 
@@ -97,6 +99,9 @@ class CharacterEditor extends MusicBeatState
 
 		add(ghost);
 		add(char);
+
+		charBox = new Hitbox();
+		add(charBox);
 
 		add(middlePoint);
 
@@ -256,7 +261,6 @@ class CharacterEditor extends MusicBeatState
 		{
 			char.data.pixel = pixel.value;
 			char.antialiasing = ((char.data.pixel) ? false : flixel.FlxSprite.defaultAntialiasing);
-			flipCheck(char);
 		});
 		tab.add(pixel);
 		tab.add(createText(pixel.x - 45, getY(3) + 2, "Pixel:", 0xFFD8DAF6));
@@ -785,7 +789,8 @@ class CharacterEditor extends MusicBeatState
 		add(menuMain);
 	}
 
-	static var camZoom:Float = 0.9;
+	var camZoom:Float = 0.9;
+
 	static var ghostOverlay:Bool = false;
 	static var tint:Bool = true;
 
@@ -813,9 +818,22 @@ class CharacterEditor extends MusicBeatState
 
 	public var curCursor:lime.ui.MouseCursor = DEFAULT;
 
+	override function draw()
+	{
+		super.draw();
+
+		var offsets:DoidoPoint = char.animOffsets.get(char.curAnimName);
+		charBox.setGraphicSize(char.frameWidth * char.scale.x, char.frameHeight * char.scale.y);
+		charBox.updateHitbox();
+		charBox.x = char.x - (offsets.x * char.scale.x);
+		charBox.y = char.y - (offsets.y * char.scale.y);
+	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		camZoom = FlxMath.bound(camZoom, 0.4, 2.5);
+		camChar.zoom = FlxMath.lerp(camChar.zoom, camZoom, elapsed * 8);
 
 		curCursor = DEFAULT;
 
@@ -883,7 +901,7 @@ class CharacterEditor extends MusicBeatState
 				curCursor = MOVE;
 				updateOffset(FlxG.mouse.deltaViewX, FlxG.mouse.deltaViewY, false);
 			}
-			else if (mouseOverlapsOffset(char))
+			else if (FlxG.mouse.overlaps(charBox, camChar))
 			{
 				curCursor = POINTER;
 				if (FlxG.mouse.justPressed)
@@ -902,9 +920,7 @@ class CharacterEditor extends MusicBeatState
 			if (FlxG.mouse.wheel != 0 && !draggingCharacter)
 			{
 				var init = FlxG.mouse.getWorldPosition(camChar);
-				camZoom += (FlxG.mouse.wheel) / 2;
-				camZoom = FlxMath.bound(camZoom, 0.4, 2.5);
-				camChar.zoom = FlxMath.lerp(camChar.zoom, camZoom, elapsed * 12);
+				camZoom += (FlxG.mouse.wheel) * 0.2;
 				var post = FlxG.mouse.getWorldPosition(camChar);
 
 				camFollow.x += init.x - post.x;
@@ -933,15 +949,6 @@ class CharacterEditor extends MusicBeatState
 		}
 
 		EditorUtil.setCursor(curCursor);
-	}
-
-	function mouseOverlapsOffset(_char:Character)
-	{
-		var mousePos = FlxG.mouse.getWorldPosition(camChar);
-		var offsets:DoidoPoint = _char.animOffsets.get(_char.curAnimName);
-		mousePos.x += offsets.x;
-		mousePos.y += offsets.y;
-		return _char.overlapsPoint(mousePos);
 	}
 
 	public function changeAnim(change:Int = 0):Void
@@ -1047,10 +1054,10 @@ class AnimWindow extends DoidoWindow
 	public var offsetTxt:FlxBitmapText;
 	public var charTxt:FlxBitmapText;
 	public var ghostTxt:FlxBitmapText;
+	public var buttons:Array<FlxSprite> = [];
 
 	var charSlider:DoidoSlider;
-
-	// var ghostSlider:DoidoSlider;
+	var ghostSlider:DoidoSlider;
 
 	public function new(characterEditor:CharacterEditor)
 	{
@@ -1074,23 +1081,17 @@ class AnimWindow extends DoidoWindow
 
 		charTxt = new FlxBitmapText(bg.x + 8, offsetTxt.y + 32, Assets.bitmapFont("phantommuff"));
 		charTxt.alignment = LEFT;
-		charTxt.text = "Character: ";
+		charTxt.text = "Char: ";
 		charTxt.color = 0xFFD8DAF6;
 		charTxt.scale.set(0.625, 0.625);
 		charTxt.updateHitbox();
 		add(charTxt);
 
-		charSlider = new DoidoSlider(charTxt.x + charTxt.width + 14, charTxt.y + 7, 320, 6, -1, -1, 3, 3, /*Math.POSITIVE_INFINITY*/);
+		charSlider = new DoidoSlider(charTxt.x + charTxt.width + 14, charTxt.y + 7, 315, 6, 0, 0, 3, 3, /*Math.POSITIVE_INFINITY*/);
 		charSlider.onScrub.add((sld) ->
 		{
-			var isOff:Bool = (charSlider.value < 0.0);
-			if (isOff)
-				characterEditor.char.playAnim(characterEditor.char.curAnimName, true);
-			else
-			{
-				characterEditor.char.playAnim(characterEditor.char.curAnimName, true, Math.floor(charSlider.value));
-				characterEditor.char.anim.pause();
-			}
+			characterEditor.char.playAnim(characterEditor.char.curAnimName, true, Math.floor(charSlider.value));
+			characterEditor.char.anim.pause();
 		});
 		add(charSlider);
 
@@ -1102,21 +1103,87 @@ class AnimWindow extends DoidoWindow
 		ghostTxt.updateHitbox();
 		add(ghostTxt);
 
-		/*ghostSlider = new DoidoSlider(charSlider.x, ghostTxt.y + 7, 320, 6, -1, -1, 3, 3);
-			ghostSlider.onScrub.add((sld) ->
-			{
-				var isOff:Bool = (ghostSlider.value < 0.0);
-				if (isOff)
-					characterEditor.ghost.playAnim(characterEditor.ghost.curAnimName, true);
-				else
-				{
-					characterEditor.ghost.playAnim(characterEditor.ghost.curAnimName, true, Math.floor(ghostSlider.value));
-					characterEditor.ghost.anim.pause();
-				}
-			});
-			add(ghostSlider); */
+		ghostSlider = new DoidoSlider(charSlider.x, ghostTxt.y + 7, 315, 6, 0, 0, 3, 3);
+		ghostSlider.onScrub.add((sld) ->
+		{
+			characterEditor.ghost.playAnim(characterEditor.ghost.curAnimName, true, Math.floor(ghostSlider.value));
+			characterEditor.ghost.anim.pause();
+		});
+		add(ghostSlider);
+
+		addButton(bg.x + bg.width - 32 - 28, charTxt.y - 3, 0, () ->
+		{
+			var char = characterEditor.char;
+			if (char.curAnimFinished || (char.curAnimPaused && char.curAnimFrame == char.anim.curAnim.frames.length - 1))
+				char.playAnim(char.curAnimName, true);
+			else if (char.curAnimPaused)
+				char.anim.resume();
+			else
+				char.anim.pause();
+		});
+		addButton(bg.x + bg.width - 32 - 28, ghostTxt.y - 3, 0, () ->
+		{
+			var char = characterEditor.ghost;
+			if (char.curAnimFinished || (char.curAnimPaused && char.curAnimFrame == char.anim.curAnim.frames.length - 1))
+				char.playAnim(char.curAnimName, true);
+			else if (char.curAnimPaused)
+				char.anim.resume();
+			else
+				char.anim.pause();
+		});
+
+		addButton(bg.x + bg.width - 32, charTxt.y - 3, 4, () ->
+		{
+			characterEditor.char.forceLoop = !characterEditor.char.forceLoop;
+		});
+		addButton(bg.x + bg.width - 32, ghostTxt.y - 3, 4, () ->
+		{
+			characterEditor.ghost.forceLoop = !characterEditor.ghost.forceLoop;
+		});
+
+		addButton(0, animName.y, 3, () ->
+		{
+			characterEditor.changeAnim(-1);
+		});
+		addButton(0, animName.y, 2, () ->
+		{
+			characterEditor.changeAnim(1);
+		});
 
 		updateAnim();
+	}
+
+	public function addButton(x:Float, y:Float, frame:Int, func:Void->Void)
+	{
+		var newBtn = new DoidoButton(func);
+		newBtn.loadSparrow("editors/charting/timeButtons");
+		newBtn.animation.addByPrefix("btn", "timeButtons", 0, false);
+		newBtn.animation.play("btn", true, false, frame);
+		buttons.push(newBtn);
+		add(newBtn);
+
+		newBtn.x = x;
+		newBtn.y = y;
+	}
+
+	override function draw()
+	{
+		var chars = [characterEditor.char, characterEditor.ghost];
+		for (i in 0...2)
+		{
+			buttons[i].animation.curAnim.curFrame = (chars[i].curAnimFinished || chars[i].curAnimPaused ? 0 : 1);
+			buttons[i + 2].alpha = (chars[i].forceLoop ? 1 : 0.6);
+		}
+
+		super.draw();
+	}
+
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		charSlider.value = characterEditor.char.curAnimFrame;
+		ghostSlider.value = characterEditor.ghost.curAnimFrame;
 	}
 
 	public function updateAnim()
@@ -1132,24 +1199,24 @@ class AnimWindow extends DoidoWindow
 		animName.x = bg.x + bg.width / 2 - animName.width / 2;
 		offsetTxt.x = bg.x + bg.width / 2 - offsetTxt.width / 2;
 
+		buttons[4].x = animName.x - 32;
+		buttons[5].x = animName.x + animName.width + 6;
+
 		if (char.animExists(anim))
 		{
 			charSlider.rangeMax = char.animation.curAnim.frames.length - 1;
-			charSlider.steps = char.animation.curAnim.frames.length - 1;
-			charSlider.snappingStrength = Math.POSITIVE_INFINITY;
+			charSlider.steps = char.animation.curAnim.frames.length;
 		}
 
-		/*
-			ghostSlider.rangeMax = ghost.animation.curAnim.frames.length - 1;
-			ghostSlider.steps = ghost.animation.curAnim.frames.length - 1;
-			ghostSlider.snappingStrength = Math.POSITIVE_INFINITY;
-		 */
+		ghostSlider.rangeMax = ghost.animation.curAnim.frames.length - 1;
+		ghostSlider.steps = ghost.animation.curAnim.frames.length;
 	}
 }
 
 class Ghost extends Character
 {
 	public var char:Character = null;
+
 	var loadedChar:String = "";
 
 	public function new(char:Character)
@@ -1192,5 +1259,53 @@ class Ghost extends Character
 		ghostAlpha = f;
 		alpha = (data.alpha ?? 1.0) * ghostAlpha;
 		return ghostAlpha;
+	}
+}
+
+class Hitbox extends FlxSprite
+{
+	var lineGrp:FlxTypedGroup<FlxSprite>;
+
+	var viewBack:Bool = false;
+	var viewLine:Bool = true;
+
+	var lineWidth:Int = 3;
+	var lineColor:FlxColor = FlxColor.RED;
+
+	override public function new()
+	{
+		super();
+		this.makeColor(1, 1, lineColor);
+		lineGrp = new FlxTypedGroup<FlxSprite>();
+	}
+
+	override function draw()
+	{
+		if (viewBack)
+			super.draw();
+
+		lineGrp.killMembers();
+
+		var top:FlxSprite = lineGrp.recycle(FlxSprite);
+		top.makeColor(width + lineWidth * 2, lineWidth, lineColor);
+		top.setPosition(x - lineWidth, y - lineWidth);
+		lineGrp.add(top);
+
+		var bottom:FlxSprite = lineGrp.recycle(FlxSprite);
+		bottom.makeColor(width + lineWidth * 2, lineWidth, lineColor);
+		bottom.setPosition(x - lineWidth, y + height);
+		lineGrp.add(bottom);
+
+		var left:FlxSprite = lineGrp.recycle(FlxSprite);
+		left.makeColor(lineWidth, height + lineWidth * 2, lineColor);
+		left.setPosition(x - lineWidth, y - lineWidth);
+		lineGrp.add(left);
+
+		var right:FlxSprite = lineGrp.recycle(FlxSprite);
+		right.makeColor(lineWidth, height + lineWidth * 2, lineColor);
+		right.setPosition(x + width, y - lineWidth);
+		lineGrp.add(right);
+
+		lineGrp.draw();
 	}
 }
