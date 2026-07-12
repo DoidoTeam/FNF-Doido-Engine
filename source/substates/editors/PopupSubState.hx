@@ -132,7 +132,7 @@ class PopupSubState extends MusicBeatSubState
 	{
 		super.update(elapsed);
 
-		if ((FlxG.keys.justPressed.ESCAPE || (FlxG.mouse.justReleased && !FlxG.mouse.overlaps(bg))) && PsychUIInputText.focusOn == null)
+		if ((FlxG.keys.justPressed.ESCAPE || (FlxG.mouse.justReleased && !FlxG.mouse.overlaps(bg, MusicBeat.getTopCamera()))) && PsychUIInputText.focusOn == null)
 			close();
 
 		if (clipped)

@@ -9,6 +9,10 @@ import doido.utils.MathUtil;
 import doido.utils.MathUtil.DoidoPoint;
 import Main.Paths; // just to help
 
+#if MODS_FOLDER
+import doido.Mods;
+#end
+
 using StringTools;
 using doido.utils.SpriteUtil;
 using doido.utils.TextUtil;

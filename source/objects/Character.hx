@@ -198,34 +198,34 @@ class Character extends DoidoSprite
 	public static function defaultCharacter():DoidoCharacter
 	{
 		return {
-			spritesheet: "face",
-			spriteType: "ATLAS",
+			spritesheet: "face/face",
+			spriteType: "SPARROW",
 			singType: "LAST",
 			anims: [
 				{
 					name: "idle",
-					prefix: "idle-alive",
+					prefix: "idle",
 					offset: {x: 0, y: 0}
 				},
 				{
 					name: "singLEFT",
-					prefix: "left-alive",
-					offset: {x: 42, y: 0}
+					prefix: "left",
+					offset: {x: 45, y: 0}
 				},
 				{
 					name: "singDOWN",
-					prefix: "down-alive",
-					offset: {x: 0, y: 8}
+					prefix: "down",
+					offset: {x: -12, y: -13}
 				},
 				{
 					name: "singUP",
-					prefix: "up-alive",
-					offset: {x: 19, y: 40}
+					prefix: "up",
+					offset: {x: 12, y: 27}
 				},
 				{
 					name: "singRIGHT",
-					prefix: "right-alive",
-					offset: {x: -23, y: 13}
+					prefix: "right",
+					offset: {x: -18, y: 3}
 				}
 			]
 		};

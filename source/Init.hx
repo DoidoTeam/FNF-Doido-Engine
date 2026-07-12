@@ -9,9 +9,6 @@ import doido.utils.EditorUtil.EditorSave;
 import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import states.*;
-#if MODS_FOLDER
-import doido.Mods;
-#end
 
 class Init extends MusicBeatState
 {

@@ -1,5 +1,7 @@
 package states.editors;
 
+import substates.editors.PopupSubState;
+import flixel.FlxBasic;
 import flixel.group.FlxGroup;
 import doido.utils.CharacterUtil;
 import doido.utils.CharacterUtil.PsychCharacter;
@@ -136,10 +138,10 @@ class CharacterEditor extends MusicBeatState
 		var fileWindow = new MenuWindow(x, y + 30, width, null);
 		fileWindow.title = "File";
 		fileWindow.cameras = [camHUD];
-		fileWindow.addButton("Save", "Ctrl + S", () ->
-		{
-			save();
-		});
+		fileWindow.addButton("New", "Ctrl + N", newChar);
+		fileWindow.addSeparator();
+		fileWindow.addButton("Open", "Ctrl + O", open);
+		fileWindow.addButton("Save", "Ctrl + S", save);
 		fileWindow.addSeparator();
 		fileWindow.addButton("Import from Psych", () ->
 		{
@@ -164,6 +166,8 @@ class CharacterEditor extends MusicBeatState
 				Assets.fileSave(data.trim(), '${char.curChar}-converted.json');
 			}
 		});
+		fileWindow.addSeparator();
+		fileWindow.addButton("Exit", exit, 0xFFFF0000);
 		fileWindow.updateBg();
 
 		var menuBox = new DoidoBox(x, y, width, height, 0, false, [fileWindow /*, editWindow, viewWindow*/], null);
@@ -837,9 +841,6 @@ class CharacterEditor extends MusicBeatState
 
 		curCursor = DEFAULT;
 
-		if (FlxG.keys.justPressed.S && FlxG.keys.pressed.CONTROL)
-			save();
-
 		var overlapsWindow:Bool = false;
 		for (basic in members)
 		{
@@ -855,18 +856,23 @@ class CharacterEditor extends MusicBeatState
 		if (FlxG.mouse.justPressed)
 			clickedOnWindow = overlapsWindow;
 
-		if (!overlapsWindow && !clickedOnWindow && !typing && focused)
+		if (!typing)
 		{
 			if (Controls.justPressed(BACK))
-			{
-				MusicBeat.stopMusic();
-				FlxG.mouse.visible = false;
-				if (wasPlayState)
-					MusicBeat.switchState(new LoadingState());
-				else
-					MusicBeat.switchState(new states.menus.MainMenuState());
-			}
+				exit();
 
+			if (FlxG.keys.pressed.CONTROL)
+			{
+				if (FlxG.keys.justPressed.S)
+					save();
+				if (FlxG.keys.justPressed.N)
+					newChar();
+				if (FlxG.keys.justPressed.O)
+					open();
+			}
+		}
+		if (!overlapsWindow && !clickedOnWindow && !typing && focused)
+		{
 			var speed:Float = elapsed * 400;
 			if (FlxG.keys.anyPressed([A, D, W, S]))
 			{
@@ -1028,6 +1034,76 @@ class CharacterEditor extends MusicBeatState
 		char.playAnim(char.curAnimName, true);
 		if (arrows)
 			updateAnim(true);
+	}
+
+	function exit()
+	{
+		FlxG.mouse.visible = false;
+		if (wasPlayState)
+		{
+			MusicBeat.stopMusic();
+			MusicBeat.switchState(new LoadingState());
+		}
+		else
+			MusicBeat.switchState(new states.menus.MainMenuState());
+	}
+
+	function newChar()
+	{
+		MusicBeat.switchState(new CharacterEditor("face", false, wasPlayState));
+	}
+
+	function open()
+	{
+		var openStuff:Array<FlxBasic> = [];
+		var selected:String = "";
+		var characters:Array<String> = Assets.list("data/characters/", true, JSON).concat(["face"]);
+
+		var ok = new DoidoTextButton("Open", "small");
+		ok.screenCenter();
+		ok.x -= (ok.width / 2) + 5;
+		ok.y += 142;
+		openStuff.push(ok);
+
+		var reload = new DoidoTextButton("Reload", "small");
+		reload.screenCenter();
+		reload.x += (reload.width / 2) + 5;
+		reload.y += 142;
+		openStuff.push(reload);
+
+		var savewindow:ChooserWindow = new ChooserWindow((FlxG.width / 2) - (440 / 2), (FlxG.height / 2) - (240 / 2) - 10, 440, 245, [], null);
+		savewindow.view = GRID;
+		savewindow.type = CHARACTER;
+		savewindow.options = characters;
+		savewindow.cameras = [camHUD];
+		openStuff.push(savewindow);
+
+		var popup = new PopupSubState("Selected: NONE", 480, 340, openStuff, false);
+		openSubState(popup);
+
+		ok.button.onUp.add(() ->
+		{
+			if (selected == "")
+				FlxG.sound.play(Assets.sound('beep'));
+			else
+				MusicBeat.switchState(new CharacterEditor(selected, false, wasPlayState));
+		});
+
+		reload.button.onUp.add(() ->
+		{
+			#if MODS_FOLDER
+			Mods.reloadMods();
+			#end
+			characters = Assets.list("data/characters/", true, JSON).concat(["face"]);
+			savewindow.options = characters;
+		});
+
+		savewindow.onClick = (str) ->
+		{
+			selected = str;
+			popup.titleText.text = 'Selected: ${selected}';
+			trace(selected);
+		};
 	}
 
 	function save()

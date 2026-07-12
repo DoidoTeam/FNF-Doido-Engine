@@ -1,6 +1,5 @@
 package states;
 
-import doido.Mods;
 import doido.song.Highscore;
 import doido.song.Highscore.ScoreData;
 import doido.objects.Alphabet;
