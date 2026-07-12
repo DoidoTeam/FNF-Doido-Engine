@@ -55,7 +55,7 @@ class Init extends MusicBeatState
 	{
 		MusicBeat.stopMusic();
 		#if MODS_FOLDER
-		Mods.reload = false;
+		Mods.reloadGame = false;
 		var initialState:String = Mods.initialState;
 		if (initialState != "")
 		{

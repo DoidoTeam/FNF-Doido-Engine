@@ -142,7 +142,7 @@ class ModSubState extends MusicBeatSubState
 		if (Controls.justPressed(BACK))
 		{
 			FlxG.sound.play(Assets.sound("options/options-close"));
-			if (Mods.reload)
+			if (Mods.reloadGame)
 				Init.flagState();
 			else
 				close();

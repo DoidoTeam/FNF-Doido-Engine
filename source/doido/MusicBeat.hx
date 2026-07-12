@@ -197,6 +197,7 @@ class MusicBeatState extends FlxUIState
 		if (!MusicBeat.skipClearCache)
 			Cache.clearCache();
 
+		#if MODS_FOLDER Mods.reloadMods(); #end
 		Cache.pushAll();
 
 		if (!MusicBeat.skipTrans)
