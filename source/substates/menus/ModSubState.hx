@@ -36,7 +36,7 @@ class ModSubState extends MusicBeatSubState
 
 		add(namesGrp = new FlxTypedGroup<ModAlphabet>());
 
-		var resetTxt = new FlxText(0, 0, 0, "PRESS RESET TO DELETE SONG SCORE");
+		var resetTxt = new FlxText(0, 0, 0, "HOLD SHIFT TO REORDER MODS");
 		resetTxt.setFormat(Main.globalFont, 28, 0xFFFFFFFF, FlxTextAlign.RIGHT);
 		var resetBg = new FlxSprite().makeGraphic(Math.floor(FlxG.width * 1.5), Math.floor(resetTxt.height + 8), 0xFF000000);
 		resetBg.alpha = 0.4;
