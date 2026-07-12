@@ -74,11 +74,17 @@ class Stage
 	// to-do: make "new" function to preload assets
 	function loadScript(path:String)
 	{
+		var tempState = playState;
+		playState = null;
+
 		loadedScript = new DoidoIris(path, this, false);
-		loadedScript.set("PlayState", PlayState);
+		
 		loadedScript.set("add", stageItems.push);
 		loadedScript.execute();
 		callScript("create");
+
+		// only allow playstate usage after create is ran
+		playState = tempState;
 	}
 
 	function loadCode(cur:String)
