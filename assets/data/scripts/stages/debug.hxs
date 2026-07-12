@@ -24,10 +24,13 @@ function create()
     bandu.antialiasing = false;
     add(bandu);
 
-    playState.bf.zIndex = 16;
-
     // preload
     Assets.sound("editors/clank");
+}
+
+function createPost()
+{
+    playState.bf.zIndex = 16;
 }
 
 var elapsedtime:Float = 0.0;
