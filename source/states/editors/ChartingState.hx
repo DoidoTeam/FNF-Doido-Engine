@@ -1867,6 +1867,13 @@ class ChartingState extends MusicBeatState
 				playingSong = !playingSong;
 		}
 
+		if (FlxG.keys.justPressed.Z || FlxG.keys.justPressed.X)
+		{
+			@:privateAccess {
+			gridWindow.zoomStepper.stepValue(FlxG.keys.justPressed.Z ? -1 : 1);
+			}
+		}
+
 		for (event in EVENTS.events)
 		{
 			if (event.stepTime > curStepFloat)
@@ -1962,11 +1969,13 @@ class ChartingState extends MusicBeatState
 				{
 					playSfx("editors/click");
 					var dir:Int = FlxG.keys.justPressed.Q ? -1 : 1;
-					if (FlxG.keys.pressed.SHIFT)
-						dir *= 4;
 					for (note in selectedNotes)
 					{
-						note.length += dir;
+						if (!FlxG.keys.pressed.SHIFT)
+							note.length += dir;
+						else
+							note.length += dir * (note.length == 0 ? 3 : 2);
+						
 						if (note.length < 0)
 							note.length = 0;
 					}
@@ -2728,9 +2737,9 @@ class ChartingState extends MusicBeatState
 
 	public function resetSection()
 	{
-		if (FlxG.keys.pressed.CONTROL)
+		if (FlxG.keys.pressed.SHIFT)
 		{
-			if (FlxG.keys.pressed.SHIFT)
+			if (FlxG.keys.pressed.CONTROL)
 				goToSong(audio.songLength - 1)
 			else
 				goToSong(0);

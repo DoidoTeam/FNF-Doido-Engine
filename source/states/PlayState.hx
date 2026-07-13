@@ -957,7 +957,7 @@ class PlayState extends MusicBeatState implements Playable
 		}
 
 		if (curBeat % 4 == 0)
-			beatCamera(0.05, 0.02);
+			beatCamera(0.035, 0.02);
 
 		hudClass.beatHit(curBeat);
 	}
