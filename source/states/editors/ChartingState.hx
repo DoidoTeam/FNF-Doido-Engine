@@ -817,7 +817,7 @@ class ChartingState extends MusicBeatState
 		}
 
 		function getY(i:Int = 0)
-			return tab.bg.y + 8 + (spacingH * i);
+			return tab.bg.y + 8 + ((spacingH - 1) * i);
 
 		tab.add(createText(getX(), getY(0) + 3, "Volume:"));
 		tab.add(createText(getX(), getY(1) + 3, "Player:", 0xFFD8DAF6));
@@ -2633,6 +2633,37 @@ class ChartingState extends MusicBeatState
 				sortEvents();
 			}
 		}
+	}
+
+	var sectStep:Int = 0;
+
+	public function copySect(?prevSect:Int, ?startSect:Int)
+	{
+		selectedNotes = [];
+		var thisSect = Std.int(curBeat / 4);
+		startSect = startSect ?? thisSect;
+		var startStep = (startSect - (prevSect ?? 0)) * 16;
+		var endStep = startStep + 16;
+		for (note in CHART.notes)
+		{
+			if (note.stepTime < startStep)
+				continue;
+
+			if (note.stepTime >= endStep)
+				break;
+
+			var newNote = {
+				stepTime: (thisSect * 16) + (note.stepTime - startStep),
+				lane: note.lane,
+				strumline: note.strumline,
+				type: note.type,
+				length: note.length
+			};
+			CHART.notes.push(newNote);
+			selectedNotes.push(newNote);
+		}
+		notesTab.updateCallback.dispatch();
+		sortNotes();
 	}
 
 	public function copy(cut:Bool)
