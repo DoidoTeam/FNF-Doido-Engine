@@ -1575,6 +1575,9 @@ class ChartingState extends MusicBeatState
 		glass.y = filter.behindText.y + 1;
 		tab.add(glass);
 
+		filter.textObj.x += glass.width + 2;
+		filter.fieldWidth -= Std.int(glass.width + 2);
+
 		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
 		balls.setPosition(getX("center", balls.width), getY(bottomY - 1) + 3);
 		tab.add(balls);
@@ -1661,7 +1664,22 @@ class ChartingState extends MusicBeatState
 
 		var filter:PsychUIInputText;
 		filter = new PsychUIInputText(getX("margin_first_search"), getY(0), 372, "", 14);
-		filter.onChange.add((old, cur, input) -> events.filter = cur);
+		filter.onChange.add((old, cur, input) ->
+		{
+			if (cur != "")
+			{
+				events.view = LIST;
+				events.options = [for (event in EventUtil.events) event.name];
+				list = false;
+			}
+			else
+			{
+				events.view = GRID;
+				events.options = EventUtil.eventLists.get("Main");
+				list = true;
+			}
+			events.filter = cur;
+		});
 		filter.behindText.color = 0xFFD8DAF6;
 		tab.add(filter);
 
@@ -1670,6 +1688,9 @@ class ChartingState extends MusicBeatState
 		glass.x = filter.behindText.x + 1;
 		glass.y = filter.behindText.y + 1;
 		tab.add(glass);
+
+		filter.textObj.x += glass.width + 2;
+		filter.fieldWidth -= Std.int(glass.width + 2);
 
 		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
 		balls.setPosition(getX("center", balls.width), getY(bottomY - 3) + 3);
