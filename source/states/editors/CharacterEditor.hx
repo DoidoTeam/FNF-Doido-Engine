@@ -170,7 +170,16 @@ class CharacterEditor extends MusicBeatState
 		fileWindow.addButton("Exit", exit, 0xFFFF0000);
 		fileWindow.updateBg();
 
-		var menuBox = new DoidoBox(x, y, width, height, 0, false, [fileWindow /*, editWindow, viewWindow*/], null);
+		var editWindow = new MenuWindow(x, y + 30, width, null);
+		editWindow.title = "Edit";
+		editWindow.cameras = [camHUD];
+		editWindow.addButton("Copy Offset", "Ctrl + C", () -> copy());
+		editWindow.addButton("Paste Offset", "Ctrl + V", () -> paste());
+		editWindow.addSeparator();
+		editWindow.addButton("Delete Offset", "Delete", () -> delete());
+		editWindow.updateBg();
+
+		var menuBox = new DoidoBox(x, y, width, height, 0, false, [fileWindow, editWindow /*, viewWindow*/], null);
 		menuBox.cameras = [camHUD];
 		add(menuBox);
 	}
@@ -855,6 +864,8 @@ class CharacterEditor extends MusicBeatState
 
 		if (FlxG.mouse.justPressed)
 			clickedOnWindow = overlapsWindow;
+		if (FlxG.mouse.released)
+			clickedOnWindow = false;
 
 		if (!typing)
 		{
@@ -869,7 +880,14 @@ class CharacterEditor extends MusicBeatState
 					newChar();
 				if (FlxG.keys.justPressed.O)
 					open();
+				if (FlxG.keys.justPressed.C)
+					copy();
+				if (FlxG.keys.justPressed.V)
+					paste();
 			}
+
+			if (FlxG.keys.justPressed.DELETE)
+				delete();
 		}
 		if (!overlapsWindow && !clickedOnWindow && !typing && focused)
 		{
@@ -1034,6 +1052,32 @@ class CharacterEditor extends MusicBeatState
 		char.playAnim(char.curAnimName, true);
 		if (arrows)
 			updateAnim(true);
+	}
+
+	public var offsetClipboard:DoidoPoint = null;
+
+	final copySelected:Bool = false;
+
+	function copy()
+	{
+		offsetClipboard = char.getOffset(copySelected ? curEditing : char.curAnimName);
+	}
+
+	function paste()
+	{
+		if (offsetClipboard != null)
+			char.addOffset(copySelected ? curEditing : char.curAnimName, offsetClipboard);
+		if (!copySelected || curEditing == char.curAnimName)
+			char.playAnim(char.curAnimName, true);
+		updateAnim(true);
+	}
+
+	function delete()
+	{
+		char.addOffset(copySelected ? curEditing : char.curAnimName, {x: 0, y: 0});
+		if (!copySelected || curEditing == char.curAnimName)
+			char.playAnim(char.curAnimName, true);
+		updateAnim(true);
 	}
 
 	function exit()
