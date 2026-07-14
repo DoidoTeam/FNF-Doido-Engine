@@ -754,6 +754,11 @@ class ChartingState extends MusicBeatState
 			EditorSave.save();
 		});
 		viewWindow.addSeparator();
+		viewWindow.addCheck("Change Camera per Section", EditorSave.data.quickCamSection, (b) ->
+		{
+			EditorSave.data.quickCamSection = b;
+			EditorSave.save();
+		});
 		viewWindow.addCheck("Center Events", centerEvents, (b) ->
 		{
 			centerEvents = b;
@@ -2728,10 +2733,15 @@ class ChartingState extends MusicBeatState
 	{
 		player = player ?? (focus != "bf");
 		selectedEvents = [];
+
+		var curEventStep:Int = curStep;
+		if (EditorSave.data.quickCamSection)
+			curEventStep = Math.floor(Conductor.getStepAtTime(getSectionStart()));
+
 		var foundEvent:EventData = null;
 		for (event in EVENTS.events)
 		{
-			if (event.stepTime == curStep)
+			if (event.stepTime == curEventStep)
 			{
 				foundEvent = event;
 				break;
@@ -2746,7 +2756,7 @@ class ChartingState extends MusicBeatState
 		else
 		{
 			var newEvent:EventData = {
-				stepTime: curStep,
+				stepTime: curEventStep,
 				name: "Camera Focus",
 				data: [player ? "bf" : "dad", 0, 0]
 			};

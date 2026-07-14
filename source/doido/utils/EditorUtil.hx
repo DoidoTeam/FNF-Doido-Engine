@@ -25,6 +25,7 @@ class EditorVariables
 	public var oldTimer:Bool = false;
 	public var quantNotes:Bool = false;
 	public var darkMode:Bool = false;
+	public var quickCamSection:Bool = false;
 }
 
 class EditorSave
