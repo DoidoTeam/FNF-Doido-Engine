@@ -236,13 +236,17 @@ class ChartingState extends MusicBeatState
 		}
 
 		bgLight = new FlxSprite().loadGraphic(Assets.image('editors/charting/bg/light'));
-		bgLight.screenCenter();
 		add(bgLight);
 
 		bgDark = new FlxSprite().loadGraphic(Assets.image('editors/charting/bg/dark'));
-		bgDark.screenCenter();
 		bgDark.visible = EditorSave.data.darkMode;
 		add(bgDark);
+
+		for (bg in [bgLight, bgDark]) {
+			bg.setGraphicSize(FlxG.width, FlxG.height);
+			bg.updateHitbox();
+			bg.screenCenter();
+		}
 
 		hoverSquare = new FlxSprite().makeColor(GRID_SIZE, GRID_SIZE, 0xFFFFFFFF);
 		hoverSquare.visible = false;
