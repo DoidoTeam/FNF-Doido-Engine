@@ -754,7 +754,7 @@ class ChartingState extends MusicBeatState
 			EditorSave.save();
 		});
 		viewWindow.addSeparator();
-		viewWindow.addCheck("Change Camera per Section", EditorSave.data.quickCamSection, (b) ->
+		viewWindow.addCheck("Quick Camera on Section", EditorSave.data.quickCamSection, (b) ->
 		{
 			EditorSave.data.quickCamSection = b;
 			EditorSave.save();
