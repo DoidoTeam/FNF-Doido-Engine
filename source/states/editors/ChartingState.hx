@@ -1062,11 +1062,16 @@ class ChartingState extends MusicBeatState
 
 		var swapNotes = new DoidoTextButton("Swap Notes", () ->
 		{
-			if (selectedNotes.length == 0)
+			var wasSection:Bool = false;
+			if (selectedNotes.length == 0) {
+				wasSection = true;
 				selectSection();
+			}
 
 			for (note in selectedNotes)
 				note.strumline = (note.strumline == 0 ? 1 : 0);
+		
+			if (wasSection) selectedNotes = [];
 		});
 		swapNotes.x = getX();
 		swapNotes.y = getY(14);
@@ -1074,8 +1079,11 @@ class ChartingState extends MusicBeatState
 
 		var duetNotes = new DoidoTextButton("Duet Notes", () ->
 		{
-			if (selectedNotes.length == 0)
+			var wasSection:Bool = false;
+			if (selectedNotes.length == 0) {
+				wasSection = true;
 				selectSection();
+			}
 
 			var notes:Array<NoteData> = [];
 			for (note in selectedNotes)
@@ -1090,7 +1098,10 @@ class ChartingState extends MusicBeatState
 				CHART.notes.push(newNote);
 				notes.push(newNote);
 			}
-			selectedNotes = selectedNotes.concat(notes);
+			if (wasSection)
+				selectedNotes = [];
+			else
+				selectedNotes = selectedNotes.concat(notes);
 			notesTab.updateCallback.dispatch();
 			sortNotes();
 		});
@@ -1100,11 +1111,16 @@ class ChartingState extends MusicBeatState
 
 		var mirrorNotes = new DoidoTextButton("Mirror Notes", () ->
 		{
-			if (selectedNotes.length == 0)
+			var wasSection:Bool = false;
+			if (selectedNotes.length == 0) {
+				wasSection = true;
 				selectSection();
+			}
 
 			for (note in selectedNotes)
 				note.lane = NoteUtil.directions.length - 1 - note.lane;
+
+			if (wasSection) selectedNotes = [];
 		});
 		mirrorNotes.x = getX("margin_right", mirrorNotes.width);
 		mirrorNotes.y = getY(14);
