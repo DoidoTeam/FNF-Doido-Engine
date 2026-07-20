@@ -1,9 +1,12 @@
 package substates.editors;
 
+import states.editors.ChartingState;
+import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxBitmapText;
 import animate.internal.elements.FlxSpriteElement;
 import flixel.FlxSprite;
+import flixel.FlxBasic;
 import flixel.math.FlxMath;
 import doido.objects.ui.buttons.DoidoAnimatedButton;
 import flixel.math.FlxRect;
@@ -11,7 +14,7 @@ import doido.objects.ui.PsychUIInputText;
 
 class PopupSubState extends MusicBeatSubState
 {
-	final clipped:Bool = false;
+	public var clipped:Bool = false;
 
 	public var bg:FlxSprite;
 	public var closeButton:DoidoAnimatedButton;
@@ -20,13 +23,16 @@ class PopupSubState extends MusicBeatSubState
 	public var width:Float = 300;
 	public var height:Float = 150;
 
-	var objects:Array<FlxSprite> = [];
+	public var onClose:Void->Void;
 
-	public function new(title:String = "", width:Float = 300, height:Float = 150, ?objects:Array<FlxSprite>)
+	var objects:Array<FlxBasic> = [];
+
+	public function new(title:String = "", width:Float = 300, height:Float = 150, ?objects:Array<FlxBasic>, ?clipped:Bool = false)
 	{
 		super();
 		this.width = width;
 		this.height = height;
+		this.clipped = clipped;
 		if (objects != null)
 			this.objects = objects;
 
@@ -49,6 +55,9 @@ class PopupSubState extends MusicBeatSubState
 		titleText.scale.set(0.625, 0.625);
 		titleText.updateHitbox();
 		add(titleText);
+
+		if (ChartingState.soundEffects)
+			FlxG.sound.play(Assets.sound("options/options-close"));
 
 		positionBg(0);
 		positionTitle();
@@ -79,19 +88,28 @@ class PopupSubState extends MusicBeatSubState
 		if (clipped)
 		{
 			positionTitle();
-			for (obj in objects)
+
+			function check(obj:FlxBasic)
 			{
+				if (obj == null)
+					return;
+
 				if (Std.isOfType(obj, FlxSpriteGroup))
 				{
 					var grp:FlxSpriteGroup = cast obj;
-					grp.forEach((member) ->
-					{
-						setClip(member, bg);
-					});
+					grp.forEach((member) -> check(member));
 				}
-				else
-					setClip(obj, bg);
+				else if (Std.isOfType(obj, FlxGroup))
+				{
+					var grp:FlxGroup = cast obj;
+					grp.forEach((member) -> check(member));
+				}
+				else if (Std.isOfType(obj, FlxSprite))
+					setClip(cast obj, bg);
 			}
+
+			for (obj in objects)
+				check(obj);
 
 			setClip(closeButton, bg);
 			setClip(titleText, bg);
@@ -114,13 +132,21 @@ class PopupSubState extends MusicBeatSubState
 	{
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.ESCAPE && PsychUIInputText.focusOn == null)
-		{
-			FlxG.sound.play(Assets.sound("options/options-close"));
+		if ((FlxG.keys.justPressed.ESCAPE || (FlxG.mouse.justReleased && !FlxG.mouse.overlaps(bg, MusicBeat.getTopCamera()))) && PsychUIInputText.focusOn == null)
 			close();
-		}
 
 		if (clipped)
 			positionBg(elapsed);
+	}
+
+	override function close()
+	{
+		if (onClose != null)
+			onClose();
+
+		if (ChartingState.soundEffects)
+			FlxG.sound.play(Assets.sound("options/options-close"));
+
+		super.close();
 	}
 }

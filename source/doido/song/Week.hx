@@ -11,7 +11,7 @@ typedef WeekData =
 	var ?chars:Array<String>;
 	var ?diffs:Array<String>;
 	var ?storyDiffs:Array<String>;
-	var ?storyColor:Dynamic;
+	var ?storyColor:String;
 	var ?freeplayOnly:Bool;
 	var ?storyModeOnly:Bool;
 }
@@ -31,7 +31,7 @@ class Week
 			weekFile: "week1",
 			weekName: "unknown",
 			freeplayName: "unknown",
-			chars: ["dad", "bf", "gf"],
+			chars: ["", "", ""],
 			freeplayOnly: false,
 			storyModeOnly: false,
 			diffs: ['easy', 'normal', 'hard'],

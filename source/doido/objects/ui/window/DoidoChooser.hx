@@ -9,6 +9,9 @@ import flixel.FlxSprite;
 import flixel.text.FlxBitmapText;
 import doido.objects.ui.buttons.DoidoButton;
 import objects.ui.HealthIcon;
+import doido.utils.EventUtil;
+import doido.utils.NoteUtil;
+import flixel.util.FlxTimer;
 
 enum ChooserView
 {
@@ -22,6 +25,12 @@ enum ChooserType
 	CHARACTER;
 	EVENT;
 	NOTETYPE;
+}
+
+enum ChooserAlign
+{
+	LEFT;
+	CENTER;
 }
 
 class ChooserWindow extends DoidoWindow
@@ -42,18 +51,21 @@ class ChooserWindow extends DoidoWindow
 
 	public var options(default, set):Array<String>;
 	public var descs(default, set):Array<String>;
+	public var descOnly:Bool = false;
 
 	var filtered:Array<String> = [];
 	var noScroll(get, never):Bool;
 
 	public var view(default, set):ChooserView = GRID;
 	public var type:ChooserType = CHARACTER;
+	public var align:ChooserAlign = CENTER;
 
 	public var onClick:String->Void;
 
 	public var buttonId:String = "";
 
 	var gridCount:Int = 4;
+	var locked:Bool = false;
 
 	public function new(x:Float = 0, y:Float = 0, width:Int = 440, height:Int = 185, list:Array<String>, chartState:ChartingState)
 	{
@@ -92,11 +104,18 @@ class ChooserWindow extends DoidoWindow
 
 		for (i in 0...filtered.length)
 		{
-			var button:ChooserButton = new ChooserButton(filtered[i], descs[i] ?? "", type, view, buttonWidth, buttonHeight, () ->
-			{
-				if (onClick != null)
-					onClick(filtered[i]);
-			});
+			var button:ChooserButton = new ChooserButton(descOnly ? descs[i] : filtered[i], descOnly ? "" : descs[i] ?? "", type, view, align, buttonWidth,
+				buttonHeight, () ->
+				{
+					if (locked)
+						return;
+
+					if (onClick != null)
+						onClick(filtered[i]);
+
+					locked = true;
+					new FlxTimer().start(0.1, (tmr) -> locked = false);
+				});
 
 			if (view == GRID)
 				button.x = x + spacing + ((i % gridCount) * buttonWidth);
@@ -219,8 +238,8 @@ class ChooserButton extends FlxSpriteGroup
 	public var button:DoidoButton;
 	public var icon:FlxSprite;
 
-	public function new(label:String, desc:String = "", type:ChooserType, view:ChooserView, width:Int = 318, height:Int = 22, ?onUp:Void->Void,
-			?onDown:Void->Void)
+	public function new(label:String, desc:String = "", type:ChooserType, view:ChooserView, align:ChooserAlign, width:Int = 318, height:Int = 22,
+			?onUp:Void->Void, ?onDown:Void->Void)
 	{
 		super();
 
@@ -253,18 +272,18 @@ class ChooserButton extends FlxSpriteGroup
 				var uhhh = new HealthIcon();
 				uhhh.setIcon(label, false);
 				icon.loadGraphicFromSprite(uhhh);
+			case EVENT:
+				icon.loadImage(EventUtil.getEventSprite(label));
+			case NOTETYPE:
+				icon.loadImage(NoteUtil.getNoteSprite(label));
 			default:
 				icon.visible = false;
 		}
-		icon.setGraphicSize(width - 20, height - 20);
-		icon.updateHitbox();
-		icon.x = button.x + (button.width - icon.width) / 2;
-		icon.y = button.y + 5;
 		add(icon);
 
 		_label = new FlxBitmapText(0, 0, Assets.bitmapFont("phantommuff"));
 		_label.color = 0xFFFFFFFF;
-		_label.alignment = CENTER;
+		_label.alignment = align == LEFT ? LEFT : CENTER;
 		_label.text = label;
 		_label.scale.set(0.625, 0.625);
 		_label.updateHitbox();
@@ -272,7 +291,7 @@ class ChooserButton extends FlxSpriteGroup
 
 		_desc = new FlxBitmapText(0, 0, Assets.bitmapFont("phantommuff"));
 		_desc.color = 0xFFD8DAF6;
-		_desc.alignment = CENTER;
+		_desc.alignment = align == LEFT ? LEFT : CENTER;
 		_desc.text = desc;
 		_desc.scale.set(0.625, 0.625);
 		_desc.updateHitbox();
@@ -283,19 +302,50 @@ class ChooserButton extends FlxSpriteGroup
 			case GRID:
 				_label.x = button.x + (button.width - _label.width) / 2;
 				_label.y = button.y + button.height - _label.height - 2;
+
+				var ratio = icon.width / icon.height;
+				icon.setGraphicSize(width - 20, (width / ratio) - 20);
+				icon.updateHitbox();
+				icon.x = button.x + (button.width - icon.width) / 2;
+				icon.y = button.y + (button.height - icon.height) / 2;
 			default:
-				_label.setPosition(button.x
-					+ ((button.width / 2) - (_label.width / 2))
-					- (_desc.width / 2)
-					- 1,
-					button.y
-					+ ((button.height / 2) - (_label.height / 2)));
-				_desc.setPosition(button.x
-					+ ((button.width / 2) - (_desc.width / 2))
-					+ (_label.width / 2)
-					+ 1,
-					button.y
-					+ ((button.height / 2) - (_desc.height / 2)));
+				switch (align)
+				{
+					case LEFT:
+						_label.setPosition(button.x + 4, button.y + ((button.height / 2) - (_label.height / 2)));
+						_desc.setPosition(_label.x + 4, button.y + ((button.height / 2) - (_desc.height / 2)));
+					default:
+						_label.setPosition(button.x
+							+ ((button.width / 2) - (_label.width / 2))
+							- (_desc.width / 2)
+							- 1,
+							button.y
+							+ ((button.height / 2) - (_label.height / 2)));
+						_desc.setPosition(button.x
+							+ ((button.width / 2) - (_desc.width / 2))
+							+ (_label.width / 2)
+							+ 1,
+							button.y
+							+ ((button.height / 2) - (_desc.height / 2)));
+				}
+
+				if (type == NOTETYPE)
+				{
+					var ratio = icon.height / icon.width;
+					var scale = 0.8;
+					icon.setGraphicSize((height / ratio) * scale, (height) * scale);
+					icon.updateHitbox();
+					icon.x = button.x + width - icon.width;
+					icon.y = button.y + (button.height - icon.height) / 2;
+				}
+				else
+				{
+					var ratio = icon.width / icon.height;
+					icon.setGraphicSize(height, (height / ratio));
+					icon.updateHitbox();
+					icon.x = button.x + width - icon.width;
+					icon.y = button.y + (button.height - icon.height) / 2;
+				}
 		}
 	}
 }

@@ -5,12 +5,10 @@ import doido.Cache;
 import doido.MusicBeat.MusicBeatState;
 import doido.song.Highscore;
 import doido.system.Discord.DiscordIO;
+import doido.utils.EditorUtil.EditorSave;
 import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import states.*;
-#if MODS_FOLDER
-import doido.Mods;
-#end
 
 class Init extends MusicBeatState
 {
@@ -20,6 +18,7 @@ class Init extends MusicBeatState
 		Save.init();
 		Controls.load();
 		Highscore.load();
+		EditorSave.load();
 		DiscordIO.check();
 
 		Main.setWindowSize(Save.data.windowSize);
@@ -53,7 +52,7 @@ class Init extends MusicBeatState
 	{
 		MusicBeat.stopMusic();
 		#if MODS_FOLDER
-		Mods.reload = false;
+		Mods.reloadGame = false;
 		var initialState:String = Mods.initialState;
 		if (initialState != "")
 		{

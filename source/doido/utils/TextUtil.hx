@@ -41,4 +41,13 @@ class TextUtil
 		var disMin:String = '$min';
 		return '$disMin:$disSec';
 	}
+
+	public static function titleCase(str:String):String
+	{
+		var words = str.split(" ");
+		var result = [];
+		for (word in words)
+			result.push(word.charAt(0).toUpperCase() + word.substr(1).toLowerCase());
+		return result.join(" ");
+	}
 }

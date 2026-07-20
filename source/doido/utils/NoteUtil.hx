@@ -10,6 +10,14 @@ import flixel.util.FlxSort;
 
 class NoteUtil
 {
+	public static var noteTypes:Array<String> = [
+		'none',
+		'no animation',
+		'gf note',
+		'hurt note',
+		'warn note',
+	];
+
 	public static var directions:Array<String> = [];
 
 	public static function setUpDirections(howMany:Int = 4)
@@ -182,6 +190,14 @@ class NoteUtil
 	public static function sortNotes(Obj1:NoteData, Obj2:NoteData):Int
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.stepTime, Obj2.stepTime);
 
-	public static function sortEvents(Obj1:EventData, Obj2:EventData):Int
-		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.stepTime, Obj2.stepTime);
+	public static function getNoteSprite(name:String):String
+	{
+		var num = name.split(". ");
+		var noteName:String = num[1].toLowerCase().replace(' ', '_');
+
+		if (!Assets.fileExists('images/editors/charting/notetypes/$noteName', IMAGE))
+			noteName = "unknown_notetype";
+
+		return 'editors/charting/notetypes/$noteName';
+	}
 }

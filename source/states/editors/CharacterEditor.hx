@@ -1,5 +1,8 @@
 package states.editors;
 
+import substates.editors.PopupSubState;
+import flixel.FlxBasic;
+import flixel.group.FlxGroup;
 import doido.utils.CharacterUtil;
 import doido.utils.CharacterUtil.PsychCharacter;
 import doido.objects.DoidoSprite.Animation;
@@ -43,6 +46,7 @@ class CharacterEditor extends MusicBeatState
 
 	public var char:Character;
 	public var ghost:Ghost;
+	public var charBox:Hitbox;
 
 	var middlePoint:FlxSprite;
 
@@ -98,6 +102,9 @@ class CharacterEditor extends MusicBeatState
 		add(ghost);
 		add(char);
 
+		charBox = new Hitbox();
+		add(charBox);
+
 		add(middlePoint);
 
 		for (char in [ghost, char])
@@ -131,10 +138,10 @@ class CharacterEditor extends MusicBeatState
 		var fileWindow = new MenuWindow(x, y + 30, width, null);
 		fileWindow.title = "File";
 		fileWindow.cameras = [camHUD];
-		fileWindow.addButton("Save", "Ctrl + S", () ->
-		{
-			save();
-		});
+		fileWindow.addButton("New", "Ctrl + N", newChar);
+		fileWindow.addSeparator();
+		fileWindow.addButton("Open", "Ctrl + O", open);
+		fileWindow.addButton("Save", "Ctrl + S", save);
 		fileWindow.addSeparator();
 		fileWindow.addButton("Import from Psych", () ->
 		{
@@ -159,9 +166,20 @@ class CharacterEditor extends MusicBeatState
 				Assets.fileSave(data.trim(), '${char.curChar}-converted.json');
 			}
 		});
+		fileWindow.addSeparator();
+		fileWindow.addButton("Exit", exit, 0xFFFF0000);
 		fileWindow.updateBg();
 
-		var menuBox = new DoidoBox(x, y, width, height, 0, false, [fileWindow /*, editWindow, viewWindow*/], null);
+		var editWindow = new MenuWindow(x, y + 30, width, null);
+		editWindow.title = "Edit";
+		editWindow.cameras = [camHUD];
+		editWindow.addButton("Copy Offset", "Ctrl + C", () -> copy());
+		editWindow.addButton("Paste Offset", "Ctrl + V", () -> paste());
+		editWindow.addSeparator();
+		editWindow.addButton("Delete Offset", "Delete", () -> delete());
+		editWindow.updateBg();
+
+		var menuBox = new DoidoBox(x, y, width, height, 0, false, [fileWindow, editWindow /*, viewWindow*/], null);
 		menuBox.cameras = [camHUD];
 		add(menuBox);
 	}
@@ -256,7 +274,6 @@ class CharacterEditor extends MusicBeatState
 		{
 			char.data.pixel = pixel.value;
 			char.antialiasing = ((char.data.pixel) ? false : flixel.FlxSprite.defaultAntialiasing);
-			flipCheck(char);
 		});
 		tab.add(pixel);
 		tab.add(createText(pixel.x - 45, getY(3) + 2, "Pixel:", 0xFFD8DAF6));
@@ -438,6 +455,43 @@ class CharacterEditor extends MusicBeatState
 
 		filter.textObj.x += glass.width + 2;
 		filter.fieldWidth -= Std.int(glass.width + 2);
+
+		var bottomY = 15;
+
+		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
+		balls.setPosition(getX("center", balls.width), getY(bottomY - 5) + 12);
+		tab.add(balls);
+
+		tab.add(createText(getX(), getY(bottomY) + 3, "Alpha:", 0xFFD8DAF6));
+		var ghostVis:DoidoCheckmark = new DoidoCheckmark(true);
+		ghostVis.onUp.add(() ->
+		{
+			ghost.visible = ghostVis.value;
+		});
+		ghostVis.x = getX("margin_first");
+		ghostVis.y = getY(bottomY) - 1;
+		tab.add(ghostVis);
+
+		var ghostStepper = new PsychUINumericStepper(getX("margin_right", 100), getY(bottomY), 0.1, ghost.ghostAlpha, 0, 1.0, 1, 100, false);
+		tab.add(ghostStepper);
+
+		var ghostSlider:DoidoSlider = new DoidoSlider(getX("margin_second"), getY(bottomY) + 9, 160, 6, ghost.ghostAlpha, 0, 1, 3, 0.02);
+		ghostSlider.onScrub.add((sld) ->
+		{
+			ghost.visible = true;
+			ghostVis.value = true;
+			ghostStepper.value = ghostSlider.value;
+			ghost.ghostAlpha = ghostSlider.value;
+		});
+		tab.add(ghostSlider);
+
+		ghostStepper.onValueChange = (() ->
+		{
+			ghost.visible = true;
+			ghostVis.value = true;
+			ghostStepper.value = ghostStepper.value;
+			ghost.ghostAlpha = ghostStepper.value;
+		});
 
 		return tab;
 	}
@@ -748,7 +802,8 @@ class CharacterEditor extends MusicBeatState
 		add(menuMain);
 	}
 
-	static var camZoom:Float = 0.9;
+	var camZoom:Float = 0.9;
+
 	static var ghostOverlay:Bool = false;
 	static var tint:Bool = true;
 
@@ -776,14 +831,24 @@ class CharacterEditor extends MusicBeatState
 
 	public var curCursor:lime.ui.MouseCursor = DEFAULT;
 
+	override function draw()
+	{
+		super.draw();
+
+		var offsets:DoidoPoint = char.animOffsets.get(char.curAnimName);
+		charBox.setGraphicSize(char.frameWidth * char.scale.x, char.frameHeight * char.scale.y);
+		charBox.updateHitbox();
+		charBox.x = char.x - (offsets.x * char.scale.x);
+		charBox.y = char.y - (offsets.y * char.scale.y);
+	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		camZoom = FlxMath.bound(camZoom, 0.4, 2.5);
+		camChar.zoom = FlxMath.lerp(camChar.zoom, camZoom, elapsed * 8);
 
 		curCursor = DEFAULT;
-
-		if (FlxG.keys.justPressed.S && FlxG.keys.pressed.CONTROL)
-			save();
 
 		var overlapsWindow:Bool = false;
 		for (basic in members)
@@ -799,19 +864,33 @@ class CharacterEditor extends MusicBeatState
 
 		if (FlxG.mouse.justPressed)
 			clickedOnWindow = overlapsWindow;
+		if (FlxG.mouse.released)
+			clickedOnWindow = false;
 
-		if (!overlapsWindow && !clickedOnWindow && !typing && focused)
+		if (!typing)
 		{
 			if (Controls.justPressed(BACK))
+				exit();
+
+			if (FlxG.keys.pressed.CONTROL)
 			{
-				MusicBeat.stopMusic();
-				FlxG.mouse.visible = false;
-				if (wasPlayState)
-					MusicBeat.switchState(new LoadingState());
-				else
-					MusicBeat.switchState(new states.menus.MainMenuState());
+				if (FlxG.keys.justPressed.S)
+					save();
+				if (FlxG.keys.justPressed.N)
+					newChar();
+				if (FlxG.keys.justPressed.O)
+					open();
+				if (FlxG.keys.justPressed.C)
+					copy();
+				if (FlxG.keys.justPressed.V)
+					paste();
 			}
 
+			if (FlxG.keys.justPressed.DELETE)
+				delete();
+		}
+		if (!overlapsWindow && !clickedOnWindow && !typing && focused)
+		{
 			var speed:Float = elapsed * 400;
 			if (FlxG.keys.anyPressed([A, D, W, S]))
 			{
@@ -846,7 +925,7 @@ class CharacterEditor extends MusicBeatState
 				curCursor = MOVE;
 				updateOffset(FlxG.mouse.deltaViewX, FlxG.mouse.deltaViewY, false);
 			}
-			else if (mouseOverlapsOffset(char))
+			else if (FlxG.mouse.overlaps(charBox, camChar))
 			{
 				curCursor = POINTER;
 				if (FlxG.mouse.justPressed)
@@ -865,9 +944,7 @@ class CharacterEditor extends MusicBeatState
 			if (FlxG.mouse.wheel != 0 && !draggingCharacter)
 			{
 				var init = FlxG.mouse.getWorldPosition(camChar);
-				camZoom += (FlxG.mouse.wheel) / 2;
-				camZoom = FlxMath.bound(camZoom, 0.4, 2.5);
-				camChar.zoom = FlxMath.lerp(camChar.zoom, camZoom, elapsed * 12);
+				camZoom += (FlxG.mouse.wheel) * 0.2;
 				var post = FlxG.mouse.getWorldPosition(camChar);
 
 				camFollow.x += init.x - post.x;
@@ -896,15 +973,6 @@ class CharacterEditor extends MusicBeatState
 		}
 
 		EditorUtil.setCursor(curCursor);
-	}
-
-	function mouseOverlapsOffset(_char:Character)
-	{
-		var mousePos = FlxG.mouse.getWorldPosition(camChar);
-		var offsets:DoidoPoint = _char.animOffsets.get(_char.curAnimName);
-		mousePos.x += offsets.x;
-		mousePos.y += offsets.y;
-		return _char.overlapsPoint(mousePos);
 	}
 
 	public function changeAnim(change:Int = 0):Void
@@ -986,6 +1054,102 @@ class CharacterEditor extends MusicBeatState
 			updateAnim(true);
 	}
 
+	public var offsetClipboard:DoidoPoint = null;
+
+	final copySelected:Bool = false;
+
+	function copy()
+	{
+		offsetClipboard = char.getOffset(copySelected ? curEditing : char.curAnimName);
+	}
+
+	function paste()
+	{
+		if (offsetClipboard != null)
+			char.addOffset(copySelected ? curEditing : char.curAnimName, offsetClipboard);
+		if (!copySelected || curEditing == char.curAnimName)
+			char.playAnim(char.curAnimName, true);
+		updateAnim(true);
+	}
+
+	function delete()
+	{
+		char.addOffset(copySelected ? curEditing : char.curAnimName, {x: 0, y: 0});
+		if (!copySelected || curEditing == char.curAnimName)
+			char.playAnim(char.curAnimName, true);
+		updateAnim(true);
+	}
+
+	function exit()
+	{
+		FlxG.mouse.visible = false;
+		if (wasPlayState)
+		{
+			MusicBeat.stopMusic();
+			MusicBeat.switchState(new LoadingState());
+		}
+		else
+			MusicBeat.switchState(new states.menus.MainMenuState());
+	}
+
+	function newChar()
+	{
+		MusicBeat.switchState(new CharacterEditor("face", false, wasPlayState));
+	}
+
+	function open()
+	{
+		var openStuff:Array<FlxBasic> = [];
+		var selected:String = "";
+		var characters:Array<String> = Assets.list("data/characters/", true, JSON).concat(["face"]);
+
+		var ok = new DoidoTextButton("Open", "small");
+		ok.screenCenter();
+		ok.x -= (ok.width / 2) + 5;
+		ok.y += 142;
+		openStuff.push(ok);
+
+		var reload = new DoidoTextButton("Reload", "small");
+		reload.screenCenter();
+		reload.x += (reload.width / 2) + 5;
+		reload.y += 142;
+		openStuff.push(reload);
+
+		var savewindow:ChooserWindow = new ChooserWindow((FlxG.width / 2) - (440 / 2), (FlxG.height / 2) - (240 / 2) - 10, 440, 245, [], null);
+		savewindow.view = GRID;
+		savewindow.type = CHARACTER;
+		savewindow.options = characters;
+		savewindow.cameras = [camHUD];
+		openStuff.push(savewindow);
+
+		var popup = new PopupSubState("Selected: NONE", 480, 340, openStuff, false);
+		openSubState(popup);
+
+		ok.button.onUp.add(() ->
+		{
+			if (selected == "")
+				FlxG.sound.play(Assets.sound('beep'));
+			else
+				MusicBeat.switchState(new CharacterEditor(selected, false, wasPlayState));
+		});
+
+		reload.button.onUp.add(() ->
+		{
+			#if MODS_FOLDER
+			Mods.reloadMods();
+			#end
+			characters = Assets.list("data/characters/", true, JSON).concat(["face"]);
+			savewindow.options = characters;
+		});
+
+		savewindow.onClick = (str) ->
+		{
+			selected = str;
+			popup.titleText.text = 'Selected: ${selected}';
+			trace(selected);
+		};
+	}
+
 	function save()
 	{
 		var data:String = Json.stringify(char.data, "\t");
@@ -1010,10 +1174,10 @@ class AnimWindow extends DoidoWindow
 	public var offsetTxt:FlxBitmapText;
 	public var charTxt:FlxBitmapText;
 	public var ghostTxt:FlxBitmapText;
+	public var buttons:Array<FlxSprite> = [];
 
 	var charSlider:DoidoSlider;
-
-	// var ghostSlider:DoidoSlider;
+	var ghostSlider:DoidoSlider;
 
 	public function new(characterEditor:CharacterEditor)
 	{
@@ -1037,23 +1201,17 @@ class AnimWindow extends DoidoWindow
 
 		charTxt = new FlxBitmapText(bg.x + 8, offsetTxt.y + 32, Assets.bitmapFont("phantommuff"));
 		charTxt.alignment = LEFT;
-		charTxt.text = "Character: ";
+		charTxt.text = "Char: ";
 		charTxt.color = 0xFFD8DAF6;
 		charTxt.scale.set(0.625, 0.625);
 		charTxt.updateHitbox();
 		add(charTxt);
 
-		charSlider = new DoidoSlider(charTxt.x + charTxt.width + 14, charTxt.y + 7, 320, 6, -1, -1, 3, 3, /*Math.POSITIVE_INFINITY*/);
+		charSlider = new DoidoSlider(charTxt.x + charTxt.width + 14, charTxt.y + 7, 315, 6, 0, 0, 3, 3, /*Math.POSITIVE_INFINITY*/);
 		charSlider.onScrub.add((sld) ->
 		{
-			var isOff:Bool = (charSlider.value < 0.0);
-			if (isOff)
-				characterEditor.char.playAnim(characterEditor.char.curAnimName, true);
-			else
-			{
-				characterEditor.char.playAnim(characterEditor.char.curAnimName, true, Math.floor(charSlider.value));
-				characterEditor.char.anim.pause();
-			}
+			characterEditor.char.playAnim(characterEditor.char.curAnimName, true, Math.floor(charSlider.value));
+			characterEditor.char.anim.pause();
 		});
 		add(charSlider);
 
@@ -1065,21 +1223,87 @@ class AnimWindow extends DoidoWindow
 		ghostTxt.updateHitbox();
 		add(ghostTxt);
 
-		/*ghostSlider = new DoidoSlider(charSlider.x, ghostTxt.y + 7, 320, 6, -1, -1, 3, 3);
-			ghostSlider.onScrub.add((sld) ->
-			{
-				var isOff:Bool = (ghostSlider.value < 0.0);
-				if (isOff)
-					characterEditor.ghost.playAnim(characterEditor.ghost.curAnimName, true);
-				else
-				{
-					characterEditor.ghost.playAnim(characterEditor.ghost.curAnimName, true, Math.floor(ghostSlider.value));
-					characterEditor.ghost.anim.pause();
-				}
-			});
-			add(ghostSlider); */
+		ghostSlider = new DoidoSlider(charSlider.x, ghostTxt.y + 7, 315, 6, 0, 0, 3, 3);
+		ghostSlider.onScrub.add((sld) ->
+		{
+			characterEditor.ghost.playAnim(characterEditor.ghost.curAnimName, true, Math.floor(ghostSlider.value));
+			characterEditor.ghost.anim.pause();
+		});
+		add(ghostSlider);
+
+		addButton(bg.x + bg.width - 32 - 28, charTxt.y - 3, 0, () ->
+		{
+			var char = characterEditor.char;
+			if (char.curAnimFinished || (char.curAnimPaused && char.curAnimFrame == char.anim.curAnim.frames.length - 1))
+				char.playAnim(char.curAnimName, true);
+			else if (char.curAnimPaused)
+				char.anim.resume();
+			else
+				char.anim.pause();
+		});
+		addButton(bg.x + bg.width - 32 - 28, ghostTxt.y - 3, 0, () ->
+		{
+			var char = characterEditor.ghost;
+			if (char.curAnimFinished || (char.curAnimPaused && char.curAnimFrame == char.anim.curAnim.frames.length - 1))
+				char.playAnim(char.curAnimName, true);
+			else if (char.curAnimPaused)
+				char.anim.resume();
+			else
+				char.anim.pause();
+		});
+
+		addButton(bg.x + bg.width - 32, charTxt.y - 3, 4, () ->
+		{
+			characterEditor.char.forceLoop = !characterEditor.char.forceLoop;
+		});
+		addButton(bg.x + bg.width - 32, ghostTxt.y - 3, 4, () ->
+		{
+			characterEditor.ghost.forceLoop = !characterEditor.ghost.forceLoop;
+		});
+
+		addButton(0, animName.y, 3, () ->
+		{
+			characterEditor.changeAnim(-1);
+		});
+		addButton(0, animName.y, 2, () ->
+		{
+			characterEditor.changeAnim(1);
+		});
 
 		updateAnim();
+	}
+
+	public function addButton(x:Float, y:Float, frame:Int, func:Void->Void)
+	{
+		var newBtn = new DoidoButton(func);
+		newBtn.loadSparrow("editors/charting/timeButtons");
+		newBtn.animation.addByPrefix("btn", "timeButtons", 0, false);
+		newBtn.animation.play("btn", true, false, frame);
+		buttons.push(newBtn);
+		add(newBtn);
+
+		newBtn.x = x;
+		newBtn.y = y;
+	}
+
+	override function draw()
+	{
+		var chars = [characterEditor.char, characterEditor.ghost];
+		for (i in 0...2)
+		{
+			buttons[i].animation.curAnim.curFrame = (chars[i].curAnimFinished || chars[i].curAnimPaused ? 0 : 1);
+			buttons[i + 2].alpha = (chars[i].forceLoop ? 1 : 0.6);
+		}
+
+		super.draw();
+	}
+
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		charSlider.value = characterEditor.char.curAnimFrame;
+		ghostSlider.value = characterEditor.ghost.curAnimFrame;
 	}
 
 	public function updateAnim()
@@ -1095,24 +1319,24 @@ class AnimWindow extends DoidoWindow
 		animName.x = bg.x + bg.width / 2 - animName.width / 2;
 		offsetTxt.x = bg.x + bg.width / 2 - offsetTxt.width / 2;
 
+		buttons[4].x = animName.x - 32;
+		buttons[5].x = animName.x + animName.width + 6;
+
 		if (char.animExists(anim))
 		{
 			charSlider.rangeMax = char.animation.curAnim.frames.length - 1;
-			charSlider.steps = char.animation.curAnim.frames.length - 1;
-			charSlider.snappingStrength = Math.POSITIVE_INFINITY;
+			charSlider.steps = char.animation.curAnim.frames.length;
 		}
 
-		/*
-			ghostSlider.rangeMax = ghost.animation.curAnim.frames.length - 1;
-			ghostSlider.steps = ghost.animation.curAnim.frames.length - 1;
-			ghostSlider.snappingStrength = Math.POSITIVE_INFINITY;
-		 */
+		ghostSlider.rangeMax = ghost.animation.curAnim.frames.length - 1;
+		ghostSlider.steps = ghost.animation.curAnim.frames.length;
 	}
 }
 
 class Ghost extends Character
 {
 	public var char:Character = null;
+
 	var loadedChar:String = "";
 
 	public function new(char:Character)
@@ -1155,5 +1379,53 @@ class Ghost extends Character
 		ghostAlpha = f;
 		alpha = (data.alpha ?? 1.0) * ghostAlpha;
 		return ghostAlpha;
+	}
+}
+
+class Hitbox extends FlxSprite
+{
+	var lineGrp:FlxTypedGroup<FlxSprite>;
+
+	var viewBack:Bool = false;
+	var viewLine:Bool = true;
+
+	var lineWidth:Int = 3;
+	var lineColor:FlxColor = FlxColor.RED;
+
+	override public function new()
+	{
+		super();
+		this.makeColor(1, 1, lineColor);
+		lineGrp = new FlxTypedGroup<FlxSprite>();
+	}
+
+	override function draw()
+	{
+		if (viewBack)
+			super.draw();
+
+		lineGrp.killMembers();
+
+		var top:FlxSprite = lineGrp.recycle(FlxSprite);
+		top.makeColor(width + lineWidth * 2, lineWidth, lineColor);
+		top.setPosition(x - lineWidth, y - lineWidth);
+		lineGrp.add(top);
+
+		var bottom:FlxSprite = lineGrp.recycle(FlxSprite);
+		bottom.makeColor(width + lineWidth * 2, lineWidth, lineColor);
+		bottom.setPosition(x - lineWidth, y + height);
+		lineGrp.add(bottom);
+
+		var left:FlxSprite = lineGrp.recycle(FlxSprite);
+		left.makeColor(lineWidth, height + lineWidth * 2, lineColor);
+		left.setPosition(x - lineWidth, y - lineWidth);
+		lineGrp.add(left);
+
+		var right:FlxSprite = lineGrp.recycle(FlxSprite);
+		right.makeColor(lineWidth, height + lineWidth * 2, lineColor);
+		right.setPosition(x + width, y - lineWidth);
+		lineGrp.add(right);
+
+		lineGrp.draw();
 	}
 }

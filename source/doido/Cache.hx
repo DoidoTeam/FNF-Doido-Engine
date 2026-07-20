@@ -77,6 +77,8 @@ class Cache
 
 		for (key in wipeQueue.get("graphics"))
 			clearGraphic(key);
+
+		wipeQueue.set("graphics", []);
 	}
 
 	public static function clearGraphic(key:String)
@@ -129,11 +131,15 @@ class Cache
 
 	public static function pushAll()
 	{
-		if (waitingList.length <= 0 && Save.data.gpuCaching)
+		if (waitingList.length <= 0 || !Save.data.gpuCaching)
 			return;
 
 		for (key in waitingList)
-			pushToGPU(getCachedGraphic(key).bitmap);
+		{
+			var graphic = getCachedGraphic(key);
+			if (graphic != null && graphic.bitmap != null) //just to be sure
+				pushToGPU(graphic.bitmap);
+		}
 
 		waitingList = [];
 	}
@@ -193,6 +199,8 @@ class Cache
 
 		for (key in wipeQueue.get("frames"))
 			clearFrames(key);
+
+		wipeQueue.set("frames", []);
 	}
 
 	public static function clearFrames(key:String)
@@ -262,6 +270,8 @@ class Cache
 
 		for (key in wipeQueue.get("sounds"))
 			clearSound(key);
+
+		wipeQueue.set("sounds", []);
 	}
 
 	public static function clearSound(key:String)

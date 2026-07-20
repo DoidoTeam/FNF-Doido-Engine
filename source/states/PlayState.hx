@@ -1,5 +1,6 @@
 package states;
 
+import doido.utils.TweenUtil;
 import shaders.ShaderCache;
 import doido.objects.DoidoCamera;
 import doido.utils.LerpUtil;
@@ -57,6 +58,8 @@ class PlayState extends MusicBeatState implements Playable
 	public var defaultHudZoom:Float = 1.0;
 
 	public var camZoom:Float = 0.9;
+	public var beatCamZoom:Float = 0.0;
+	public var zoomTween:FlxTween;
 
 	public var curFocus:String = "";
 	public var maxDisplace:DoidoPoint = {x: 0, y: 0};
@@ -148,7 +151,7 @@ class PlayState extends MusicBeatState implements Playable
 
 		spawnEvents = EVENTS.events;
 
-		audio = new AudioHandler(CHART.song, songDiff);
+		audio = new AudioHandler(CHART.song, CHART.postfix);
 
 		camGame = new DoidoCamera(false, true);
 		camHUD = new DoidoCamera(true, false);
@@ -321,10 +324,18 @@ class PlayState extends MusicBeatState implements Playable
 
 			if (!note.isHold || note.missed)
 			{
-				for (char in characters)
+				switch (note.data.type)
 				{
-					if (char.strumline == strumline)
-						char.playSingAnim(note.data.lane, note.missed);
+					case "no animation":
+						//
+					case "gf note":
+						gf.playSingAnim(note.data.lane, note.missed);
+					default:
+						for (char in characters)
+						{
+							if (char.strumline == strumline)
+								char.playSingAnim(note.data.lane, note.missed);
+						}
 				}
 			}
 
@@ -365,10 +376,18 @@ class PlayState extends MusicBeatState implements Playable
 			if (note.isHold && !note.isHoldEnd)
 				return;
 
-			for (char in characters)
+			switch (note.data.type)
 			{
-				if (char.strumline == strumline)
-					char.playSingAnim(note.data.lane, true);
+				case "no animation":
+					//
+				case "gf note":
+					gf.playSingAnim(note.data.lane, true);
+				default:
+					for (char in characters)
+					{
+						if (char.strumline == strumline)
+							char.playSingAnim(note.data.lane, true);
+					}
 			}
 
 			if (strumline.isPlayer)
@@ -380,15 +399,31 @@ class PlayState extends MusicBeatState implements Playable
 		};
 		playField.onNoteHold = (note, strumline) ->
 		{
-			for (char in characters)
+			switch (note.data.type)
 			{
-				if (char.strumline == strumline)
-				{
-					if (char.singType == LAST)
-						char.resetSingStep();
-					else if (char.curAnimFrame == char.singLoop || char.singType == FIRST)
-						char.playSingAnim(note.data.lane);
-				}
+				case "no animation":
+					//
+				case "gf note":
+					// weird formatter bug here sorry...
+					if (gf.singType == LAST)
+					{
+						gf.resetSingStep();
+					}
+					else if (gf.curAnimFrame == gf.singLoop || gf.singType == FIRST)
+					{
+						gf.playSingAnim(note.data.lane);
+					}
+				default:
+					for (char in characters)
+					{
+						if (char.strumline == strumline)
+						{
+							if (char.singType == LAST)
+								char.resetSingStep();
+							else if (char.curAnimFrame == char.singLoop || char.singType == FIRST)
+								char.playSingAnim(note.data.lane);
+						}
+					}
 			}
 
 			if (strumline.isPlayer)
@@ -489,7 +524,8 @@ class PlayState extends MusicBeatState implements Playable
 			{x: -FlxG.width / 2, y: -FlxG.height / 2}
 		]);
 
-		camGame.zoom = FlxMath.lerp(camGame.zoom, camZoom, elapsed * 6);
+		camGame.zoom = camZoom + beatCamZoom;
+		beatCamZoom = FlxMath.lerp(beatCamZoom, 0, elapsed * 6);
 		for (cam in [camHUD, camStrum])
 			cam.zoom = FlxMath.lerp(cam.zoom, defaultHudZoom, elapsed * 6);
 
@@ -509,31 +545,8 @@ class PlayState extends MusicBeatState implements Playable
 			openSubState(new GameOverSubState(SONG.META.assets.gameOverPath, bf));
 		}
 
-		if (FlxG.keys.justPressed.SEVEN)
-			MusicBeat.switchState(new ChartingState(SONG));
-
-		if(FlxG.keys.justPressed.EIGHT)
-		{
-			var char = dad;
-			if(FlxG.keys.pressed.SHIFT)
-				char = bf;
-			if(FlxG.keys.pressed.CONTROL)
-				char = gf;
-			
-			MusicBeat.switchState(new CharacterEditor(char.curChar, char == bf, true));
-		}
-
-		if (FlxG.keys.justPressed.ONE)
-			endSong();
-		//	changeStage(stageBuild.curStage == "stage" ? "school" : "stage");
-
-		if (FlxG.keys.justPressed.NINE)
-			camZoom = 0.2;
-
-		if (FlxG.keys.justPressed.F9)
-			audio.speed = 10;
-		if (FlxG.keys.justReleased.F9)
-			audio.speed = defaultSongSpeed;
+		if (Save.data.developerMode)
+			debugKeys();
 
 		if (canPause)
 		{
@@ -545,7 +558,7 @@ class PlayState extends MusicBeatState implements Playable
 
 		if (!paused)
 		{
-			Conductor.songPos += elapsed * 1000 * audio.speed;
+			audio.sync(elapsed);
 			FlxG.animationTimeScale = audio.speed;
 			if (!startedSong)
 			{
@@ -575,12 +588,38 @@ class PlayState extends MusicBeatState implements Playable
 		callScript("updatePost", [elapsed]);
 	}
 
+	function debugKeys()
+	{
+		if (FlxG.keys.justPressed.SEVEN)
+			MusicBeat.switchState(new ChartingState(SONG));
+
+		if (FlxG.keys.justPressed.EIGHT)
+		{
+			var char = dad;
+			if (FlxG.keys.pressed.SHIFT)
+				char = bf;
+			if (FlxG.keys.pressed.CONTROL)
+				char = gf;
+
+			MusicBeat.switchState(new CharacterEditor(char.curChar, char == bf, true));
+		}
+
+		if (FlxG.keys.justPressed.ONE)
+			endSong();
+		if (FlxG.keys.justPressed.NINE)
+			camZoom = 0.2;
+		if (FlxG.keys.justPressed.F9)
+			audio.speed = 10;
+		if (FlxG.keys.justReleased.F9)
+			audio.speed = defaultSongSpeed;
+	}
+
 	function preloadEvent(name:String, data:Array<Dynamic>)
 	{
 		switch (name)
 		{
 			case 'Change Character':
-				strToChar(data[0]).addChar(data[1]);
+				strToChar(data[0]).addChar(data[1], false);
 			case 'Change Stage':
 				stageBuild.reloadStage(data[0]);
 				if (stageBuild.gfVersion != "")
@@ -609,22 +648,33 @@ class PlayState extends MusicBeatState implements Playable
 					if (strumline.scrollTween != null)
 						strumline.scrollTween.cancel();
 					var newSpeed:Float = data[0];
-					var duration:Float = Conductor.getTimeAtStep(data[1]);
+					var duration:Float = Conductor.getStepDuration(curStepFloat, data[1]);
 					if (duration <= 0)
 						strumline.scrollSpeed = newSpeed;
 					else
 					{
 						strumline.scrollTween = FlxTween.tween(strumline, {scrollSpeed: newSpeed}, duration, {
-							// ease: CoolUtil.stringToEase(daEvent.value3),
+							ease: TweenUtil.fromString(data[2], data[3]),
 						});
 					}
 				}
 			case "Change Cam Zoom":
-				camZoom = data[0];
+				if (zoomTween != null)
+					zoomTween.cancel();
+				var newZoom:Float = data[0];
+				var duration:Float = Conductor.getStepDuration(curStepFloat, data[1]);
+				if (duration <= 0)
+					camZoom = newZoom;
+				else
+				{
+					zoomTween = FlxTween.tween(this, {camZoom: newZoom}, duration, {
+						ease: TweenUtil.fromString(data[2], data[3]),
+					});
+				}
 			case "Flash Screen":
-				MusicBeat.flash(camGame, Conductor.getTimeAtStep(data[0]), SpriteUtil.getColor(data[1]));
+				MusicBeat.flash(strToCam(data[2]), Conductor.getStepDuration(curStepFloat, data[0]), SpriteUtil.getColor(data[1]));
 			case 'Fade Screen':
-				camGame.fade(SpriteUtil.getColor(data[2]), Conductor.getTimeAtStep(data[1]), data[0]);
+				strToCam(data[3]).fade(SpriteUtil.getColor(data[2]), Conductor.getStepDuration(curStepFloat, data[1]), data[0]);
 			case "Change Stage":
 				changeStage(data[0]);
 			case "Camera Focus":
@@ -679,14 +729,29 @@ class PlayState extends MusicBeatState implements Playable
 		}
 	}
 
+	public static var availableCharacters:Array<String> = ['dad', 'bf', 'gf'];
+
 	function strToChar(str:String, nullable:Bool = false):CharGroup
 	{
-		return switch (str)
+		return switch (str.toLowerCase())
 		{
 			default: nullable ? null : dad;
 			case 'dad': dad;
 			case 'bf' | 'boyfriend': bf;
 			case 'gf' | 'girlfriend': gf;
+		}
+	}
+
+	public static var availableCameras:Array<String> = ['Game', 'HUD', 'Strum', 'Other'];
+
+	function strToCam(str:String):DoidoCamera
+	{
+		return switch (str.toLowerCase())
+		{
+			default: camGame;
+			case 'camHUD' | 'hud' | 'ui': camHUD;
+			case 'camStrum' | 'strum' | 'notes': camStrum;
+			case 'camOther' | 'other' | 'camOthers' | 'others': camOther;
 		}
 	}
 
@@ -717,7 +782,7 @@ class PlayState extends MusicBeatState implements Playable
 			snd.resume();
 		}
 		MusicBeat.activateTimers(true);
-		if (Conductor.songPos < audio.length)
+		if (Conductor.songPos < audio.songLength)
 		{
 			if (Conductor.songPos >= 0)
 				audio.play();
@@ -734,9 +799,9 @@ class PlayState extends MusicBeatState implements Playable
 
 	public function beatCamera(gameZoom:Float, hudZoom:Float)
 	{
-		camGame.zoom *= gameZoom;
+		beatCamZoom += gameZoom;
 		for (cam in [camHUD, camStrum])
-			cam.zoom *= hudZoom;
+			cam.zoom += hudZoom;
 	}
 
 	var endedSong:Bool = false;
@@ -795,9 +860,7 @@ class PlayState extends MusicBeatState implements Playable
 
 		if (startedSong && !endedSong)
 		{
-			if (Conductor.songPos < audio.length - 2000)
-				audio.sync();
-			else if (Conductor.songPos >= audio.length)
+			if (Conductor.songPos >= audio.songLength)
 				endSong();
 		}
 
@@ -895,7 +958,7 @@ class PlayState extends MusicBeatState implements Playable
 		}
 
 		if (curBeat % 4 == 0)
-			beatCamera(1.05, 1.02);
+			beatCamera(0.035, 0.02);
 
 		hudClass.beatHit(curBeat);
 	}
@@ -923,7 +986,7 @@ class PlayState extends MusicBeatState implements Playable
 	public var songLength(get, never):Float;
 
 	public function get_songLength():Float
-		return audio.length;
+		return audio.songLength;
 
 	public var botplay(default, set):Bool;
 

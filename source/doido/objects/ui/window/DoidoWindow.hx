@@ -1,5 +1,6 @@
 package doido.objects.ui.window;
 
+import flixel.util.FlxSignal;
 import doido.objects.ui.DoidoSlider;
 import flixel.FlxBasic;
 import flixel.group.FlxGroup;
@@ -14,7 +15,8 @@ class DoidoWindow extends FlxGroup implements IWindow
 	public var chartState:ChartingState;
 	public var bg:FlxSprite;
 	public var title:String = "";
-
+	public var updateCallback:FlxSignal = new FlxSignal();
+ 
 	public function new(chartState:ChartingState)
 	{
 		super();

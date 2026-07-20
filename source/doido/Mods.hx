@@ -71,8 +71,9 @@ class Mods
 	public static var modMetas:Array<ModMetadata> = [];
 	public static var modConfigs:Map<String, ModConfig> = [];
 	public static var enabledMods:Array<String> = [];
+	public static var initialized:Bool = false;
 
-	public static final API_VERSION:Version = "0.2.3";
+	public static final API_VERSION:Version = "0.2.5";
 	public static final MOD_ROOT:String = "mods";
 	public static final ASSETS_ROOT:Null<String> = null; // null defaults to assets, android only works like this
 	public static final VERSION_RULE:VersionRule = '>=${API_VERSION.major}.${API_VERSION.minor}.0 <=${API_VERSION}';
@@ -120,6 +121,7 @@ class Mods
 			ignoredFiles: ignoredFiles,
 			useScriptedClasses: false
 		});
+		initialized = true;
 		loadJson();
 		scan();
 	}
@@ -221,7 +223,7 @@ class Mods
 			}
 		}
 
-		if (!reload)
+		if (!reloadGame)
 		{
 			var added = newMods.filter(m -> !enabledMods.contains(m));
 			var removed = enabledMods.filter(m -> !newMods.contains(m));
@@ -232,12 +234,20 @@ class Mods
 				var config = modConfigs.get(mod);
 				if (config != null && (config.reload ?? false))
 				{
-					reload = true;
+					reloadGame = true;
 					break;
 				}
 			}
 		}
 		enabledMods = newMods;
+	}
+
+	public static function reloadMods()
+	{
+		if (!initialized)
+			return;
+
+		Polymod.reload();
 	}
 
 	public static function getMod(mod:String)
@@ -293,14 +303,14 @@ class Mods
 		modList.mods[index] = modList.mods[index + offset];
 		modList.mods[index + offset] = temp;
 
-		if (!reload)
+		if (!reloadGame)
 		{
 			for (mod in [modList.mods[index], modList.mods[index + offset]])
 			{
 				var config = modConfigs.get(mod.name);
 				if (config != null && (config.reload ?? false))
 				{
-					reload = true;
+					reloadGame = true;
 					break;
 				}
 			}
@@ -358,7 +368,7 @@ class Mods
 		return null;
 	}
 
-	public static var reload:Bool = false;
+	public static var reloadGame:Bool = false;
 	public static var stateRedirects(get, never):Map<String, String>;
 	public static var initialState(get, never):String;
 	public static var modOptions(get, never):Array<ModOption>;

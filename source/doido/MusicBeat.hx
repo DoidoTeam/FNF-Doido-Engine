@@ -21,6 +21,7 @@ class MusicBeat
 {
 	public static var activeState:FlxState;
 	public static var nextTransition:String = '';
+
 	public static function switchState(?target:MusicBeatState, tOut:String = 'funkin', ?tIn:String)
 	{
 		#if SCREENSHOT_FEATURE Screenshot.clearScreenshot(); #end
@@ -75,6 +76,9 @@ class MusicBeat
 	public static var skipClearCache:Bool = false;
 	public static var skipTrans:Bool = true;
 	public static var skip(get, set):Bool;
+
+	public static var preventClosing:Bool = false;
+	public static var onClosing:Void->Void = null;
 
 	public static function get_skip()
 		return skipTrans && skipClearCache;
@@ -193,6 +197,7 @@ class MusicBeatState extends FlxUIState
 		if (!MusicBeat.skipClearCache)
 			Cache.clearCache();
 
+		#if MODS_FOLDER Mods.reloadMods(); #end
 		Cache.pushAll();
 
 		if (!MusicBeat.skipTrans)

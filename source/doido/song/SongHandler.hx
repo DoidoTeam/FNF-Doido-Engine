@@ -1,8 +1,10 @@
 package doido.song;
 
+import doido.utils.EventUtil;
 import objects.Character.DoidoCharacter;
 import doido.utils.NoteUtil;
 import doido.song.compat.Legacy;
+import haxe.Json;
 
 typedef DoidoSong =
 {
@@ -17,6 +19,7 @@ typedef DoidoChart =
 	var notes:Array<NoteData>;
 	var bpm:Float;
 	var speed:Float;
+	var ?postfix:String;
 }
 
 typedef DoidoEvents =
@@ -108,11 +111,15 @@ class SongHandler
 	{
 		// Normalize song name to use only lowercases and no spaces
 		CHART.song = formatName(CHART.song);
+		CHART.postfix = CHART.postfix ?? "";
 
 		// cleaning multiple notes at the same place
 		var removed:Int = 0;
 		for (note in CHART.notes)
 		{
+			if (note.type == null || note.type == "")
+				note.type = "none";
+
 			for (doubleNote in CHART.notes)
 			{
 				if (note != doubleNote
@@ -152,7 +159,7 @@ class SongHandler
 
 	private static function formatEvents(EVENTS:DoidoEvents):DoidoEvents
 	{
-		EVENTS.events.sort(NoteUtil.sortEvents);
+		EVENTS.events.sort(EventUtil.sortEvents);
 		return EVENTS;
 	}
 
@@ -167,11 +174,9 @@ class SongHandler
 		return formatEvents({events: a.events.concat(b.events)});
 	}
 
-	/* --- METAS --- */
-	public static function loadMeta(jsonInput:String, ?diff:String = "normal"):DoidoMeta
+	public static function defaultMeta():DoidoMeta
 	{
-		// default
-		var meta:DoidoMeta = {
+		return {
 			player1: "bf",
 			player2: "face",
 			gf: "gf",
@@ -187,7 +192,13 @@ class SongHandler
 				gameOverPath: "base",
 			}
 		};
+	}
 
+	/* --- METAS --- */
+	public static function loadMeta(jsonInput:String, ?diff:String = "normal"):DoidoMeta
+	{
+		// default
+		var meta:DoidoMeta = defaultMeta();
 		var metaPath:String = 'songs/$jsonInput/meta';
 		if (Assets.fileExists(metaPath, JSON))
 			meta = mergeMetas(meta, cast Assets.json(metaPath));
@@ -252,4 +263,13 @@ class SongHandler
 
 	public static function formatName(name:String)
 		return name.toLowerCase().replace(" ", "-");
+
+	inline public static function parseChart(str:String):DoidoChart
+		return formatChart(cast Json.parse(str));
+
+	inline public static function parseEvents(str:String):DoidoEvents
+		return formatEvents(cast Json.parse(str));
+
+	inline public static function parseMeta(str:String):DoidoMeta
+		return mergeMetas(cast Json.parse(str), defaultMeta());
 }

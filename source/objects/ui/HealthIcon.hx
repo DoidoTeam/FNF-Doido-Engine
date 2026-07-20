@@ -7,7 +7,7 @@ import doido.objects.DoidoSprite;
 typedef IconData =
 {
 	var ?image:String;
-	var ?color:Dynamic;
+	var ?color:String;
 	var ?scale:Float;
 	var ?pixel:Bool;
 	var ?gridWidth:Int;

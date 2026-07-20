@@ -1,6 +1,5 @@
 package states;
 
-import doido.Mods;
 import doido.song.Highscore;
 import doido.song.Highscore.ScoreData;
 import doido.objects.Alphabet;
@@ -253,7 +252,7 @@ class Freeplay extends MusicBeatState
 			{
 				PlayState.loadSong(options[curSong].name, options[curSong].diffs[curDiff]);
 
-				if (FlxG.keys.justPressed.SEVEN)
+				if (Save.data.developerMode && FlxG.keys.justPressed.SEVEN)
 				{
 					MusicBeat.switchState(new ChartingState(PlayState.SONG));
 				}

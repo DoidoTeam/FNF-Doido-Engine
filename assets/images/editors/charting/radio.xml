@@ -2,6 +2,6 @@
 <TextureAtlas imagePath="radial.png">
 	<!-- Created with Adobe Animate version 20.0.3.25487 -->
 	<!-- http://www.adobe.com/products/animate.html -->
-	<SubTexture name="button radial0000" x="2" y="2" width="20" height="20"/>
-	<SubTexture name="button radial0001" x="24" y="2" width="20" height="20"/>
+	<SubTexture name="button radio0000" x="2" y="2" width="20" height="20"/>
+	<SubTexture name="button radio0001" x="24" y="2" width="20" height="20"/>
 </TextureAtlas>

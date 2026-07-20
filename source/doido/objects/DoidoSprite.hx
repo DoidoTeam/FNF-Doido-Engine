@@ -37,6 +37,7 @@ class DoidoSprite extends FlxAnimate
 	public var curAnimName:String = '';
 	public var curAnimFrame(get, never):Int;
 	public var curAnimFinished(get, never):Bool;
+	public var curAnimPaused(get, never):Bool;
 	public var animOffsets:Map<String, DoidoPoint> = [];
 	public var animList:Array<String> = [];
 
@@ -222,6 +223,9 @@ class DoidoSprite extends FlxAnimate
 
 	public function get_curAnimFinished():Bool
 		return anim.curAnim.finished;
+
+	public function get_curAnimPaused():Bool
+		return anim.curAnim.paused;
 
 	public static function copyAnim(anim:Animation):Animation
 	{

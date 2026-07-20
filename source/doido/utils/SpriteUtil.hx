@@ -31,11 +31,7 @@ class SpriteUtil
 
 	public static function loadImage(spr:FlxSprite, key:String, animated:Bool = false, frameWidth:Float = 0, frameHeight:Float = 0):FlxSprite
 	{
-		spr.loadGraphic(
-			Assets.image(key), animated,
-			animated ? Math.floor(frameWidth) : 0,
-			animated ? Math.floor(frameHeight) : 0
-		);
+		spr.loadGraphic(Assets.image(key), animated, animated ? Math.floor(frameWidth) : 0, animated ? Math.floor(frameHeight) : 0);
 		return spr;
 	}
 
@@ -95,13 +91,22 @@ class SpriteUtil
 		return spr;
 	}
 
-	public static function getColor(clr:Dynamic):FlxColor
+	public static function setHitbox(spr:FlxSprite, width:Float, height:Float)
 	{
-		if (Std.isOfType(clr, String))
-			return FlxColor.fromString(clr);
-		else if (Std.isOfType(clr, Array))
-			return FlxColor.fromRGB(clr[0], clr[1], clr[2]);
+		spr.width = width;
+		spr.height = height;
+		spr.offset.set((spr.frameWidth - width) / 2, (spr.frameHeight - height) / 2);
+	}
+
+	public static function getColor(clr:String):FlxColor
+	{
+		var str:String = cast clr;
+		if (str.contains(","))
+		{
+			var clr = str.split(",");
+			return FlxColor.fromRGB(Std.parseInt(clr[0] ?? "0") ?? 0, Std.parseInt(clr[1] ?? "0") ?? 0, Std.parseInt(clr[2] ?? "0") ?? 0) ?? 0xFFA1A1A1;
+		}
 		else
-			return 0xFFA1A1A1;
+			return FlxColor.fromString(clr) ?? 0xFFA1A1A1;
 	}
 }

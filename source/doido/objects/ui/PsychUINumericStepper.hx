@@ -25,7 +25,10 @@ class PsychUINumericStepper extends PsychUIInputText
 	public var buttonReset:DoidoAnimatedButton;
 
 	public var onValueChange:Void->Void;
+	public var onValueStep:Float->Void;
 	public var value(default, set):Float;
+
+	public var disableSteppers:Bool = false;
 
 	public function new(x:Float = 0, y:Float = 0, step:Float = 1, defValue:Float = 0, min:Float = -999, max:Float = 999, decimals:Int = 0, ?wid:Int = 100,
 			?isPercent:Bool = false, ?hasReset:Bool = false)
@@ -86,6 +89,8 @@ class PsychUINumericStepper extends PsychUIInputText
 	function stepValue(mult:Int = 0)
 	{
 		value += (step * mult);
+		if (onValueStep != null)
+			onValueStep(step * mult);
 		_internalOnChange();
 	}
 
@@ -94,10 +99,10 @@ class PsychUINumericStepper extends PsychUIInputText
 		value = Math.max(min, Math.min(max, v));
 		text = Std.string(isPercent ? (value * 100) : value);
 
-		buttonPlus.disabled = value >= max;
-		buttonMinus.disabled = value <= min;
+		buttonPlus.disabled = disableSteppers && (disableInput || value >= max);
+		buttonMinus.disabled = disableSteppers && (disableInput || value <= min);
 		if (buttonReset != null)
-			buttonReset.disabled = value == defValue;
+			buttonReset.disabled = disableSteppers && !disableInput && value == defValue;
 
 		_updateValue();
 		return value;

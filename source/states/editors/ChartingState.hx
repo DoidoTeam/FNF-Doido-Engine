@@ -1,5 +1,8 @@
 package states.editors;
 
+import states.menus.MainMenuState;
+import flixel.FlxObject;
+import openfl.events.RenderEvent;
 import substates.editors.ChartTestSubState;
 import substates.editors.PopupSubState;
 import doido.Cache;
@@ -27,6 +30,7 @@ import doido.song.SongHandler.DoidoEvents;
 import doido.song.SongHandler.DoidoMeta;
 import doido.utils.NoteUtil;
 import flixel.FlxSprite;
+import flixel.FlxBasic;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxBitmapText;
@@ -41,14 +45,78 @@ import flixel.util.FlxColor;
 import doido.objects.ui.buttons.DoidoTextButton;
 import flixel.graphics.frames.FlxFrame;
 import doido.song.SongHandler;
+import doido.utils.EventUtil;
 
 class ChartingNote extends Note
 {
 	public var selected:Bool = false;
 
+	public var typeTxt:FlxBitmapText;
+	public var typeIndex:Int = 0;
+
 	public function new()
 	{
 		super();
+
+		typeTxt = new FlxBitmapText(0, 0, Assets.bitmapFont("phantommuff"));
+		typeTxt.setOutline(0xFF000000, 2);
+		typeTxt.alignment = LEFT;
+		typeTxt.scale.set(0.7, 0.7);
+		typeTxt.updateHitbox();
+	}
+
+	override function draw()
+	{
+		super.draw();
+
+		if (typeIndex != 0 && !isHold)
+		{
+			typeTxt.x = x;
+			typeTxt.y = y;
+			typeTxt.draw();
+		}
+	}
+
+	public override function loadData(data:NoteData, skin:String)
+	{
+		super.loadData(data, skin);
+		typeIndex = NoteUtil.noteTypes.indexOf(data.type);
+		typeTxt.text = typeIndex == -1 ? '?' : Std.string(typeIndex);
+	}
+}
+
+class ChartingEvent extends FlxSprite
+{
+	public var selected:Bool = false;
+	public var event:EventData;
+	public var isHold:Bool = false;
+
+	public function new()
+	{
+		super();
+	}
+
+	public function resetEvent()
+	{
+		scale.set(1, 1);
+		antialiasing = true;
+		updateHitbox();
+	}
+
+	public function reloadEvent(event:EventData)
+	{
+		resetEvent();
+		isHold = false;
+		this.event = event;
+		this.loadImage(EventUtil.getEventSprite(event.name));
+		this.setHitbox(ChartingState.EVENT_SIZE, ChartingState.EVENT_SIZE);
+	}
+
+	public function reloadHold(length:Float)
+	{
+		resetEvent();
+		isHold = true;
+		this.makeColor(ChartingState.GRID_SIZE * 0.25, ChartingState.GRID_SIZE * ChartingState.GRID_ZOOM * length);
 	}
 }
 
@@ -60,8 +128,15 @@ class ChartingState extends MusicBeatState
 	public static var GRID_SNAP:Int = 16;
 	public static var GRID_ZOOM:Float = 1.0;
 
+	public static var EVENT_SIZE:Float = 40;
+	public static var EVENT_PADDING:Int = 10;
+
+	// settings
+	public static var soundEffects:Bool = true;
+	public static var centerEvents:Bool = true;
 	public static var noFunAllowed:Bool = false; // reduced animations
-	public static var quantNotes:Bool = Save.data.quantNotes;
+	public static var quantNotes:Bool = false;
+	public static var darkMode:Bool = false;
 
 	public var audio:AudioHandler;
 	public var playingSong:Bool = false;
@@ -74,13 +149,25 @@ class ChartingState extends MusicBeatState
 	public var grid:ChartingGrid;
 	public var timeBar:FlxSprite;
 	public var renderNotes:FlxTypedGroup<ChartingNote>;
+	public var renderEvents:FlxTypedGroup<ChartingEvent>;
 	public var selectedColor:FlxColor = FlxColor.BLACK;
 
+	public var bgLight:FlxSprite;
+	public var bgDark:FlxSprite;
+
 	// editor stuff
+	public var borderAreas:FlxGroup;
 	public var selectedNotes:Array<NoteData> = [];
+	public var selectedEvents:Array<EventData> = [];
+	public var noteClipboard:Array<NoteData> = [];
 	public var draggingSelectedNotes:Bool = false;
 	public var hoverSquare:FlxSprite;
 	public var selectSquare:FlxSprite;
+	public var addEvent:ChartingEvent;
+
+	public var curNoteType:String = "none";
+	public var lastEdited:EventData;
+	public var eventAmounts:Map<String, Int> = []; // how many events are in each step
 
 	public var lastClicked:DoidoPoint = {x: 0, y: 0};
 	public var lastClickedOffset:Float = 0.0;
@@ -96,8 +183,7 @@ class ChartingState extends MusicBeatState
 	public var menuMain:DoidoBox;
 
 	// border
-	public var borderLeft:FlxSprite;
-	public var borderRight:FlxSprite;
+	public var border:ColoredBorder;
 	public var cameraIcon:FlxSprite;
 	public var iconBf:HealthIcon;
 	public var iconDad:HealthIcon;
@@ -123,27 +209,63 @@ class ChartingState extends MusicBeatState
 		persistentUpdate = false;
 		MusicBeat.stopMusic();
 
+		MusicBeat.preventClosing = true;
+		MusicBeat.onClosing = () -> confirmPopup("Close", () -> Sys.exit(0));
+
+		noFunAllowed = EditorSave.data.reducedAnimations;
+		soundEffects = EditorSave.data.soundEffects;
+		centerEvents = EditorSave.data.centerEvents;
+		quantNotes = EditorSave.data.quantNotes;
+		darkMode = EditorSave.data.darkMode;
+
 		characters = Assets.list("data/characters/", true, JSON).concat(["face"]);
 
-		audio = new AudioHandler(CHART.song, PlayState.songDiff);
+		audio = new AudioHandler(CHART.song, CHART.postfix);
 
 		if (NoteUtil.directions.length == 0)
 			NoteUtil.setUpDirections(4);
 
-		var bg = new FlxSprite().loadGraphic(Assets.image('editors/charting/bg/light'));
-		bg.screenCenter();
-		add(bg);
+		// areas excluded from mouse dragging
+		// [x, y], [width, height]
+		var borderList:Array<Array<Array<Int>>> = [[[0, 0], [338, 51]], [[0, 597], [338, 123]], [[803, 0], [477, 720]]];
+		borderAreas = new FlxGroup();
+		for (border in borderList)
+		{
+			var borderHbx = new FlxObject(border[0][0], border[0][1], border[1][0], border[1][1]);
+			borderAreas.add(borderHbx);
+		}
+
+		bgLight = new FlxSprite().loadGraphic(Assets.image('editors/charting/bg/light'));
+		add(bgLight);
+
+		bgDark = new FlxSprite().loadGraphic(Assets.image('editors/charting/bg/dark'));
+		bgDark.visible = EditorSave.data.darkMode;
+		add(bgDark);
+
+		for (bg in [bgLight, bgDark]) {
+			bg.setGraphicSize(FlxG.width, FlxG.height);
+			bg.updateHitbox();
+			bg.screenCenter();
+		}
 
 		hoverSquare = new FlxSprite().makeColor(GRID_SIZE, GRID_SIZE, 0xFFFFFFFF);
 		hoverSquare.visible = false;
 		hoverSquare.alpha = 0.7;
 		// add(hoverSquare);
 
-		grid = new ChartingGrid(358, audio.length, hoverSquare);
+		grid = new ChartingGrid(415, audio.songLength, hoverSquare);
 		add(grid);
 
 		renderNotes = new FlxTypedGroup<ChartingNote>();
 		add(renderNotes);
+
+		renderEvents = new FlxTypedGroup<ChartingEvent>();
+		add(renderEvents);
+
+		addEvent = new ChartingEvent();
+		addEvent.reloadEvent({name: "add", stepTime: 0, data: []});
+		addEvent.visible = false;
+		add(addEvent);
 
 		timeBar = new FlxSprite(grid.gridX).makeColor(GRID_SIZE * GRID_LANES, 4, 0xFFFF0000);
 		timeBar.screenCenter(Y);
@@ -183,19 +305,14 @@ class ChartingState extends MusicBeatState
 			icon.destroy();
 		}
 
-		borderLeft = new FlxSprite().loadGraphic(Assets.image('editors/charting/border_left'));
-		borderLeft.x -= 2;
-		add(borderLeft);
-
-		borderRight = new FlxSprite().loadGraphic(Assets.image('editors/charting/border_right'));
-		borderRight.x = FlxG.width - borderRight.width + 2;
-		add(borderRight);
+		border = new ColoredBorder(grid.gridX + (GRID_SIZE * GRID_LANES / 2));
+		add(border);
 
 		cameraIcon = new FlxSprite().loadGraphic(Assets.image('editors/charting/camera'));
-		cameraIcon.scale.set(0.38, 0.38);
+		cameraIcon.scale.set(-0.38, 0.38);
 		cameraIcon.updateHitbox();
-		cameraIcon.x = 518 - (cameraIcon.width / 2);
-		cameraIcon.y = 1;
+		cameraIcon.x = grid.gridX + (GRID_SIZE * GRID_LANES / 2) - cameraIcon.width / 2;
+		cameraIcon.y = 44 - cameraIcon.height;
 		add(cameraIcon);
 
 		iconBf = new HealthIcon();
@@ -205,24 +322,249 @@ class ChartingState extends MusicBeatState
 		reloadIcons();
 	}
 
+	override function destroy()
+	{
+		MusicBeat.preventClosing = false;
+		MusicBeat.onClosing = null;
+		super.destroy();
+	}
+
 	function reloadIcons()
 	{
 		iconBf.setIcon(META.player1, true);
 		iconDad.setIcon(META.player2, false);
 
-		borderLeft.color = iconDad.barColor;
-		borderRight.color = iconBf.barColor;
+		border.setColor(false, iconDad.barColor);
+		border.setColor(true, iconBf.barColor);
 
 		for (icon in [iconBf, iconDad])
 		{
 			icon.setGraphicSize(82, 82);
 			icon.updateHitbox();
+			icon.setHitbox(62, 62);
 			icon.scrollFactor.set();
 			icon.y = 35 - (icon.height / 2);
 		}
 
-		iconDad.x = 518 - iconDad.width - 15;
-		iconBf.x = 518 + 15;
+		iconDad.x = grid.gridX + (GRID_SIZE * GRID_LANES / 2) - iconDad.width - 35;
+		iconBf.x = grid.gridX + (GRID_SIZE * GRID_LANES / 2) + 35;
+	}
+
+	function newSong()
+	{
+		var newSong:String = CHART.song;
+		var newDiff:String = PlayState.songDiff;
+
+		var openStuff:Array<FlxBasic> = [];
+		openStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22 - 5, "Song:", 0xFFD8DAF6));
+		openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Diff:", 0xFFD8DAF6));
+
+		var songField:PsychUIInputText;
+		songField = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, newSong, 14);
+		songField.onChange.add((old, cur, input) -> newSong = cur);
+		openStuff.push(songField);
+
+		var diffField:PsychUIInputText;
+		diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, newDiff, 14);
+		diffField.onChange.add((old, cur, input) -> newDiff = cur);
+		openStuff.push(diffField);
+
+		var ok = new DoidoTextButton("Ok", "small");
+		ok.screenCenter();
+		ok.y += 50;
+		openStuff.push(ok);
+
+		var popup = new PopupSubState("New Song:", 320, 150, openStuff);
+		openSubState(popup);
+
+		ok.button.onUp.add(() ->
+		{
+			confirmPopup("New Song:", () ->
+			{
+				PlayState.SONG = {
+					CHART: {
+						song: newSong,
+						notes: [],
+						bpm: 100,
+						speed: 2
+					},
+					EVENTS: {events: []},
+					META: {
+						player1: "bf",
+						player2: "face",
+						gf: "gf",
+						stage: "stage",
+						composer: "Unknown",
+						charter: "Unknown",
+						assets: {
+							playerNotes: "base",
+							opponentNotes: "base",
+							hudType: "base",
+							ratings: "base",
+							countdown: "base",
+							gameOverPath: "base",
+						}
+					}
+				};
+				PlayState.songDiff = newDiff;
+				PlayState.isStoryMode = false;
+				MusicBeat.switchState(new ChartingState(PlayState.SONG));
+			});
+		});
+	}
+
+	function openSong()
+	{
+		var newSong:String = CHART.song;
+		var newDiff:String = PlayState.songDiff;
+
+		var openStuff:Array<FlxBasic> = [];
+		openStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22 - 5, "Song:", 0xFFD8DAF6));
+		openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Diff:", 0xFFD8DAF6));
+
+		var songField:PsychUIInputText;
+		songField = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, newSong, 14);
+		songField.onChange.add((old, cur, input) -> newSong = cur);
+		openStuff.push(songField);
+
+		var diffField:PsychUIInputText;
+		diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, newDiff, 14);
+		diffField.onChange.add((old, cur, input) -> newDiff = cur);
+		openStuff.push(diffField);
+
+		var ok = new DoidoTextButton("Ok", "small");
+		ok.screenCenter();
+		ok.y += 50;
+		openStuff.push(ok);
+
+		var popup = new PopupSubState("Open Song:", 320, 150, openStuff);
+		openSubState(popup);
+
+		ok.button.onUp.add(() ->
+		{
+			confirmPopup("Open Song:", () ->
+			{
+				try
+				{
+					PlayState.loadSong(newSong, newDiff);
+					MusicBeat.switchState(new ChartingState(PlayState.SONG));
+				}
+				catch (e)
+				{
+					FlxG.sound.play(Assets.sound('beep'));
+					Logs.print(e);
+					openSong();
+				}
+			});
+		});
+	}
+
+	function openAutosave()
+	{
+		var openStuff:Array<FlxBasic> = [];
+		var saves:Array<String> = [];
+		var selected:Int = -1;
+
+		for (save in EditorSave.savedSongs)
+			saves.push('${save.song} - ${save.diff} (${save.date})');
+
+		var ok = new DoidoTextButton("Open", "small");
+		ok.screenCenter();
+		ok.x -= (ok.width / 2) + 5;
+		ok.y += 142;
+		openStuff.push(ok);
+
+		var export = new DoidoTextButton("Export", "small");
+		export.screenCenter();
+		export.x += (export.width / 2) + 5;
+		export.y += 142;
+		openStuff.push(export);
+
+		var savewindow:ChooserWindow = new ChooserWindow((FlxG.width / 2) - (440 / 2), (FlxG.height / 2) - (240 / 2) - 10, 440, 245, [], this);
+		savewindow.view = LIST;
+		savewindow.type = NONE;
+		savewindow.options = saves;
+		savewindow.align = CENTER;
+		openStuff.push(savewindow);
+
+		var popup = new PopupSubState("Selected: NONE", 480, 340, openStuff, false);
+		openSubState(popup);
+
+		ok.button.onUp.add(() ->
+		{
+			if (selected < 0)
+				return;
+
+			confirmPopup('Open Autosave', () ->
+			{
+				var saveData = EditorSave.savedSongs[selected];
+				var CHART = SongHandler.parseChart(saveData.CHART);
+				var EVENTS = SongHandler.parseEvents(saveData.EVENTS);
+				var META = SongHandler.parseMeta(saveData.META);
+				var diff = saveData.diff;
+				addAutoSave();
+
+				PlayState.SONG = {
+					CHART: CHART,
+					EVENTS: EVENTS,
+					META: META
+				};
+				PlayState.songDiff = diff;
+				PlayState.isStoryMode = false;
+				MusicBeat.switchState(new ChartingState(PlayState.SONG));
+			}, false);
+		});
+
+		export.button.onUp.add(() ->
+		{
+			if (selected < 0)
+				return;
+
+			var saveData = EditorSave.savedSongs[selected];
+			var CHART = SongHandler.parseChart(saveData.CHART);
+			var EVENTS = SongHandler.parseEvents(saveData.EVENTS);
+			var META = SongHandler.parseMeta(saveData.META);
+			var diff = saveData.diff;
+			save(CHART, PlayState.songDiff);
+			save(EVENTS, "events");
+			save(META, "meta");
+			popup.close();
+		});
+
+		savewindow.onClick = (str) ->
+		{
+			selected = saves.indexOf(str);
+			popup.titleText.text = 'Selected: ${saves[selected]}';
+			trace(selected);
+		};
+	}
+
+	function confirmPopup(titleText:String, func:Void->Void, ?save:Bool = true, ?close:Bool = false)
+	{
+		if (save)
+			addAutoSave();
+
+		playingSong = false;
+		var openStuff:Array<FlxBasic> = [];
+
+		var text = createText(0, 0, "Are you sure?\nUnsaved changes may be lost.", 0xFFD8DAF6);
+		text.alignment = CENTER;
+		text.updateHitbox();
+		text.screenCenter();
+		text.y -= 5;
+		openStuff.push(text);
+
+		var ok = new DoidoTextButton("Ok", "small");
+		ok.screenCenter();
+		ok.y += 50;
+		openStuff.push(ok);
+
+		var popup = new PopupSubState(titleText, 320, 150, openStuff, false);
+		openSubState(popup);
+
+		ok.button.onUp.add(func);
+		if (close)
+			ok.button.onUp.add(popup.close);
 	}
 
 	function addMenu()
@@ -234,54 +576,10 @@ class ChartingState extends MusicBeatState
 
 		var fileWindow = new MenuWindow(x, y + 30, width, this);
 		fileWindow.title = "File";
-		// fileWindow.addButton("New", "Ctrl + N");
-		// fileWindow.addSeparator();
-
-		// fileWindow.addButton("Open Events", "Ctrl + Alt + O");
-		// fileWindow.addSeparator();
-		fileWindow.addButton("Open Song", () ->
-		{
-			var newSong:String = CHART.song;
-			var newDiff:String = PlayState.songDiff;
-
-			var openStuff:Array<FlxSprite> = [];
-			openStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22, "Song:", 0xFFD8DAF6));
-			openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22, "Diff:", 0xFFD8DAF6));
-
-			var songField:PsychUIInputText;
-			songField = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2), 145, newSong, 14);
-			songField.onChange.add((old, cur, input) -> newSong = cur);
-			openStuff.push(songField);
-
-			var diffField:PsychUIInputText;
-			diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2), 145, newDiff, 14);
-			diffField.onChange.add((old, cur, input) -> newDiff = cur);
-			openStuff.push(diffField);
-
-			var ok = new DoidoTextButton("Ok", "small");
-			ok.screenCenter();
-			ok.y += 50;
-			openStuff.push(ok);
-
-			var popup = new PopupSubState("Open Song:", 320, 150, openStuff);
-			openSubState(popup);
-
-			ok.button.onUp.add(() ->
-			{
-				try
-				{
-					PlayState.loadSong(newSong, newDiff);
-					MusicBeat.switchState(new ChartingState(PlayState.SONG));
-				}
-				catch (e)
-				{
-					FlxG.sound.play(Assets.sound('beep'));
-					Logs.print(e);
-				}
-
-				// popup.close();
-			});
-		});
+		fileWindow.addButton("New", "Ctrl + N", newSong);
+		fileWindow.addSeparator();
+		fileWindow.addButton("Open Song", "Ctrl + O", openSong);
+		fileWindow.addButton("Open Autosave", "Ctrl + Shift + O", openAutosave);
 		fileWindow.addButton("Save Song", "Ctrl + S", () ->
 		{
 			save(CHART, PlayState.songDiff);
@@ -293,12 +591,17 @@ class ChartingState extends MusicBeatState
 		fileWindow.addButton("Save Events", "Ctrl + Alt + S", () -> save(EVENTS, "events"));
 		fileWindow.addButton("Save Meta", "Ctrl + Tab + S", () -> save(META, "meta"));
 		fileWindow.addSeparator();
-		// fileWindow.addButton("Reload Chart", "Ctrl + Shift + Alt + R");
+		// fileWindow.addButton("Import Chart");
+		// fileWindow.addButton("Export Chart");
 		// fileWindow.addSeparator();
-		// fileWindow.addButton("Preview", "ESC");
+		fileWindow.addButton("Test Chart", "ESC", () -> openTester(false));
+		fileWindow.addButton("Test Chart (Opponent)", "Shift + ESC", () -> openTester(true));
+		fileWindow.addSeparator();
 		fileWindow.addButton("Play Song", "Enter", () -> play());
 		fileWindow.addButton("Play from Here", "Shift + Enter", () -> play(true));
-		fileWindow.addButton("Test Song", "ESC", () -> openTester());
+		fileWindow.addSeparator();
+		fileWindow.addButton("Exit", () -> confirmPopup("Exit", () -> MusicBeat.switchState(new MainMenuState())), 0xFFFF0000);
+
 		fileWindow.updateBg();
 
 		var editWindow = new MenuWindow(x, y + 30, width, this);
@@ -306,72 +609,179 @@ class ChartingState extends MusicBeatState
 		// editWindow.addButton("Undo", "Ctrl + Z");
 		// editWindow.addButton("Redo", "Ctrl + Y");
 		// editWindow.addSeparator();
-		editWindow.addButton("Select All", "Ctrl + A", () -> selectAll());
+		editWindow.addButton("Copy", "Ctrl + C", () -> copy(false));
+		editWindow.addButton("Paste", "Ctrl + V", () -> paste());
 		editWindow.addSeparator();
-		editWindow.addButton("Chart Converter", () ->
-		{
-			var newSong:String = CHART.song;
-			var newDiff:String = PlayState.songDiff;
-
-			var openStuff:Array<FlxSprite> = [];
-			openStuff.push(createText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2) - 22, "Songs:", 0xFFD8DAF6));
-			openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22, "Diffs:", 0xFFD8DAF6));
-
-			var songField:PsychUIInputText;
-			songField = new PsychUIInputText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2), 245, newSong, 14);
-			songField.onChange.add((old, cur, input) -> newSong = cur);
-			openStuff.push(songField);
-
-			var diffField:PsychUIInputText;
-			diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2), 245, newDiff, 14);
-			diffField.onChange.add((old, cur, input) -> newDiff = cur);
-			openStuff.push(diffField);
-
-			var ok = new DoidoTextButton("Convert", "small");
-			ok.screenCenter();
-			ok.y += 50;
-			openStuff.push(ok);
-
-			var popup = new PopupSubState("Chart Converter", 520, 150, openStuff);
-			openSubState(popup);
-
-			ok.button.onUp.add(() ->
+		editWindow.addButton("Cut", "Ctrl + X", () -> copy(true));
+		editWindow.addButton("Delete", "Delete", () -> delete());
+		editWindow.addSeparator();
+		editWindow.addButton("Select Section", "Ctrl + A", () -> selectSection());
+		editWindow.addButton("Select All", "Ctrl + Shift + A", () -> selectAll());
+		editWindow.addButton("Deselect", "Ctrl + D", () -> deselect());
+		editWindow.addSeparator();
+		editWindow.addButton("Add Opponent Camera", "O", () -> quickCam(false));
+		editWindow.addButton("Add Player Camera", "P", () -> quickCam(true));
+		/*editWindow.addSeparator();
+			editWindow.addButton("Chart Converter", () ->
 			{
-				var songs:Array<String> = newSong.split(",").map(s -> s.trim());
-				var diffs:Array<String> = newDiff.split(",").map(s -> s.trim());
+				var newSong:String = CHART.song;
+				var newDiff:String = PlayState.songDiff;
 
-				for (input in songs)
+				var openStuff:Array<FlxBasic> = [];
+				openStuff.push(createText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2) - 22 - 5, "Songs:", 0xFFD8DAF6));
+				openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Diffs:", 0xFFD8DAF6));
+
+				var songField:PsychUIInputText;
+				songField = new PsychUIInputText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2) - 5, 245, newSong, 14);
+				songField.onChange.add((old, cur, input) -> newSong = cur);
+				openStuff.push(songField);
+
+				var diffField:PsychUIInputText;
+				diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 245, newDiff, 14);
+				diffField.onChange.add((old, cur, input) -> newDiff = cur);
+				openStuff.push(diffField);
+
+				var ok = new DoidoTextButton("Convert", "small");
+				ok.screenCenter();
+				ok.y += 50;
+				openStuff.push(ok);
+
+				var popup = new PopupSubState("Chart Converter", 520, 150, openStuff);
+				openSubState(popup);
+
+				ok.button.onUp.add(() ->
 				{
-					for (diff in diffs)
+					var songs:Array<String> = newSong.split(",").map(s -> s.trim());
+					var diffs:Array<String> = newDiff.split(",").map(s -> s.trim());
+
+					for (input in songs)
 					{
-						trace(diff);
-						var song = SongHandler.loadSong(input, diff);
-						var export:Array<Dynamic> = [song.CHART, song.EVENTS, song.META];
-						var names = ["", "events-", "meta-"];
-						for (i in 0...export.length)
+						for (diff in diffs)
 						{
-							var data:String = Json.stringify(export[i], "\t");
-							if (data != null && data.length > 0)
+							trace(diff);
+							var song = SongHandler.loadSong(input, diff);
+							var export:Array<Dynamic> = [song.CHART, song.EVENTS, song.META];
+							var names = ["", "events-", "meta-"];
+							for (i in 0...export.length)
 							{
-								Assets.fileSave(data.trim(), '$input-${names[i]}$diff.json');
+								var data:String = Json.stringify(export[i], "\t");
+								if (data != null && data.length > 0)
+								{
+									Assets.fileSave(data.trim(), '$input-${names[i]}$diff.json');
+								}
 							}
 						}
 					}
-				}
-			});
-		});
+				});
+		});*/
+		editWindow.addSeparator();
+		editWindow.addButton("Clear Notes", () ->
+		{
+			confirmPopup("Clear Notes", () ->
+			{
+				CHART.notes = [];
+				selectedNotes = [];
+			}, true, true);
+		}, 0xFFFF0000);
+		editWindow.addButton("Clear Events", () ->
+		{
+			confirmPopup("Clear Events", () ->
+			{
+				EVENTS.events = [];
+				selectedEvents = [];
+			}, true, true);
+		}, 0xFFFF0000);
+		editWindow.addButton("Clear Song", () ->
+		{
+			confirmPopup("Clear Song", () ->
+			{
+				CHART.notes = [];
+				selectedNotes = [];
+
+				EVENTS.events = [];
+				selectedEvents = [];
+			}, true, true);
+		}, 0xFFFF0000);
 		editWindow.updateBg();
 
 		var viewWindow = new MenuWindow(x, y + 30, width, this);
 		viewWindow.title = "View";
-		// viewWindow.addButton("Go to Section...");
-		// viewWindow.addSeparator();
+		viewWindow.addButton("Go to Section", () ->
+		{
+			var openStuff:Array<FlxBasic> = [];
+			openStuff.push(createText((FlxG.width / 2) - (130 / 2), (FlxG.height / 2) - 22 - 5, "Section:", 0xFFD8DAF6));
+
+			var ok = new DoidoTextButton("Go", "small");
+			ok.screenCenter();
+			ok.y += 50;
+			openStuff.push(ok);
+
+			var playerStepper = new PsychUINumericStepper((FlxG.width / 2) - (130 / 2), (FlxG.height / 2) - 5, 1, Math.floor(curStep / 16), 0, 9999, 0, 130,
+				false);
+			openStuff.push(playerStepper);
+
+			var popup = new PopupSubState("Go to Section", 155, 150, openStuff);
+			openSubState(popup);
+
+			ok.button.onUp.add(() ->
+			{
+				goToSong(Conductor.getTimeAtStep(playerStepper.value * 16));
+				popup.close();
+			});
+		});
+		viewWindow.addSeparator();
 		viewWindow.addButton("Go to Song Start", "Ctrl + R", () -> goToSong(0));
-		viewWindow.addButton("Go to Song End", null, () -> goToSong(audio.length - 1));
-		// viewWindow.addButton("Go to...");
+		viewWindow.addButton("Go to Song End", "Ctrl + Shift + R", () -> goToSong(audio.songLength - 1));
+		viewWindow.addSeparator();
+		viewWindow.addButton("Reset Time Bar", () -> timeBar.screenCenter(Y));
+		viewWindow.addCheck("Dark Mode", darkMode, (b) ->
+		{
+			darkMode = b;
+			EditorSave.data.darkMode = b;
+			bgDark.visible = b;
+			EditorSave.save();
+		});
+		viewWindow.addCheck("Reduced Animations", noFunAllowed, (b) ->
+		{
+			noFunAllowed = b;
+			EditorSave.data.reducedAnimations = b;
+			EditorSave.save();
+		});
+		viewWindow.addCheck("Sound Effects", soundEffects, (b) ->
+		{
+			soundEffects = b;
+			EditorSave.data.soundEffects = b;
+			EditorSave.save();
+		});
+		viewWindow.addSeparator();
+		viewWindow.addCheck("Quick Camera on Section", EditorSave.data.quickCamSection, (b) ->
+		{
+			EditorSave.data.quickCamSection = b;
+			EditorSave.save();
+		});
+		viewWindow.addCheck("Center Events", centerEvents, (b) ->
+		{
+			centerEvents = b;
+			EditorSave.data.centerEvents = b;
+			EditorSave.save();
+		});
+		viewWindow.addCheck("Old Timer", TimeWindow.oldTimer, (b) ->
+		{
+			TimeWindow.oldTimer = b;
+			EditorSave.data.oldTimer = b;
+			EditorSave.save();
+		});
+		viewWindow.addCheck("Quant Notes", quantNotes, (b) ->
+		{
+			quantNotes = b;
+			EditorSave.data.quantNotes = b;
+			EditorSave.save();
+		});
+		// viewWindow.addSeparator();
+		// viewWindow.addButton("Theme");
 		viewWindow.updateBg();
 
-		menuBox = new DoidoBox(x, y, width, height, 0, false, [fileWindow, editWindow, viewWindow], this);
+		menuBox = new DoidoBox(x, y, width, height, -1, false, [fileWindow, editWindow, viewWindow], this);
 		add(menuBox);
 	}
 
@@ -416,7 +826,7 @@ class ChartingState extends MusicBeatState
 		}
 
 		function getY(i:Int = 0)
-			return tab.bg.y + 8 + (spacingH * i);
+			return tab.bg.y + 8 + ((spacingH - 1) * i);
 
 		tab.add(createText(getX(), getY(0) + 3, "Volume:"));
 		tab.add(createText(getX(), getY(1) + 3, "Player:", 0xFFD8DAF6));
@@ -521,15 +931,114 @@ class ChartingState extends MusicBeatState
 		balls.setPosition(getX("center", balls.width), getY(4) + 5);
 		tab.add(balls);
 
+		tab.add(createText(getX(), getY(5) + 3, "Hitsounds:"));
+		tab.add(createText(getX(), getY(6) + 3, "Player:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(7) + 3, "Opponent:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(8) + 3, "Metronome:", 0xFFD8DAF6));
+
+		var playerHitVol:DoidoCheckmark = new DoidoCheckmark(playerHitSounds);
+		playerHitVol.onUp.add(() ->
+		{
+			playerHitSounds = playerHitVol.value;
+		});
+		playerHitVol.x = getX("margin_first");
+		playerHitVol.y = getY(6) - 1;
+		tab.add(playerHitVol);
+
+		var playerHitStepper = new PsychUINumericStepper(getX("margin_right", 100), getY(6), 0.01, playerHitVolume, 0, 1.0, 2, 100, true);
+		tab.add(playerHitStepper);
+
+		var oppHitVol:DoidoCheckmark = new DoidoCheckmark(oppHitSounds);
+		oppHitVol.onUp.add(() ->
+		{
+			oppHitSounds = oppHitVol.value;
+		});
+		oppHitVol.x = getX("margin_first");
+		oppHitVol.y = getY(7) - 1;
+		tab.add(oppHitVol);
+
+		var oppHitStepper = new PsychUINumericStepper(getX("margin_right", 100), getY(7), 0.01, oppHitVolume, 0, 1.0, 2, 100, true);
+		tab.add(oppHitStepper);
+
+		var metVol:DoidoCheckmark = new DoidoCheckmark(metronome);
+		metVol.onUp.add(() ->
+		{
+			metronome = metVol.value;
+		});
+		metVol.x = getX("margin_first");
+		metVol.y = getY(8) - 1;
+		tab.add(metVol);
+
+		var metStepper = new PsychUINumericStepper(getX("margin_right", 100), getY(8), 0.01, metronomeVolume, 0, 1.0, 2, 100, true);
+		tab.add(metStepper);
+
+		var playerHitSlider:DoidoSlider = new DoidoSlider(getX("margin_second"), getY(6) + 9, 160, 6, playerHitVolume, 0, 1, 3, 0.02);
+		playerHitSlider.onScrub.add((sld) ->
+		{
+			playerHitSounds = true;
+			playerHitVol.value = true;
+			playerHitStepper.value = playerHitSlider.value;
+			playerHitVolume = playerHitSlider.value;
+		});
+		tab.add(playerHitSlider);
+
+		var oppHitSlider:DoidoSlider = new DoidoSlider(getX("margin_second"), getY(7) + 9, 160, 6, oppHitVolume, 0, 1, 3, 0.02);
+		oppHitSlider.onScrub.add((sld) ->
+		{
+			oppHitSounds = true;
+			oppHitVol.value = true;
+			oppHitStepper.value = oppHitSlider.value;
+			oppHitVolume = oppHitSlider.value;
+		});
+		tab.add(oppHitSlider);
+
+		var metSlider:DoidoSlider = new DoidoSlider(getX("margin_second"), getY(8) + 9, 160, 6, metronomeVolume, 0, 1, 3, 0.02);
+		metSlider.onScrub.add((sld) ->
+		{
+			metronome = true;
+			metVol.value = true;
+			metStepper.value = metSlider.value;
+			metronomeVolume = metSlider.value;
+		});
+		tab.add(metSlider);
+
+		playerHitStepper.onValueChange = (() ->
+		{
+			playerHitSounds = true;
+			playerHitVol.value = true;
+			playerHitSlider.value = playerHitStepper.value;
+			playerHitVolume = playerHitStepper.value;
+		});
+
+		oppHitStepper.onValueChange = (() ->
+		{
+			oppHitSounds = true;
+			oppHitVol.value = true;
+			oppHitSlider.value = oppHitStepper.value;
+			oppHitVolume = oppHitStepper.value;
+		});
+
+		metStepper.onValueChange = (() ->
+		{
+			metronome = true;
+			metVol.value = true;
+			metSlider.value = metStepper.value;
+			metronomeVolume = metStepper.value;
+		});
+
+		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
+		balls.setPosition(getX("center", balls.width), getY(9) + 5);
+		tab.add(balls);
+
 		// playback
-		tab.add(createText(getX(), getY(5) + 3, "Playback:"));
+		tab.add(createText(getX(), getY(10) + 3, "Playback:"));
 
-		tab.add(createText(getX(), getY(6) + 3, "Speed:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(11) + 3, "Speed:", 0xFFD8DAF6));
 
-		var playbackStepper = new PsychUINumericStepper(getX("margin_right", 152), getY(6), 0.1, 1, 0, 2.0, 2, 100, false, true);
+		var playbackStepper = new PsychUINumericStepper(getX("margin_right", 152), getY(11), 0.1, 1, 0, 2.0, 2, 100, false, true);
 		tab.add(playbackStepper);
 
-		var playbackSlider:DoidoSlider = new DoidoSlider(getX("margin_first_small"), getY(6) + 9, 210, 6, 1, 0, 2, 5, 0.03);
+		var playbackSlider:DoidoSlider = new DoidoSlider(getX("margin_first_small"), getY(11) + 9, 210, 6, 1, 0, 2, 5, 0.03);
 		playbackSlider.onScrub.add((sld) ->
 		{
 			if (playbackSlider.value <= 0)
@@ -553,15 +1062,78 @@ class ChartingState extends MusicBeatState
 			audio.speed = playbackStepper.value;
 		});
 
-		var quantCheck:DoidoCheckmark = new DoidoCheckmark(quantNotes);
-		quantCheck.onUp.add(() ->
+		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
+		balls.setPosition(getX("center", balls.width), getY(12) + 5);
+		tab.add(balls);
+
+		// playback
+		tab.add(createText(getX(), getY(13) + 3, "Functions:"));
+
+		var swapNotes = new DoidoTextButton("Swap Notes", () ->
 		{
-			quantNotes = quantCheck.value;
+			var wasSection:Bool = false;
+			if (selectedNotes.length == 0) {
+				wasSection = true;
+				selectSection();
+			}
+
+			for (note in selectedNotes)
+				note.strumline = (note.strumline == 0 ? 1 : 0);
+		
+			if (wasSection) selectedNotes = [];
 		});
-		quantCheck.x = getX("margin_right", quantCheck.width);
-		quantCheck.y = tab.bg.y + tab.bg.height - quantCheck.height - 8;
-		tab.add(quantCheck);
-		tab.add(createText(quantCheck.x - 70, quantCheck.y + 5, "Quants:"));
+		swapNotes.x = getX();
+		swapNotes.y = getY(14);
+		tab.add(swapNotes);
+
+		var duetNotes = new DoidoTextButton("Duet Notes", () ->
+		{
+			var wasSection:Bool = false;
+			if (selectedNotes.length == 0) {
+				wasSection = true;
+				selectSection();
+			}
+
+			var notes:Array<NoteData> = [];
+			for (note in selectedNotes)
+			{
+				var newNote = {
+					stepTime: note.stepTime,
+					lane: note.lane,
+					strumline: (note.strumline == 0 ? 1 : 0),
+					type: note.type,
+					length: note.length
+				};
+				CHART.notes.push(newNote);
+				notes.push(newNote);
+			}
+			if (wasSection)
+				selectedNotes = [];
+			else
+				selectedNotes = selectedNotes.concat(notes);
+			notesTab.updateCallback.dispatch();
+			sortNotes();
+		});
+		duetNotes.x = getX("center", duetNotes.width);
+		duetNotes.y = getY(14);
+		tab.add(duetNotes);
+
+		var mirrorNotes = new DoidoTextButton("Mirror Notes", () ->
+		{
+			var wasSection:Bool = false;
+			if (selectedNotes.length == 0) {
+				wasSection = true;
+				selectSection();
+			}
+
+			for (note in selectedNotes)
+				note.lane = NoteUtil.directions.length - 1 - note.lane;
+
+			if (wasSection) selectedNotes = [];
+		});
+		mirrorNotes.x = getX("margin_right", mirrorNotes.width);
+		mirrorNotes.y = getY(14);
+		tab.add(mirrorNotes);
 
 		return tab;
 	}
@@ -592,7 +1164,7 @@ class ChartingState extends MusicBeatState
 		tab.add(createText(getX(), getY(3) + 3, "Note Speed:", 0xFFD8DAF6));
 
 		var songName:PsychUIInputText;
-		songName = new PsychUIInputText(getX("margin_first"), getY(1), 342, CHART.song, 14);
+		songName = new PsychUIInputText(getX("margin_first"), getY(1), 340, CHART.song, 14);
 		songName.onChange.add((old, cur, input) -> CHART.song = cur);
 		tab.add(songName);
 
@@ -601,6 +1173,7 @@ class ChartingState extends MusicBeatState
 		{
 			Conductor.initialBPM = bpmStepper.value;
 			CHART.bpm = Conductor.bpm;
+			Conductor.mapBPMChanges(EVENTS.events);
 		});
 		tab.add(bpmStepper);
 
@@ -611,15 +1184,21 @@ class ChartingState extends MusicBeatState
 		});
 		tab.add(speedStepper);
 
+		var postfix:PsychUIInputText;
+		postfix = new PsychUIInputText(getX("margin_right", 146), getY(2), 146, CHART.postfix, 14);
+		postfix.onChange.add((old, cur, input) -> CHART.postfix = cur);
+		tab.add(postfix);
+		tab.add(createText(postfix.x - 70, getY(2) + 3, "Postfix:", 0xFFD8DAF6));
+
 		var reloadButton = new DoidoTextButton("Reload Audio", () ->
 		{
 			playingSong = false;
 			audio.pause();
-			audio.reload(CHART.song, PlayState.songDiff);
-			grid.length = audio.length;
+			audio.reload(CHART.song, CHART.postfix);
+			grid.length = audio.songLength;
 		});
 		reloadButton.x = getX("margin_right", reloadButton.width);
-		reloadButton.y = getY(3) - 9;
+		reloadButton.y = getY(3) - 3;
 		reloadButton.button.setColorTransform(0.59, 0.78, 1);
 		reloadButton.label.color = 0xFFFFFFFF;
 		tab.add(reloadButton);
@@ -818,17 +1397,17 @@ class ChartingState extends MusicBeatState
 			var metaComposer:String = META.composer;
 			var metaCharter:String = META.charter;
 
-			var metaStuff:Array<FlxSprite> = [];
-			metaStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22, "Composer:", 0xFFD8DAF6));
-			metaStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22, "Charter:", 0xFFD8DAF6));
+			var metaStuff:Array<FlxBasic> = [];
+			metaStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22 - 5, "Composer:", 0xFFD8DAF6));
+			metaStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Charter:", 0xFFD8DAF6));
 
 			var composer:PsychUIInputText;
-			composer = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2), 145, metaComposer, 14);
+			composer = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, metaComposer, 14);
 			composer.onChange.add((old, cur, input) -> metaComposer = cur);
 			metaStuff.push(composer);
 
 			var charter:PsychUIInputText;
-			charter = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2), 145, metaCharter, 14);
+			charter = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, metaCharter, 14);
 			charter.onChange.add((old, cur, input) -> metaCharter = cur);
 			metaStuff.push(charter);
 
@@ -857,17 +1436,17 @@ class ChartingState extends MusicBeatState
 			var dadSkin:String = META.assets.opponentNotes;
 			var bfSkin:String = META.assets.playerNotes;
 
-			var metaStuff:Array<FlxSprite> = [];
-			metaStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22, "Opp Notes:", 0xFFD8DAF6));
-			metaStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22, "Player Notes:", 0xFFD8DAF6));
+			var metaStuff:Array<FlxBasic> = [];
+			metaStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22 - 5, "Opp Notes:", 0xFFD8DAF6));
+			metaStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Player Notes:", 0xFFD8DAF6));
 
 			var dadnotes:PsychUIInputText;
-			dadnotes = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2), 145, dadSkin, 14);
+			dadnotes = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, dadSkin, 14);
 			dadnotes.onChange.add((old, cur, input) -> dadSkin = cur);
 			metaStuff.push(dadnotes);
 
 			var bfnotes:PsychUIInputText;
-			bfnotes = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2), 145, bfSkin, 14);
+			bfnotes = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, bfSkin, 14);
 			bfnotes.onChange.add((old, cur, input) -> bfSkin = cur);
 			metaStuff.push(bfnotes);
 
@@ -893,6 +1472,144 @@ class ChartingState extends MusicBeatState
 		return tab;
 	}
 
+	function createNotesTab()
+	{
+		var tab = createBasic("Notes");
+
+		function getX(place:String = "margin_left", width:Float = 0)
+		{
+			return switch (place)
+			{
+				case "margin_first": tab.bg.x + 120;
+				case "margin_first_search": tab.bg.x + 80;
+				case "margin_right": tab.bg.x + tab.bg.width - width - 8;
+				case "center": tab.bg.x + (tab.bg.width / 2) - (width / 2);
+				default: tab.bg.x + 8;
+			}
+		}
+
+		function getY(i:Int = 0)
+			return tab.bg.y + 8 + (spacingH * i);
+
+		tab.add(createText(getX(), getY(0), "Timings:"));
+		tab.add(createText(getX(), getY(1) + 3, "Note Step:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(2) + 3, "Note Length:", 0xFFD8DAF6));
+
+		var noteSteps = new PsychUINumericStepper(getX("margin_first"), getY(1), 1, 0, 0, 999999, 2);
+		noteSteps.onValueChange = (() ->
+		{
+			if (selectedNotes.length == 1)
+				selectedNotes[0].stepTime = noteSteps.value;
+		});
+		noteSteps.onValueStep = ((step) ->
+		{
+			if (selectedNotes.length > 1)
+				for (note in selectedNotes)
+					note.stepTime += step;
+		});
+		tab.add(noteSteps);
+
+		var noteLength = new PsychUINumericStepper(getX("margin_first"), getY(2), 1, 0, 0, 999999, 1);
+		noteLength.onValueChange = (() ->
+		{
+			if (selectedNotes.length == 1)
+				selectedNotes[0].length = noteLength.value;
+			else if (selectedNotes.length > 1) {}
+		});
+		noteLength.onValueStep = ((step) ->
+		{
+			if (selectedNotes.length > 1)
+				for (note in selectedNotes)
+					note.length += step;
+		});
+		tab.add(noteLength);
+
+		var curTypeTxt:FlxBitmapText;
+		tab.add(curTypeTxt = createText(0, 0, 'Type: $curNoteType'));
+		curTypeTxt.x = getX();
+		curTypeTxt.y = tab.bg.y + tab.bg.height - curTypeTxt.height - 8;
+
+		tab.updateCallback.add(() ->
+		{
+			curTypeTxt.text = 'Type: ${TextUtil.titleCase(curNoteType)}';
+
+			if (selectedNotes.length == 0)
+			{
+				for (stepper in [noteSteps, noteLength])
+				{
+					stepper.disableInput = true;
+					stepper.disableSteppers = true;
+					stepper.value = 0;
+				}
+			}
+			else if (selectedNotes.length == 1)
+			{
+				for (stepper in [noteSteps, noteLength])
+				{
+					stepper.disableInput = false;
+					stepper.disableSteppers = false;
+				}
+
+				noteSteps.value = selectedNotes[0].stepTime;
+				noteLength.value = selectedNotes[0].length;
+			}
+			else
+			{
+				for (stepper in [noteSteps, noteLength])
+				{
+					stepper.disableInput = true;
+					stepper.disableSteppers = false;
+					stepper.value = 0;
+				}
+			}
+		});
+		tab.updateCallback.dispatch();
+
+		var bottomY = 4;
+
+		var notes = new ChooserWindow(getX("center", 440), getY(bottomY + 1) + 5, 440, 300, [], null);
+		notes.view = LIST;
+		notes.type = NOTETYPE;
+		notes.descOnly = true;
+		notes.align = LEFT;
+		notes.options = NoteUtil.noteTypes;
+		notes.descs = [
+			for (i in 0...NoteUtil.noteTypes.length)
+				'$i. ${TextUtil.titleCase(NoteUtil.noteTypes[i])}'
+		];
+		notes.onClick = (str) ->
+		{
+			curNoteType = str;
+			for (note in selectedNotes)
+				note.type = str;
+			tab.updateCallback.dispatch();
+		};
+		tab.add(notes);
+
+		var search = tab.add(createText(getX(), getY(bottomY) + 3, "Search:", 0xFFD8DAF6));
+
+		var filter:PsychUIInputText;
+		filter = new PsychUIInputText(getX("margin_first_search"), getY(bottomY), 372, "", 14);
+		filter.onChange.add((old, cur, input) -> notes.filter = cur);
+		filter.behindText.color = 0xFFD8DAF6;
+		tab.add(filter);
+
+		var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
+		glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
+		glass.x = filter.behindText.x + 1;
+		glass.y = filter.behindText.y + 1;
+		tab.add(glass);
+
+		filter.textObj.x += glass.width + 2;
+		filter.fieldWidth -= Std.int(glass.width + 2);
+
+		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
+		balls.setPosition(getX("center", balls.width), getY(bottomY - 1) + 3);
+		tab.add(balls);
+
+		return tab;
+	}
+
 	function createEventsTab()
 	{
 		var tab = createBasic("Events");
@@ -901,48 +1618,270 @@ class ChartingState extends MusicBeatState
 		{
 			return switch (place)
 			{
+				case "margin_first_search": tab.bg.x + 80;
 				case "center": tab.bg.x + (tab.bg.width / 2) - (width / 2);
 				case "margin_first": tab.bg.x + 110;
+				case "margin_right": tab.bg.x + tab.bg.width - width - 8;
 				default: tab.bg.x + 8;
 			}
 		}
 
+		var spacingE = spacingH - 3;
 		function getY(i:Int = 0)
-			return tab.bg.y + 8 + (spacingH * i);
+			return tab.bg.y + 8 + (spacingE * i);
+
+		var valueTabs:FlxGroup = new FlxGroup();
+		tab.add(valueTabs);
+
+		var bottomY = 12;
+
+		var warnSpr = new FlxSprite();
+		warnSpr.loadImage("editors/charting/events/warning");
+		warnSpr.x = getX("center", warnSpr.width);
+		warnSpr.y = getY(6);
+		tab.add(warnSpr);
+
+		var warnTxt = createText(0, 0, "Select an event to edit.", 0xFFD8DAF6);
+		warnTxt.x = getX("center", warnTxt.width);
+		warnTxt.y = warnSpr.y + warnSpr.height + 10;
+		warnTxt.scale.set(0.8, 0.8);
+		tab.add(warnTxt);
+
+		var events = new ChooserWindow(getX("center", 440), getY(1) + 5, 440, 200, [], null);
+		events.view = GRID;
+		events.type = EVENT;
+		events.options = EventUtil.eventLists.get("Main");
+		var list:Bool = true;
+		events.onClick = (str) ->
+		{
+			if (list)
+			{
+				events.view = LIST;
+				events.options = ["Back"].concat(EventUtil.eventLists.get(str));
+				list = false;
+			}
+			else
+			{
+				if (str == "Back")
+				{
+					events.view = GRID;
+					events.options = EventUtil.eventLists.get("Main");
+					list = true;
+				}
+				else
+				{
+					if (lastEdited != null)
+					{
+						var mapBPM:Bool = Conductor.isMappable(lastEdited.name) || Conductor.isMappable(str);
+						lastEdited.name = str;
+						lastEdited.data = [for (v in EventUtil.getEvent(str).values) v.defaultValue];
+						if (mapBPM)
+							Conductor.mapBPMChanges(EVENTS.events);
+					}
+					tab.updateCallback.dispatch();
+				}
+			}
+		};
+		events.active = false;
+		tab.add(events);
+
+		var search = tab.add(createText(getX(), getY(0) + 3, "Search:", 0xFFD8DAF6));
+
+		var filter:PsychUIInputText;
+		filter = new PsychUIInputText(getX("margin_first_search"), getY(0), 372, "", 14);
+		filter.onChange.add((old, cur, input) ->
+		{
+			if (cur != "")
+			{
+				events.view = LIST;
+				events.options = [for (event in EventUtil.events) event.name];
+				list = false;
+			}
+			else
+			{
+				events.view = GRID;
+				events.options = EventUtil.eventLists.get("Main");
+				list = true;
+			}
+			events.filter = cur;
+		});
+		filter.behindText.color = 0xFFD8DAF6;
+		tab.add(filter);
+
+		var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
+		glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
+		glass.x = filter.behindText.x + 1;
+		glass.y = filter.behindText.y + 1;
+		tab.add(glass);
+
+		filter.textObj.x += glass.width + 2;
+		filter.fieldWidth -= Std.int(glass.width + 2);
+
+		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
+		balls.setPosition(getX("center", balls.width), getY(bottomY - 3) + 3);
+		tab.add(balls);
+
+		function toggleStuff(b:Bool)
+		{
+			for (obj in [events, filter, glass, balls, search])
+			{
+				obj.active = b;
+				obj.visible = b;
+			}
+			for (obj in [warnSpr, warnTxt])
+			{
+				obj.active = !b;
+				obj.visible = !b;
+			}
+		}
+		toggleStuff(false);
+
+		tab.updateCallback.add(() ->
+		{
+			valueTabs.clear();
+
+			if (lastEdited == null)
+			{
+				toggleStuff(false);
+				return;
+			}
+
+			toggleStuff(true);
+
+			var event = EventUtil.getEvent(lastEdited.name);
+			if (event == null)
+				return;
+
+			valueTabs.add(createText(getX(), getY(bottomY - 2), "Editing: " + event.name, 0xFFFFFFFF));
+			for (i in 0...event.values.length)
+			{
+				var value = event.values[i];
+				var index = event.values.length - i;
+
+				var x = getX((i % 2 == 0) ? "" : "center");
+				var y = getY((bottomY) + (Math.floor(i / 2) * 2));
+
+				var current:Dynamic = (lastEdited.data != null && lastEdited.data[i] != null) ? lastEdited.data[i] : value.defaultValue;
+
+				valueTabs.add(createText(x, y - spacingE + 3, value.name + ":", 0xFFD8DAF6));
+				if (Std.isOfType(value.defaultValue, String))
+				{
+					if (value.options != null)
+					{
+						// drop down
+						var dropdown = new PsychUIDropDownMenu(x, y, cast value.options, (i2, s) ->
+						{
+							lastEdited.data[i] = s;
+
+							if (Conductor.isMappable(lastEdited.name))
+								Conductor.mapBPMChanges(EVENTS.events);
+						}, 100, false);
+						dropdown.selectedLabel = current;
+						dropdown.zIndex = index;
+						valueTabs.add(dropdown);
+					}
+					else
+					{
+						var textfield = new PsychUIInputText(x, y, 145, current, 14);
+						textfield.onChange.add((old, cur, input) ->
+						{
+							lastEdited.data[i] = cur;
+							if (Conductor.isMappable(lastEdited.name))
+								Conductor.mapBPMChanges(EVENTS.events);
+						});
+						textfield.zIndex = index;
+						valueTabs.add(textfield);
+					}
+				}
+				else if (Std.isOfType(value.defaultValue, Float) || Std.isOfType(value.defaultValue, Int))
+				{
+					var stepper = new PsychUINumericStepper(x, y, value.step ?? 0.25, current, value.min ?? 0, value.max ?? 4, value.decimals ?? 2, 100, false);
+					stepper.onValueChange = () ->
+					{
+						lastEdited.data[i] = stepper.value;
+						if (Conductor.isMappable(lastEdited.name))
+							Conductor.mapBPMChanges(EVENTS.events);
+					};
+					stepper.zIndex = index;
+					valueTabs.add(stepper);
+				}
+				else if (Std.isOfType(value.defaultValue, Bool))
+				{
+					var checkmark = new DoidoCheckmark(current);
+					checkmark.onUp.add(() ->
+					{
+						lastEdited.data[i] = checkmark.value;
+						if (Conductor.isMappable(lastEdited.name))
+							Conductor.mapBPMChanges(EVENTS.events);
+					});
+					checkmark.x = x;
+					checkmark.y = y;
+					checkmark.zIndex = index;
+					valueTabs.add(checkmark);
+				}
+			}
+
+			valueTabs.sort(ZIndex.sort);
+		});
 
 		return tab;
 	}
 
+	var eventsTab:DoidoWindow;
+	var notesTab:DoidoWindow;
+
 	function addMain()
 	{
-		menuMain = new DoidoBox(803, 19, 458, 32, 4, [
+		menuMain = new DoidoBox(803, 19, 458, 32, 3, [
 			createChartingTab(),
-			createEventsTab(),
-			createBasic("Note"),
-			createBasic("Functions"),
+			eventsTab = createEventsTab(),
+			notesTab = createNotesTab(),
+			// createBasic("Functions"),
 			createSongTab()
 		], this);
 		add(menuMain);
 	}
 
+	public var playerHitSounds:Bool = true;
+	public var oppHitSounds:Bool = true;
+	public var metronome:Bool = false;
+
+	public var playerHitVolume:Float = 1;
+	public var oppHitVolume:Float = 1;
+	public var metronomeVolume:Float = 1;
+
+	public function onNoteHit(note:NoteData)
+	{
+		if (note.strumline == 0 && oppHitSounds || note.strumline == 1 && playerHitSounds)
+		{
+			var key = Save.data.hitsound;
+			if (key == "OFF")
+				key = "OSU";
+			NoteUtil.playHitsound(key, note.strumline == 0 ? oppHitVolume : playerHitVolume);
+		}
+	}
+
 	public var tweeningSongPos:Bool = false;
 	public var curCursor:lime.ui.MouseCursor = DEFAULT;
-
-	var clickedOnWindow:Bool = false;
 
 	var autoScrolling:Bool = false;
 	var scrollAutoY:Float = 0;
 
-	var typing(get, never):Bool;
+	var typing:Bool = false;
+	var focus:String = "dad";
 
-	function get_typing():Bool
-		return PsychUIInputText.focusOn != null;
+	static var autosavetimer:Float = 0;
 
 	override function update(elapsed:Float)
 	{
-		// debug camera lol
-		if (FlxG.keys.justPressed.NINE || FlxG.keys.justPressed.NUMPADNINE)
-			FlxG.camera.zoom = (FlxG.camera.zoom == 1.0 ? 0.8 : 1.0);
+		// autosaves every 5 minutes
+		autosavetimer += elapsed;
+		if (autosavetimer >= 60 * 5)
+		{
+			Logs.print('chart autosaved');
+			autosavetimer = 0;
+			addAutoSave();
+		}
 
 		curCursor = DEFAULT;
 		if (tweeningSongPos)
@@ -953,7 +1892,24 @@ class ChartingState extends MusicBeatState
 				playingSong = !playingSong;
 		}
 
-		var overlapsWindow:Bool = false;
+		if (FlxG.keys.justPressed.Z || FlxG.keys.justPressed.X)
+		{
+			@:privateAccess {
+			gridWindow.zoomStepper.stepValue(FlxG.keys.justPressed.Z ? -1 : 1);
+			}
+		}
+
+		for (event in EVENTS.events)
+		{
+			if (event.stepTime > curStepFloat)
+				break;
+
+			if (event.name == "Camera Focus")
+				focus = event.data[0];
+		}
+
+		// var mouseOffscreen = FlxG.mouse.viewX < 0 || FlxG.mouse.viewY < 0 || FlxG.mouse.viewX > FlxG.width || FlxG.mouse.viewY > FlxG.height;
+		var overlapsWindow:Bool = FlxG.mouse.overlaps(borderAreas);
 
 		for (basic in members)
 		{
@@ -966,41 +1922,199 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
-		if (FlxG.mouse.justPressed)
-			clickedOnWindow = overlapsWindow;
+		if (selectedNotes.length > 0 || selectedEvents.length > 0)
+		{
+			var selColor:Float = 0.8 + Math.sin(FlxG.game.ticks / 100) * 2;
+			selectedColor.redFloat = selColor;
+			selectedColor.greenFloat = selColor;
+			selectedColor.blueFloat = selColor;
+		}
 
 		var cursorText:String = "";
 
-		if (!clickedOnWindow && !typing)
+		if (!typing)
 		{
+			// debug camera lol
+			if (FlxG.keys.justPressed.NINE || FlxG.keys.justPressed.NUMPADNINE)
+				FlxG.camera.zoom = (FlxG.camera.zoom == 1.0 ? 0.8 : 1.0);
+
 			if (FlxG.keys.pressed.SHIFT)
 				cursorText = "4x";
 
-			if (FlxG.mouse.pressedRight)
-				cursorText = "X";
+			// Function Shortcuts
+			if (FlxG.keys.pressed.CONTROL)
+			{
+				if ((FlxG.keys.justPressed.C || FlxG.keys.justPressed.X))
+					copy(FlxG.keys.justPressed.X);
+				if (FlxG.keys.justPressed.V)
+					paste();
+				if (FlxG.keys.justPressed.N)
+					newSong();
+				if (FlxG.keys.justPressed.O)
+				{
+					if (FlxG.keys.pressed.SHIFT)
+						openAutosave();
+					else
+						openSong();
+				}
+				if (FlxG.keys.justPressed.S)
+				{
+					var pressedNone = !FlxG.keys.pressed.SHIFT && !FlxG.keys.pressed.ALT && !FlxG.keys.pressed.TAB;
 
+					if (FlxG.keys.pressed.SHIFT || pressedNone)
+						save(CHART, PlayState.songDiff);
+					if (FlxG.keys.pressed.ALT || pressedNone)
+						save(EVENTS, "events");
+					if (FlxG.keys.pressed.TAB || pressedNone)
+						save(META, "meta");
+				}
+			}
+			else
+			{
+				// quick add camera
+				if (FlxG.keys.justPressed.O || FlxG.keys.justPressed.P)
+					quickCam(FlxG.keys.justPressed.P);
+			}
+
+			if (FlxG.keys.justPressed.R)
+				resetSection();
+
+			if (FlxG.keys.justPressed.ENTER)
+				play(FlxG.keys.pressed.SHIFT);
+
+			if (FlxG.keys.justPressed.ESCAPE)
+				openTester(FlxG.keys.pressed.SHIFT);
+
+			if (FlxG.keys.justPressed.DELETE)
+				delete();
+
+			if (selectedNotes.length > 0)
+			{
+				if (FlxG.keys.justPressed.Q || FlxG.keys.justPressed.E)
+				{
+					playSfx("editors/click");
+					var dir:Int = FlxG.keys.justPressed.Q ? -1 : 1;
+					for (note in selectedNotes)
+					{
+						if (!FlxG.keys.pressed.SHIFT)
+							note.length += dir;
+						else
+							note.length += dir * (note.length == 0 ? 3 : 2);
+						
+						if (note.length < 0)
+							note.length = 0;
+					}
+					notesTab.updateCallback.dispatch();
+				}
+			}
+
+			if (FlxG.keys.pressed.W || FlxG.keys.pressed.S)
+			{
+				playingSong = false;
+				stopTweenSongPos();
+				var dir:Int = (FlxG.keys.pressed.S ? 1 : 0) - (FlxG.keys.pressed.W ? 1 : 0);
+				Conductor.songPos += dir * 1000 * elapsed * (FlxG.keys.pressed.SHIFT ? 4 : 1) / GRID_ZOOM;
+			}
+
+			if (FlxG.keys.justPressed.A || FlxG.keys.justPressed.D)
+			{
+				var wasA:Bool = FlxG.keys.justPressed.A;
+				if (FlxG.keys.pressed.CONTROL)
+				{
+					if (wasA)
+					{
+						if (FlxG.keys.pressed.SHIFT)
+							selectAll();
+						else
+							selectSection();
+					}
+					else
+						deselect();
+				}
+				else
+					changeSection(wasA ? -1 : 1);
+			}
+
+			if (!playingSong)
+			{
+				if (FlxG.mouse.pressedMiddle && FlxG.keys.pressed.CONTROL)
+					timeBar.y = (FlxG.keys.pressed.SHIFT ? (FlxG.height / 2) - (timeBar.height / 2) : FlxG.mouse.y);
+				else if (FlxG.mouse.justPressedMiddle)
+				{
+					autoScrolling = !autoScrolling;
+
+					if (autoScrolling)
+					{
+						scrollAutoY = FlxG.mouse.getWorldPosition().y;
+						scrollBall.setPosition(FlxG.mouse.getWorldPosition().x - (scrollBall.width / 2),
+							FlxG.mouse.getWorldPosition().y - (scrollBall.height / 2));
+					}
+				}
+			}
+		}
+
+		if (autoScrolling)
+			Conductor.songPos += (FlxG.mouse.getWorldPosition().y - scrollAutoY) * 10 * elapsed * (FlxG.keys.pressed.SHIFT ? 4 : 1);
+
+		var tappedCam = false;
+		var camObjects = FlxG.mouse.overlaps(cameraIcon) || FlxG.mouse.overlaps(iconBf) || FlxG.mouse.overlaps(iconDad);
+		if (camObjects && !overlapsWindow && !typing)
+		{
+			curCursor = POINTER;
+			tappedCam = FlxG.mouse.justPressed || FlxG.mouse.pressed || FlxG.mouse.justReleased;
 			if (FlxG.mouse.justPressed)
 			{
-				lastClicked = {x: FlxG.mouse.x, y: FlxG.mouse.y};
-				lastClickedOffset = grid.gridY;
+				if (FlxG.mouse.overlaps(cameraIcon))
+					quickCam();
+				else if (FlxG.mouse.overlaps(iconBf))
+					quickCam(true);
+				else
+					quickCam(false);
 			}
+		}
 
-			if (FlxG.mouse.justReleased)
-			{
-				heldOnNote = false;
-				// heldOnNoteHold = false;
-			}
+		if (noFunAllowed)
+		{
+			cameraIcon.scale.x = (focus == "dad" ? 0.38 : -0.38);
+			cameraIcon.updateHitbox();
+			cameraIcon.x = grid.gridX + (GRID_SIZE * GRID_LANES / 2) - cameraIcon.width / 2;
+		}
+		else
+		{
+			cameraIcon.scale.x = FlxMath.lerp(cameraIcon.scale.x, (focus == "dad" ? 1 : -1) * (tappedCam ? 0.42 : 0.38), elapsed * 16);
+			cameraIcon.scale.y = FlxMath.lerp(cameraIcon.scale.y, (tappedCam ? 0.33 : 0.38), elapsed * 8);
+			cameraIcon.updateHitbox();
+			cameraIcon.x = grid.gridX + (GRID_SIZE * GRID_LANES / 2) - cameraIcon.width / 2;
+			cameraIcon.y = 45 - cameraIcon.height;
+		}
 
-			if (lastClickedOffset != grid.gridY)
-			{
-				lastClicked.y -= (lastClickedOffset - grid.gridY);
-				lastClickedOffset = grid.gridY;
-			}
+		// to-do: move more stuff up here lol
+		if (FlxG.mouse.justReleased)
+			heldOnNote = false;
+
+		if (FlxG.mouse.justPressed)
+		{
+			lastClicked = {x: FlxG.mouse.x, y: FlxG.mouse.y};
+			lastClickedOffset = grid.gridY;
+		}
+
+		if (lastClickedOffset != grid.gridY)
+		{
+			lastClicked.y -= (lastClickedOffset - grid.gridY);
+			lastClickedOffset = grid.gridY;
+		}
+
+		// selectSquare.visible = false;
+
+		if (!overlapsWindow && !typing && !tappedCam)
+		{
+			if (FlxG.mouse.pressedRight)
+				cursorText = "X";
 
 			if (FlxG.mouse.pressed)
 			{
 				// if you moved 10 pixels from it
-				if (Math.abs(FlxG.mouse.x - lastClicked.x) >= 10 || Math.abs(FlxG.mouse.y - lastClicked.y) >= 10)
+				if (Math.abs(FlxG.mouse.x - lastClicked.x) >= 25 || Math.abs(FlxG.mouse.y - lastClicked.y) >= 25)
 				{
 					if (selectedNotes.length > 0)
 					{
@@ -1011,59 +2125,136 @@ class ChartingState extends MusicBeatState
 					}
 					else
 						selectSquare.visible = true;
-				}
 
-				if (!playingSong)
-				{
-					var mouseMove:Int = 60;
-					if (FlxG.mouse.y < mouseMove || FlxG.mouse.y > FlxG.height - mouseMove)
+					if (!playingSong)
 					{
-						var dir:Int = (FlxG.mouse.y < mouseMove) ? -1 : 1;
-						if (FlxG.mouse.y < mouseMove / 2 || FlxG.mouse.y > FlxG.height - mouseMove / 2)
-							dir *= 4;
+						var mouseMove:Int = 60;
+						if (FlxG.mouse.y < mouseMove || FlxG.mouse.y > FlxG.height - mouseMove)
+						{
+							var dir:Int = (FlxG.mouse.y < mouseMove) ? -1 : 1;
+							if (FlxG.mouse.y < mouseMove / 2 || FlxG.mouse.y > FlxG.height - mouseMove / 2)
+								dir *= 4;
 
-						Conductor.songPos += dir * 1000 * elapsed;
+							Conductor.songPos += dir * 1000 * elapsed;
+						}
 					}
 				}
 			}
 
-			if (selectedNotes.length > 0)
+			if (selectedEvents.length < 2 && selectedEvents[0] != lastEdited)
 			{
-				var selColor:Float = 0.8 + Math.sin(FlxG.game.ticks / 100) * 2;
-				selectedColor.redFloat = selColor;
-				selectedColor.greenFloat = selColor;
-				selectedColor.blueFloat = selColor;
-				for (note in renderNotes.members)
-				{
-					if (note.selected)
-						note.color = selectedColor;
-				}
+				lastEdited = selectedEvents[0];
+				eventsTab.updateCallback.dispatch();
+				if (lastEdited != null)
+					menuMain.setTab("Events");
+			}
 
-				if (FlxG.keys.justPressed.Q || FlxG.keys.justPressed.E)
+			if (FlxG.mouse.x < grid.gridX)
+			{
+				var zoomSnap:Float = (GRID_SNAP * GRID_ZOOM);
+				var realSnap:Float = (zoomSnap / 16);
+				var sizeTimed:Float = (GRID_SIZE / realSnap) * GRID_ZOOM;
+				var mouseY:Float = Math.floor((FlxG.mouse.y + (centerEvents ? (EVENT_SIZE / 2) : 0) - grid.gridY) / sizeTimed) * sizeTimed;
+				var curStep:Float = mouseY / GRID_SIZE / GRID_ZOOM;
+				var eventOrder:Int = eventAmounts.get(Std.string(curStep)) ?? 1;
+
+				addEvent.x = grid.gridX - ((EVENT_SIZE + EVENT_PADDING) * eventOrder) - (EVENT_PADDING / 2);
+				addEvent.y = grid.gridY + mouseY;
+				addEvent.visible = true;
+				if (GRID_SNAP == 0)
+					addEvent.y = FlxG.mouse.y;
+				if (centerEvents)
+					addEvent.y -= (EVENT_SIZE / 2);
+
+				if (FlxG.mouse.overlaps(addEvent))
 				{
-					playSfx("editors/click");
-					var dir:Int = FlxG.keys.justPressed.Q ? -1 : 1;
-					if (FlxG.keys.pressed.SHIFT)
-						dir *= 4;
-					for (note in selectedNotes)
+					addEvent.alpha = 1;
+					curCursor = POINTER;
+
+					if (FlxG.mouse.justReleased)
 					{
-						note.length += dir;
-						if (note.length < 0)
-							note.length = 0;
+						if (!draggingSelectedNotes && !heldOnNoteHold)
+						{
+							var mapBPM:Bool = false;
+							var multiple:Bool = selectedEvents.length > 0;
+							var eventList:Array<EventData> = [
+								{
+									stepTime: 0,
+									name: "New Event",
+									data: []
+								}
+							];
+							if (multiple)
+								eventList = selectedEvents;
+
+							selectedEvents = [];
+							for (event in eventList)
+							{
+								var newEvent:EventData = {
+									stepTime: curStep,
+									name: event.name,
+									data: event.data.copy()
+								};
+
+								mapBPM = Conductor.isMappable(event.name);
+								EVENTS.events.push(newEvent);
+								selectedEvents.push(newEvent);
+								playSfx("editors/click", multiple ? FlxG.random.float(0.0, 0.4) : 0);
+							}
+
+							sortEvents();
+							if (mapBPM)
+								Conductor.mapBPMChanges(EVENTS.events);
+						}
 					}
 				}
-
-				if (FlxG.keys.justPressed.DELETE)
+				else
 				{
-					for (note in selectedNotes)
+					addEvent.alpha = 0.5;
+
+					var removed:Bool = false;
+					var mapBPM:Bool = false;
+					renderEvents.forEachAlive((event) ->
 					{
-						playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
-						CHART.notes.remove(note);
+						if (event.isHold)
+							return;
+
+						if (FlxG.mouse.overlaps(event))
+						{
+							curCursor = POINTER;
+							if (FlxG.mouse.justPressed)
+							{
+								var exists = selectedEvents.contains(event.event);
+								if (!FlxG.keys.pressed.CONTROL)
+									selectedEvents = [];
+
+								if (selectedEvents.contains(event.event))
+									selectedEvents.remove(event.event);
+								else if (!exists)
+									selectedEvents.push(event.event);
+							}
+							else if (FlxG.mouse.justPressedRight)
+							{
+								removed = true;
+								mapBPM = Conductor.isMappable(event.event.name);
+								EVENTS.events.remove(event.event);
+								if (selectedEvents.contains(event.event))
+									selectedEvents.remove(event.event);
+							}
+						}
+					});
+
+					if (removed)
+					{
+						playSfx("editors/pop");
+						sortEvents();
+						if (mapBPM)
+							Conductor.mapBPMChanges(EVENTS.events);
 					}
-					selectedNotes = [];
-					sortNotes();
 				}
 			}
+			else
+				addEvent.visible = false;
 
 			if (selectSquare.visible)
 			{
@@ -1100,11 +2291,15 @@ class ChartingState extends MusicBeatState
 						if (note.stepTime > startY - 1 && note.stepTime < endY + 1 && rawLane > startX - 1 && rawLane < endX + 1)
 						{
 							if (!selectedNotes.contains(note))
+							{
 								selectedNotes.push(note);
+								curNoteType = note.type;
+							}
 						}
 					}
 
 					selectSquare.visible = false;
+					notesTab.updateCallback.dispatch();
 				}
 			}
 			else
@@ -1127,22 +2322,36 @@ class ChartingState extends MusicBeatState
 					var mouseStep:Float = (hoverSquare.y - grid.gridY) / GRID_SIZE / GRID_ZOOM;
 
 					if (FlxG.mouse.justPressedRight)
+					{
 						selectedNotes = [];
+						notesTab.updateCallback.dispatch();
+					}
 
-					if (FlxG.mouse.overlaps(renderNotes))
+					var overlapsNotes:Bool = false;
+					renderNotes.forEachAlive((note) ->
+					{
+						if (overlapsNotes)
+							return;
+
+						if (FlxG.mouse.overlaps(note))
+							overlapsNotes = true;
+					});
+
+					if (overlapsNotes)
 					{
 						var mightBeHold:Bool = false;
 						var noteExists:Bool = false;
 
 						curCursor = POINTER;
-						for (note in renderNotes.members)
+
+						renderNotes.forEachAlive((note) ->
 						{
 							if (FlxG.mouse.overlaps(note))
 							{
 								if (CHART.notes.contains(note.data))
 									noteExists = true;
 								else
-									continue;
+									return;
 
 								// hold hitbox
 								if ((note.isHold && FlxG.mouse.y > note.y + GRID_SIZE / 2)
@@ -1152,12 +2361,12 @@ class ChartingState extends MusicBeatState
 									mightBeHold = true;
 								}
 							}
-						}
+						});
 
 						if (FlxG.mouse.pressedRight)
 						{
 							var removed:Bool = false;
-							for (note in renderNotes.members)
+							renderNotes.forEachAlive((note) ->
 							{
 								if (FlxG.mouse.overlaps(note) && noteExists)
 								{
@@ -1167,7 +2376,7 @@ class ChartingState extends MusicBeatState
 									else
 										CHART.notes.remove(note.data);
 								}
-							}
+							});
 							if (removed)
 							{
 								playSfx("editors/pop");
@@ -1182,7 +2391,7 @@ class ChartingState extends MusicBeatState
 								heldOnNote = true;
 
 							var clearNote:NoteData = null;
-							for (note in renderNotes.members)
+							renderNotes.forEachAlive((note) ->
 							{
 								if (FlxG.mouse.overlaps(note) && noteExists)
 								{
@@ -1199,7 +2408,7 @@ class ChartingState extends MusicBeatState
 											clearNote = note.data;
 									}
 								}
-							}
+							});
 
 							lastMouseStep = mouseStep;
 							lastMouseLane = mouseLane;
@@ -1207,6 +2416,9 @@ class ChartingState extends MusicBeatState
 							if (clearNote != null)
 								selectedNotes = [clearNote];
 
+							if (selectedNotes.length > 0)
+								curNoteType = selectedNotes[selectedNotes.length - 1].type;
+							notesTab.updateCallback.dispatch();
 							sortNotes();
 						}
 					}
@@ -1221,12 +2433,13 @@ class ChartingState extends MusicBeatState
 									stepTime: mouseStep,
 									lane: (mouseLane % 4),
 									strumline: (mouseLane >= 4) ? 1 : 0,
-									type: "none",
+									type: curNoteType,
 									length: 0.0,
 								};
 								// trace('added lane ${newNote.lane} to strumline ${newNote.strumline}');
 								CHART.notes.push(newNote);
 								selectedNotes = [newNote];
+								notesTab.updateCallback.dispatch();
 								sortNotes();
 							}
 						}
@@ -1245,6 +2458,7 @@ class ChartingState extends MusicBeatState
 								if (note.length < 0)
 									note.length = 0;
 							}
+							notesTab.updateCallback.dispatch();
 						}
 					}
 
@@ -1280,6 +2494,7 @@ class ChartingState extends MusicBeatState
 										note.strumline = 0;
 								}
 							}
+							notesTab.updateCallback.dispatch();
 							sortNotes();
 						}
 					}
@@ -1294,47 +2509,11 @@ class ChartingState extends MusicBeatState
 				stopTweenSongPos();
 				Conductor.songPos += -FlxG.mouse.wheel * 10000 * elapsed * (FlxG.keys.pressed.SHIFT ? 4 : 1) / GRID_ZOOM;
 			}
-
-			if (FlxG.keys.pressed.W || FlxG.keys.pressed.S)
-			{
-				playingSong = false;
-				stopTweenSongPos();
-				var dir:Int = (FlxG.keys.pressed.S ? 1 : 0) - (FlxG.keys.pressed.W ? 1 : 0);
-				Conductor.songPos += dir * 1000 * elapsed * (FlxG.keys.pressed.SHIFT ? 4 : 1) / GRID_ZOOM;
-			}
-
-			if (FlxG.keys.justPressed.A || FlxG.keys.justPressed.D)
-			{
-				var wasA:Bool = FlxG.keys.justPressed.A;
-				if (wasA && FlxG.keys.pressed.CONTROL)
-					selectAll();
-				else
-					changeSection(wasA ? -1 : 1);
-			}
-
-			if (FlxG.keys.justPressed.R)
-				resetSection();
-
-			if (FlxG.keys.justPressed.ENTER)
-				play(FlxG.keys.pressed.SHIFT);
-
-			if (FlxG.keys.justPressed.ESCAPE)
-				openTester();
-
-			if (FlxG.keys.justPressed.EIGHT || FlxG.keys.justPressed.NUMPADEIGHT)
-				noFunAllowed = !noFunAllowed;
-
-			if (FlxG.keys.justPressed.S && FlxG.keys.pressed.CONTROL)
-			{
-				var pressedNone = !FlxG.keys.pressed.SHIFT && !FlxG.keys.pressed.ALT && !FlxG.keys.pressed.TAB;
-
-				if (FlxG.keys.pressed.SHIFT || pressedNone)
-					save(CHART, PlayState.songDiff);
-				if (FlxG.keys.pressed.ALT || pressedNone)
-					save(EVENTS, "events");
-				if (FlxG.keys.pressed.TAB || pressedNone)
-					save(META, "meta");
-			}
+		}
+		else
+		{
+			selectSquare.visible = false;
+			addEvent.visible = false;
 		}
 
 		if (playingSong && audio.speed > 0)
@@ -1342,7 +2521,19 @@ class ChartingState extends MusicBeatState
 			if (!audio.playing && Conductor.songPos >= 0)
 				audio.play(Conductor.songPos);
 
-			Conductor.songPos += elapsed * 1000 * audio.speed;
+			var prevPos = Conductor.songPos;
+			audio.sync(elapsed);
+
+			for (note in CHART.notes)
+			{
+				var noteTime:Float = Conductor.getTimeAtStep(note.stepTime);
+				if (noteTime < prevPos)
+					continue;
+				else if (noteTime > Conductor.songPos)
+					break;
+				else
+					onNoteHit(note);
+			}
 		}
 		else
 		{
@@ -1352,30 +2543,10 @@ class ChartingState extends MusicBeatState
 
 		if (Conductor.songPos < 0)
 			Conductor.songPos = 0;
-		if (Conductor.songPos >= audio.length)
+		if (Conductor.songPos >= audio.songLength)
 		{
-			Conductor.songPos = audio.length;
+			Conductor.songPos = audio.songLength;
 			playingSong = false;
-		}
-
-		if (!playingSong)
-		{
-			if (FlxG.mouse.pressedMiddle && FlxG.keys.pressed.CONTROL)
-				timeBar.y = (FlxG.keys.pressed.SHIFT ? (FlxG.height / 2) - (timeBar.height / 2) : FlxG.mouse.y);
-			else if (FlxG.mouse.justPressedMiddle)
-			{
-				autoScrolling = !autoScrolling;
-
-				if (autoScrolling)
-				{
-					scrollAutoY = FlxG.mouse.getWorldPosition().y;
-					scrollBall.setPosition(FlxG.mouse.getWorldPosition()
-						.x - (scrollBall.width / 2), FlxG.mouse.getWorldPosition().y - (scrollBall.height / 2));
-				}
-			}
-
-			if (autoScrolling)
-				Conductor.songPos += (FlxG.mouse.getWorldPosition().y - scrollAutoY) * 10 * elapsed * (FlxG.keys.pressed.SHIFT ? 4 : 1);
 		}
 
 		grid.gridY = timeBar.y + (timeBar.height / 2) - (curStepFloat * GRID_SIZE * GRID_ZOOM);
@@ -1387,6 +2558,9 @@ class ChartingState extends MusicBeatState
 			cursorTxt.text = cursorText;
 			cursorTxt.color = (cursorText == "X" ? 0xFFFF0000 : 0xFFFFFFFF);
 		}
+
+		// set at the end so it doesnt interfere with the other keybinds
+		typing = PsychUIInputText.focusOn != null;
 	}
 
 	public function save(_data:Dynamic, name:String)
@@ -1398,31 +2572,201 @@ class ChartingState extends MusicBeatState
 		}
 	}
 
+	public function addAutoSave()
+	{
+		EditorSave.addSong(SONG, PlayState.songDiff);
+	}
+
 	public function play(testHere:Bool = false)
 	{
 		if (testHere)
 			PlayState.startPos = Conductor.songPos;
 
+		addAutoSave();
 		PlayState.SONG = SONG;
 		MusicBeat.switchState(new LoadingState());
 		FlxG.mouse.visible = false;
 	}
 
-	public function openTester()
+	public function openTester(opponentSide:Bool)
 	{
 		playingSong = false;
 		if (audio.playing)
 			audio.pause();
 
 		persistentDraw = false;
-		openSubState(new ChartTestSubState(SONG, Conductor.songPos));
+		openSubState(new ChartTestSubState(SONG, Conductor.songPos, opponentSide));
 	}
 
-	function selectAll()
+	public function selectAll()
 	{
 		selectedNotes = [];
 		for (note in CHART.notes)
 			selectedNotes.push(note);
+		notesTab.updateCallback.dispatch();
+	}
+
+	public function selectSection()
+	{
+		selectedNotes = [];
+
+		var startStep = Std.int(curBeat / 4) * 16;
+		var endStep = startStep + 16;
+		for (note in CHART.notes)
+		{
+			if (note.stepTime < startStep)
+				continue;
+
+			if (note.stepTime >= endStep)
+				break;
+
+			selectedNotes.push(note);
+		}
+		notesTab.updateCallback.dispatch();
+	}
+
+	public function deselect()
+	{
+		selectedNotes = [];
+		notesTab.updateCallback.dispatch();
+	}
+
+	public function delete()
+	{
+		if (selectedNotes.length > 0)
+		{
+			for (note in selectedNotes)
+			{
+				playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
+				CHART.notes.remove(note);
+			}
+			selectedNotes = [];
+			notesTab.updateCallback.dispatch();
+			sortNotes();
+		}
+
+		if (selectedEvents.length > 0)
+		{
+			if (FlxG.keys.justPressed.DELETE)
+			{
+				for (event in selectedEvents)
+				{
+					playSfx("editors/pop", FlxG.random.float(0.0, 0.4));
+					EVENTS.events.remove(event);
+				}
+				selectedEvents = [];
+				sortEvents();
+			}
+		}
+	}
+
+	var sectStep:Int = 0;
+
+	public function copySect(?prevSect:Int, ?startSect:Int)
+	{
+		selectedNotes = [];
+		var thisSect = Std.int(curBeat / 4);
+		startSect = startSect ?? thisSect;
+		var startStep = (startSect - (prevSect ?? 0)) * 16;
+		var endStep = startStep + 16;
+		for (note in CHART.notes)
+		{
+			if (note.stepTime < startStep)
+				continue;
+
+			if (note.stepTime >= endStep)
+				break;
+
+			var newNote = {
+				stepTime: (thisSect * 16) + (note.stepTime - startStep),
+				lane: note.lane,
+				strumline: note.strumline,
+				type: note.type,
+				length: note.length
+			};
+			CHART.notes.push(newNote);
+			selectedNotes.push(newNote);
+		}
+		notesTab.updateCallback.dispatch();
+		sortNotes();
+	}
+
+	public function copy(cut:Bool)
+	{
+		if (selectedNotes.length < 1)
+			return;
+
+		noteClipboard = selectedNotes.copy();
+		noteClipboard.sort(NoteUtil.sortNotes);
+
+		if (cut)
+			delete();
+		else
+			playSfx("editors/click");
+	}
+
+	public function paste()
+	{
+		if (noteClipboard.length < 1)
+			return;
+
+		playSfx("editors/pop");
+		selectedNotes = [];
+		var firstStep = noteClipboard[0].stepTime;
+		for (note in noteClipboard)
+		{
+			var newNote = {
+				stepTime: curStep + (note.stepTime - firstStep),
+				lane: note.lane,
+				strumline: note.strumline,
+				type: note.type,
+				length: note.length
+			};
+			CHART.notes.push(newNote);
+			selectedNotes.push(newNote);
+		}
+		notesTab.updateCallback.dispatch();
+		sortNotes();
+	}
+
+	public function quickCam(?player:Bool)
+	{
+		player = player ?? (focus != "bf");
+		selectedEvents = [];
+
+		var curEventStep:Int = curStep;
+		if (EditorSave.data.quickCamSection)
+			curEventStep = Math.floor(Conductor.getStepAtTime(getSectionStart()));
+
+		var foundEvent:EventData = null;
+		for (event in EVENTS.events)
+		{
+			if (event.stepTime == curEventStep)
+			{
+				foundEvent = event;
+				break;
+			}
+		}
+
+		if (foundEvent != null)
+		{
+			foundEvent.data = [player ? "bf" : "dad", 0, 0];
+			selectedEvents = [foundEvent];
+		}
+		else
+		{
+			var newEvent:EventData = {
+				stepTime: curEventStep,
+				name: "Camera Focus",
+				data: [player ? "bf" : "dad", 0, 0]
+			};
+
+			EVENTS.events.push(newEvent);
+			selectedEvents.push(newEvent);
+		}
+
+		sortEvents();
+		playSfx("editors/click");
 	}
 
 	public function getMouseLane():Int
@@ -1456,7 +2800,10 @@ class ChartingState extends MusicBeatState
 	{
 		if (FlxG.keys.pressed.SHIFT)
 		{
-			goToSong(0);
+			if (FlxG.keys.pressed.CONTROL)
+				goToSong(audio.songLength - 1)
+			else
+				goToSong(0);
 		}
 		else
 		{
@@ -1490,7 +2837,7 @@ class ChartingState extends MusicBeatState
 
 	public function tweenSongPos(target:Float, duration:Float = 0.1, ?ease:EaseFunction, ?onComplete:FlxTween->Void)
 	{
-		target = FlxMath.bound(target, 0, audio.length);
+		target = FlxMath.bound(target, 0, audio.songLength);
 		if (noFunAllowed)
 			duration = 0;
 
@@ -1519,8 +2866,16 @@ class ChartingState extends MusicBeatState
 		CHART.notes.sort(NoteUtil.sortNotes);
 	}
 
+	public function sortEvents()
+	{
+		EVENTS.events.sort(EventUtil.sortEvents);
+	}
+
 	public function playSfx(key:String, pitchShift:Bool = true, startDelay:Float = 0.0)
 	{
+		if (!soundEffects)
+			return;
+
 		var sfx = FlxG.sound.load(Assets.sound(key));
 		if (pitchShift)
 			sfx.pitch = FlxG.random.float(0.8, 1.2);
@@ -1533,12 +2888,17 @@ class ChartingState extends MusicBeatState
 			});
 	}
 
+	public function playMetronome(pitchShift:Bool = true)
+	{
+		var sfx = FlxG.sound.load(Assets.sound("metronome"), metronomeVolume);
+		sfx.pitch = pitchShift ? 1.12 : 1;
+		sfx.play();
+	}
+
 	override function draw()
 	{
-		for (note in renderNotes.members)
-		{
-			note.kill();
-		}
+		renderNotes.killMembers();
+		renderEvents.killMembers();
 
 		for (noteData in CHART.notes)
 		{
@@ -1556,11 +2916,8 @@ class ChartingState extends MusicBeatState
 			note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 			note.updateHitbox();
 
-			note.selected = false;
-			if (!selectedNotes.contains(noteData))
-				note.color = 0xFFFFFFFF;
-			else
-				note.selected = true;
+			note.selected = selectedNotes.contains(noteData);
+			note.color = note.selected ? selectedColor : 0xFFFFFFFF;
 
 			if (noteData.stepTime < curStepFloat)
 				note.alpha = 0.4;
@@ -1585,6 +2942,9 @@ class ChartingState extends MusicBeatState
 				hold.alpha = note.alpha;
 				hold.shader = note.shader;
 
+				hold.selected = note.selected;
+				hold.color = hold.selected ? selectedColor : 0xFFFFFFFF;
+
 				hold.holdParent = note; // idk you might need it
 				hold.zIndex = 1;
 
@@ -1593,25 +2953,84 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
+		eventAmounts.clear();
+		for (eventData in EVENTS.events)
+		{
+			var eventY:Float = grid.gridY + (eventData.stepTime * GRID_SIZE * GRID_ZOOM);
+			var eventOrder:Int = eventAmounts.get(Std.string(eventData.stepTime)) ?? 1;
+			if (eventY > FlxG.height)
+				break;
+
+			var eventLength = EventUtil.getLength(eventData);
+			var eventHeight = eventY + (ChartingState.GRID_SIZE * ChartingState.GRID_ZOOM * eventLength);
+			if (eventY < -GRID_SIZE && (eventLength <= 0 || eventHeight < -GRID_SIZE))
+				continue;
+
+			var event:ChartingEvent = cast renderEvents.recycle(ChartingEvent);
+			event.reloadEvent(eventData);
+			event.x = grid.gridX - ((event.width + EVENT_PADDING) * eventOrder) - EVENT_PADDING;
+			event.y = eventY - (centerEvents ? event.height / 2 : 0);
+			event.zIndex = 2;
+
+			event.selected = selectedEvents.contains(eventData);
+			event.color = event.selected ? selectedColor : 0xFFFFFFFF;
+
+			if (eventData.stepTime < curStepFloat)
+				event.alpha = 0.4;
+			else
+				event.alpha = 1;
+
+			if (eventData.name == "Camera Focus" && eventData.data[0] == "bf")
+				event.color *= iconBf.barColor;
+			else if (eventData.name == "Camera Focus" && eventData.data[0] == "dad")
+				event.color *= iconDad.barColor;
+
+			if (!renderEvents.members.contains(event))
+				renderEvents.add(event);
+
+			if (eventLength >= 0)
+			{
+				//
+				var hold:ChartingEvent = cast renderEvents.recycle(ChartingEvent);
+				hold.reloadHold(eventLength);
+				hold.x = event.x + (event.width / 2) - (hold.width / 2);
+				hold.y = event.y + (centerEvents ? event.height / 2 : 0);
+				hold.zIndex = 1;
+
+				hold.selected = event.selected;
+				hold.color = hold.selected ? selectedColor : 0xFFFFFFFF;
+				hold.alpha = event.alpha;
+
+				if (!renderEvents.members.contains(hold))
+					renderEvents.add(hold);
+			}
+
+			eventAmounts.set(Std.string(eventData.stepTime), eventOrder + 1);
+		}
+
 		renderNotes.sort(ZIndex.sort);
+		renderEvents.sort(ZIndex.sort);
 
 		super.draw();
 
-		if (cursorTxt.text != "")
+		if (persistentDraw)
 		{
-			cursorTxt.setPosition(FlxG.mouse.x + 18, FlxG.mouse.y + 18);
-			cursorTxt.draw();
-		}
+			if (cursorTxt.text != "")
+			{
+				cursorTxt.setPosition(FlxG.mouse.x + 18, FlxG.mouse.y + 18);
+				cursorTxt.draw();
+			}
 
-		if (autoScrolling)
-			scrollBall.draw();
+			if (autoScrolling)
+				scrollBall.draw();
+		}
 	}
 
-	override function stepHit()
+	override function beatHit()
 	{
-		super.stepHit();
-		if (audio.playing && Conductor.songPos >= 0)
-			audio.sync();
+		super.beatHit();
+		if (playingSong && metronome)
+			playMetronome(curBeat % 4 == 0);
 	}
 
 	public var CHART(get, never):DoidoChart;
@@ -1695,7 +3114,7 @@ class ChartingGrid extends FlxSprite
 			// grid squares
 			for (_x in 0...8)
 			{
-				color = (((_x + _y) % 2 == 0) ? 0xFFEBEFFE : 0xFFD7D9F6);
+				color = getSquareColor((_x + _y) % 2 == 0);
 				x = gridX + (GRID_SIZE * _x);
 				y = gridY;
 				super.draw();
@@ -1713,7 +3132,7 @@ class ChartingGrid extends FlxSprite
 			// beat lines and section numbers
 			if (zoomedY % 4 == 0)
 			{
-				beatLine.color = (zoomedY % 16 == 0) ? 0xFF1C1A24 : 0xFFA5B1E4;
+				beatLine.color = getBeatLineColor(zoomedY % 16 == 0);
 				beatLine.scale.y = (zoomedY % 16 == 0) ? 8 : 4;
 				beatLine.updateHitbox();
 
@@ -1742,6 +3161,12 @@ class ChartingGrid extends FlxSprite
 		}
 		midLine.draw();
 	}
+
+	function getBeatLineColor(b:Bool)
+		return ChartingState.darkMode ? (b ? 0xFF1C1A24 : 0xFF2E303A) : (b ? 0xFF1C1A24 : 0xFFA5B1E4);
+
+	function getSquareColor(b:Bool)
+		return ChartingState.darkMode ? (b ? 0xFF5C6074 : 0xFF4D5161) : (b ? 0xFFEBEFFE : 0xFFD7D9F6);
 }
 
 class GridWindow extends DoidoWindow
@@ -1808,18 +3233,19 @@ class GridWindow extends DoidoWindow
 
 class TimeWindow extends DoidoWindow
 {
+	public static var oldTimer:Bool = false;
+
 	public var timeTxt:FlxBitmapText;
 	public var infoTxt:FlxBitmapText;
 	public var timeBar:DoidoBar;
 	public var timeBall:FlxSprite;
-	public var oldMark:DoidoCheckmark;
-	public var oldTxt:FlxBitmapText;
-
 	public var buttons:Array<FlxSprite> = [];
 
 	public function new(chartState:ChartingState)
 	{
 		super(chartState);
+		oldTimer = EditorSave.data.oldTimer;
+
 		bg.scale.set(458, 138);
 		bg.updateHitbox();
 		bg.setPosition(FlxG.width - bg.width - 18, FlxG.height - bg.height - 18);
@@ -1872,29 +3298,11 @@ class TimeWindow extends DoidoWindow
 		{
 			chartState.resetSection();
 		});
-
-		oldMark = new DoidoCheckmark(false);
-		oldMark.onUp.add(() ->
-		{
-			oldTimer = oldMark.value;
-		});
-		oldMark.x = bg.x + bg.width - oldMark.width - 8;
-		oldMark.y = bg.y + 8;
-		add(oldMark);
-
-		oldTxt = new FlxBitmapText(0, bg.y + 8 + 3, Assets.bitmapFont("phantommuff"));
-		oldTxt.color = 0xFFD8DAF6;
-		oldTxt.alignment = LEFT;
-		oldTxt.scale.set(0.625, 0.625);
-		oldTxt.updateHitbox();
-		oldTxt.text = "Old Timer:";
-		oldTxt.x = oldMark.x - oldTxt.width - 8;
-		add(oldTxt);
 	}
 
 	override function draw()
 	{
-		var timeText:String = "Time: " + getTime(Conductor.songPos) + " / " + getTime(chartState.audio.length);
+		var timeText:String = "Time: " + getTime(Conductor.songPos) + " / " + getTime(chartState.audio.songLength);
 		if (timeTxt.text != timeText)
 			timeTxt.text = timeText;
 
@@ -1905,7 +3313,7 @@ class TimeWindow extends DoidoWindow
 		if (infoTxt.text != infoText)
 			infoTxt.text = infoText;
 
-		timeBar.percent = (1.0 - (Conductor.songPos / chartState.audio.length)) * 100;
+		timeBar.percent = (1.0 - (Conductor.songPos / chartState.audio.songLength)) * 100;
 		timeBall.x = FlxMath.lerp(timeBar.x, timeBar.x + timeBar.width, 1 - (timeBar.percent / 100)) - (timeBall.width / 2);
 
 		// time button!!
@@ -1945,15 +3353,13 @@ class TimeWindow extends DoidoWindow
 			chartState.curCursor = POINTER;
 			chartState.playingSong = false;
 
-			Conductor.songPos = FlxMath.bound(FlxMath.remapToRange(FlxG.mouse.x, timeBar.x, timeBar.x + timeBar.width, 0, chartState.audio.length), 0,
-				chartState.audio.length);
+			Conductor.songPos = FlxMath.bound(FlxMath.remapToRange(FlxG.mouse.x, timeBar.x, timeBar.x + timeBar.width, 0, chartState.audio.songLength), 0,
+				chartState.audio.songLength);
 
 			if (!FlxG.mouse.pressed)
 				scrubbing = false;
 		}
 	}
-
-	public var oldTimer:Bool = false;
 
 	public function getTime(time:Float):String
 	{
@@ -1962,5 +3368,59 @@ class TimeWindow extends DoidoWindow
 			return FlxStringUtil.formatTime(time, true);
 		else // old timer
 			return '${Math.floor(time * 100) / 100}';
+	}
+}
+
+class ColoredBorder extends FlxGroup
+{
+	// only the white lines get added here
+	var left:FlxTypedGroup<FlxSprite>;
+	var right:FlxTypedGroup<FlxSprite>;
+
+	public function new(center:Float)
+	{
+		super();
+
+		left = new FlxTypedGroup<FlxSprite>();
+		add(left);
+
+		right = new FlxTypedGroup<FlxSprite>();
+		add(right);
+
+		for (i in 0...2)
+		{
+			var side = [left, right][i];
+			createLine([0, center][i], 0, [center, FlxG.width][i], 12, side);
+			createLine([0, center][i], FlxG.height - 12, [center, FlxG.width][i], 12, side);
+			createLine([0, FlxG.width - 12][i], 0, 12, FlxG.height, side);
+
+			var cam:FlxSprite = new FlxSprite();
+			cam.loadImage("editors/charting/camera_border");
+			cam.flipX = i == 1;
+			cam.setPosition(center - [cam.width, 0][i], 0);
+			side.add(cam);
+		}
+		sort(ZIndex.sort);
+	}
+
+	function createLine(x:Float, y:Float, width:Float, height:Float, group:FlxTypedGroup<FlxSprite>)
+	{
+		var black = new FlxSprite();
+		black.makeColor(width + 6, height + 6, 0xFF000000);
+		black.setPosition(x - 3, y - 3);
+		black.zIndex = -1;
+		add(black);
+
+		var color = new FlxSprite();
+		color.makeColor(width, height, 0xFFFFFFFF);
+		color.setPosition(x, y);
+		color.zIndex = 1;
+		group.add(color);
+	}
+
+	public function setColor(isRight:Bool, color:FlxColor)
+	{
+		for (side in (isRight ? right : left).members)
+			side.color = color;
 	}
 }

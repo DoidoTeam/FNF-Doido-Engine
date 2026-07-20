@@ -44,8 +44,14 @@ class Conductor
 	inline public static function calcStep(bpm:Float):Float
 		return calcBeat(bpm) / 4;
 
+	public static var mappableEvents:Array<String> = ["BPM Change", "Linear BPM Change"];
+
+	inline public static function isMappable(name:String)
+		return mappableEvents.contains(name);
+
 	public static function mapBPMChanges(?events:Array<Dynamic>)
 	{
+		trace("mapping!");
 		bpmChangeMap = [];
 		if (events == null)
 			return;
@@ -251,6 +257,10 @@ class Conductor
 			time = songPos;
 		return getStepAtTime(time) / 4;
 	}
+
+	// note: in SECONDS
+	public static function getStepDuration(step:Float, length:Float)
+		return (getTimeAtStep(step + length) - getTimeAtStep(step)) / 1000;
 
 	static function getEventRampDuration(event:BPMChangeEvent):Float
 	{

@@ -38,7 +38,12 @@ class MainMenuState extends MusicBeatState
 		super();
 		addOption("story mode", () -> switchState(new states.menus.StoryMenuState()));
 		addOption("freeplay", () -> switchState(new FreeplayState()));
-		addOption("donate", () -> #if (android && MODS_FOLDER) openSubState(new substates.menus.ModSubState()) #else switchState(new DebugMenu()) #end);
+		#if (android && MODS_FOLDER)
+		addOption("debug", () -> openSubState(new substates.menus.ModSubState()));
+		#else
+		if (Save.data.developerMode)
+			addOption("debug", () -> switchState(new DebugMenu()));
+		#end
 		addOption("options", () -> openSubState(new substates.menus.OptionsSubState()));
 		addOption("credits", () -> switchState(new states.menus.CreditsState()));
 		loadScript();
@@ -114,7 +119,7 @@ class MainMenuState extends MusicBeatState
 
 		#if MODS_FOLDER
 		#if mobile
-		splash += '\nPress DONATE to manage Mods';
+		splash += '\nPress DEBUG to manage Mods';
 		#elseif desktop
 		splash += '\nPress [TAB] to manage Mods';
 		#end
@@ -171,7 +176,7 @@ class MainMenuState extends MusicBeatState
 			//	MusicBeat.switchState(new states.DebugMenu.ModManager());
 			#end
 
-			if(FlxG.keys.justPressed.EIGHT)
+			if (Save.data.developerMode && FlxG.keys.justPressed.EIGHT)
 			{
 				FlxG.sound.play(Assets.sound("cancel"));
 				MusicBeat.switchState(new states.editors.CharacterEditor("face", false, false));

@@ -12,6 +12,7 @@ import doido.song.Conductor;
 import states.PlayState;
 import flixel.FlxSprite;
 import doido.utils.NoteUtil;
+import doido.utils.EditorUtil;
 
 class ChartTestSubState extends MusicBeatSubState implements Playable
 {
@@ -25,6 +26,7 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 	public var health:Float = 1;
 	public var downscroll:Bool = false;
 	public var middlescroll:Bool = false;
+	public var opponentSide:Bool = false;
 
 	public var validScore:Bool = true;
 	public var botplay(default, set):Bool;
@@ -36,11 +38,12 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 	var hudClass:ClassHud;
 	var startPos:Float = 0;
 
-	public function new(SONG:DoidoSong, startPos:Float)
+	public function new(SONG:DoidoSong, startPos:Float, opponentSide:Bool)
 	{
 		super();
 		this.SONG = SONG;
 		this.startPos = startPos;
+		this.opponentSide = opponentSide;
 	}
 
 	override function close()
@@ -48,9 +51,8 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 		audio.pause();
 		Conductor.songPos = startPos;
 		Main.setFpsPos(18, FlxG.height - 125 - Std.int(Main.fpsCounter.bgHeight));
-		MusicBeat.activeState.persistentDraw = true;
-
 		super.close();
+		MusicBeat.activeState.persistentDraw = true;
 	}
 
 	override function create()
@@ -58,6 +60,7 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 		super.create();
 		Main.setFpsPos(5, 5);
 		Timings.init();
+		EditorUtil.setCursor(DEFAULT);
 
 		var startOffset:Float = 820;
 		Conductor.songPos = startPos - startOffset;
@@ -70,7 +73,7 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 		add(bg);
 
 		downscroll = (#if TOUCH_CONTROLS Save.data.modernControls #else false #end ?true:Save.data.downscroll);
-		audio = new AudioHandler(CHART.song, PlayState.songDiff);
+		audio = new AudioHandler(CHART.song, CHART.postfix);
 		audio.play(Conductor.songPos);
 
 		hudClass = new TestHud(this);
@@ -78,6 +81,10 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 		add(hudClass);
 
 		playField = new PlayField(CHART.notes, CHART.speed, downscroll, middlescroll, META.assets);
+		playField.dadStrumline.botplay = !opponentSide;
+		playField.dadStrumline.isPlayer = opponentSide;
+		playField.bfStrumline.botplay = opponentSide;
+		playField.bfStrumline.isPlayer = !opponentSide;
 		add(playField);
 		setUpInput();
 
@@ -204,7 +211,7 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 
 		if (!paused)
 		{
-			Conductor.songPos += elapsed * 1000 * audio.speed;
+			audio.sync(elapsed);
 			playField.updateNotes(curStepFloat);
 		}
 	}
@@ -226,9 +233,7 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 
 		if (!paused)
 		{
-			if (Conductor.songPos < audio.length - 2000)
-				audio.sync();
-			else if (Conductor.songPos >= audio.length)
+			if (Conductor.songPos >= audio.songLength)
 				close();
 		}
 
@@ -242,12 +247,17 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 		return META.player2;
 
 	public function get_songLength():Float
-		return audio.length;
+		return audio.songLength;
 
 	public function set_botplay(b:Bool):Bool
 	{
 		botplay = b;
-		playField.bfStrumline.botplay = b;
+
+		if (opponentSide)
+			playField.dadStrumline.botplay = b;
+		else
+			playField.bfStrumline.botplay = b;
+
 		return botplay;
 	}
 

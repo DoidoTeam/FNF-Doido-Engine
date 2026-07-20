@@ -1,5 +1,6 @@
 {
 	"speed": 2.5,
+	"postfix": "erect",
 	"notes": [
 		{
 			"length": 1,

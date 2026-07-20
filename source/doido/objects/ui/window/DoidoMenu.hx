@@ -5,6 +5,7 @@ import flixel.text.FlxBitmapText;
 import flixel.group.FlxSpriteGroup;
 import states.editors.ChartingState;
 import doido.objects.ui.buttons.DoidoButton;
+import flixel.util.FlxColor;
 
 // was i supposed to do something with this?
 enum MenuObjects
@@ -34,9 +35,25 @@ class MenuWindow extends DoidoWindow
 		bg.updateHitbox();
 	}
 
-	public function addButton(label:String, ?bind:String, ?func:Void->Void)
+	public function addButton(label:String, ?bind:String, ?func:Void->Void, ?color:FlxColor)
 	{
-		var newBtn = new MenuButton(label, bind, width, func);
+		var newBtn = new MenuButton(label, bind, width, func, color);
+		buttons.push(newBtn);
+		add(newBtn);
+
+		newBtn.x = bg.x;
+		newBtn.y = bg.y + yOffset;
+		yOffset += newBtn.height;
+	}
+
+	public function addCheck(label:String, defaultValue:Bool, func:Bool->Void, ?color:FlxColor)
+	{
+		var newBtn = new MenuButton(label, defaultValue, width, color);
+		newBtn.button.onUp.add(() ->
+		{
+			newBtn.value = !newBtn.value;
+			func(newBtn.value);
+		});
 		buttons.push(newBtn);
 		add(newBtn);
 
@@ -59,17 +76,31 @@ class MenuWindow extends DoidoWindow
 
 class MenuButton extends FlxSpriteGroup
 {
+	public var value(default, set):Bool;
+	public var button:DoidoButton;
+
 	var _label:FlxBitmapText;
 	var _bind:FlxBitmapText;
-	var button:DoidoButton;
+	var check:FlxSprite;
 
-	public function new(label:String, ?bind:String, width:Float = 318, height:Float = 22, ?onUp:Void->Void, ?onDown:Void->Void)
+	public function new(label:String, ?bind:String, ?defaultValue:Bool, width:Float = 318, height:Float = 22, ?onUp:Void->Void, ?onDown:Void->Void,
+			?color:FlxColor)
 	{
 		super();
 
+		var defaultAlpha = 0.0;
+		var selAlpha = 0.2;
+
+		if (color == null)
+			color = 0xFFD8DAF6;
+		else {
+			defaultAlpha = 0.2;
+			selAlpha = 0.4;
+		}
+
 		button = new DoidoButton(onUp, onDown);
-		button.makeColor(width, height, 0xFFD8DAF6);
-		button.alpha = 0;
+		button.makeColor(width, height, color);
+		button.alpha = defaultAlpha;
 		button.maxScale = 1;
 		button.minScale = 1;
 		button.changeScale = false;
@@ -77,11 +108,11 @@ class MenuButton extends FlxSpriteGroup
 
 		button.onHover.add(() ->
 		{
-			button.alpha = 0.2;
+			button.alpha = selAlpha;
 		});
 		button.onOut.add(() ->
 		{
-			button.alpha = 0;
+			button.alpha = defaultAlpha;
 		});
 
 		_label = new FlxBitmapText(0, 0, Assets.bitmapFont("phantommuff"));
@@ -104,5 +135,26 @@ class MenuButton extends FlxSpriteGroup
 			_bind.setPosition(button.x + button.width - _bind.width - 2, button.y + ((button.height / 2) - (_bind.height / 2)));
 			add(_bind);
 		}
+
+		if (defaultValue != null)
+		{
+			check = new FlxSprite();
+			check.loadSparrow("editors/charting/checkmark");
+			check.animation.addByPrefix("off", "button checkmark" + "0000", 0, false);
+			check.animation.addByPrefix("on", "button checkmark" + "0001", 0, false);
+			check.scale.set(0.76, 0.76);
+			check.updateHitbox();
+			check.setPosition(button.x + button.width - check.width - 2, button.y + ((button.height / 2) - (check.height / 2)));
+			add(check);
+
+			value = defaultValue;
+		}
+	}
+
+	public function set_value(b:Bool)
+	{
+		value = b;
+		check.animation.play((b ? "on" : "off"));
+		return value;
 	}
 }

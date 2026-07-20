@@ -15,7 +15,7 @@ typedef CreditData =
 {
 	var name:String;
 	var icon:String;
-	var color:Dynamic;
+	var color:String;
 	var info:String;
 	var ?link:String;
 }
@@ -56,7 +56,7 @@ class CreditsState extends MusicBeatState
 
 	var astraEasterEgg:Bool = false;
 
-	function addCredit(name:String, icon:String = "", color:Dynamic, info:String = "", ?link:String)
+	function addCredit(name:String, icon:String = "", color:String, info:String = "", ?link:String)
 	{
 		creditList.credits.push({
 			name: name,

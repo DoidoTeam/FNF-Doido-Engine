@@ -27,24 +27,26 @@ class CharGroup extends FlxTypedGroup<Character>
 		if (isPlayer)
 		{
 			var deadCharExists:Bool = false;
-			for(char in members)
+			for (char in members)
 			{
 				if (char.curChar == newChar.deathChar)
 					deadCharExists = true;
 			}
-			if (!deadCharExists) {
+			if (!deadCharExists)
+			{
 				trace("DEATH CHAR DOESN'T EXIST, CREATING: " + newChar.deathChar);
 				var deadChar = new Character(newChar.deathChar, true);
 				add(deadChar);
 			}
 		}
 
-		if (isActive)
-			setActive(charName);
+		setActive(isActive ? charName : null);
 	}
 
-	public function setActive(charName:String)
+	public function setActive(?charName:String)
 	{
+		charName = charName ?? curChar;
+		
 		char = null;
 		for (char in members)
 		{
@@ -72,6 +74,7 @@ class CharGroup extends FlxTypedGroup<Character>
 	}
 
 	public var x(default, set):Float = 0.0;
+
 	public function set_x(v:Float):Float
 	{
 		x = v;
@@ -80,6 +83,7 @@ class CharGroup extends FlxTypedGroup<Character>
 	}
 
 	public var y(default, set):Float = 0.0;
+
 	public function set_y(v:Float):Float
 	{
 		y = v;
@@ -97,6 +101,7 @@ class CharGroup extends FlxTypedGroup<Character>
 	}
 
 	public var scrollFactorX(default, set):Float = 1.0;
+
 	public function set_scrollFactorX(v:Float):Float
 	{
 		scrollFactorX = v;
@@ -105,6 +110,7 @@ class CharGroup extends FlxTypedGroup<Character>
 	}
 
 	public var scrollFactorY(default, set):Float = 1.0;
+
 	public function set_scrollFactorY(v:Float):Float
 	{
 		scrollFactorY = v;
@@ -119,6 +125,7 @@ class CharGroup extends FlxTypedGroup<Character>
 	}
 
 	public var alpha(default, set):Float = 1.0;
+
 	public function set_alpha(v:Float):Float
 	{
 		alpha = v;
@@ -127,6 +134,7 @@ class CharGroup extends FlxTypedGroup<Character>
 	}
 
 	public var angle(default, set):Float = 0.0;
+
 	public function set_angle(v:Float):Float
 	{
 		angle = v;
@@ -191,6 +199,7 @@ class CharGroup extends FlxTypedGroup<Character>
 		return char.getMidpoint(point);
 
 	public var cameraOffset(get, never):DoidoPoint;
+
 	public function get_cameraOffset():DoidoPoint
 		return char.cameraOffset;
 
