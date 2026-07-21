@@ -164,7 +164,7 @@ class Legacy
 				EVENTS.events.push({
 					name: "Camera Focus",
 					stepTime: sectionTime,
-					data: [(section.mustHitSection ? "bf" : "dad")],
+					data: [(section.mustHitSection ? "bf" : "dad"), 4, "classic", "inout", 0, 0],
 				});
 				lastSection = section.mustHitSection;
 			}

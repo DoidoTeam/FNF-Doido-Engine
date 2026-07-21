@@ -158,8 +158,8 @@ class PlayState extends MusicBeatState implements Playable
 		camOther = new DoidoCamera(true, false);
 
 		shaders = new ShaderCache();
-		camFollow = new LerpPoint(true);
-		camDisplace = new LerpPoint(true);
+		camFollow = new LerpPoint();
+		camDisplace = new LerpPoint();
 
 		stageBuild = new Stage(this);
 
@@ -679,7 +679,10 @@ class PlayState extends MusicBeatState implements Playable
 				changeStage(data[0]);
 
 			case "Camera Focus":
-				followCamera(data[0], {x: data[1], y: data[2]});
+				followCamera(data[0], data[1] ?? 4, data[2] ?? "classic", data[3] ?? "inout", {x: data[4] ?? 0, y: data[5] ?? 0});
+
+			case "Camera Position":
+				followCamera("", data[2], data[3], data[4], {x: data[0], y: data[1]});
 		}
 	}
 
@@ -712,7 +715,7 @@ class PlayState extends MusicBeatState implements Playable
 		}
 	}
 
-	public function followCamera(charStr:String = "", ?offset:DoidoPoint):LerpPoint
+	public function followCamera(charStr:String = "", duration:Float = 4, ease:String = "classic", modifier:String = "inout", ?offset:DoidoPoint):LerpPoint
 	{
 		offset = MathUtil.addPoint(offset ?? {x: 0, y: 0}, switch (charStr)
 		{
@@ -722,21 +725,26 @@ class PlayState extends MusicBeatState implements Playable
 			default: {x: 0, y: 0};
 		});
 
-		var char = strToChar(charStr);
+		var char = strToChar(charStr, true);
 		curFocus = charStr;
-		camFollow.point = {x: 0, y: 0};
 
+		var target:DoidoPoint = {x: 0, y: 0};
 		if (char != null)
 		{
 			var playerMult:Int = (char.isPlayer ? -1 : 1);
 
-			camFollow.point = {
+			target = {
 				x: char.getMidpoint().x + ((200 + char.cameraOffset.x) * playerMult),
 				y: char.getMidpoint().y - 20 + char.cameraOffset.y
 			};
 		}
+		target = MathUtil.addPoint(target, offset);
 
-		camFollow.point = MathUtil.addPoint(camFollow.point, offset);
+		if (ease == "classic")
+			camFollow.set(target);
+		else
+			camFollow.tweenTo(target, Conductor.getStepDuration(curStepFloat, duration), ease, modifier);
+
 		return camFollow;
 	}
 

@@ -26,6 +26,9 @@ typedef OptionData =
 	var ?updatePlayState:PlayState->Void;
 	var ?playStateWarning:Bool;
 
+	// menu stuff
+	var ?resetMenu:Bool;
+
 	// SELECTORS
 	var ?options:Array<String>;
 
@@ -38,6 +41,7 @@ typedef OptionData =
 class OptionsSubState extends MusicBeatSubState
 {
 	public var playState:PlayState = null;
+	public var resetMenu:Bool = false;
 
 	public var optionOrder:Array<String> = ["Gameplay", "Preferences", "Graphics", #if TOUCH_CONTROLS "Mobile", #end];
 	public var optionList:Map<String, Array<OptionData>> = [];
@@ -338,6 +342,7 @@ class OptionsSubState extends MusicBeatSubState
 						else
 							return "If enabled, will give access to the engine's editors.";
 					},
+					resetMenu: true,
 				},
 			],
 			"Graphics" => [
@@ -694,12 +699,19 @@ class OptionsSubState extends MusicBeatSubState
 		reloadDesc();
 		if (curOption.onChange != null)
 			curOption.onChange();
-		if (playState == null)
-			return;
-		if (curOption.updatePlayState != null)
-			curOption.updatePlayState(playState);
-		if (curOption.playStateWarning ?? false)
-			triggerWarning();
+
+		if (playState != null)
+		{
+			if (curOption.updatePlayState != null)
+				curOption.updatePlayState(playState);
+			if (curOption.playStateWarning ?? false)
+				triggerWarning();
+		}
+		else
+		{
+			if (curOption.resetMenu ?? false)
+				resetMenu = true;
+		}
 	}
 
 	override function draw()
@@ -827,7 +839,11 @@ class OptionsSubState extends MusicBeatSubState
 		if (Controls.justPressed(BACK))
 		{
 			FlxG.sound.play(Assets.sound("options/options-close"));
-			close();
+
+			if (playState == null && resetMenu)
+				MusicBeat.switchState(cast Type.createInstance(Type.getClass(subParent), []));
+			else
+				close();
 		}
 
 		var change:Int = (Controls.pressed(UI_DOWN) ? 1 : 0) - (Controls.pressed(UI_UP) ? 1 : 0);

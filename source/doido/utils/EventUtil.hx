@@ -33,7 +33,7 @@ class EventUtil
 {
 	public static var eventLists:Map<String, Array<String>> = [
 		"Main" => ["Camera", "Objects", "Screen", "Gameplay", "Song", "Misc"],
-		"Camera" => ["Camera Focus", "Change Cam Zoom", "Change Cam Angle"],
+		"Camera" => ["Camera Focus", "Camera Position", "Change Cam Zoom", "Change Cam Angle"],
 		"Objects" => ["Change Character", "Play Animation", "Change Stage"],
 		"Screen" => ["Flash Screen", "Fade Screen", "Shake Screen"],
 		"Gameplay" => ["Change Note Speed", "Freeze Notes"],
@@ -68,12 +68,33 @@ class EventUtil
 					options: PlayState.availableCharacters
 				},
 				{
+					name: "Duration",
+					info: "How long the camera movement will take, in steps. If 0, zoom will be instant or lerp.",
+					defaultValue: 4,
+					min: 0,
+					max: 128,
+					step: 1,
+					decimals: 0
+				},
+				{
+					name: "Easing",
+					info: "Easing function to make your tweens smoother.",
+					defaultValue: "classic",
+					options: ["classic"].concat(TweenUtil.availableEases)
+				},
+				{
+					name: "Modifier",
+					info: "Modifier that declares where the easing is applied to the tween.",
+					defaultValue: "InOut",
+					options: TweenUtil.availableModifiers
+				},
+				{
 					name: "X Offset",
 					info: "Offset along the x axis.",
 					defaultValue: 0,
 					min: 0,
 					max: 2000,
-					step: 50,
+					step: 10,
 					decimals: 0
 				},
 				{
@@ -82,8 +103,53 @@ class EventUtil
 					defaultValue: 0,
 					min: 0,
 					max: 2000,
-					step: 50,
+					step: 10,
 					decimals: 0
+				}
+			]
+		},
+		{
+			name: "Camera Position",
+			desc: "Set the position of a specific character.",
+			values: [
+				{
+					name: "X Position",
+					info: "Offset along the x axis.",
+					defaultValue: 0,
+					min: 0,
+					max: 2000,
+					step: 10,
+					decimals: 0
+				},
+				{
+					name: "Y Position",
+					info: "Offset along the y axis.",
+					defaultValue: 0,
+					min: 0,
+					max: 2000,
+					step: 10,
+					decimals: 0
+				},
+				{
+					name: "Duration",
+					info: "How long the camera movement will take, in steps. If 0, zoom will be instant or lerp.",
+					defaultValue: 4,
+					min: 0,
+					max: 128,
+					step: 1,
+					decimals: 0
+				},
+				{
+					name: "Easing",
+					info: "Easing function to make your tweens smoother.",
+					defaultValue: "classic",
+					options: ["classic"].concat(TweenUtil.availableEases)
+				},
+				{
+					name: "Modifier",
+					info: "Modifier that declares where the easing is applied to the tween.",
+					defaultValue: "InOut",
+					options: TweenUtil.availableModifiers
 				}
 			]
 		},
@@ -476,6 +542,9 @@ class EventUtil
 	public static function getLength(data:EventData)
 	{
 		var event:Event = getEvent(data.name);
+
+		if ((data.name == "Camera Focus" && data.data[2] == "classic") || (data.name == "Camera Position" && data.data[3] == "classic"))
+			return -1;
 
 		if (event != null)
 		{

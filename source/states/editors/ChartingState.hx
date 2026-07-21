@@ -2763,7 +2763,7 @@ class ChartingState extends MusicBeatState
 			var newEvent:EventData = {
 				stepTime: curEventStep,
 				name: "Camera Focus",
-				data: [player ? "bf" : "dad", 0, 0]
+				data: [player ? "bf" : "dad", 4, "classic", "inout", 0, 0]
 			};
 
 			EVENTS.events.push(newEvent);
