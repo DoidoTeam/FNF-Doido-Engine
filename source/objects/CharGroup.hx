@@ -1,9 +1,8 @@
 package objects;
 
-import objects.Character.SingType;
+import objects.Character;
 import flixel.math.FlxPoint;
 import doido.utils.NoteUtil;
-import objects.ui.notes.Note;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import objects.ui.notes.Strumline;
 
@@ -46,7 +45,7 @@ class CharGroup extends FlxTypedGroup<Character>
 	public function setActive(?charName:String)
 	{
 		charName = charName ?? curChar;
-		
+
 		char = null;
 		for (char in members)
 		{
@@ -145,7 +144,11 @@ class CharGroup extends FlxTypedGroup<Character>
 
 	public function playSingAnim(lane:Int, miss:Bool = false)
 	{
+		if (specialAnim == IGNORE_NOTES || specialAnim == OVERRIDE_ALL)
+			return;
+
 		resetSingStep();
+		specialAnim = NONE;
 		playAnim(NoteUtil.getSingAnims(4)[lane] + (miss ? "miss" : ""), true);
 	}
 
@@ -225,4 +228,15 @@ class CharGroup extends FlxTypedGroup<Character>
 
 	public function animExists(animName:String):Bool
 		return char.animExists(animName);
+
+	public var specialAnim(get, set):SpecialAnim;
+
+	public function get_specialAnim():SpecialAnim
+		return char.specialAnim;
+
+	public function set_specialAnim(sp:SpecialAnim):SpecialAnim
+	{
+		char.specialAnim = sp;
+		return char.specialAnim;
+	}
 }

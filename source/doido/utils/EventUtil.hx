@@ -33,9 +33,9 @@ class EventUtil
 {
 	public static var eventLists:Map<String, Array<String>> = [
 		"Main" => ["Camera", "Objects", "Screen", "Gameplay", "Song", "Misc"],
-		"Camera" => ["Camera Focus", "Change Cam Zoom"],
+		"Camera" => ["Camera Focus", "Change Cam Zoom", "Change Cam Angle"],
 		"Objects" => ["Change Character", "Play Animation", "Change Stage"],
-		"Screen" => ["Flash Screen", "Fade Screen"],
+		"Screen" => ["Flash Screen", "Fade Screen", "Shake Screen"],
 		"Gameplay" => ["Change Note Speed", "Freeze Notes"],
 		"Song" => ["BPM Change"],
 		"Misc" => ["Trigger Tag"]
@@ -129,6 +129,53 @@ class EventUtil
 			]
 		},
 		{
+			name: "Change Cam Angle",
+			desc: "Change the Camera Angle.",
+			values: [
+				{
+					name: "Camera",
+					info: "Which camera to change angle.",
+					defaultValue: "Game",
+					options: PlayState.availableCameras
+				},
+				{
+					name: "New Angle",
+					info: "What angle to change to.",
+					defaultValue: 0,
+					min: -360,
+					max: 360,
+					step: 1,
+					decimals: 0
+				},
+				{
+					name: "Duration",
+					info: "How long the zoom will take, in steps. If 0, zoom will be instant or lerp.",
+					defaultValue: 4,
+					min: 0,
+					max: 128,
+					step: 1,
+					decimals: 0
+				},
+				{
+					name: "Easing",
+					info: "Easing function to make your tweens smoother.",
+					defaultValue: "linear",
+					options: TweenUtil.availableEases
+				},
+				{
+					name: "Modifier",
+					info: "Modifier that declares where the easing is applied to the tween.",
+					defaultValue: "InOut",
+					options: TweenUtil.availableModifiers
+				},
+				/*{
+					name: "Lerping",
+					info: "If enabled, will use a classic lerp smoothing.",
+					defaultValue: false
+				},*/
+			]
+		},
+		{
 			name: "Play Animation",
 			desc: "Make a Character play a specific animation.",
 			values: [
@@ -143,6 +190,12 @@ class EventUtil
 					info: "Which animation to play.",
 					defaultValue: "idle",
 				},
+				{
+					name: "Mode",
+					info: "Animation mode.",
+					defaultValue: "NONE",
+					options: ["NONE", "IGNORE IDLE", "IGNORE NOTES", "OVERRIDE ALL"]
+				}
 			]
 		},
 		{
@@ -233,6 +286,36 @@ class EventUtil
 			]
 		},
 		{
+			name: "Shake Screen",
+			desc: "Shake a Camera with a specific intensity.",
+			values: [
+				{
+					name: "Intensity",
+					info: "How strong will the shake be.",
+					defaultValue: 0.05,
+					min: 0.01,
+					max: 1,
+					step: 0.01,
+					decimals: 2
+				},
+				{
+					name: "Duration",
+					info: "How long the shake will take, in steps.",
+					defaultValue: 4,
+					min: 1,
+					max: 128,
+					step: 1,
+					decimals: 0
+				},
+				{
+					name: "Camera",
+					info: "Which camera to flash.",
+					defaultValue: "Game",
+					options: PlayState.availableCameras
+				}
+			]
+		},
+		{
 			name: "Freeze Notes",
 			desc: "Stop note scroll indefinitely, or until changed.",
 			values: [
@@ -240,6 +323,12 @@ class EventUtil
 					name: "Enabled",
 					defaultValue: false
 				},
+				{
+					name: "Strumline",
+					info: "Which strumline(s) to freeze.",
+					defaultValue: "both",
+					options: ["dad", "bf", "both"]
+				}
 			]
 		},
 		{

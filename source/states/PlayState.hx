@@ -634,24 +634,50 @@ class PlayState extends MusicBeatState implements Playable
 			case "Play Animation":
 				var char = strToChar(data[0]);
 				char.playAnim(data[1], true);
-			// char.char.specialAnim = (CoolUtil.stringToBool(daEvent.value3) ? 2 : 1);
+				char.specialAnim = switch (data[2])
+				{
+					case "IGNORE IDLE": IGNORE_IDLE;
+					case "IGNORE NOTES": IGNORE_NOTES;
+					case "OVERRIDE ALL": OVERRIDE_ALL;
+					default: NONE;
+				};
+
 			case "Change Character":
 				var char = strToChar(data[0]);
 				changeChar(char, data[1], (char != gf));
+
 			case "Freeze Notes":
-				for (strumline in playField.strumlines)
+				var affected:Array<Strumline> = playField.strumlines;
+				switch (data[1])
+				{
+					case "dad": affected.remove(playField.bfStrumline);
+					case "bf": affected.remove(playField.dadStrumline);
+				}
+				for (strumline in affected)
 					strumline.pauseNotes = data[0];
+
 			case "Change Note Speed":
 				for (strumline in playField.strumlines)
 					setTween("scrollSpeed" + strumline.ID, strumline, {scrollSpeed: data[0]}, data[1], data[2], data[3]);
+
 			case "Change Cam Zoom":
 				setTween("camZoom", this, {camZoom: data[0]}, data[1], data[2], data[3]);
+
+			case "Change Cam Angle":
+				setTween("camAngle" + data[0], strToCam(data[0]), {angle: data[1]}, data[2], data[3], data[4]);
+
 			case "Flash Screen":
 				MusicBeat.flash(strToCam(data[2]), Conductor.getStepDuration(curStepFloat, data[0]), SpriteUtil.getColor(data[1]));
+
 			case 'Fade Screen':
 				strToCam(data[3]).fade(SpriteUtil.getColor(data[2]), Conductor.getStepDuration(curStepFloat, data[1]), data[0]);
+
+			case 'Shake Screen':
+				strToCam(data[2]).shake(data[0], Conductor.getStepDuration(curStepFloat, data[1]));
+
 			case "Change Stage":
 				changeStage(data[0]);
+
 			case "Camera Focus":
 				followCamera(data[0], {x: data[1], y: data[2]});
 		}
@@ -664,7 +690,8 @@ class PlayState extends MusicBeatState implements Playable
 			tween.cancel();
 	}
 
-	public function setTween(name:String, object:Dynamic, values:Dynamic, duration:Float = 1, ease:String = "linear", modifier:String = "in", clear:Bool = true):FlxTween
+	public function setTween(name:String, object:Dynamic, values:Dynamic, duration:Float = 1, ease:String = "linear", modifier:String = "in",
+			clear:Bool = true):FlxTween
 	{
 		if (clear)
 			clearTween(name);

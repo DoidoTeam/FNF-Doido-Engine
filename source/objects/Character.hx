@@ -35,6 +35,14 @@ enum SingType
 	LOOP;
 }
 
+enum SpecialAnim
+{
+	NONE;
+	IGNORE_IDLE;
+	IGNORE_NOTES;
+	OVERRIDE_ALL;
+}
+
 class Character extends DoidoSprite
 {
 	public var curChar:String = "bf";
@@ -64,6 +72,8 @@ class Character extends DoidoSprite
 	public var singLength:Float = 0.7;
 	public var singStep:Float = 0.0;
 	public var singLoop:Int = 4;
+
+	public var specialAnim:SpecialAnim = NONE;
 
 	public var globalOffset:DoidoPoint = {x: 0, y: 0};
 	public var cameraOffset:DoidoPoint = {x: 0, y: 0};
@@ -144,6 +154,9 @@ class Character extends DoidoSprite
 
 	public function dance(forced:Bool = false)
 	{
+		if (specialAnim != NONE)
+			return;
+
 		playAnim(idleAnims[curDance]);
 		curDance++;
 		if (curDance >= idleAnims.length)
@@ -177,6 +190,12 @@ class Character extends DoidoSprite
 		{
 			if (animExists(curAnimName + '-loop') && curAnimFinished)
 				playAnim(curAnimName + '-loop');
+
+			if (specialAnim != NONE && specialAnim != OVERRIDE_ALL && curAnimFinished)
+			{
+				specialAnim = NONE;
+				dance();
+			}
 		}
 		else
 		{
