@@ -219,13 +219,13 @@ class DoidoSprite extends FlxAnimate
 		return animList.contains(animName);
 
 	public function get_curAnimFrame():Int
-		return anim.curAnim.curFrame;
+		return anim?.curAnim?.curFrame ?? 0;
 
 	public function get_curAnimFinished():Bool
-		return anim.curAnim.finished;
+		return anim?.curAnim?.finished ?? false;
 
 	public function get_curAnimPaused():Bool
-		return anim.curAnim.paused;
+		return anim?.curAnim?.paused ?? false;
 
 	public static function copyAnim(anim:Animation):Animation
 	{

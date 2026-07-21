@@ -1,5 +1,6 @@
 package states.editors;
 
+import substates.editors.IconEditorSubState;
 import substates.editors.PopupSubState;
 import flixel.FlxBasic;
 import flixel.group.FlxGroup;
@@ -173,10 +174,12 @@ class CharacterEditor extends MusicBeatState
 		var editWindow = new MenuWindow(x, y + 30, width, null);
 		editWindow.title = "Edit";
 		editWindow.cameras = [camHUD];
-		editWindow.addButton("Copy Offset", "Ctrl + C", () -> copy());
-		editWindow.addButton("Paste Offset", "Ctrl + V", () -> paste());
+		editWindow.addButton("Copy Offset", "Ctrl + C", copy);
+		editWindow.addButton("Paste Offset", "Ctrl + V", paste);
 		editWindow.addSeparator();
-		editWindow.addButton("Delete Offset", "Delete", () -> delete());
+		editWindow.addButton("Delete Offset", "Delete", delete);
+		editWindow.addSeparator();
+		editWindow.addButton("Edit Icon", () -> openSubState(new IconEditorSubState("face")));
 		editWindow.updateBg();
 
 		var menuBox = new DoidoBox(x, y, width, height, 0, false, [fileWindow, editWindow /*, viewWindow*/], null);
@@ -1311,7 +1314,7 @@ class AnimWindow extends DoidoWindow
 		var char = characterEditor.char;
 		var ghost = characterEditor.ghost;
 		var anim = characterEditor.char.curAnimName;
-		var offsets:DoidoPoint = char.animOffsets.get(anim);
+		var offsets:DoidoPoint = char.animOffsets.get(anim) ?? {x: 0, y: 0};
 
 		animName.text = anim;
 		offsetTxt.text = 'X: ${offsets.x} / Y: ${offsets.y}';
@@ -1328,8 +1331,11 @@ class AnimWindow extends DoidoWindow
 			charSlider.steps = char.animation.curAnim.frames.length;
 		}
 
-		ghostSlider.rangeMax = ghost.animation.curAnim.frames.length - 1;
-		ghostSlider.steps = ghost.animation.curAnim.frames.length;
+		if (ghost.animExists(anim))
+		{
+			ghostSlider.rangeMax = ghost.animation.curAnim.frames.length - 1;
+			ghostSlider.steps = ghost.animation.curAnim.frames.length;
+		}
 	}
 }
 
@@ -1389,8 +1395,8 @@ class Hitbox extends FlxSprite
 	var viewBack:Bool = false;
 	var viewLine:Bool = true;
 
-	var lineWidth:Int = 3;
-	var lineColor:FlxColor = FlxColor.RED;
+	public var lineWidth:Int = 3;
+	public var lineColor:FlxColor = FlxColor.RED;
 
 	override public function new()
 	{
