@@ -58,7 +58,6 @@ class PlayState extends MusicBeatState implements Playable
 
 	public var camZoom:Float = 0.9;
 	public var beatCamZoom:Float = 0.0;
-	public var zoomTween:FlxTween;
 
 	public var curFocus:String = "";
 	public var maxDisplace:DoidoPoint = {x: 0, y: 0};
@@ -90,6 +89,7 @@ class PlayState extends MusicBeatState implements Playable
 	var pauseButton:DoidoHitbox;
 	#end
 
+	public var eventTweens:Map<String, FlxTween> = [];
 	public var spawnEvents:Array<EventData> = [];
 	public var curEventCount:Int = 0;
 
@@ -643,33 +643,9 @@ class PlayState extends MusicBeatState implements Playable
 					strumline.pauseNotes = data[0];
 			case "Change Note Speed":
 				for (strumline in playField.strumlines)
-				{
-					if (strumline.scrollTween != null)
-						strumline.scrollTween.cancel();
-					var newSpeed:Float = data[0];
-					var duration:Float = Conductor.getStepDuration(curStepFloat, data[1]);
-					if (duration <= 0)
-						strumline.scrollSpeed = newSpeed;
-					else
-					{
-						strumline.scrollTween = FlxTween.tween(strumline, {scrollSpeed: newSpeed}, duration, {
-							ease: TweenUtil.fromString(data[2], data[3]),
-						});
-					}
-				}
+					setTween("scrollSpeed" + strumline.ID, strumline, {scrollSpeed: data[0]}, data[1], data[2], data[3]);
 			case "Change Cam Zoom":
-				if (zoomTween != null)
-					zoomTween.cancel();
-				var newZoom:Float = data[0];
-				var duration:Float = Conductor.getStepDuration(curStepFloat, data[1]);
-				if (duration <= 0)
-					camZoom = newZoom;
-				else
-				{
-					zoomTween = FlxTween.tween(this, {camZoom: newZoom}, duration, {
-						ease: TweenUtil.fromString(data[2], data[3]),
-					});
-				}
+				setTween("camZoom", this, {camZoom: data[0]}, data[1], data[2], data[3]);
 			case "Flash Screen":
 				MusicBeat.flash(strToCam(data[2]), Conductor.getStepDuration(curStepFloat, data[0]), SpriteUtil.getColor(data[1]));
 			case 'Fade Screen':
@@ -678,6 +654,35 @@ class PlayState extends MusicBeatState implements Playable
 				changeStage(data[0]);
 			case "Camera Focus":
 				followCamera(data[0], {x: data[1], y: data[2]});
+		}
+	}
+
+	public function clearTween(name:String)
+	{
+		var tween = eventTweens.get(name);
+		if (tween != null)
+			tween.cancel();
+	}
+
+	public function setTween(name:String, object:Dynamic, values:Dynamic, duration:Float = 1, ease:String = "linear", modifier:String = "in", clear:Bool = true):FlxTween
+	{
+		if (clear)
+			clearTween(name);
+
+		duration = Conductor.getStepDuration(curStepFloat, duration);
+		if (duration <= 0)
+		{
+			for (field in Reflect.fields(values))
+				Reflect.setField(object, field, Reflect.field(values, field));
+			return null;
+		}
+		else
+		{
+			var tween = FlxTween.tween(object, values, duration, {
+				ease: TweenUtil.fromString(ease, modifier),
+			});
+			eventTweens.set(name, tween);
+			return tween;
 		}
 	}
 

@@ -36,9 +36,11 @@ class PlayField extends FlxGroup
 		var strumPos = getStrumlinePos(middlescroll);
 
 		dadStrumline = new Strumline(strumPos[0], downscroll, false, true, false, assets.opponentNotes);
+		dadStrumline.ID = 0;
 		strumlines.push(dadStrumline);
 
 		bfStrumline = new Strumline(strumPos[1], downscroll, true, false, wide, assets.playerNotes);
+		bfStrumline.ID = 1;
 		strumlines.push(bfStrumline);
 
 		for (strumline in strumlines)
@@ -357,10 +359,13 @@ class PlayField extends FlxGroup
 			}
 
 			var splashEnabled:Bool = true;
-			switch(Save.data.splashNotes)
+			switch (Save.data.splashNotes)
 			{
-				case "PLAYER ONLY": if (!strumline.isPlayer) splashEnabled = false;
-				case "OFF": splashEnabled = false;
+				case "PLAYER ONLY":
+					if (!strumline.isPlayer)
+						splashEnabled = false;
+				case "OFF":
+					splashEnabled = false;
 			}
 
 			if (splashEnabled)
