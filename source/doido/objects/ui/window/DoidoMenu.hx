@@ -83,8 +83,7 @@ class MenuButton extends FlxSpriteGroup
 	var _bind:FlxBitmapText;
 	var check:FlxSprite;
 
-	public function new(label:String, ?bind:String, ?defaultValue:Bool, width:Float = 318, height:Float = 22, ?onUp:Void->Void, ?onDown:Void->Void,
-			?color:FlxColor)
+	public function new(label:String, ?bind:String, ?defaultValue:Bool, width:Float = 318, height:Float = 22, ?onUp:Void->Void, ?onDown:Void->Void, ?color:FlxColor)
 	{
 		super();
 
@@ -93,7 +92,8 @@ class MenuButton extends FlxSpriteGroup
 
 		if (color == null)
 			color = 0xFFD8DAF6;
-		else {
+		else
+		{
 			defaultAlpha = 0.2;
 			selAlpha = 0.4;
 		}

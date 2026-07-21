@@ -49,8 +49,7 @@ class Logs
 		};
 	}
 
-	public static function print(v:Dynamic, type:ErrorType = TRACE, printType:Bool = true, printTime:Bool = true, printClass:Bool = true,
-			allowDebugger:Bool = true, ?infos:Null<haxe.PosInfos>)
+	public static function print(v:Dynamic, type:ErrorType = TRACE, printType:Bool = true, printTime:Bool = true, printClass:Bool = true, allowDebugger:Bool = true, ?infos:Null<haxe.PosInfos>)
 	{
 		#if !ENABLE_PRINTING
 		return;
@@ -84,8 +83,7 @@ class Logs
 		}
 	}
 
-	public static function formatOutput(v:Dynamic, type:ErrorType, printType:Bool = true, printTime:Bool = true, printClass:Bool = true, hasColor:Bool = true,
-			infos:Null<haxe.PosInfos>):String
+	public static function formatOutput(v:Dynamic, type:ErrorType, printType:Bool = true, printTime:Bool = true, printClass:Bool = true, hasColor:Bool = true, infos:Null<haxe.PosInfos>):String
 	{
 		var str:String = "";
 

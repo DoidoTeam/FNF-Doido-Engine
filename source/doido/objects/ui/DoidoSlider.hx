@@ -27,8 +27,7 @@ class DoidoSlider extends FlxSpriteGroup
 
 	var wid:Int = 160;
 
-	public function new(x:Float = 0, y:Float = 0, wid:Int = 160, hei:Int = 6, defValue:Float = 0, rangeMin:Float = 0, rangeMax:Float = 0, steps:Int = 2,
-			snappingStrength:Float = 0, vertical:Bool = false, center:Bool = false)
+	public function new(x:Float = 0, y:Float = 0, wid:Int = 160, hei:Int = 6, defValue:Float = 0, rangeMin:Float = 0, rangeMax:Float = 0, steps:Int = 2, snappingStrength:Float = 0, vertical:Bool = false, center:Bool = false)
 	{
 		super(x, y);
 		this.rangeMin = rangeMin;
@@ -110,7 +109,7 @@ class DoidoSlider extends FlxSpriteGroup
 
 			if (steps >= 2 && snappingStrength >= 0)
 			{
-				//shit workaround
+				// shit workaround
 				var t = FlxMath.remapToRange(value, rangeMin, rangeMax, 0, 1);
 				for (i in 0...steps)
 				{
@@ -121,8 +120,6 @@ class DoidoSlider extends FlxSpriteGroup
 						break;
 					}
 				}
-
-				
 			}
 
 			if (!FlxG.mouse.pressed)

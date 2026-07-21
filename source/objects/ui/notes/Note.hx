@@ -80,7 +80,8 @@ class Note extends FlxSprite
 		// noteSpeed = (FlxG.random.bool(50) ? null : 1.0);
 	}
 
-	public function resetCoyote():Void {
+	public function resetCoyote():Void
+	{
 		holdCoyote = 0.2;
 	}
 

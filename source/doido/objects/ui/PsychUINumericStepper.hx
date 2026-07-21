@@ -30,8 +30,7 @@ class PsychUINumericStepper extends PsychUIInputText
 
 	public var disableSteppers:Bool = false;
 
-	public function new(x:Float = 0, y:Float = 0, step:Float = 1, defValue:Float = 0, min:Float = -999, max:Float = 999, decimals:Int = 0, ?wid:Int = 100,
-			?isPercent:Bool = false, ?hasReset:Bool = false)
+	public function new(x:Float = 0, y:Float = 0, step:Float = 1, defValue:Float = 0, min:Float = -999, max:Float = 999, decimals:Int = 0, ?wid:Int = 100, ?isPercent:Bool = false, ?hasReset:Bool = false)
 	{
 		super(x, y, wid - 54, '', 14);
 		@:bypassAccessor this.decimals = decimals;

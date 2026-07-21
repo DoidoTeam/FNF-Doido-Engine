@@ -24,8 +24,7 @@ class DoidoBox extends FlxGroup implements IWindow
 	var cur:Int = -1;
 	var spacing:Float = 5;
 
-	public function new(x:Float = 0, y:Float = 0, width:Float = 100, buttonHeight:Float = 20, startingTab:Int = -1, centerButtons:Bool = true,
-			tabs:Array<DoidoWindow>, chartState:ChartingState)
+	public function new(x:Float = 0, y:Float = 0, width:Float = 100, buttonHeight:Float = 20, startingTab:Int = -1, centerButtons:Bool = true, tabs:Array<DoidoWindow>, chartState:ChartingState)
 	{
 		super();
 		this.x = x;

@@ -88,35 +88,27 @@ class DoidoSprite extends FlxAnimate
 			{
 				case TIMELINE:
 					if ((animData.indices ?? []).length > 0)
-						anim.addByTimelineIndices(animData.name, library.timeline, animData.indices, animData.framerate ?? 24, animData.loop ?? false,
-							animData.flipX ?? false, animData.flipY ?? false);
+						anim.addByTimelineIndices(animData.name, library.timeline, animData.indices, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false, animData.flipY ?? false);
 					else
-						anim.addByTimeline(animData.name, library.timeline, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false,
-							animData.flipY ?? false);
+						anim.addByTimeline(animData.name, library.timeline, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false, animData.flipY ?? false);
 				case FRAMELABEL:
 					if ((animData.indices ?? []).length > 0)
-						anim.addByFrameLabelIndices(animData.name, animData.prefix, animData.indices, animData.framerate ?? 24, animData.loop ?? false,
-							animData.flipX ?? false, animData.flipY ?? false);
+						anim.addByFrameLabelIndices(animData.name, animData.prefix, animData.indices, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false, animData.flipY ?? false);
 					else
-						anim.addByFrameLabel(animData.name, animData.prefix, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false,
-							animData.flipY ?? false);
+						anim.addByFrameLabel(animData.name, animData.prefix, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false, animData.flipY ?? false);
 				default: // SYMBOL
 					if ((animData.indices ?? []).length > 0)
-						anim.addBySymbolIndices(animData.name, animData.prefix, animData.indices, animData.framerate ?? 24, animData.loop ?? false,
-							animData.flipX ?? false, animData.flipY ?? false);
+						anim.addBySymbolIndices(animData.name, animData.prefix, animData.indices, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false, animData.flipY ?? false);
 					else
-						anim.addBySymbol(animData.name, animData.prefix, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false,
-							animData.flipY ?? false);
+						anim.addBySymbol(animData.name, animData.prefix, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false, animData.flipY ?? false);
 			}
 		}
 		else
 		{
 			if ((animData.indices ?? []).length > 0)
-				anim.addByIndices(animData.name, animData.prefix, animData.indices, "", animData.framerate ?? 24, animData.loop ?? false,
-					animData.flipX ?? false, animData.flipY ?? false);
+				anim.addByIndices(animData.name, animData.prefix, animData.indices, "", animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false, animData.flipY ?? false);
 			else
-				anim.addByPrefix(animData.name, animData.prefix, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false,
-					animData.flipY ?? false);
+				anim.addByPrefix(animData.name, animData.prefix, animData.framerate ?? 24, animData.loop ?? false, animData.flipX ?? false, animData.flipY ?? false);
 		}
 
 		if (animData.offset != null)

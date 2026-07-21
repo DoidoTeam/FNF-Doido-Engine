@@ -690,8 +690,7 @@ class PlayState extends MusicBeatState implements Playable
 			tween.cancel();
 	}
 
-	public function setTween(name:String, object:Dynamic, values:Dynamic, duration:Float = 1, ease:String = "linear", modifier:String = "in",
-			clear:Bool = true):FlxTween
+	public function setTween(name:String, object:Dynamic, values:Dynamic, duration:Float = 1, ease:String = "linear", modifier:String = "in", clear:Bool = true):FlxTween
 	{
 		if (clear)
 			clearTween(name);

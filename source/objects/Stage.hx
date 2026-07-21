@@ -78,7 +78,7 @@ class Stage
 		playState = null;
 
 		loadedScript = new DoidoIris(path, this, false);
-		
+
 		loadedScript.set("add", stageItems.push);
 		loadedScript.execute();
 		callScript("create");

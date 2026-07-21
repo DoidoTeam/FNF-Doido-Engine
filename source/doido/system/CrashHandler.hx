@@ -65,7 +65,7 @@ class CrashHandler extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-	
+
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
 			MusicBeat.skipTrans = true;
@@ -76,6 +76,4 @@ class CrashHandler extends MusicBeatState
 			FlxG.openURL('https://github.com/DoidoTeam/FNF-Doido-Engine/issues');
 		}
 	}
-	
 }
-

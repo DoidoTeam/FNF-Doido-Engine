@@ -10,13 +10,7 @@ import flixel.util.FlxSort;
 
 class NoteUtil
 {
-	public static var noteTypes:Array<String> = [
-		'none',
-		'no animation',
-		'gf note',
-		'hurt note',
-		'warn note',
-	];
+	public static var noteTypes:Array<String> = ['none', 'no animation', 'gf note', 'hurt note', 'warn note',];
 
 	public static var directions:Array<String> = [];
 
@@ -53,8 +47,10 @@ class NoteUtil
 
 	public static function getSingAnims(howMany:Int = 4):Array<String>
 	{
-		if (howMany < 1) howMany = 1;
-		if (howMany > 9) howMany = 9;
+		if (howMany < 1)
+			howMany = 1;
+		if (howMany > 9)
+			howMany = 9;
 		return switch (howMany)
 		{
 			case 1: ["singUP"];
@@ -64,8 +60,27 @@ class NoteUtil
 			case 5: ["singLEFT", "singDOWN", "singUP", "singUP", "singRIGHT"];
 			case 6: ["singLEFT", "singDOWN", "singRIGHT", "singLEFT", "singUP", "singRIGHT"];
 			case 7: ["singLEFT", "singDOWN", "singRIGHT", "singUP", "singLEFT", "singUP", "singRIGHT"];
-			case 8: ["singLEFT", "singDOWN", "singUP", "singRIGHT", "singLEFT", "singDOWN", "singUP", "singRIGHT"];
-			case 9: ["singLEFT", "singDOWN", "singUP", "singRIGHT", "singUP", "singLEFT", "singDOWN", "singUP", "singRIGHT"];
+			case 8: [
+					"singLEFT",
+					"singDOWN",
+					"singUP",
+					"singRIGHT",
+					"singLEFT",
+					"singDOWN",
+					"singUP",
+					"singRIGHT"
+				];
+			case 9: [
+					"singLEFT",
+					"singDOWN",
+					"singUP",
+					"singRIGHT",
+					"singUP",
+					"singLEFT",
+					"singDOWN",
+					"singUP",
+					"singRIGHT"
+				];
 			default: ["how???"];
 		}
 	}
@@ -82,6 +97,7 @@ class NoteUtil
 		hits.push("OFF");
 		return hits;
 	}
+
 	inline public static function playHitsound(?key:String, ?volume:Float):FlxSound
 	{
 		if (key == null)
@@ -96,55 +112,57 @@ class NoteUtil
 		hitsound.play();
 		return hitsound;
 	}
-	
+
 	public static var missSoundList:Array<String> = [];
+
 	public static function loadMissSounds()
 	{
 		missSoundList = Assets.list("sounds/miss", true, SOUND);
-		for(i in 0...missSoundList.length)
+		for (i in 0...missSoundList.length)
 		{
 			missSoundList[i] = 'miss/${missSoundList[i]}';
 			FlxG.sound.play(Assets.sound(missSoundList[i]), 0.0);
 		}
 	}
+
 	inline public static function playMissSound(?preload:Bool = false)
 	{
 		FlxG.sound.play(Assets.sound(FlxG.random.getObject(missSoundList)), 0.6);
 	}
 
 	public static var loadedQuantColors:Map<String, Array<Array<FlxColor>>> = [];
+
 	public static function getQuantColors(skin:String):Array<Array<FlxColor>>
 	{
 		if (!loadedQuantColors.exists(skin))
 			switch (skin)
 			{
 				default:
-					loadedQuantColors.set(
-						skin, Assets.loadPaletteFromFile("ui/notes/base/quant/palette")
-					);
+					loadedQuantColors.set(skin, Assets.loadPaletteFromFile("ui/notes/base/quant/palette"));
 					// if you'd rather use a hardcoded array
 					// instead of an image palette, here you go
 					/*loadedQuantColors.set(
-						skin,
-						[
-							[0xFFff3535, 0xFFFFFFFF, 0xFF651038], // red
-							[0xFF536bef, 0xFFFFFFFF, 0xFF0f1c54], // blue
-							[0xFFc24b99, 0xFFFFFFFF, 0xFF3c1f56], // magenta
-							[0xFF00e550, 0xFFFFFFFF, 0xFF0a4447], // lime
-							[0xFF606789, 0xFFFFFFFF, 0xFF232a4c], // gray
-							[0xFFff7ad7, 0xFFFFFFFF, 0xFF4d0954], // pink
-							[0xFFffe83d, 0xFFFFFFFF, 0xFF514100], // yellow
-							[0xFFae36e6, 0xFFFFFFFF, 0xFF19246a], // purple
-							[0xFF0fe7ff, 0xFFFFFFFF, 0xFF153e72], // cyan
-							[0xFF606789, 0xFFFFFFFF, 0xFF232a4c], // light gray
-						];
-					);*/
+							skin,
+							[
+								[0xFFff3535, 0xFFFFFFFF, 0xFF651038], // red
+								[0xFF536bef, 0xFFFFFFFF, 0xFF0f1c54], // blue
+								[0xFFc24b99, 0xFFFFFFFF, 0xFF3c1f56], // magenta
+								[0xFF00e550, 0xFFFFFFFF, 0xFF0a4447], // lime
+								[0xFF606789, 0xFFFFFFFF, 0xFF232a4c], // gray
+								[0xFFff7ad7, 0xFFFFFFFF, 0xFF4d0954], // pink
+								[0xFFffe83d, 0xFFFFFFFF, 0xFF514100], // yellow
+								[0xFFae36e6, 0xFFFFFFFF, 0xFF19246a], // purple
+								[0xFF0fe7ff, 0xFFFFFFFF, 0xFF153e72], // cyan
+								[0xFF606789, 0xFFFFFFFF, 0xFF232a4c], // light gray
+							];
+						); */
 			}
 
 		return loadedQuantColors.get(skin);
 	}
 
 	public static final quantArray:Array<Int> = [4, 8, 12, 16, 20, 24, 32, 48, 64, 192];
+
 	public static function calcQuant(data:NoteData)
 	{
 		var stepInMeasure:Float = data.stepTime % 16;

@@ -170,7 +170,8 @@ class Alphabet extends FlxTypedSpriteGroup<AlphaCharacter>
 
 	public function writeTxt()
 	{
-		forEachAlive(function(char:AlphaCharacter) {
+		forEachAlive(function(char:AlphaCharacter)
+		{
 			char.kill();
 		});
 
@@ -208,7 +209,7 @@ class Alphabet extends FlxTypedSpriteGroup<AlphaCharacter>
 			char.frames = fontFrames;
 			char.alphabet = (font == "alphabet");
 			char.row = daRow;
-			
+
 			char.alpha = alpha;
 			char.angle = angle;
 
@@ -375,6 +376,7 @@ class Alphabet extends FlxTypedSpriteGroup<AlphaCharacter>
 		});
 		return value;
 	}
+
 	override function findMaxXHelper()
 	{
 		var value = Math.NEGATIVE_INFINITY;
@@ -404,6 +406,7 @@ class Alphabet extends FlxTypedSpriteGroup<AlphaCharacter>
 		});
 		return value;
 	}
+
 	override function findMaxYHelper()
 	{
 		var value = Math.NEGATIVE_INFINITY;

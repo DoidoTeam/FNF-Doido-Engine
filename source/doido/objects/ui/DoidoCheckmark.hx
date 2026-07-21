@@ -6,8 +6,7 @@ class DoidoCheckmark extends DoidoButton
 {
 	public var value(default, set):Bool;
 
-	public function new(defVal:Bool = false, sprite:String = "editors/charting/checkmark", animation:String = "button checkmark", ?onUp:Void->Void,
-			?onDown:Void->Void)
+	public function new(defVal:Bool = false, sprite:String = "editors/charting/checkmark", animation:String = "button checkmark", ?onUp:Void->Void, ?onDown:Void->Void)
 	{
 		super(onUp, onDown);
 

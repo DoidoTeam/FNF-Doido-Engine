@@ -4,7 +4,6 @@ import flixel.input.FlxInput.FlxInputState;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
 import flixel.input.gamepad.FlxGamepad.FlxGamepadModel;
-
 #if TOUCH_CONTROLS
 import doido.mobile.TouchHandler;
 #end
@@ -37,7 +36,8 @@ typedef Binds =
 	var rebindable:Bool;
 }
 
-enum InputType {
+enum InputType
+{
 	KEYBOARD;
 	GAMEPAD;
 	TOUCH;
@@ -45,9 +45,11 @@ enum InputType {
 
 class InputDelayHandler extends flixel.FlxBasic
 {
-	public function new() {
+	public function new()
+	{
 		super();
 	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -55,12 +57,13 @@ class InputDelayHandler extends flixel.FlxBasic
 			Controls.inputDelay--;
 	}
 }
+
 class Controls
 {
 	public static var defaultBindMap:Map<DoidoKey, Binds> = [];
 	public static var bindMap:Map<DoidoKey, Binds> = [
 		// GAMEPLAY
-		LEFT => {	
+		LEFT => {
 			keyboard: [FlxKey.A, FlxKey.LEFT],
 			gamepad: [FlxPad.LEFT_TRIGGER, FlxPad.DPAD_LEFT],
 			rebindable: true
@@ -150,6 +153,7 @@ class Controls
 		return checkBind(bind, JUST_RELEASED);
 
 	public static var lastInput(default, null):InputType = #if !mobile KEYBOARD #else TOUCH #end;
+
 	private static function setLastInput(v:InputType)
 	{
 		if (lastInput != v)
@@ -220,7 +224,7 @@ class Controls
 	{
 		if (inputDelay > 0)
 			return false;
-		
+
 		var daCheck:Bool = false;
 
 		if (isUiBind(bind))
@@ -230,7 +234,8 @@ class Controls
 		else if (bind == ACCEPT)
 			daCheck = (TouchHandler.getTap(inputState) && !TouchHandler.getSwipe() && !TouchHandler.back);
 
-		if (daCheck) setLastInput(TOUCH);
+		if (daCheck)
+			setLastInput(TOUCH);
 		return daCheck;
 	}
 	#end

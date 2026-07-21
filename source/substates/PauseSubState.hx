@@ -23,7 +23,7 @@ class PauseSubState extends MusicBeatSubState
 		super();
 		persistentUpdate = false;
 		persistentDraw = true;
-		
+
 		var bg = new FlxSprite().makeColor(FlxG.width + 10, FlxG.height + 10, 0xFF000000);
 		bg.alpha = 0.4;
 		add(bg);
@@ -33,7 +33,7 @@ class PauseSubState extends MusicBeatSubState
 
 		// i hope this wont break anything
 		/*if (PlayState.instance.startedSong)
-			options.insert(3, "Options");*/
+			options.insert(3, "Options"); */
 
 		for (i in 0...options.length)
 		{

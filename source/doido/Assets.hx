@@ -382,8 +382,7 @@ class Assets
 	public static inline function bitmapFont(key:String, ?library:String = "fonts"):FlxBitmapFont
 		return cast framesCollection(key, library, FONT);
 
-	public static inline function framesCollection(key:String, ?extrasheets:Array<String>, ?library:String = "", type:SpriteType,
-			persist:Bool = false):FlxFramesCollection
+	public static inline function framesCollection(key:String, ?extrasheets:Array<String>, ?library:String = "", type:SpriteType, persist:Bool = false):FlxFramesCollection
 	{
 		var path = getPath(key, library);
 		var frames:FlxFramesCollection = null;
@@ -409,8 +408,7 @@ class Assets
 			{
 				for (extraKey in extrasheets)
 				{
-					var newFrames:FlxFramesCollection = FlxAtlasFrames.fromSparrow(getAsset('images/$extraKey', library, IMAGE),
-						getAsset('images/$extraKey', library, XML));
+					var newFrames:FlxFramesCollection = FlxAtlasFrames.fromSparrow(getAsset('images/$extraKey', library, IMAGE), getAsset('images/$extraKey', library, XML));
 					for (frame in newFrames.frames)
 					{
 						frames.pushFrame(frame);

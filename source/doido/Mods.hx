@@ -154,8 +154,7 @@ class Mods
 		var error:PolymodError = null;
 
 		if (!VersionUtil.match(meta.apiVersion, VERSION_RULE))
-			error = new PolymodError(ERROR, VERSION_CONFLICT_API,
-				'"${meta.id}" API version ${meta.apiVersion.toString()} is incompatible, expected "${VERSION_RULE.toString()}"', SCAN);
+			error = new PolymodError(ERROR, VERSION_CONFLICT_API, '"${meta.id}" API version ${meta.apiVersion.toString()} is incompatible, expected "${VERSION_RULE.toString()}"', SCAN);
 		if (meta.id.startsWith("_"))
 			error = new PolymodError(WARNING, CUSTOM_HIDE, '"${meta.id}" ignored', SCAN);
 

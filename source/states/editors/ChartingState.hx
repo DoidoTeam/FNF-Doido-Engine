@@ -242,7 +242,8 @@ class ChartingState extends MusicBeatState
 		bgDark.visible = EditorSave.data.darkMode;
 		add(bgDark);
 
-		for (bg in [bgLight, bgDark]) {
+		for (bg in [bgLight, bgDark])
+		{
 			bg.setGraphicSize(FlxG.width, FlxG.height);
 			bg.updateHitbox();
 			bg.screenCenter();
@@ -716,8 +717,7 @@ class ChartingState extends MusicBeatState
 			ok.y += 50;
 			openStuff.push(ok);
 
-			var playerStepper = new PsychUINumericStepper((FlxG.width / 2) - (130 / 2), (FlxG.height / 2) - 5, 1, Math.floor(curStep / 16), 0, 9999, 0, 130,
-				false);
+			var playerStepper = new PsychUINumericStepper((FlxG.width / 2) - (130 / 2), (FlxG.height / 2) - 5, 1, Math.floor(curStep / 16), 0, 9999, 0, 130, false);
 			openStuff.push(playerStepper);
 
 			var popup = new PopupSubState("Go to Section", 155, 150, openStuff);
@@ -1072,15 +1072,17 @@ class ChartingState extends MusicBeatState
 		var swapNotes = new DoidoTextButton("Swap Notes", () ->
 		{
 			var wasSection:Bool = false;
-			if (selectedNotes.length == 0) {
+			if (selectedNotes.length == 0)
+			{
 				wasSection = true;
 				selectSection();
 			}
 
 			for (note in selectedNotes)
 				note.strumline = (note.strumline == 0 ? 1 : 0);
-		
-			if (wasSection) selectedNotes = [];
+
+			if (wasSection)
+				selectedNotes = [];
 		});
 		swapNotes.x = getX();
 		swapNotes.y = getY(14);
@@ -1089,7 +1091,8 @@ class ChartingState extends MusicBeatState
 		var duetNotes = new DoidoTextButton("Duet Notes", () ->
 		{
 			var wasSection:Bool = false;
-			if (selectedNotes.length == 0) {
+			if (selectedNotes.length == 0)
+			{
 				wasSection = true;
 				selectSection();
 			}
@@ -1121,7 +1124,8 @@ class ChartingState extends MusicBeatState
 		var mirrorNotes = new DoidoTextButton("Mirror Notes", () ->
 		{
 			var wasSection:Bool = false;
-			if (selectedNotes.length == 0) {
+			if (selectedNotes.length == 0)
+			{
 				wasSection = true;
 				selectSection();
 			}
@@ -1129,7 +1133,8 @@ class ChartingState extends MusicBeatState
 			for (note in selectedNotes)
 				note.lane = NoteUtil.directions.length - 1 - note.lane;
 
-			if (wasSection) selectedNotes = [];
+			if (wasSection)
+				selectedNotes = [];
 		});
 		mirrorNotes.x = getX("margin_right", mirrorNotes.width);
 		mirrorNotes.y = getY(14);
@@ -1895,7 +1900,7 @@ class ChartingState extends MusicBeatState
 		if (FlxG.keys.justPressed.Z || FlxG.keys.justPressed.X)
 		{
 			@:privateAccess {
-			gridWindow.zoomStepper.stepValue(FlxG.keys.justPressed.Z ? -1 : 1);
+				gridWindow.zoomStepper.stepValue(FlxG.keys.justPressed.Z ? -1 : 1);
 			}
 		}
 
@@ -2000,7 +2005,7 @@ class ChartingState extends MusicBeatState
 							note.length += dir;
 						else
 							note.length += dir * (note.length == 0 ? 3 : 2);
-						
+
 						if (note.length < 0)
 							note.length = 0;
 					}
@@ -2046,8 +2051,8 @@ class ChartingState extends MusicBeatState
 					if (autoScrolling)
 					{
 						scrollAutoY = FlxG.mouse.getWorldPosition().y;
-						scrollBall.setPosition(FlxG.mouse.getWorldPosition().x - (scrollBall.width / 2),
-							FlxG.mouse.getWorldPosition().y - (scrollBall.height / 2));
+						scrollBall.setPosition(FlxG.mouse.getWorldPosition()
+							.x - (scrollBall.width / 2), FlxG.mouse.getWorldPosition().y - (scrollBall.height / 2));
 					}
 				}
 			}
@@ -3353,8 +3358,7 @@ class TimeWindow extends DoidoWindow
 			chartState.curCursor = POINTER;
 			chartState.playingSong = false;
 
-			Conductor.songPos = FlxMath.bound(FlxMath.remapToRange(FlxG.mouse.x, timeBar.x, timeBar.x + timeBar.width, 0, chartState.audio.songLength), 0,
-				chartState.audio.songLength);
+			Conductor.songPos = FlxMath.bound(FlxMath.remapToRange(FlxG.mouse.x, timeBar.x, timeBar.x + timeBar.width, 0, chartState.audio.songLength), 0, chartState.audio.songLength);
 
 			if (!FlxG.mouse.pressed)
 				scrubbing = false;

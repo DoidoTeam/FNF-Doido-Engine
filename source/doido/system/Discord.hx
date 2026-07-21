@@ -71,7 +71,7 @@ class DiscordIO
 	public static function check()
 	{
 		#if DISCORD_RPC
-		if(Save.data.discordRPC)
+		if (Save.data.discordRPC)
 			DiscordAPI.initialize();
 		else
 			shutdown();
@@ -152,8 +152,7 @@ class DiscordAPI
 		isInitialized = true;
 	}
 
-	public static function changePresence(?details:String = 'In the Menus', ?state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool,
-			?endTimestamp:Float)
+	public static function changePresence(?details:String = 'In the Menus', ?state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float)
 	{
 		var startTimestamp:Float = 0;
 		if (hasStartTimestamp)

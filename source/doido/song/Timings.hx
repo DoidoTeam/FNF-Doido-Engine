@@ -111,7 +111,7 @@ class Timings
 		}
 		return timing;
 	}
-	
+
 	public static function addCombo(dir:Int)
 	{
 		if (dir < 0)
@@ -126,7 +126,7 @@ class Timings
 		{
 			if (combo < 0)
 				combo = 0;
-			
+
 			combo++;
 		}
 	}
@@ -163,7 +163,7 @@ class Timings
 		{
 			if (hold.holdParent.gotHit)
 				addCombo(-1);
-			
+
 			score -= Math.floor(50 * (hold.data.length - scoreWin));
 		}
 		else

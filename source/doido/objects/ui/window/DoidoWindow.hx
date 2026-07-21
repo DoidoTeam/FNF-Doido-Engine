@@ -16,7 +16,7 @@ class DoidoWindow extends FlxGroup implements IWindow
 	public var bg:FlxSprite;
 	public var title:String = "";
 	public var updateCallback:FlxSignal = new FlxSignal();
- 
+
 	public function new(chartState:ChartingState)
 	{
 		super();

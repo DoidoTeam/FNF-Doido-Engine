@@ -42,8 +42,7 @@ class DoidoCamera extends FlxCamera
 			// angle fix
 			var flxRect = FlxRect.get();
 			flxRect.copyFromFlash(_scrollRect.scrollRect);
-			flxRect.getRotatedBounds(angle, FlxPoint.get(FlxMath.lerp(flxRect.left, flxRect.right, 0.5), FlxMath.lerp(flxRect.top, flxRect.bottom, 0.5)),
-				flxRect);
+			flxRect.getRotatedBounds(angle, FlxPoint.get(FlxMath.lerp(flxRect.left, flxRect.right, 0.5), FlxMath.lerp(flxRect.top, flxRect.bottom, 0.5)), flxRect);
 			_scrollRect.x += flxRect.x - _scrollRect.scrollRect.x;
 			_scrollRect.y += flxRect.y - _scrollRect.scrollRect.y;
 			_scrollRect.scrollRect = flxRect.copyToFlash();

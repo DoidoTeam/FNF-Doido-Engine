@@ -59,8 +59,7 @@ class Screenshot extends FlxBasic
 
 		if (scaleImage)
 		{
-			rect = new Rectangle((FlxG.stage.window.width - FlxG.width * scale) / 2, (FlxG.stage.window.height - FlxG.height * scale) / 2, FlxG.width * scale,
-				FlxG.height * scale);
+			rect = new Rectangle((FlxG.stage.window.width - FlxG.width * scale) / 2, (FlxG.stage.window.height - FlxG.height * scale) / 2, FlxG.width * scale, FlxG.height * scale);
 		}
 
 		var rawImage = Application.current.window.readPixels(scaleImage ? rect : null);

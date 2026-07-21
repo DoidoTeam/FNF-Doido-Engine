@@ -104,18 +104,17 @@ class ChooserWindow extends DoidoWindow
 
 		for (i in 0...filtered.length)
 		{
-			var button:ChooserButton = new ChooserButton(descOnly ? descs[i] : filtered[i], descOnly ? "" : descs[i] ?? "", type, view, align, buttonWidth,
-				buttonHeight, () ->
-				{
-					if (locked)
-						return;
+			var button:ChooserButton = new ChooserButton(descOnly ? descs[i] : filtered[i], descOnly ? "" : descs[i] ?? "", type, view, align, buttonWidth, buttonHeight, () ->
+			{
+				if (locked)
+					return;
 
-					if (onClick != null)
-						onClick(filtered[i]);
+				if (onClick != null)
+					onClick(filtered[i]);
 
-					locked = true;
-					new FlxTimer().start(0.1, (tmr) -> locked = false);
-				});
+				locked = true;
+				new FlxTimer().start(0.1, (tmr) -> locked = false);
+			});
 
 			if (view == GRID)
 				button.x = x + spacing + ((i % gridCount) * buttonWidth);
@@ -238,8 +237,7 @@ class ChooserButton extends FlxSpriteGroup
 	public var button:DoidoButton;
 	public var icon:FlxSprite;
 
-	public function new(label:String, desc:String = "", type:ChooserType, view:ChooserView, align:ChooserAlign, width:Int = 318, height:Int = 22,
-			?onUp:Void->Void, ?onDown:Void->Void)
+	public function new(label:String, desc:String = "", type:ChooserType, view:ChooserView, align:ChooserAlign, width:Int = 318, height:Int = 22, ?onUp:Void->Void, ?onDown:Void->Void)
 	{
 		super();
 
@@ -315,18 +313,8 @@ class ChooserButton extends FlxSpriteGroup
 						_label.setPosition(button.x + 4, button.y + ((button.height / 2) - (_label.height / 2)));
 						_desc.setPosition(_label.x + 4, button.y + ((button.height / 2) - (_desc.height / 2)));
 					default:
-						_label.setPosition(button.x
-							+ ((button.width / 2) - (_label.width / 2))
-							- (_desc.width / 2)
-							- 1,
-							button.y
-							+ ((button.height / 2) - (_label.height / 2)));
-						_desc.setPosition(button.x
-							+ ((button.width / 2) - (_desc.width / 2))
-							+ (_label.width / 2)
-							+ 1,
-							button.y
-							+ ((button.height / 2) - (_desc.height / 2)));
+						_label.setPosition(button.x + ((button.width / 2) - (_label.width / 2)) - (_desc.width / 2) - 1, button.y + ((button.height / 2) - (_label.height / 2)));
+						_desc.setPosition(button.x + ((button.width / 2) - (_desc.width / 2)) + (_label.width / 2) + 1, button.y + ((button.height / 2) - (_desc.height / 2)));
 				}
 
 				if (type == NOTETYPE)

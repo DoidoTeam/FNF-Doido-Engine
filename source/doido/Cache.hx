@@ -137,7 +137,7 @@ class Cache
 		for (key in waitingList)
 		{
 			var graphic = getCachedGraphic(key);
-			if (graphic != null && graphic.bitmap != null) //just to be sure
+			if (graphic != null && graphic.bitmap != null) // just to be sure
 				pushToGPU(graphic.bitmap);
 		}
 

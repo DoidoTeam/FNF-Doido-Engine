@@ -51,11 +51,11 @@ class ShaderCache
 		return filters;
 	}
 
-    public function cacheShader(name:String, shader:Dynamic)
-    {
-        if(Std.isOfType(shader, FlxRuntimeShader))
-            cache.set(name, new ShaderFilter(shader));
-        else if(Std.isOfType(shader, ShaderFilter))
-            cache.set(name, shader);
-    }
+	public function cacheShader(name:String, shader:Dynamic)
+	{
+		if (Std.isOfType(shader, FlxRuntimeShader))
+			cache.set(name, new ShaderFilter(shader));
+		else if (Std.isOfType(shader, ShaderFilter))
+			cache.set(name, shader);
+	}
 }

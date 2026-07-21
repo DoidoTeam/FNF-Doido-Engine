@@ -10,7 +10,7 @@ class DoidoBar extends FlxSpriteGroup
 	public var border:FlxSprite;
 	public var sideL:FlxSprite;
 	public var sideR:FlxSprite;
-	
+
 	public var percent(default, set):Float = 0;
 
 	public function set_percent(v:Float)
@@ -47,13 +47,13 @@ class DoidoBar extends FlxSpriteGroup
 
 	public function updatePos()
 	{
-		for(item in members)
+		for (item in members)
 			item.setPosition(x, y);
 	}
 
 	override function draw()
 	{
-		for(item in members)
+		for (item in members)
 			item.alpha = alpha;
 		super.draw();
 	}

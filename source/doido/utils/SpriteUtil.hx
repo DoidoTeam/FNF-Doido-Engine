@@ -17,8 +17,7 @@ class SpriteUtil
 		return spr;
 	}
 
-	public static function makeGradient(spr:FlxSprite, width:Float, height:Float, colors:Array<FlxColor>, chunkSize:UInt = 1, rotation:Int = 90,
-			interpolate:Bool = true):FlxSprite
+	public static function makeGradient(spr:FlxSprite, width:Float, height:Float, colors:Array<FlxColor>, chunkSize:UInt = 1, rotation:Int = 90, interpolate:Bool = true):FlxSprite
 	{
 		if (colors.length == 0)
 			colors = [FlxColor.WHITE];
