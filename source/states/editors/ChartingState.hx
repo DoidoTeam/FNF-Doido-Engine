@@ -1741,9 +1741,13 @@ class ChartingState extends MusicBeatState
 		}
 		toggleStuff(false);
 
+		var info = createText(0, getY(bottomY), "", 0xFFD8DAF6);
+		tab.add(info);
+
 		tab.updateCallback.add(() ->
 		{
 			valueTabs.clear();
+			info.text = "";
 
 			if (lastEdited == null)
 			{
@@ -1756,6 +1760,11 @@ class ChartingState extends MusicBeatState
 			var event = EventUtil.getEvent(lastEdited.name);
 			if (event == null)
 				return;
+
+			info.text = event.desc;
+			info.updateHitbox();
+			info.x = getX("center", info.width);
+			info.y = getY(bottomY + 5) + 6;
 
 			valueTabs.add(createText(getX(), getY(bottomY - 2), "Editing: " + event.name, 0xFFFFFFFF));
 			for (i in 0...event.values.length)
