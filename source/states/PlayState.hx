@@ -59,6 +59,12 @@ class PlayState extends MusicBeatState implements Playable
 	public var camZoom:Float = 0.9;
 	public var beatCamZoom:Float = 0.0;
 
+	public var beatRate:Int = 16;
+	public var beatOffset:Int = 0;
+	public var beatGame:Float = 0.035;
+	public var beatHUD:Float = 0.02;
+	public var beatStrum:Float = 0.02;
+
 	public var curFocus:String = "";
 	public var maxDisplace:DoidoPoint = {x: 0, y: 0};
 
@@ -666,6 +672,16 @@ class PlayState extends MusicBeatState implements Playable
 			case "Change Cam Angle":
 				setTween("camAngle" + data[0], strToCam(data[0]), {angle: data[1]}, data[2], data[3], data[4]);
 
+			case "Beat Screen":
+				beatCamera(data[0], data[1], data[2]);
+
+			case "Auto Beat Screen":
+				beatRate = data[0];
+				beatOffset = data[1];
+				beatGame = data[2];
+				beatHUD = data[3];
+				beatStrum = data[4];
+
 			case "Flash Screen":
 				MusicBeat.flash(strToCam(data[2]), Conductor.getStepDuration(curStepFloat, data[0]), SpriteUtil.getColor(data[1]));
 
@@ -835,11 +851,11 @@ class PlayState extends MusicBeatState implements Playable
 			audio.speed = defaultSongSpeed;
 	}
 
-	public function beatCamera(gameZoom:Float, hudZoom:Float)
+	public function beatCamera(gameZoom:Float, hudZoom:Float, strumZoom:Float)
 	{
 		beatCamZoom += gameZoom;
-		for (cam in [camHUD, camStrum])
-			cam.zoom += hudZoom;
+		camHUD.zoom += hudZoom;
+		camStrum.zoom += strumZoom;
 	}
 
 	var endedSong:Bool = false;
@@ -901,6 +917,9 @@ class PlayState extends MusicBeatState implements Playable
 			if (Conductor.songPos >= audio.songLength)
 				endSong();
 		}
+
+		if ((curStep + beatOffset) % beatRate == 0)
+			beatCamera(beatGame, beatHUD, beatStrum);
 
 		hudClass.stepHit(curStep);
 	}
@@ -994,9 +1013,6 @@ class PlayState extends MusicBeatState implements Playable
 					char.dance();
 			}
 		}
-
-		if (curBeat % 4 == 0)
-			beatCamera(0.035, 0.02);
 
 		hudClass.beatHit(curBeat);
 	}

@@ -41,10 +41,10 @@ class PsychUINumericStepper extends PsychUIInputText
 		this.defValue = defValue;
 		_updateFilter();
 
-		buttonPlus = new DoidoAnimatedButton("editors/charting/plus", "buttonplus", () -> stepValue(1));
+		buttonPlus = new DoidoAnimatedButton("editors/charting/plus", "buttonplus", () -> endHold(1), () -> startHold(1));
 		add(buttonPlus);
 
-		buttonMinus = new DoidoAnimatedButton("editors/charting/minus", "buttonminus", () -> stepValue(-1));
+		buttonMinus = new DoidoAnimatedButton("editors/charting/minus", "buttonminus", () -> endHold(-1), () -> startHold(-1));
 		add(buttonMinus);
 
 		if (hasReset)
@@ -61,6 +61,44 @@ class PsychUINumericStepper extends PsychUIInputText
 			_internalOnChange();
 		}
 		value = defValue;
+	}
+
+	var holdTimer:Float = 0.0;
+	var holdMax:Float = 0.2;
+	var holdMult:Int = 1;
+	var holding:Bool = false;
+	var held:Bool = false;
+
+	function startHold(mult:Int)
+	{
+		holding = true;
+		holdMult = mult;
+	}
+
+	function endHold(mult:Int)
+	{
+		if (!held)
+			stepValue(mult);
+
+		holding = false;
+		held = false;
+	}
+
+	override public function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		if (holding)
+			holdTimer += elapsed;
+		else
+			holdTimer = 0.0;
+
+		if (holdTimer >= holdMax)
+		{
+			holdTimer = holdMax - 0.08;
+			held = true;
+			stepValue(holdMult);
+		}
 	}
 
 	final buttonSpacing:Float = 1;
@@ -87,6 +125,9 @@ class PsychUINumericStepper extends PsychUIInputText
 
 	function stepValue(mult:Int = 0)
 	{
+		if (FlxG.keys.pressed.SHIFT)
+			mult *= 4;
+
 		value += (step * mult);
 		if (onValueStep != null)
 			onValueStep(step * mult);

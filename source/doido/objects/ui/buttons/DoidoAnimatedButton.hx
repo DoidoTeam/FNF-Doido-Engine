@@ -33,6 +33,9 @@ class DoidoAnimatedButton extends DoidoButton
 
 	override function set_disabled(b:Bool):Bool
 	{
+		if (b == disabled)
+			return disabled;
+
 		super.set_disabled(b);
 		animation.play(b ? "pressed" : "idle");
 		return disabled;

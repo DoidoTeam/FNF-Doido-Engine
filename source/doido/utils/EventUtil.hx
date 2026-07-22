@@ -35,7 +35,7 @@ class EventUtil
 		"Main" => ["Camera", "Objects", "Screen", "Gameplay", "Song", "Misc"],
 		"Camera" => ["Camera Focus", "Camera Position", "Change Cam Zoom", "Change Cam Angle"],
 		"Objects" => ["Change Character", "Play Animation", "Change Stage"],
-		"Screen" => ["Flash Screen", "Fade Screen", "Shake Screen"],
+		"Screen" => ["Flash Screen", "Fade Screen", "Shake Screen", "Beat Screen", "Auto Beat Screen"],
 		"Gameplay" => ["Change Note Speed", "Freeze Notes"],
 		"Song" => ["BPM Change"],
 		"Misc" => ["Trigger Tag"]
@@ -378,6 +378,84 @@ class EventUtil
 					info: "Which camera to flash.",
 					defaultValue: "Game",
 					options: PlayState.availableCameras
+				}
+			]
+		},
+		{
+			name: "Beat Screen",
+			desc: "Do a momentary zoom to the game screens.",
+			values: [
+				{
+					name: "Game Zoom",
+					defaultValue: 0.035,
+					min: 0,
+					max: 1,
+					step: 0.001,
+					decimals: 3
+				},
+				{
+					name: "HUD Zoom",
+					defaultValue: 0.02,
+					min: 0,
+					max: 1,
+					step: 0.001,
+					decimals: 3
+				},
+				{
+					name: "Strum Zoom",
+					defaultValue: 0.02,
+					min: 0,
+					max: 1,
+					step: 0.001,
+					decimals: 3
+				}
+			]
+		},
+		{
+			name: "Auto Beat Screen",
+			desc: "Configure the automatic screen beats.",
+			values: [
+				{
+					name: "Rate",
+					info: "How often, in steps, will the screen beat.",
+					defaultValue: 16,
+					min: 0,
+					max: 64,
+					step: 1,
+					decimals: 0
+				},
+				{
+					name: "Offset",
+					info: "How much offset should the beats have.",
+					defaultValue: 0,
+					min: 0,
+					max: 64,
+					step: 1,
+					decimals: 0
+				},
+				{
+					name: "Game Zoom",
+					defaultValue: 0.035,
+					min: 0,
+					max: 1,
+					step: 0.001,
+					decimals: 3
+				},
+				{
+					name: "HUD Zoom",
+					defaultValue: 0.02,
+					min: 0,
+					max: 1,
+					step: 0.001,
+					decimals: 3
+				},
+				{
+					name: "Strum Zoom",
+					defaultValue: 0.02,
+					min: 0,
+					max: 1,
+					step: 0.001,
+					decimals: 3
 				}
 			]
 		},
