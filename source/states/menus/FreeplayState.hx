@@ -423,7 +423,7 @@ class FreeplayState extends MusicBeatState
 					possibleList.push(i);
 			}
 			FlxG.random.shuffle(possibleList);
-			changeSelection(FlxG.random.getObject(possibleList));
+			changeSelection(FlxG.random.getObject(possibleList) - curSelected);
 		}
 
 		try

@@ -253,6 +253,7 @@ class PlayState extends MusicBeatState implements Playable
 		}
 		else
 		{
+			startPos = 0;
 			for (strumline in playField.strumlines)
 			{
 				if (strumline.hasModchart)
@@ -483,7 +484,9 @@ class PlayState extends MusicBeatState implements Playable
 				add(item);
 		}
 
+		clearTween("camZoom");
 		camZoom = stageBuild.camZoom;
+
 		if (stageBuild.gfVersion != "")
 			gf.setActive(stageBuild.gfVersion);
 		else
@@ -653,7 +656,7 @@ class PlayState extends MusicBeatState implements Playable
 				changeChar(char, data[1], (char != gf));
 
 			case "Freeze Notes":
-				var affected:Array<Strumline> = playField.strumlines;
+				var affected:Array<Strumline> = playField.strumlines.copy();
 				switch (data[1])
 				{
 					case "dad": affected.remove(playField.bfStrumline);
@@ -766,8 +769,9 @@ class PlayState extends MusicBeatState implements Playable
 
 	function updateDisplace()
 	{
-		if (maxDisplace == {x: 0, y: 0})
+		if (maxDisplace.x == 0 && maxDisplace.y == 0)
 			return;
+
 		switch (strToChar(curFocus).curAnimName.split('-')[0])
 		{
 			case 'singLEFT':

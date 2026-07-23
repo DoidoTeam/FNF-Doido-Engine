@@ -8,11 +8,9 @@ If you're unsure about this, or would like to suggest a feature, please [create 
 - Chart Editor
 - Character Editor
 - Offsets (Music)
-- Controls Menu
 
 ## Medium priority
-- Menus (Freeplay)
-- Note Types
+- Menus
 - Scriptable HUDs
 - Cutscene support
 - Dialogue support

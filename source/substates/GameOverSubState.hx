@@ -129,6 +129,10 @@ class GameOverSubState extends MusicBeatSubState
 	// dont call super because this substate doesnt actually have a script
 	override public function callScript(fun:String, ?args:Array<Dynamic>)
 	{
+		// dont run regular state calls to avoid running unwanted code...
+		if (!fun.startsWith("gameOver"))
+			return;
+
 		PlayState.instance.callScript(fun, args);
 	}
 

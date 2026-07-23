@@ -60,6 +60,7 @@ class PauseSubState extends MusicBeatSubState
 
 		botplayTxt = new FlxText(0, 0, 0, "BOTPLAY");
 		botplayTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, RIGHT);
+		botplayTxt.setOutline(0xFF000000, 2);
 		botplayTxt.x = FlxG.width - botplayTxt.width - 10;
 		botplayTxt.y = FlxG.height - botplayTxt.height - 10;
 		botplayTxt.visible = PlayState.instance.botplay;
