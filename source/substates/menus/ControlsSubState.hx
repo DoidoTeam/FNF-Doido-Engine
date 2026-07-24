@@ -28,6 +28,24 @@ class ControlsSubState extends MusicBeatSubState
 	public var allBinds:Array<DoidoKey> = [LEFT, DOWN, UP, RIGHT];
 	public var allOptions:Array<String> = ["EDIT", "CLEAR", "RESET"];
 
+	public var bannedKeys:Array<FlxKey> = [
+		FlxKey.ZERO,
+		FlxKey.PLUS,
+		FlxKey.MINUS,
+		FlxKey.F1,
+		FlxKey.F2,
+		FlxKey.F3,
+		FlxKey.F4,
+		FlxKey.F5,
+		FlxKey.F6,
+		FlxKey.F7,
+		FlxKey.F8,
+		FlxKey.F9,
+		FlxKey.F10,
+		FlxKey.F11,
+		FlxKey.F12
+	];
+
 	final formatNum:Array<String> = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'];
 
 	public var optionsSubState:OptionsSubState;
@@ -243,7 +261,7 @@ class ControlsSubState extends MusicBeatSubState
 			if (FlxG.keys.justPressed.ANY)
 			{
 				awaitingTxt.visible = false;
-				if (FlxG.keys.justPressed.ESCAPE)
+				if (FlxG.keys.justPressed.ESCAPE || FlxG.keys.anyJustPressed(bannedKeys))
 				{
 					reloadKey(curBindSpr, getSaveBind());
 					changeMenu(EDIT_CHOOSING, "cancel");
@@ -415,7 +433,7 @@ class BindSprite extends FlxSprite
 			animation.play(switch (key)
 			{
 				case "LEFT" | "DOWN" | "UP" | "RIGHT": "arrow " + key.toLowerCase();
-				case "SHIFT" | "CONTROL" | "ALT" | "0#": "key empty long";
+				case "SHIFT" | "CONTROL" | "ALT" | "0#" | "CAPSLOCK" | "BACKSPACE" | "SCROLL_LOCK" | "BREAK" | "PAGEUP" | "PAGEDOWN": "key empty long";
 				case "ENTER": "enter";
 				default: "key empty";
 			});
@@ -426,8 +444,22 @@ class BindSprite extends FlxSprite
 				{
 					case "LEFT" | "DOWN" | "UP" | "RIGHT": "";
 					case "CONTROL": "CTRL";
+					case "BACKSLASH": "/";
+					case "SEMICOLON": ";";
+					case "COLON": ":";
+					case "COMMA": ",";
+					case "PERIOD": ".";
+					case "QUOTE": "'";
+					case "CAPSLOCK": "CAPS";
+					case "PAGEUP": "PGUP";
+					case "PAGEDOWN": "PGDWN";
+					case "DELETE": "DEL";
+					case "BACKSPACE": "BKSP";
+					case "SCROLL_LOCK": "SCRLK";
+					case "INSERT": "INS";
 					default: key;
 				}
+				label.flipX = key == "BACKSLASH";
 			}
 		}
 		scale.set(0.7, 0.7);
