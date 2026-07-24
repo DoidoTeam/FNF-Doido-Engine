@@ -11,12 +11,16 @@ import flixel.tweens.FlxTween;
 
 class PauseSubState extends MusicBeatSubState
 {
-	var options:Array<String> = ["Resume", "Restart Song", "Options", "Botplay", "Exit To Menu"];
+	var options:Array<String> = ["Resume", "Restart Song", "Options", "Practice Mode", "Botplay", "Exit To Menu"];
 	var optionText:Array<Alphabet> = [];
+	var curSelected:Int = 0;
+
+	var metadata:Array<FlxText> = [];
 	var title:FlxText;
 	var creditsText:FlxText;
-	var botplayTxt:FlxText;
-	var curSelected:Int = 0;
+	var diffText:FlxText;
+	var blueballText:FlxText;
+	var bottomTxt:FlxText;
 
 	public function new()
 	{
@@ -27,9 +31,6 @@ class PauseSubState extends MusicBeatSubState
 		var bg = new FlxSprite().makeColor(FlxG.width + 10, FlxG.height + 10, 0xFF000000);
 		bg.alpha = 0.4;
 		add(bg);
-
-		if (true) // difficultyList.length > 0 or something like that
-			options.insert(2, "Change Difficulty");
 
 		// i hope this wont break anything
 		/*if (PlayState.instance.startedSong)
@@ -44,34 +45,66 @@ class PauseSubState extends MusicBeatSubState
 			add(option);
 		}
 
+		var textPadding:Int = 35;
+
 		// add the song title
-		title = new FlxText(10, 10, 0, PlayState.CHART.song);
+		title = new FlxText(10, 8, 0, TextUtil.titleCase(PlayState.CHART.song));
 		title.setFormat(Main.globalFont, 36, 0xFFFFFFFF, RIGHT);
 		title.setOutline(0xFF000000, 2);
 		title.x = FlxG.width - title.width - 10;
-		add(title);
+		metadata.push(title);
 
 		//  add the credits text
-		creditsText = new FlxText(10, title.y + 30, 0, "");
+		creditsText = new FlxText(10, title.y + textPadding, 0, "");
 		creditsText.setFormat(Main.globalFont, 36, 0xFFFFFFFF, RIGHT);
 		creditsText.setOutline(0xFF000000, 2);
 		creditsText.alpha = 1;
-		add(creditsText);
+		metadata.push(creditsText);
 
-		botplayTxt = new FlxText(0, 0, 0, "BOTPLAY");
-		botplayTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, RIGHT);
-		botplayTxt.setOutline(0xFF000000, 2);
-		botplayTxt.x = FlxG.width - botplayTxt.width - 10;
-		botplayTxt.y = FlxG.height - botplayTxt.height - 10;
-		botplayTxt.visible = PlayState.instance.botplay;
-		add(botplayTxt);
+		diffText = new FlxText(10, creditsText.y + textPadding, 0, 'Difficulty: ${TextUtil.titleCase(PlayState.songDiff)}');
+		diffText.setFormat(Main.globalFont, 36, 0xFFFFFFFF, RIGHT);
+		diffText.setOutline(0xFF000000, 2);
+		diffText.alpha = 1;
+		diffText.x = FlxG.width - diffText.width - 10;
+		metadata.push(diffText);
 
+		blueballText = new FlxText(10, diffText.y + textPadding, 0, 'Blueballed: ${PlayState.blueballed}');
+		blueballText.setFormat(Main.globalFont, 36, 0xFFFFFFFF, RIGHT);
+		blueballText.setOutline(0xFF000000, 2);
+		blueballText.alpha = 1;
+		blueballText.x = FlxG.width - blueballText.width - 10;
+		metadata.push(blueballText);
+
+		bottomTxt = new FlxText(0, 0, 0, "BOTPLAY");
+		bottomTxt.setFormat(Main.globalFont, 36, 0xFFFFFFFF, RIGHT);
+		bottomTxt.setOutline(0xFF000000, 2);
+		bottomTxt.y = FlxG.height - bottomTxt.height - 10;
+		add(bottomTxt);
+
+		addMeta();
 		changeSelection();
 		drawCreditsText();
+		drawBottom();
 		creditsFade();
 	}
 
+	function addMeta()
+	{
+		var delay = 0.0;
+		for (text in metadata)
+		{
+			text.alpha = 0;
+			text.x -= 5;
+			FlxTween.tween(text, {alpha: 1, y: text.y + 5}, 1.2, {ease: FlxEase.quartOut, startDelay: delay});
+			add(text);
+			delay += 0.1;
+		}
+	}
+
 	var curSelectedCredit:Int = 0;
+	var creditsTween:FlxTween;
+	var fadeDelay:Float = 6;
+	var fadeDuration:Float = 0.75;
 
 	function drawCreditsText()
 	{
@@ -82,10 +115,6 @@ class PauseSubState extends MusicBeatSubState
 		curSelectedCredit++;
 		curSelectedCredit = FlxMath.wrap(curSelectedCredit, 0, 1);
 	}
-
-	var creditsTween:FlxTween;
-	var fadeDelay:Float = 5;
-	var fadeDuration:Float = 0.75;
 
 	function creditsFade()
 	{
@@ -106,6 +135,12 @@ class PauseSubState extends MusicBeatSubState
 		});
 	}
 
+	function drawBottom()
+	{
+		bottomTxt.text = PlayState.instance.botplay ? "BOTPLAY" : (PlayState.instance.practice ? "PRACTICE" : "");
+		bottomTxt.x = FlxG.width - bottomTxt.width - 10;
+	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -121,17 +156,29 @@ class PauseSubState extends MusicBeatSubState
 			{
 				case 'resume':
 					close();
+
 				case 'restart song':
 					MusicBeat.skip = true;
 					MusicBeat.switchState(new states.PlayState());
+
 				case 'botplay':
 					FlxG.sound.play(Assets.sound("cancel"));
 					PlayState.instance.botplay = !PlayState.instance.botplay;
-					botplayTxt.visible = PlayState.instance.botplay;
+					PlayState.instance.practice = false;
+					drawBottom();
+
+				case 'practice mode':
+					FlxG.sound.play(Assets.sound("cancel"));
+					PlayState.instance.practice = !PlayState.instance.practice;
+					PlayState.instance.botplay = false;
+					drawBottom();
+
 				case 'options':
 					openSubState(new OptionsSubState(PlayState.instance));
+
 				case 'exit to menu':
 					PlayState.instance.goToMenu();
+
 				default:
 					FlxG.sound.play(Assets.sound("cancel"));
 			}

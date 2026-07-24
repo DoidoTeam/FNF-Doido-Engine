@@ -210,7 +210,7 @@ class ChartingState extends MusicBeatState
 		MusicBeat.stopMusic();
 
 		MusicBeat.preventClosing = true;
-		MusicBeat.onClosing = () -> confirmPopup("Close", () -> Sys.exit(0));
+		#if sys MusicBeat.onClosing = () -> confirmPopup("Close", () -> Sys.exit(0)); #end
 
 		noFunAllowed = EditorSave.data.reducedAnimations;
 		soundEffects = EditorSave.data.soundEffects;

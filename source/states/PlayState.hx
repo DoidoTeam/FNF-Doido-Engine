@@ -42,6 +42,10 @@ class PlayState extends MusicBeatState implements Playable
 	public static var isStoryMode:Bool = false;
 	public static var weekScore:Int = 0;
 
+	// other statics
+	public static var blueballed:Int = 0;
+	public static var playedCutscene:Bool = false;
+
 	public var playField:PlayField;
 	public var hudClass:ClassHud;
 	public var debugInfo:DebugInfo;
@@ -86,10 +90,12 @@ class PlayState extends MusicBeatState implements Playable
 	public var characters:Array<CharGroup> = [];
 
 	public var health:Float = 1;
+	public var isDead:Bool = false;
 
 	public var downscroll:Bool;
 	public var middlescroll:Bool;
 	public var validScore:Bool = true;
+	public var practice:Bool = false;
 
 	#if TOUCH_CONTROLS
 	var pauseButton:DoidoHitbox;
@@ -119,7 +125,8 @@ class PlayState extends MusicBeatState implements Playable
 		loadSong(playList[0], diff, true);
 	}
 
-	public function resetStatics()
+	// resets static values related to current playthrough (score, etc)
+	public static function resetStatics()
 	{
 		Timings.init();
 
@@ -129,6 +136,13 @@ class PlayState extends MusicBeatState implements Playable
 			curWeek = '';
 			playList = [];
 		}
+	}
+
+	// resets static values related to current song (blueballed count, etc)
+	public static function resetSongStatics()
+	{
+		blueballed = 0;
+		playedCutscene = false;
 	}
 
 	override function create()
@@ -520,7 +534,7 @@ class PlayState extends MusicBeatState implements Playable
 	{
 		super.update(elapsed);
 
-		if (botplay && startedSong)
+		if ((botplay || practice) && startedSong)
 			validScore = false;
 
 		var followLerp:Float = FlxMath.bound((cameraSpeed * 5 * elapsed), 0, 1);
@@ -538,31 +552,14 @@ class PlayState extends MusicBeatState implements Playable
 			cam.zoom = FlxMath.lerp(cam.zoom, defaultHudZoom, elapsed * 6);
 
 		health = FlxMath.bound(health, 0, 2);
-		if (Controls.justPressed(RESET) || health <= 0)
-		{
-			// MusicBeat.skip = true;
-			// MusicBeat.switchState(new PlayState());
-			paused = true;
-			for (snd in FlxG.sound.list)
-			{
-				snd.stop();
-			}
-
-			followCamera("boyfriend");
-			persistentDraw = persistentUpdate = false;
-			openSubState(new GameOverSubState(SONG.META.assets.gameOverPath, bf));
-		}
+		if (Controls.justPressed(RESET) || (health <= 0 && !practice))
+			startGameOver();
 
 		if (Save.data.developerMode)
 			debugKeys();
 
-		if (canPause)
-		{
-			if (Controls.justPressed(PAUSE) #if TOUCH_CONTROLS || pauseButton.justPressed #end)
-			{
-				pauseSong();
-			}
-		}
+		if (canPause && Controls.justPressed(PAUSE) #if TOUCH_CONTROLS || pauseButton.justPressed #end)
+			pauseSong();
 
 		if (!paused)
 		{
@@ -855,6 +852,24 @@ class PlayState extends MusicBeatState implements Playable
 			audio.speed = defaultSongSpeed;
 	}
 
+	public function startGameOver()
+	{
+		if (isDead)
+			return;
+
+		isDead = true;
+		paused = true;
+		for (snd in FlxG.sound.list)
+		{
+			snd.stop();
+		}
+		audio.stop();
+		MusicBeat.activateTimers(false);
+		followCamera("boyfriend");
+		persistentDraw = persistentUpdate = false;
+		openSubState(new GameOverSubState(SONG.META.assets.gameOverPath, bf));
+	}
+
 	public function beatCamera(gameZoom:Float, hudZoom:Float, strumZoom:Float)
 	{
 		beatCamZoom += gameZoom;
@@ -868,8 +883,10 @@ class PlayState extends MusicBeatState implements Playable
 	{
 		if (endedSong)
 			return;
+
 		endedSong = true;
 		canPause = false;
+		resetSongStatics();
 
 		if (validScore)
 		{
@@ -905,10 +922,19 @@ class PlayState extends MusicBeatState implements Playable
 
 	public function goToMenu()
 	{
+		MusicBeat.stopMusic();
+		resetSongStatics();
+
 		if (isStoryMode)
 			MusicBeat.switchState(new states.menus.StoryMenuState());
 		else
 			MusicBeat.switchState(new states.menus.FreeplayState());
+	}
+
+	override function destroy()
+	{
+		instance = null;
+		super.destroy();
 	}
 
 	override function stepHit()
