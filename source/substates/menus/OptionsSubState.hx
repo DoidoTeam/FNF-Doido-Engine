@@ -468,7 +468,7 @@ class OptionsSubState extends MusicBeatSubState
 		persistentDraw = false;
 		bg = new FlxSprite().makeColor(0, 0, 0xFF000000);
 		bg.screenCenter();
-		bg.alpha = 0.9;
+		bg.alpha = 0.8;
 		add(bg);
 
 		add(alphabetGrp = new FlxTypedGroup<OptionAlphabet>());

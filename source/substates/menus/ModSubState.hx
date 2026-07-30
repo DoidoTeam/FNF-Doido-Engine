@@ -8,128 +8,137 @@ import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxTimer;
+import flixel.FlxBasic;
+import flixel.FlxSprite;
+import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxRect;
+import flixel.util.FlxColor;
 
 typedef ModOption =
 {
 	var id:String;
 	var name:String;
 	var icon:String;
-	var ?enabled:Bool;
+	var modVer:String;
+	var apiVer:String;
+	var enabled:Bool;
+	var system:Bool;
 }
 
 class ModSubState extends MusicBeatSubState
 {
-	public var bg:FlxSprite;
-	public var namesGrp:FlxTypedGroup<ModAlphabet>;
-	public var mods:Array<ModOption>;
+	public var width:Int = 1000;
+	public var height:Int = 600;
+	public var realX:Float = 0;
+	public var realY:Float = 0;
+	public var padding:Int = 12;
+
+	public final maxOptions:Int = 5;
+	public final enabledColor:FlxColor = FlxColor.WHITE;
+	public final disabledColor:FlxColor = FlxColor.WHITE.getDarkened(0.6);
+
+	public var curSelected:Int = 0;
+	public var curSys:Int = 0;
+
+	public var mods:Array<ModOption> = [];
 	public var systemOptions:Array<String> = ["reload list", #if (windows || android) "open folder" #end];
 
-	var curSelected:Int = 0;
+	public var bg:FlxSprite;
+	public var displayGrp:FlxTypedGroup<ModDisplay>;
 
 	public function new()
 	{
 		super();
-		bg = new FlxSprite().makeColor(FlxG.width + 10, FlxG.height + 10, 0xFF000000);
+
+		bg = new FlxSprite().makeColor(width, height, 0xFF000000);
 		bg.screenCenter();
-		bg.alpha = 0.4;
+		bg.alpha = 0.8;
 		add(bg);
 
-		add(namesGrp = new FlxTypedGroup<ModAlphabet>());
+		realX = bg.x;
+		realY = bg.y;
+		bg.scale.x = 0;
+		bg.scale.y = 0;
+		bg.screenCenter();
 
-		var resetTxt = new FlxText(0, 0, 0, "HOLD SHIFT TO REORDER MODS");
-		resetTxt.setFormat(Main.globalFont, 28, 0xFFFFFFFF, FlxTextAlign.RIGHT);
-		var resetBg = new FlxSprite().makeGraphic(Math.floor(FlxG.width * 1.5), Math.floor(resetTxt.height + 8), 0xFF000000);
-		resetBg.alpha = 0.4;
-		resetBg.screenCenter(X);
-		resetBg.y = FlxG.height - resetBg.height;
-		resetTxt.screenCenter(X);
-		resetTxt.y = resetBg.y + 4;
-		add(resetBg);
-		add(resetTxt);
+		displayGrp = new FlxTypedGroup<ModDisplay>();
+		add(displayGrp);
 
 		reloadMods();
-
-		new FlxTimer().start(0.1, function(tmr:FlxTimer)
-		{
-			if (Mods.queuedErrors.length > 0)
-				showErrors();
-		});
+		positionBg(0);
 	}
+
+	var optionCount:Int = 0;
 
 	public function reloadMods()
 	{
 		mods = [];
 		for (mod in Mods.modList.mods)
 		{
+			var meta = Mods.getMeta(mod.name);
 			mods.push({
 				id: mod.name,
-				name: Mods.getTitle(mod.name),
+				name: meta.title,
 				icon: mod.name,
-				enabled: mod.enabled
+				enabled: mod.enabled,
+				modVer: meta.modVersion,
+				apiVer: meta.apiVersion,
+				system: false
 			});
 		}
 
-		for (opt in systemOptions)
-		{
-			mods.push({
-				id: opt,
-				name: opt,
-				icon: "-",
-				enabled: null
-			});
-		}
+		mods.push({
+			id: systemOptions[curSys],
+			name: systemOptions[curSys],
+			icon: "-",
+			enabled: true,
+			modVer: "0.0.0",
+			apiVer: "0.0.0",
+			system: true
+		});
 
-		namesGrp.killMembers();
-		var i = 0;
+		displayGrp.killMembers();
+		optionCount = 0;
 		for (mod in mods)
 		{
-			var name:ModAlphabet = namesGrp.recycle(ModAlphabet);
-
-			name.text = mod.name;
-			name.reloadIcon(mod.icon, mod.enabled);
-			name.ID = i;
-
-			if (!namesGrp.members.contains(name))
-				namesGrp.add(name);
-			i++;
+			var disp:ModDisplay = displayGrp.recycle(ModDisplay);
+			disp.setMod(mod);
+			if (!mod.system)
+			{
+				disp.x = realX + padding;
+				disp.checkmark.x = realX + width - disp.checkmark.width - padding;
+			}
+			disp.ID = optionCount;
+			displayGrp.add(disp);
+			optionCount++;
 		}
+
 		changeSelection();
-		updatePos();
+		positionOptions();
 	}
 
-	public function updatePos(lerp:Float = 1)
+	function positionBg(elapsed:Float)
 	{
-		namesGrp.forEachAlive((alphabet) ->
-		{
-			var daPos:Int = (alphabet.ID - curSelected);
-
-			var xOffset:Float = Math.pow(3, Math.min(Math.abs(daPos), 3)) * 10;
-			var yOffset:Float = (150 * daPos);
-
-			alphabet.setPosition(FlxMath.lerp(alphabet.x, 280 - xOffset, lerp), FlxMath.lerp(alphabet.y, (FlxG.height / 2) - 30 + yOffset, lerp));
-		});
+		bg.scale.set(FlxMath.lerp(bg.scale.x, width, elapsed * 8), FlxMath.lerp(bg.scale.y, height, elapsed * 8));
+		bg.updateHitbox();
+		bg.screenCenter();
 	}
 
-	public function changeSelection(?change:Int = 0)
+	public function positionOptions(?elapsed:Float)
 	{
-		if (change != 0)
-			FlxG.sound.play(Assets.sound("scroll"));
+		var half:Int = Std.int(maxOptions / 2);
+		var scrollAnchor:Int = 0;
+		if (optionCount > maxOptions)
+			scrollAnchor = Std.int(FlxMath.bound(curSelected - half, 0, optionCount - maxOptions));
 
-		if (FlxG.keys.pressed.SHIFT && change != 0 && !isSystem)
+		displayGrp.forEachAlive((disp) ->
 		{
-			Mods.move(curSelected, change);
-			reloadMods();
-		}
-
-		curSelected += change;
-		curSelected = FlxMath.wrap(curSelected, 0, mods.length - 1);
-
-		namesGrp.forEachAlive((alphabet) ->
-		{
-			if (alphabet.ID == curSelected)
-				alphabet.alpha = 1.0;
+			var daPos:Int = (disp.ID - scrollAnchor);
+			var yOffset:Float = (disp.fakeHeight + padding) * daPos;
+			if (elapsed != null)
+				disp.y = FlxMath.lerp(disp.y, realY + padding + yOffset, elapsed * 8);
 			else
-				alphabet.alpha = 0.4;
+				disp.y = realY + padding + yOffset;
 		});
 	}
 
@@ -139,6 +148,10 @@ class ModSubState extends MusicBeatSubState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		positionBg(elapsed);
+		positionOptions(elapsed);
+
 		if (Controls.justPressed(BACK))
 		{
 			FlxG.sound.play(Assets.sound("options/options-close"));
@@ -160,10 +173,13 @@ class ModSubState extends MusicBeatSubState
 				holdTimer = holdMax - 0.12;
 		}
 
+		if (Controls.justPressed(UI_LEFT) && isSystem)
+			changeSys(-1);
+		if (Controls.justPressed(UI_RIGHT) && isSystem)
+			changeSys(1);
+
 		if (Controls.justPressed(ACCEPT))
 			toggleMod();
-
-		updatePos(elapsed * 8);
 	}
 
 	public function toggleMod()
@@ -177,9 +193,9 @@ class ModSubState extends MusicBeatSubState
 				case "reload list":
 					Mods.scan();
 					reloadMods();
-					curSelected = mods.length - 2;
+					curSelected = mods.length - 1;
 					changeSelection();
-					updatePos();
+					positionOptions();
 					if (Mods.queuedErrors.length > 0)
 						showErrors();
 			}
@@ -188,10 +204,10 @@ class ModSubState extends MusicBeatSubState
 		{
 			curMod.enabled = !curMod.enabled;
 			Mods.setMod(curMod.id, curMod.enabled, true);
-			namesGrp.forEachAlive((alphabet) ->
+			displayGrp.forEachAlive((disp) ->
 			{
-				if (alphabet.ID == curSelected)
-					alphabet.checkmark.animation.play(Std.string(curMod.enabled));
+				if (disp.ID == curSelected)
+					disp.checkmark.animation.play(Std.string(curMod.enabled));
 			});
 		}
 	}
@@ -207,6 +223,71 @@ class ModSubState extends MusicBeatSubState
 		Mods.queuedErrors = [];
 	}
 
+	public function changeSelection(?change:Int = 0)
+	{
+		if (change != 0)
+			FlxG.sound.play(Assets.sound("scroll"));
+
+		if (FlxG.keys.pressed.SHIFT && change != 0 && !isSystem)
+		{
+			Mods.move(curSelected, change);
+			reloadMods();
+		}
+
+		curSelected += change;
+		curSelected = FlxMath.wrap(curSelected, 0, mods.length - 1);
+
+		displayGrp.forEachAlive((disp) ->
+		{
+			disp.setColor(disp.ID == curSelected ? enabledColor : disabledColor);
+			disp.hovering = disp.ID == curSelected;
+		});
+	}
+
+	public function changeSys(?change:Int = 0)
+	{
+		if (change != 0)
+			FlxG.sound.play(Assets.sound("scroll"));
+
+		curSys += change;
+		curSys = FlxMath.wrap(curSys, 0, systemOptions.length - 1);
+
+		// to-do: make this less shitty
+		reloadMods();
+	}
+
+	override function draw()
+	{
+		function check(obj:FlxBasic)
+		{
+			if (obj == null)
+				return;
+
+			if (Std.isOfType(obj, FlxSpriteGroup))
+			{
+				var grp:FlxSpriteGroup = cast obj;
+				grp.forEach((member) -> check(member));
+			}
+			else if (Std.isOfType(obj, FlxGroup))
+			{
+				var grp:FlxGroup = cast obj;
+				grp.forEach((member) -> check(member));
+			}
+			else if (Std.isOfType(obj, FlxSprite))
+				setClip(cast obj, bg);
+		}
+
+		check(displayGrp);
+
+		// for (obj in objects)
+		//	check(obj);
+
+		// setClip(closeButton, bg);
+		// setClip(titleText, bg);
+
+		super.draw();
+	}
+
 	var curMod(get, never):ModOption;
 	var isSystem(get, never):Bool;
 
@@ -215,72 +296,146 @@ class ModSubState extends MusicBeatSubState
 
 	function get_isSystem():Bool
 		return systemOptions.contains(curMod.id);
+
+	// for some reason clipToSprite isnt working right
+	function setClip(sprite:FlxSprite, bg:FlxSprite)
+	{
+		var newx:Float = bg.x - sprite.x;
+		var newy:Float = bg.y - sprite.y;
+		var newwidth:Float = (bg.x + bg.width - sprite.x) - newx;
+		var newheight:Float = (bg.y + bg.height - sprite.y) - newy;
+		sprite.clipRect = new FlxRect(newx / sprite.scale.x, newy / sprite.scale.y, newwidth / sprite.scale.x, newheight / sprite.scale.y);
+	}
 }
 
-class ModAlphabet extends Alphabet
+class ModDisplay extends FlxSpriteGroup
 {
 	public var icon:FlxSprite;
 	public var checkmark:FlxSprite;
+	public var name:Alphabet;
+	public var ver:Alphabet;
+	public var arrows:Array<FlxSprite> = [];
 
-	public function new()
+	public var nameText:String = "";
+	public var verText:String = "";
+
+	public var padding:Int = 12;
+	public var fakeHeight:Float = 0;
+
+	public var lastColor:FlxColor;
+	public var hovering:Bool = false;
+	public var mod:ModOption;
+
+	public function new(mod:ModOption)
 	{
-		super(0, 0, "", true);
+		super();
+		hovering = false;
+
 		icon = new FlxSprite();
+		icon.scale.set(0.7, 0.7);
+		add(icon);
+
+		name = new Alphabet(0, 0, "", true, LEFT);
+		name.scale.set(0.8, 0.8);
+		add(name);
 
 		checkmark = new FlxSprite();
 		checkmark.loadSparrow("menu/checkmark");
 		checkmark.animation.addByPrefix("false", "false", 24, false);
 		checkmark.animation.addByPrefix("true", "true", 24, false);
-		checkmark.animation.play("true");
-		checkmark.updateHitbox();
+		checkmark.scale.set(0.9, 0.9);
+		add(checkmark);
+
+		ver = new Alphabet(0, 0, '<color value=#FFFFFF>$verText</color>', false, LEFT);
+		ver.scale.set(0.3, 0.3);
+		add(ver);
+
+		for (i in 0...2)
+		{
+			var dir:String = (i == 0 ? "left" : "right");
+			var arrow = new FlxSprite();
+			arrow.loadSparrow("menu/menuArrows");
+			arrow.animation.addByPrefix('idle', 'arrow $dir', 24, false);
+			arrow.animation.addByPrefix('push', 'arrow push $dir', 24, false);
+			arrow.animation.play("idle");
+			arrow.scale.set(0.7, 0.7);
+			arrow.updateHitbox();
+			arrows.push(arrow);
+			arrow.ID = i;
+			arrow.y = name.y;
+			add(arrow);
+		}
 	}
 
-	public function reloadIcon(mod:String, ?check:Bool)
+	public function setMod(mod:ModOption)
 	{
-		if (check == null)
-			checkmark.visible = false;
-		else
+		this.mod = mod;
+
+		icon.loadGraphic(Mods.getIcon(mod.id));
+		icon.updateHitbox();
+
+		nameText = mod.name;
+		name.text = nameText;
+		name.updateHitbox();
+
+		checkmark.animation.play(Std.string(mod.enabled), true, 99);
+		checkmark.updateHitbox();
+
+		verText = mod.system ? 'Hold SHIFT to reorder mods.' : 'MOD: v${mod.modVer} | API: v${mod.apiVer}';
+		ver.text = '<color value=#FFFFFF>$verText</color>';
+		ver.updateHitbox();
+
+		name.x = icon.x + icon.width + padding;
+		name.y = icon.y + (icon.height / 2) - (name.height / 2);
+		checkmark.y = icon.y - 14;
+
+		name.y -= (ver.height / 2);
+		ver.x = name.x;
+		ver.y = name.y + name.height;
+
+		checkmark.visible = !mod.system;
+		icon.visible = !mod.system;
+
+		arrows[0].visible = mod.system;
+		arrows[1].visible = mod.system;
+
+		if (mod.system)
 		{
-			checkmark.visible = true;
-			checkmark.animation.play(Std.string(check), true, false, checkmark.animation.getByName(Std.string(check)).frames.length - 1);
+			name.screenCenter(X);
+			ver.screenCenter(X);
+
+			arrows[0].y = name.y;
+			arrows[1].y = name.y;
+			arrows[0].x = name.x - arrows[0].width - padding;
+			arrows[1].x = name.x + name.width + padding;
 		}
 
-		if (mod == "-")
-		{
-			icon.visible = false;
-		}
-		else
-		{
-			icon.visible = true;
-			icon.loadGraphic(Mods.getIcon(mod));
-			icon.scale.set(0.9, 0.9);
-			icon.updateHitbox();
-		}
+		fakeHeight = icon.height;
+	}
+
+	public function setColor(newColor:FlxColor)
+	{
+		for (obj in [icon, checkmark].concat(arrows))
+			obj.color = newColor;
+
+		name.text = '<color value=#${newColor.toHexString(false, false)}>$nameText</color>';
+		ver.text = '<color value=#${newColor.toHexString(false, false)}>$verText</color>';
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		if (checkmark.visible)
-			checkmark.update(elapsed);
-	}
-
-	override function draw()
-	{
-		if (icon.visible)
+		if (hovering && mod.system)
 		{
-			icon.alpha = alpha;
-			icon.setPosition(x - icon.width - 16, y + (height - icon.height) / 2);
-			icon.draw();
+			for (arrow in arrows)
+			{
+				if (arrow.ID == 0)
+					arrow.animation.play(Controls.pressed(UI_LEFT) ? "push" : "idle");
+				else
+					arrow.animation.play(Controls.pressed(UI_RIGHT) ? "push" : "idle");
+			}
 		}
-		if (checkmark.visible)
-		{
-			checkmark.alpha = alpha;
-			checkmark.setPosition(x + width + 16, y + ((height - checkmark.height) / 2) - 14);
-			checkmark.draw();
-		}
-		super.draw();
 	}
 }
 #end
