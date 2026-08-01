@@ -110,6 +110,7 @@ class PlayField extends FlxGroup
 			Controls.released(RIGHT)
 			|| touchInput.released("right"),
 		];
+		
 		if (!pressed.contains(true))
 			playerHolding = false;
 
