@@ -51,6 +51,7 @@ class DebugSubState extends MusicBeatSubState
 	{
 		super();
 		FlxG.mouse.visible = true;
+		FlxG.sound.play(Assets.sound("options/options-open"));
 
 		#if MODS_FOLDER
 		addOption("manage mods", () -> openSubState(new substates.menus.ModSubState(this, bg.width, bg.height)));

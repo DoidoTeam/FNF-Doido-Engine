@@ -52,6 +52,7 @@ class ModSubState extends MusicBeatSubState
 	{
 		super();
 		this.debugSubState = debugSubState;
+		FlxG.sound.play(Assets.sound("options/options-open"));
 
 		bg = new FlxSprite().makeColor(width, height, 0xFF000000);
 		bg.screenCenter();
