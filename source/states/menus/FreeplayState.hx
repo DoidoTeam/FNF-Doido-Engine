@@ -481,7 +481,7 @@ class FreeplayState extends MusicBeatState
 		return songs[curSelected];
 
 	function get_diff():String
-		return curSong.diffs[curDiff] ?? 'normal';
+		return curSong?.diffs[curDiff] ?? 'normal';
 
 	function get_middleDiff()
 		return Std.int((curSong.diffs.length - 1) / 2);
