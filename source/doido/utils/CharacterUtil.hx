@@ -48,8 +48,7 @@ class CharacterUtil
 				danceIdle++;
 
 			var offset = arrayToOffset(anim.offsets);
-			offset.x /= char.scale;
-			offset.y /= char.scale;
+			offset = {x: Math.round(offset.x / char.scale), y: Math.round(offset.y / char.scale)};
 
 			anims.push({
 				name: anim.anim,

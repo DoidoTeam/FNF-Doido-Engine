@@ -51,7 +51,7 @@ class DoidoSprite extends FlxAnimate
 
 	public function addOffset(animName:String, offset:DoidoPoint)
 	{
-		animOffsets.set(animName, offset);
+		animOffsets.set(animName, {x: Math.round(offset.x), y: Math.round(offset.y)});
 	}
 
 	public function getOffset(animName:String):DoidoPoint
