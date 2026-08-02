@@ -259,7 +259,7 @@ class WeekEditorSubState extends MusicBeatSubState
 		});
 		dataWindow.add(storyColor);
 
-		var radio = new DoidoRadio(["Always", "Story", "Freeplay"], 0, (cur) ->
+		var radio = new DoidoRadio(["Always", "Story Only", "Freeplay Only"], 0, (cur) ->
 		{
 			curWeek.storyModeOnly = cur == 1;
 			curWeek.freeplayOnly = cur == 2;

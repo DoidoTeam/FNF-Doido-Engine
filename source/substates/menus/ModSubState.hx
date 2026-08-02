@@ -27,8 +27,8 @@ typedef ModOption =
 
 class ModSubState extends MusicBeatSubState
 {
-	public var width:Int = 1000;
-	public var height:Int = 600;
+	public var width:Float = 1000;
+	public var height:Float = 600;
 	public var realX:Float = 0;
 	public var realY:Float = 0;
 	public var padding:Int = 12;
@@ -46,9 +46,12 @@ class ModSubState extends MusicBeatSubState
 	public var bg:FlxSprite;
 	public var displayGrp:FlxTypedGroup<ModDisplay>;
 
-	public function new()
+	public var debugSubState:DebugSubState;
+
+	public function new(?debugSubState:DebugSubState, prevWidth:Float = 0, prevHeight:Float = 0)
 	{
 		super();
+		this.debugSubState = debugSubState;
 
 		bg = new FlxSprite().makeColor(width, height, 0xFF000000);
 		bg.screenCenter();
@@ -57,8 +60,8 @@ class ModSubState extends MusicBeatSubState
 
 		realX = bg.x;
 		realY = bg.y;
-		bg.scale.x = 0;
-		bg.scale.y = 0;
+		bg.scale.x = prevWidth;
+		bg.scale.y = prevHeight;
 		bg.screenCenter();
 
 		displayGrp = new FlxTypedGroup<ModDisplay>();
@@ -149,16 +152,17 @@ class ModSubState extends MusicBeatSubState
 	{
 		super.update(elapsed);
 
-		positionBg(elapsed);
-		positionOptions(elapsed);
-
 		if (Controls.justPressed(BACK))
 		{
 			FlxG.sound.play(Assets.sound("options/options-close"));
 			if (Mods.reloadGame)
 				Init.flagState();
 			else
+			{
+				if (debugSubState != null)
+					debugSubState.bg.scale.set(bg.width, bg.height);
 				close();
+			}
 		}
 
 		var change:Int = (Controls.pressed(UI_DOWN) ? 1 : 0) - (Controls.pressed(UI_UP) ? 1 : 0);
@@ -180,6 +184,9 @@ class ModSubState extends MusicBeatSubState
 
 		if (Controls.justPressed(ACCEPT))
 			toggleMod();
+
+		positionBg(elapsed);
+		positionOptions(elapsed);
 	}
 
 	public function toggleMod()
@@ -332,7 +339,6 @@ class ModDisplay extends FlxSpriteGroup
 		hovering = false;
 
 		icon = new FlxSprite();
-		icon.scale.set(0.7, 0.7);
 		add(icon);
 
 		name = new Alphabet(0, 0, "", true, LEFT);
@@ -372,6 +378,7 @@ class ModDisplay extends FlxSpriteGroup
 		this.mod = mod;
 
 		icon.loadGraphic(Mods.getIcon(mod.id));
+		icon.setGraphicSize(150 * 0.7, 150 * 0.7);
 		icon.updateHitbox();
 
 		nameText = mod.name;

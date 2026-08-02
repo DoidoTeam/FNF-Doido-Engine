@@ -60,9 +60,7 @@ typedef ModOption =
  * Please keep in mind a lot of things are not yet implemented
  * and others may break when we change stuff.
  * TO-DO
- * - Mod Settings
  * - Better Meta
- * - Better Mod Manager
  * - Support for more soft-coded things
  */
 class Mods
@@ -141,10 +139,7 @@ class Mods
 			scanned.push(meta.id);
 		}
 
-		for (mod in modList.mods)
-			if (!scanned.contains(mod.name))
-				modList.mods.remove(mod);
-
+		modList.mods = modList.mods.filter(mod -> scanned.contains(mod.name));
 		saveJson();
 		loadMods();
 	}
@@ -153,10 +148,10 @@ class Mods
 	{
 		var error:PolymodError = null;
 
-		if (!VersionUtil.match(meta.apiVersion, VERSION_RULE))
-			error = new PolymodError(ERROR, VERSION_CONFLICT_API, '"${meta.id}" API version ${meta.apiVersion.toString()} is incompatible, expected "${VERSION_RULE.toString()}"', SCAN);
 		if (meta.id.startsWith("_"))
 			error = new PolymodError(WARNING, CUSTOM_HIDE, '"${meta.id}" ignored', SCAN);
+		else if (!VersionUtil.match(meta.apiVersion, VERSION_RULE))
+			error = new PolymodError(ERROR, VERSION_CONFLICT_API, '"${meta.id}" API version ${meta.apiVersion.toString()} is incompatible, expected "${VERSION_RULE.toString()}"', SCAN);
 
 		if (error != null)
 		{
@@ -402,7 +397,7 @@ class Mods
 			if (!mod.enabled)
 				continue;
 			var config = modConfigs.get(mod.name);
-			if (config == null)
+			if (config == null || config.initialState == "")
 				continue;
 			init = config.initialState;
 		}

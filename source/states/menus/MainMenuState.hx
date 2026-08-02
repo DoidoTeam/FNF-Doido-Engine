@@ -1,5 +1,6 @@
 package states.menus;
 
+import substates.menus.DebugSubState;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import doido.utils.LerpUtil;
@@ -10,7 +11,6 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import states.*;
-import states.DebugMenu;
 
 typedef MenuOption =
 {
@@ -42,7 +42,7 @@ class MainMenuState extends MusicBeatState
 		addOption("debug", () -> openSubState(new substates.menus.ModSubState()));
 		#else
 		if (Save.data.developerMode)
-			addOption("debug", () -> switchState(new DebugMenu()));
+			addOption("debug", () -> openSubState(new DebugSubState()));
 		#end
 		addOption("options", () -> openSubState(new substates.menus.OptionsSubState()));
 		addOption("credits", () -> switchState(new states.menus.CreditsState()));
@@ -173,7 +173,6 @@ class MainMenuState extends MusicBeatState
 			#if MODS_FOLDER
 			if (FlxG.keys.justPressed.TAB)
 				openSubState(new substates.menus.ModSubState());
-			//	MusicBeat.switchState(new states.DebugMenu.ModManager());
 			#end
 
 			if (Save.data.developerMode && FlxG.keys.justPressed.EIGHT)

@@ -1125,7 +1125,7 @@ class CharacterEditor extends MusicBeatState
 		savewindow.cameras = [camHUD];
 		openStuff.push(savewindow);
 
-		var popup = new PopupSubState("Selected: NONE", 480, 340, openStuff, false);
+		var popup = new PopupSubState("Open: NONE", 480, 340, openStuff, false);
 		openSubState(popup);
 
 		ok.button.onUp.add(() ->
@@ -1148,7 +1148,7 @@ class CharacterEditor extends MusicBeatState
 		savewindow.onClick = (str) ->
 		{
 			selected = str;
-			popup.titleText.text = 'Selected: ${selected}';
+			popup.titleText.text = 'Open: ${selected}';
 			trace(selected);
 		};
 	}

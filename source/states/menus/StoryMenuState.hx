@@ -19,6 +19,7 @@ class StoryMenuState extends MusicBeatState
 	static var curDiff:Int = -1;
 
 	public var editingWeek:WeekData;
+	public var editing:Bool = false;
 
 	var weekList(get, never):Array<WeekData>;
 	var _weekList:Array<WeekData> = []; // internal
@@ -39,6 +40,12 @@ class StoryMenuState extends MusicBeatState
 	var weekScoreTxt:FlxText;
 
 	// var resetTxt:FlxText;
+
+	public function new(editing:Bool = false)
+	{
+		super();
+		this.editing = editing;
+	}
 
 	override function create()
 	{
@@ -104,6 +111,9 @@ class StoryMenuState extends MusicBeatState
 			curDiff = middleDiff;
 
 		reload();
+
+		if (editing)
+			openSubState(new WeekEditorSubState(week, this));
 	}
 
 	public function reload()
