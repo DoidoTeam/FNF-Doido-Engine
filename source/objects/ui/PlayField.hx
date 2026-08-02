@@ -110,12 +110,12 @@ class PlayField extends FlxGroup
 			Controls.released(RIGHT)
 			|| touchInput.released("right"),
 		];
-		
+
 		if (!pressed.contains(true))
 			playerHolding = false;
 
 		// spawning notes
-		while(curSpawnNote < spawnNotes.length)
+		while (curSpawnNote < spawnNotes.length)
 		{
 			var noteData = spawnNotes[curSpawnNote];
 			var strumline = strumlines[noteData.strumline];
@@ -125,9 +125,7 @@ class PlayField extends FlxGroup
 				curSpawnNote++;
 			}
 			else
-			{
 				break;
-			}
 		}
 
 		for (strumline in strumlines)
