@@ -115,21 +115,17 @@ class PlayField extends FlxGroup
 			playerHolding = false;
 
 		// spawning notes
-		if (curSpawnNote < spawnNotes.length)
+		while (curSpawnNote < spawnNotes.length)
 		{
-			for (i in 0...spawnNotes.length)
+			var noteData = spawnNotes[curSpawnNote];
+			var strumline = strumlines[noteData.strumline];
+			if (noteDiffStep(noteData) < strumline.spawnStep) // spawns notes 32 steps ahead
 			{
-				if (i < curSpawnNote)
-					continue;
-
-				var noteData = spawnNotes[curSpawnNote];
-				var strumline = strumlines[noteData.strumline];
-				if (noteDiffStep(noteData) < strumline.spawnStep) // spawns notes 32 steps ahead
-				{
-					strumline.addNote(noteData);
-					curSpawnNote++;
-				}
+				strumline.addNote(noteData);
+				curSpawnNote++;
 			}
+			else
+				break;
 		}
 
 		for (strumline in strumlines)
