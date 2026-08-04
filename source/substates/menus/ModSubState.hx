@@ -23,6 +23,8 @@ typedef ModOption =
 	var apiVer:String;
 	var enabled:Bool;
 	var system:Bool;
+	var invalid:Bool;
+	var deps:Int;
 }
 
 class ModSubState extends MusicBeatSubState
@@ -87,7 +89,9 @@ class ModSubState extends MusicBeatSubState
 				enabled: mod.enabled,
 				modVer: meta.modVersion,
 				apiVer: meta.apiVersion,
-				system: false
+				system: false,
+				invalid: Mods.isInvalid(mod.name),
+				deps: Lambda.count(meta.dependencies) + Lambda.count(meta.optionalDependencies)
 			});
 		}
 
@@ -98,7 +102,9 @@ class ModSubState extends MusicBeatSubState
 			enabled: true,
 			modVer: "0.0.0",
 			apiVer: "0.0.0",
-			system: true
+			system: true,
+			invalid: false,
+			deps: 0
 		});
 
 		displayGrp.killMembers();
@@ -208,14 +214,21 @@ class ModSubState extends MusicBeatSubState
 						showErrors();
 			}
 		}
+		else if (curMod.invalid)
+			FlxG.sound.play(Assets.sound('cancel'));
 		else
 		{
 			curMod.enabled = !curMod.enabled;
 			Mods.setMod(curMod.id, curMod.enabled, true);
 			displayGrp.forEachAlive((disp) ->
 			{
-				if (disp.ID == curSelected)
-					disp.checkmark.animation.play(Std.string(curMod.enabled));
+				var modToggle = Mods.getMod(disp.mod.id);
+				if (modToggle != disp.checked)
+				{
+					disp.mod.enabled = modToggle;
+					disp.checked = modToggle;
+					disp.checkmark.animation.play(Std.string(modToggle));
+				}
 			});
 		}
 	}
@@ -236,7 +249,7 @@ class ModSubState extends MusicBeatSubState
 		if (change != 0)
 			FlxG.sound.play(Assets.sound("scroll"));
 
-		if (FlxG.keys.pressed.SHIFT && change != 0 && !isSystem)
+		if (FlxG.keys.pressed.CONTROL && change != 0 && !isSystem)
 		{
 			Mods.move(curSelected, change);
 			reloadMods();
@@ -333,6 +346,7 @@ class ModDisplay extends FlxSpriteGroup
 	public var lastColor:FlxColor;
 	public var hovering:Bool = false;
 	public var mod:ModOption;
+	public var checked:Bool = false;
 
 	public function new(mod:ModOption)
 	{
@@ -386,10 +400,17 @@ class ModDisplay extends FlxSpriteGroup
 		name.text = nameText;
 		name.updateHitbox();
 
+		checked = mod.enabled;
 		checkmark.animation.play(Std.string(mod.enabled), true, 99);
 		checkmark.updateHitbox();
 
-		verText = mod.system ? 'Hold SHIFT to reorder mods.' : 'MOD: v${mod.modVer} | API: v${mod.apiVer}';
+		if (mod.system)
+			verText = 'Hold CTRL to reorder mods.';
+		else if (mod.invalid)
+			verText = '${Mods.getInvalid(mod.id)}';
+		else
+			verText = 'MOD: v${mod.modVer} | API: v${mod.apiVer} | Deps: ${mod.deps}';
+
 		ver.text = '<color value=#FFFFFF>$verText</color>';
 		ver.updateHitbox();
 
@@ -401,7 +422,7 @@ class ModDisplay extends FlxSpriteGroup
 		ver.x = name.x;
 		ver.y = name.y + name.height;
 
-		checkmark.visible = !mod.system;
+		checkmark.visible = !mod.system && !mod.invalid;
 		icon.visible = !mod.system;
 
 		arrows[0].visible = mod.system;
@@ -426,8 +447,9 @@ class ModDisplay extends FlxSpriteGroup
 		for (obj in [icon, checkmark].concat(arrows))
 			obj.color = newColor;
 
-		name.text = '<color value=#${newColor.toHexString(false, false)}>$nameText</color>';
-		ver.text = '<color value=#${newColor.toHexString(false, false)}>$verText</color>';
+		var white = newColor.toHexString(false, false);
+		name.text = '<color value=#$white>$nameText</color>';
+		ver.text = '<color value=#$white>$verText</color>';
 	}
 
 	override function update(elapsed:Float)

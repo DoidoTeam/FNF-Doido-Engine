@@ -69,9 +69,10 @@ class Mods
 	public static var modMetas:Array<ModMetadata> = [];
 	public static var modConfigs:Map<String, ModConfig> = [];
 	public static var enabledMods:Array<String> = [];
+	public static var invalidMods:Map<String, String> = []; // id -> error
 	public static var initialized:Bool = false;
 
-	public static final API_VERSION:Version = "0.2.5";
+	public static final API_VERSION:Version = "0.2.6";
 	public static final MOD_ROOT:String = "mods";
 	public static final ASSETS_ROOT:Null<String> = null; // null defaults to assets, android only works like this
 	public static final VERSION_RULE:VersionRule = '>=${API_VERSION.major}.${API_VERSION.minor}.0 <=${API_VERSION}';
@@ -113,7 +114,7 @@ class Mods
 			frameworkParams: {
 				coreAssetRedirect: ASSETS_ROOT
 			},
-			apiVersionRule: VERSION_RULE,
+			apiVersionRule: "*.*.*",
 			errorCallback: onError,
 			parseRules: new ParseRules(), // disables it i hope
 			ignoredFiles: ignoredFiles,
@@ -132,7 +133,7 @@ class Mods
 		var scanned:Array<String> = [];
 		for (meta in modMetas)
 		{
-			if (!validateMod(meta))
+			if (hiddenMod(meta.id))
 				continue;
 			if (!exists(meta.id))
 				setMod(meta.id, false); // just to be safe
@@ -144,22 +145,49 @@ class Mods
 		loadMods();
 	}
 
-	public static function validateMod(meta:ModMetadata):Bool
+	public static function hiddenMod(id:String)
+		return id.startsWith("_");
+
+	public static function validateMod(id:String)
 	{
-		var error:PolymodError = null;
+		var meta = getMeta(id);
+		var reason:String = "";
 
-		if (meta.id.startsWith("_"))
-			error = new PolymodError(WARNING, CUSTOM_HIDE, '"${meta.id}" ignored', SCAN);
+		if (meta == null)
+			reason = 'Error: Meta not found';
 		else if (!VersionUtil.match(meta.apiVersion, VERSION_RULE))
-			error = new PolymodError(ERROR, VERSION_CONFLICT_API, '"${meta.id}" API version ${meta.apiVersion.toString()} is incompatible, expected "${VERSION_RULE.toString()}"', SCAN);
+			reason = 'Incompatible API Version: Expected $API_VERSION, got ${meta.apiVersion}';
+		else
+			reason = checkDependencies(meta);
 
-		if (error != null)
+		if (reason != "")
+			invalidMods.set(meta.id, reason);
+		else if (isInvalid(meta.id))
+			invalidMods.remove(meta.id);
+	}
+
+	public static function checkDependencies(meta:ModMetadata):String
+	{
+		for (dep in meta.dependencies.keys())
 		{
-			onError(error);
-			return false;
+			var rule = meta.dependencies.get(dep);
+			var depMeta = getMeta(dep);
+
+			if (depMeta == null)
+				return 'Missing Dependency: "$dep"';
+			else if (!VersionUtil.match(depMeta.modVersion, rule))
+				return 'Error: Dependency "$dep" does not satisfy $rule';
 		}
 
-		return true;
+		for (dep in meta.optionalDependencies.keys())
+		{
+			var rule = meta.optionalDependencies.get(dep);
+			var depMeta = getMeta(dep);
+			if (depMeta != null && !VersionUtil.match(depMeta.modVersion, rule))
+				return 'Error: Dependency "$dep" (optional) does not satisfy $rule';
+		}
+
+		return "";
 	}
 
 	public static function loadJson()
@@ -185,8 +213,11 @@ class Mods
 	{
 		var newMods:Array<String> = [];
 		for (mod in modList.mods)
-			if (mod.enabled)
+		{
+			validateMod(mod.name);
+			if (mod.enabled && !isInvalid(mod.name))
 				newMods.push(mod.name);
+		}
 
 		Polymod.loadOnlyMods(newMods);
 
@@ -252,12 +283,30 @@ class Mods
 
 	public static function setMod(mod:String, ?enable:Bool, save:Bool = false)
 	{
-		var index:Int = getIndex(mod);
+		if (isInvalid(mod))
+			enable = false;
 
+		var index:Int = getIndex(mod);
 		if (index == -1)
-			addMod(mod);
+			addMod(mod, enable);
 		else
+		{
 			modList.mods[index].enabled = enable ?? modList.mods[index].enabled;
+			if (enable)
+			{
+				for (dep in getAllDependencies(mod))
+					if (exists(dep))
+						setMod(dep, true, false);
+			}
+			else
+			{
+				for (sub in modList.mods)
+				{
+					if (getAllDependencies(sub.name).contains(mod) && exists(sub.name))
+						setMod(sub.name, false, false);
+				}
+			}
+		}
 
 		if (save)
 		{
@@ -267,11 +316,11 @@ class Mods
 	}
 
 	// unsafe, dont use
-	public static function addMod(mod:String)
+	public static function addMod(mod:String, enable:Bool = false)
 	{
 		modList.mods.push({
 			name: mod,
-			enabled: false
+			enabled: enable // BEWARE!
 		});
 	}
 
@@ -353,6 +402,25 @@ class Mods
 		return meta != null ? meta.title : "unknown";
 	}
 
+	public static function getAllDependencies(mod:String):Array<String>
+	{
+		var meta = getMeta(mod);
+		var deps:Array<String> = [];
+
+		if (meta != null)
+		{
+			for (dep in meta.dependencies.keys())
+				if (!deps.contains(dep))
+					deps.push(dep);
+
+			for (dep in meta.optionalDependencies.keys())
+				if (!deps.contains(dep))
+					deps.push(dep);
+		}
+
+		return deps;
+	}
+
 	public static function getMeta(mod:String):ModMetadata
 	{
 		for (meta in modMetas)
@@ -361,6 +429,12 @@ class Mods
 
 		return null;
 	}
+
+	public static function isInvalid(mod:String):Bool
+		return invalidMods.get(mod) != null;
+
+	public static function getInvalid(mod:String):String
+		return invalidMods.get(mod) ?? "";
 
 	public static var reloadGame:Bool = false;
 	public static var stateRedirects(get, never):Map<String, String>;
@@ -373,7 +447,7 @@ class Mods
 
 		for (mod in modList.mods)
 		{
-			if (!mod.enabled)
+			if (!mod.enabled || isInvalid(mod.name))
 				continue;
 
 			var config = modConfigs.get(mod.name);
@@ -394,7 +468,7 @@ class Mods
 
 		for (mod in modList.mods)
 		{
-			if (!mod.enabled)
+			if (!mod.enabled || isInvalid(mod.name))
 				continue;
 			var config = modConfigs.get(mod.name);
 			if (config == null || config.initialState == "")
@@ -411,7 +485,7 @@ class Mods
 
 		for (mod in modList.mods)
 		{
-			if (!mod.enabled)
+			if (!mod.enabled || isInvalid(mod.name))
 				continue;
 			var config = modConfigs.get(mod.name);
 			if (config == null)
