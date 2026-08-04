@@ -1,7 +1,6 @@
 package;
 
 import flixel.FlxState;
-import doido.Cache;
 import doido.MusicBeat.MusicBeatState;
 import doido.song.Highscore;
 import doido.system.Discord.DiscordIO;
@@ -34,9 +33,6 @@ class Init extends MusicBeatState
 		Mods.init();
 		#end
 
-		FlxGraphic.defaultPersist = true;
-		openfl.Assets.cache.enabled = false;
-		Cache.initCache();
 		flagState();
 
 		#if android

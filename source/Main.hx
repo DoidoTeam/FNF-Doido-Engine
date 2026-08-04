@@ -1,6 +1,8 @@
 package;
 
 import doido.objects.system.*;
+import doido.objects.system.soundtray.*;
+import doido.Cache;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.input.keyboard.FlxKey;
@@ -44,11 +46,12 @@ class Main extends Sprite
 		// adding the crash handler
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 		Logs.init(); // custom logging shit
+		Cache.initCache(); // cache needs to be loaded before soundtray
 
 		game = new FlxGame(gameWidth, gameHeight, Init, framerate, framerate, skipSplash);
 		globalFont = Assets.font("vcr"); // we need to initialize this before the font ever gets used, otherwise it wont be found
 		@:privateAccess
-		game._customSoundTray = SoundTray;
+		game._customSoundTray = FunkinSoundTray;
 		addChild(game);
 	}
 

@@ -41,6 +41,8 @@ class Cache
 			sounds: new Map<String, Sound>()
 		};
 
+		FlxGraphic.defaultPersist = true;
+		openfl.Assets.cache.enabled = false;
 		initialized = true;
 	}
 
