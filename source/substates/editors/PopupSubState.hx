@@ -1,5 +1,6 @@
 package substates.editors;
 
+import doido.utils.EditorUtil;
 import states.editors.ChartingState;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
@@ -10,7 +11,6 @@ import flixel.FlxBasic;
 import flixel.math.FlxMath;
 import doido.objects.ui.buttons.DoidoAnimatedButton;
 import flixel.math.FlxRect;
-import doido.objects.ui.PsychUIInputText;
 
 class PopupSubState extends MusicBeatSubState
 {
@@ -133,7 +133,7 @@ class PopupSubState extends MusicBeatSubState
 		super.update(elapsed);
 
 		if ((FlxG.keys.justPressed.ESCAPE || (FlxG.mouse.justReleased && !FlxG.mouse.overlaps(bg, MusicBeat.getTopCamera())))
-			&& PsychUIInputText.focusOn == null)
+			&& !EditorUtil.isTyping)
 			close();
 
 		if (clipped)

@@ -222,9 +222,9 @@ class CharacterEditor extends MusicBeatState
 
 		tab.add(createText(getX(), getY(0) + 3, "Sprite:", 0xFFD8DAF6));
 		var textWidth:Int = 200;
-		var sprite:PsychUIInputText;
-		sprite = new PsychUIInputText(getX("margin_first"), getY(0), textWidth, char.data.spritesheet, 14);
-		sprite.onChange.add((old, cur, input) ->
+		var sprite:DoidoInputText;
+		sprite = new DoidoInputText(getX("margin_first"), getY(0), textWidth, char.data.spritesheet);
+		sprite.onTextChange.add((cur, input) ->
 		{
 			char.data.spritesheet = cur;
 		});
@@ -315,9 +315,9 @@ class CharacterEditor extends MusicBeatState
 		tab.add(spriteType);
 
 		tab.add(createText(getX(), getY(2) + 3, "Idles:", 0xFFD8DAF6));
-		var idles:PsychUIInputText;
-		idles = new PsychUIInputText(getX("margin_first"), getY(2), textWidth, char.idleAnims.join(", "), 14);
-		idles.onChange.add((old, cur, input) ->
+		var idles:DoidoInputText;
+		idles = new DoidoInputText(getX("margin_first"), getY(2), textWidth, char.idleAnims.join(", "));
+		idles.onTextChange.add((cur, input) ->
 		{
 			char.idleAnims = cur.split(",").map(s -> s.trim());
 			char.data.idleAnims = char.idleAnims;
@@ -443,21 +443,21 @@ class CharacterEditor extends MusicBeatState
 		ghostAnims.cameras = [camHUD];
 		tab.add(ghostAnims);
 
-		var filter:PsychUIInputText;
-		filter = new PsychUIInputText(getX("margin_first_search"), getY(0), 372, "", 14);
-		filter.onChange.add((old, cur, input) -> ghostAnims.filter = cur);
-		filter.behindText.color = 0xFFD8DAF6;
+		var filter:DoidoInputText;
+		filter = new DoidoInputText(getX("margin_first_search"), getY(0), 372, "");
+		filter.onTextChange.add((cur, input) -> ghostAnims.filter = cur);
+		filter.backgroundColor = 0xFFD8DAF6;
 		filter.cameras = [camHUD];
 		tab.add(filter);
 
-		var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
-		glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
-		glass.x = filter.behindText.x + 1;
-		glass.y = filter.behindText.y + 1;
-		tab.add(glass);
+		//var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
+		//glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
+		//glass.x = filter.behindText.x + 1;
+		//glass.y = filter.behindText.y + 1;
+		//tab.add(glass);
 
-		filter.textObj.x += glass.width + 2;
-		filter.fieldWidth -= Std.int(glass.width + 2);
+		//filter.textObj.x += glass.width + 2;
+		//filter.fieldWidth -= Std.int(glass.width + 2);
 
 		var bottomY = 15;
 
@@ -561,27 +561,27 @@ class CharacterEditor extends MusicBeatState
 		tab.add(createText(getX(), getY(bottomY - 1) + 3, "Indices:", 0xFFD8DAF6));
 
 		var textWidth:Int = 200;
-		var name:PsychUIInputText;
-		name = new PsychUIInputText(getX("margin_first"), getY(bottomY - 3), textWidth, animEditing.name, 14);
-		name.onChange.add((old, cur, input) ->
+		var name:DoidoInputText;
+		name = new DoidoInputText(getX("margin_first"), getY(bottomY - 3), textWidth, animEditing.name);
+		name.onTextChange.add((cur, input) ->
 		{
 			animEditing.name = cur;
 		});
 		name.cameras = [camHUD];
 		tab.add(name);
 
-		var prefix:PsychUIInputText;
-		prefix = new PsychUIInputText(getX("margin_first"), getY(bottomY - 2), textWidth, animEditing.prefix, 14);
-		prefix.onChange.add((old, cur, input) ->
+		var prefix:DoidoInputText;
+		prefix = new DoidoInputText(getX("margin_first"), getY(bottomY - 2), textWidth, animEditing.prefix);
+		prefix.onTextChange.add((cur, input) ->
 		{
 			animEditing.prefix = cur;
 		});
 		prefix.cameras = [camHUD];
 		tab.add(prefix);
 
-		var indices:PsychUIInputText;
-		indices = new PsychUIInputText(getX("margin_first"), getY(bottomY - 1), textWidth, animEditing.indices.join(", "), 14);
-		indices.onChange.add((old, cur, input) ->
+		var indices:DoidoInputText;
+		indices = new DoidoInputText(getX("margin_first"), getY(bottomY - 1), textWidth, animEditing.indices.join(", "));
+		indices.onTextChange.add((cur, input) ->
 		{
 			animEditing.indices = cur.split(",").map(s -> Std.parseInt(s)).filter(n -> n != null);
 		});
@@ -591,14 +591,14 @@ class CharacterEditor extends MusicBeatState
 		/*
 			var coordWidth:Int = 42;
 			tab.add(createText(getX("margin_right", coordWidth) - 22, getY(bottomY - 3) + 3, "Y:", 0xFFD8DAF6));
-			var y:PsychUIInputText;
-			y = new PsychUIInputText(getX("margin_right", coordWidth), getY(bottomY - 3), coordWidth, "", 14);
+			var y:DoidoInputText;
+			y = new DoidoInputText(getX("margin_right", coordWidth), getY(bottomY - 3), coordWidth, "", 14);
 			y.cameras = [camHUD];
 			tab.add(y);
 
 			tab.add(createText(getX("margin_right", 100) - 38, getY(bottomY - 3) + 3, "X:", 0xFFD8DAF6));
-			var x:PsychUIInputText;
-			x = new PsychUIInputText(getX("margin_right", coordWidth) - 18 - coordWidth - 12, getY(bottomY - 3), coordWidth, "", 14);
+			var x:DoidoInputText;
+			x = new DoidoInputText(getX("margin_right", coordWidth) - 18 - coordWidth - 12, getY(bottomY - 3), coordWidth, "", 14);
 			x.cameras = [camHUD];
 			tab.add(x); */
 
@@ -768,21 +768,21 @@ class CharacterEditor extends MusicBeatState
 			}
 		});
 
-		var filter:PsychUIInputText;
-		filter = new PsychUIInputText(getX("margin_first_search"), getY(0), 372, "", 14);
-		filter.onChange.add((old, cur, input) -> anims.filter = cur);
-		filter.behindText.color = 0xFFD8DAF6;
+		var filter:DoidoInputText;
+		filter = new DoidoInputText(getX("margin_first_search"), getY(0), 372, "");
+		filter.onTextChange.add((cur, input) -> anims.filter = cur);
+		filter.backgroundColor = 0xFFD8DAF6;
 		filter.cameras = [camHUD];
 		tab.add(filter);
 
-		var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
-		glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
-		glass.x = filter.behindText.x + 1;
-		glass.y = filter.behindText.y + 1;
-		tab.add(glass);
+		//var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
+		//glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
+		//glass.x = filter.behindText.x + 1;
+		//glass.y = filter.behindText.y + 1;
+		//tab.add(glass);
 
-		filter.textObj.x += glass.width + 2;
-		filter.fieldWidth -= Std.int(glass.width + 2);
+		//filter.textObj.x += glass.width + 2;
+		//filter.fieldWidth -= Std.int(glass.width + 2);
 
 		return tab;
 	}
@@ -811,11 +811,6 @@ class CharacterEditor extends MusicBeatState
 	static var tint:Bool = true;
 
 	var draggingCharacter:Bool = false;
-	var typing(get, never):Bool;
-
-	function get_typing():Bool
-		return PsychUIInputText.focusOn != null;
-
 	var focused:Bool = true;
 	var waitingForFocus:Bool = false;
 	var clickedOnWindow:Bool = false;
@@ -870,7 +865,7 @@ class CharacterEditor extends MusicBeatState
 		if (FlxG.mouse.released)
 			clickedOnWindow = false;
 
-		if (!typing)
+		if (!EditorUtil.isTyping)
 		{
 			if (Controls.justPressed(BACK))
 				exit();
@@ -892,7 +887,7 @@ class CharacterEditor extends MusicBeatState
 			if (FlxG.keys.justPressed.DELETE)
 				delete();
 		}
-		if (!overlapsWindow && !clickedOnWindow && !typing && focused)
+		if (!overlapsWindow && !clickedOnWindow && !EditorUtil.isTyping && focused)
 		{
 			var speed:Float = elapsed * 400;
 			if (FlxG.keys.anyPressed([A, D, W, S]))

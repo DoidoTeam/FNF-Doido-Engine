@@ -1,5 +1,6 @@
 package doido.utils;
 
+import flixel.text.FlxInputText;
 import lime.app.Application;
 import lime.ui.MouseCursor;
 import haxe.Json;
@@ -115,4 +116,9 @@ class EditorUtil
 
 		return filtered;
 	}
+
+	public static var isTyping(get, never):Bool;
+
+	public static function get_isTyping()
+		return FlxInputText.globalManager.isTyping;
 }

@@ -1,6 +1,5 @@
 package substates.editors;
 
-import doido.objects.ui.PsychUIInputText;
 import flixel.text.FlxBitmapText;
 import doido.objects.ui.buttons.DoidoTextButton;
 import states.editors.CharacterEditor.Hitbox;
@@ -32,19 +31,6 @@ class IconEditorSubState extends PopupSubState
 
 		var stuffY = (FlxG.height / 2) - 22 - 5;
 
-		/*add(createText((FlxG.width / 2) - (145) - 5, stuffY, "Image:", 0xFFD8DAF6));
-			add(createText((FlxG.width / 2) + 5, stuffY, "Color:", 0xFFD8DAF6));
-
-			var songField:PsychUIInputText;
-			songField = new PsychUIInputText((FlxG.width / 2) - (145) - 5, stuffY, 145, "", 14);
-			songField.onChange.add((old, cur, input) -> {});
-			add(songField);
-
-			var diffField:PsychUIInputText;
-			diffField = new PsychUIInputText((FlxG.width / 2) + 5, stuffY, 145, "", 14);
-			diffField.onChange.add((old, cur, input) -> {});
-			add(diffField);
-		 */
 
 		var ok = new DoidoTextButton("Open", "small");
 		ok.screenCenter();

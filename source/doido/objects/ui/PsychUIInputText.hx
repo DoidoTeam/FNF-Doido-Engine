@@ -45,6 +45,7 @@ enum abstract CaseMode(Int) from Int from UInt to Int to UInt
 
 typedef TextSignal = FlxTypedSignal<String->String->PsychUIInputText->Void>;
 
+@:deprecated("PsychUIInputText deprecated. Please use DoidoInputText instead.")
 class PsychUIInputText extends FlxSpriteGroup
 {
 	static final KEY_TILDE = 126;

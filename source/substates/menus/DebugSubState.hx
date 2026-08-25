@@ -1,12 +1,13 @@
 package substates.menus;
 
+import states.editors.InputTestState;
 import doido.objects.ui.DoidoRadio;
 import doido.objects.ui.PsychUIDropDownMenu;
 import states.ScriptedState;
 import states.menus.StoryMenuState;
 import states.editors.ChartingState;
 import states.PlayState;
-import doido.objects.ui.PsychUIInputText;
+import doido.objects.ui.DoidoInputText;
 import flixel.text.FlxBitmapText;
 import states.editors.CharacterEditor;
 import substates.editors.PopupSubState;
@@ -60,7 +61,7 @@ class DebugSubState extends MusicBeatSubState
 		addOption("character editor", characterEditor);
 		addOption("week editor", () -> MusicBeat.switchState(new StoryMenuState(true)));
 		addOption("scripted state", scriptedState);
-		// addOption("crash handler", () -> throw "Crash Handler Test");
+		addOption("input test", () -> MusicBeat.switchState(new InputTestState()));
 
 		displayGrp = new FlxTypedGroup<Alphabet>();
 		for (i in 0...options.length)
@@ -113,14 +114,14 @@ class DebugSubState extends MusicBeatSubState
 		openStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22 - 5, "Song:", 0xFFD8DAF6));
 		openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Diff:", 0xFFD8DAF6));
 
-		var songField:PsychUIInputText;
-		songField = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, newSong, 14);
-		songField.onChange.add((old, cur, input) -> newSong = cur);
+		var songField:DoidoInputText;
+		songField = new DoidoInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, newSong);
+		songField.onTextChange.add((cur, input) -> newSong = cur);
 		openStuff.push(songField);
 
-		var diffField:PsychUIInputText;
-		diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, newDiff, 14);
-		diffField.onChange.add((old, cur, input) -> newDiff = cur);
+		var diffField:DoidoInputText;
+		diffField = new DoidoInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, newDiff);
+		diffField.onTextChange.add((cur, input) -> newDiff = cur);
 		openStuff.push(diffField);
 
 		var ok = new DoidoTextButton("Ok", "small");
@@ -217,9 +218,9 @@ class DebugSubState extends MusicBeatSubState
 		var openStuff:Array<FlxBasic> = [];
 		openStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22 - 5, "Script:", 0xFFD8DAF6));
 
-		var stateField:PsychUIInputText;
-		stateField = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145 + 30, newState, 14);
-		stateField.onChange.add((old, cur, input) -> newState = cur);
+		var stateField:DoidoInputText;
+		stateField = new DoidoInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145 + 30, newState);
+		stateField.onTextChange.add((cur, input) -> newState = cur);
 		openStuff.push(stateField);
 
 		var radio = new DoidoRadio(["State", "SubState"], 0, (cur) ->

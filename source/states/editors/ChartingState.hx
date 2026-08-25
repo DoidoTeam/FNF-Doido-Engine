@@ -360,14 +360,14 @@ class ChartingState extends MusicBeatState
 		openStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22 - 5, "Song:", 0xFFD8DAF6));
 		openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Diff:", 0xFFD8DAF6));
 
-		var songField:PsychUIInputText;
-		songField = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, newSong, 14);
-		songField.onChange.add((old, cur, input) -> newSong = cur);
+		var songField:DoidoInputText;
+		songField = new DoidoInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, newSong);
+		songField.onTextChange.add((cur, input) -> newSong = cur);
 		openStuff.push(songField);
 
-		var diffField:PsychUIInputText;
-		diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, newDiff, 14);
-		diffField.onChange.add((old, cur, input) -> newDiff = cur);
+		var diffField:DoidoInputText;
+		diffField = new DoidoInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, newDiff);
+		diffField.onTextChange.add((cur, input) -> newDiff = cur);
 		openStuff.push(diffField);
 
 		var ok = new DoidoTextButton("Ok", "small");
@@ -423,14 +423,14 @@ class ChartingState extends MusicBeatState
 		openStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22 - 5, "Song:", 0xFFD8DAF6));
 		openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Diff:", 0xFFD8DAF6));
 
-		var songField:PsychUIInputText;
-		songField = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, newSong, 14);
-		songField.onChange.add((old, cur, input) -> newSong = cur);
+		var songField:DoidoInputText;
+		songField = new DoidoInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, newSong);
+		songField.onTextChange.add((cur, input) -> newSong = cur);
 		openStuff.push(songField);
 
-		var diffField:PsychUIInputText;
-		diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, newDiff, 14);
-		diffField.onChange.add((old, cur, input) -> newDiff = cur);
+		var diffField:DoidoInputText;
+		diffField = new DoidoInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, newDiff);
+		diffField.onTextChange.add((cur, input) -> newDiff = cur);
 		openStuff.push(diffField);
 
 		var ok = new DoidoTextButton("Ok", "small");
@@ -632,13 +632,13 @@ class ChartingState extends MusicBeatState
 				openStuff.push(createText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2) - 22 - 5, "Songs:", 0xFFD8DAF6));
 				openStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Diffs:", 0xFFD8DAF6));
 
-				var songField:PsychUIInputText;
-				songField = new PsychUIInputText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2) - 5, 245, newSong, 14);
+				var songField:DoidoInputText;
+				songField = new DoidoInputText((FlxG.width / 2) - (245) - 5, (FlxG.height / 2) - 5, 245, newSong, 14);
 				songField.onChange.add((old, cur, input) -> newSong = cur);
 				openStuff.push(songField);
 
-				var diffField:PsychUIInputText;
-				diffField = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 245, newDiff, 14);
+				var diffField:DoidoInputText;
+				diffField = new DoidoInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 245, newDiff, 14);
 				diffField.onChange.add((old, cur, input) -> newDiff = cur);
 				openStuff.push(diffField);
 
@@ -1168,9 +1168,9 @@ class ChartingState extends MusicBeatState
 		tab.add(createText(getX(), getY(2) + 3, "BPM:", 0xFFD8DAF6));
 		tab.add(createText(getX(), getY(3) + 3, "Note Speed:", 0xFFD8DAF6));
 
-		var songName:PsychUIInputText;
-		songName = new PsychUIInputText(getX("margin_first"), getY(1), 340, CHART.song, 14);
-		songName.onChange.add((old, cur, input) -> CHART.song = cur);
+		var songName:DoidoInputText;
+		songName = new DoidoInputText(getX("margin_first"), getY(1), 340, CHART.song);
+		songName.onTextChange.add((cur, input) -> CHART.song = cur);
 		tab.add(songName);
 
 		var bpmStepper = new PsychUINumericStepper(getX("margin_first"), getY(2), 1, CHART.bpm, 1, 339, 0);
@@ -1189,9 +1189,9 @@ class ChartingState extends MusicBeatState
 		});
 		tab.add(speedStepper);
 
-		var postfix:PsychUIInputText;
-		postfix = new PsychUIInputText(getX("margin_right", 146), getY(2), 146, CHART.postfix, 14);
-		postfix.onChange.add((old, cur, input) -> CHART.postfix = cur);
+		var postfix:DoidoInputText;
+		postfix = new DoidoInputText(getX("margin_right", 146), getY(2), 146, CHART.postfix);
+		postfix.onTextChange.add((cur, input) -> CHART.postfix = cur);
 		tab.add(postfix);
 		tab.add(createText(postfix.x - 70, getY(2) + 3, "Postfix:", 0xFFD8DAF6));
 
@@ -1220,20 +1220,20 @@ class ChartingState extends MusicBeatState
 		var test:ChooserWindow = new ChooserWindow(getX("center", 440), getY(6) + 5, 440, 170, [], this);
 		tab.add(test);
 
-		var filter:PsychUIInputText;
-		filter = new PsychUIInputText(getX("margin_first_search"), getY(5), 372, "", 14);
-		filter.onChange.add((old, cur, input) -> test.filter = cur);
-		filter.behindText.color = 0xFFD8DAF6;
+		var filter:DoidoInputText;
+		filter = new DoidoInputText(getX("margin_first_search"), getY(5), 372, "");
+		filter.onTextChange.add((cur, input) -> test.filter = cur);
+		filter.backgroundColor = 0xFFD8DAF6;
 		tab.add(filter);
 
-		var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
+		/*var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
 		glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
 		glass.x = filter.behindText.x + 1;
 		glass.y = filter.behindText.y + 1;
 		tab.add(glass);
 
 		filter.textObj.x += glass.width + 2;
-		filter.fieldWidth -= Std.int(glass.width + 2);
+		filter.fieldWidth -= Std.int(glass.width + 2);*/
 
 		tab.add(createText(getX(), getY(12) + 10, "Opponent:", 0xFFD8DAF6));
 		tab.add(createText(getX("center", 145), getY(12) + 10, "Girlfriend:", 0xFFD8DAF6));
@@ -1406,14 +1406,14 @@ class ChartingState extends MusicBeatState
 			metaStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22 - 5, "Composer:", 0xFFD8DAF6));
 			metaStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Charter:", 0xFFD8DAF6));
 
-			var composer:PsychUIInputText;
-			composer = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, metaComposer, 14);
-			composer.onChange.add((old, cur, input) -> metaComposer = cur);
+			var composer:DoidoInputText;
+			composer = new DoidoInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, metaComposer);
+			composer.onTextChange.add((cur, input) -> metaComposer = cur);
 			metaStuff.push(composer);
 
-			var charter:PsychUIInputText;
-			charter = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, metaCharter, 14);
-			charter.onChange.add((old, cur, input) -> metaCharter = cur);
+			var charter:DoidoInputText;
+			charter = new DoidoInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, metaCharter);
+			charter.onTextChange.add((cur, input) -> metaCharter = cur);
 			metaStuff.push(charter);
 
 			var ok = new DoidoTextButton("Ok", "small");
@@ -1445,14 +1445,14 @@ class ChartingState extends MusicBeatState
 			metaStuff.push(createText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 22 - 5, "Opp Notes:", 0xFFD8DAF6));
 			metaStuff.push(createText((FlxG.width / 2) + 5, (FlxG.height / 2) - 22 - 5, "Player Notes:", 0xFFD8DAF6));
 
-			var dadnotes:PsychUIInputText;
-			dadnotes = new PsychUIInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, dadSkin, 14);
-			dadnotes.onChange.add((old, cur, input) -> dadSkin = cur);
+			var dadnotes:DoidoInputText;
+			dadnotes = new DoidoInputText((FlxG.width / 2) - (145) - 5, (FlxG.height / 2) - 5, 145, dadSkin);
+			dadnotes.onTextChange.add((cur, input) -> dadSkin = cur);
 			metaStuff.push(dadnotes);
 
-			var bfnotes:PsychUIInputText;
-			bfnotes = new PsychUIInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, bfSkin, 14);
-			bfnotes.onChange.add((old, cur, input) -> bfSkin = cur);
+			var bfnotes:DoidoInputText;
+			bfnotes = new DoidoInputText((FlxG.width / 2) + 5, (FlxG.height / 2) - 5, 145, bfSkin);
+			bfnotes.onTextChange.add((cur, input) -> bfSkin = cur);
 			metaStuff.push(bfnotes);
 
 			var ok = new DoidoTextButton("Ok", "small");
@@ -1593,20 +1593,20 @@ class ChartingState extends MusicBeatState
 
 		var search = tab.add(createText(getX(), getY(bottomY) + 3, "Search:", 0xFFD8DAF6));
 
-		var filter:PsychUIInputText;
-		filter = new PsychUIInputText(getX("margin_first_search"), getY(bottomY), 372, "", 14);
-		filter.onChange.add((old, cur, input) -> notes.filter = cur);
-		filter.behindText.color = 0xFFD8DAF6;
+		var filter:DoidoInputText;
+		filter = new DoidoInputText(getX("margin_first_search"), getY(bottomY), 372, "");
+		filter.onTextChange.add((cur, input) -> notes.filter = cur);
+		filter.backgroundColor = 0xFFD8DAF6;
 		tab.add(filter);
 
-		var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
+		/*var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
 		glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
 		glass.x = filter.behindText.x + 1;
 		glass.y = filter.behindText.y + 1;
 		tab.add(glass);
 
 		filter.textObj.x += glass.width + 2;
-		filter.fieldWidth -= Std.int(glass.width + 2);
+		filter.fieldWidth -= Std.int(glass.width + 2);*/
 
 		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
 		balls.setPosition(getX("center", balls.width), getY(bottomY - 1) + 3);
@@ -1692,9 +1692,9 @@ class ChartingState extends MusicBeatState
 
 		var search = tab.add(createText(getX(), getY(0) + 3, "Search:", 0xFFD8DAF6));
 
-		var filter:PsychUIInputText;
-		filter = new PsychUIInputText(getX("margin_first_search"), getY(0), 372, "", 14);
-		filter.onChange.add((old, cur, input) ->
+		var filter:DoidoInputText;
+		filter = new DoidoInputText(getX("margin_first_search"), getY(0), 372, "");
+		filter.onTextChange.add((cur, input) ->
 		{
 			if (cur != "")
 			{
@@ -1710,17 +1710,17 @@ class ChartingState extends MusicBeatState
 			}
 			events.filter = cur;
 		});
-		filter.behindText.color = 0xFFD8DAF6;
+		filter.backgroundColor = 0xFFD8DAF6;
 		tab.add(filter);
 
-		var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
+		/*var glass:FlxSprite = new FlxSprite().loadImage("editors/charting/glass");
 		glass.setGraphicSize(filter.behindText.height - 2, filter.behindText.height - 2);
 		glass.x = filter.behindText.x + 1;
 		glass.y = filter.behindText.y + 1;
 		tab.add(glass);
 
 		filter.textObj.x += glass.width + 2;
-		filter.fieldWidth -= Std.int(glass.width + 2);
+		filter.fieldWidth -= Std.int(glass.width + 2);*/
 
 		var balls:FlxSprite = new FlxSprite().loadImage("editors/charting/balls");
 		balls.setPosition(getX("center", balls.width), getY(bottomY - 3) + 3);
@@ -1728,7 +1728,7 @@ class ChartingState extends MusicBeatState
 
 		function toggleStuff(b:Bool)
 		{
-			for (obj in [events, filter, glass, balls, search])
+			for (obj in [events, filter, /*glass,*/ balls, search])
 			{
 				obj.active = b;
 				obj.visible = b;
@@ -1796,8 +1796,8 @@ class ChartingState extends MusicBeatState
 					}
 					else
 					{
-						var textfield = new PsychUIInputText(x, y, 145, current, 14);
-						textfield.onChange.add((old, cur, input) ->
+						var textfield = new DoidoInputText(x, y, 145, current);
+						textfield.onTextChange.add((cur, input) ->
 						{
 							lastEdited.data[i] = cur;
 							if (Conductor.isMappable(lastEdited.name))
@@ -2574,7 +2574,7 @@ class ChartingState extends MusicBeatState
 		}
 
 		// set at the end so it doesnt interfere with the other keybinds
-		typing = PsychUIInputText.focusOn != null;
+		typing = EditorUtil.isTyping;
 	}
 
 	public function save(_data:Dynamic, name:String)
@@ -3189,7 +3189,7 @@ class GridWindow extends DoidoWindow
 	var zoomTxt:FlxBitmapText;
 	var snapTxt:FlxBitmapText;
 
-	var songName:PsychUIInputText;
+	var songName:DoidoInputText;
 	var zoomStepper:PsychUINumericStepper;
 	var snapDrowUp:PsychUIDropDownMenu;
 

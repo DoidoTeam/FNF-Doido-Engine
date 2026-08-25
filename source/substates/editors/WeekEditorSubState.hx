@@ -9,9 +9,10 @@ import doido.objects.ui.window.DoidoWindow;
 import doido.objects.ui.window.DoidoBox;
 import flixel.text.FlxBitmapText;
 import flixel.util.FlxColor;
-import doido.objects.ui.PsychUIInputText;
+import doido.objects.ui.DoidoInputText;
 import states.menus.StoryMenuState;
 import doido.song.Week;
+import doido.utils.EditorUtil;
 
 class WeekEditorSubState extends MusicBeatSubState
 {
@@ -77,17 +78,17 @@ class WeekEditorSubState extends MusicBeatSubState
 		songWindow.add(createText(getX(), getY(9) + 3, "Song: ", 0xFFD8DAF6));
 		songWindow.add(createText(getX(), getY(10) + 3, "Icon: ", 0xFFD8DAF6));
 
-		var song:PsychUIInputText;
-		song = new PsychUIInputText(getX("margin_first"), getY(9), 260, "", 14);
-		song.onChange.add((old, cur, input) ->
+		var song:DoidoInputText;
+		song = new DoidoInputText(getX("margin_first"), getY(9), 260, "");
+		song.onTextChange.add((cur, input) ->
 		{
 			curSong.song = cur;
 		});
 		songWindow.add(song);
 
-		var icon:PsychUIInputText;
-		icon = new PsychUIInputText(getX("margin_first"), getY(10), 260, "", 14);
-		icon.onChange.add((old, cur, input) ->
+		var icon:DoidoInputText;
+		icon = new DoidoInputText(getX("margin_first"), getY(10), 260, "");
+		icon.onTextChange.add((cur, input) ->
 		{
 			curSong.icon = cur;
 		});
@@ -207,52 +208,52 @@ class WeekEditorSubState extends MusicBeatSubState
 		dataWindow.add(createText(getX(), getY(4) + 3, "Story Diffs: ", 0xFFD8DAF6));
 		dataWindow.add(createText(getX(), getY(5) + 3, "Story Color: ", 0xFFD8DAF6));
 
-		var file:PsychUIInputText;
-		file = new PsychUIInputText(getX("margin_second"), getY(0), 210, "", 14);
-		file.onChange.add((old, cur, input) ->
+		var file:DoidoInputText;
+		file = new DoidoInputText(getX("margin_second"), getY(0), 210, "");
+		file.onTextChange.add((cur, input) ->
 		{
 			curWeek.weekFile = cur;
 			storyMenu.reload();
 		});
 		dataWindow.add(file);
 
-		var name:PsychUIInputText;
-		name = new PsychUIInputText(getX("margin_second"), getY(1), 210, "", 14);
-		name.onChange.add((old, cur, input) ->
+		var name:DoidoInputText;
+		name = new DoidoInputText(getX("margin_second"), getY(1), 210, "");
+		name.onTextChange.add((cur, input) ->
 		{
 			curWeek.weekName = cur;
 			storyMenu.reload();
 		});
 		dataWindow.add(name);
 
-		var freeplay:PsychUIInputText;
-		freeplay = new PsychUIInputText(getX("margin_second"), getY(2), 210, "", 14);
-		freeplay.onChange.add((old, cur, input) ->
+		var freeplay:DoidoInputText;
+		freeplay = new DoidoInputText(getX("margin_second"), getY(2), 210, "");
+		freeplay.onTextChange.add((cur, input) ->
 		{
 			curWeek.freeplayName = cur;
 		});
 		dataWindow.add(freeplay);
 
-		var diffs:PsychUIInputText;
-		diffs = new PsychUIInputText(getX("margin_second"), getY(3), 210, "", 14);
-		diffs.onChange.add((old, cur, input) ->
+		var diffs:DoidoInputText;
+		diffs = new DoidoInputText(getX("margin_second"), getY(3), 210, "");
+		diffs.onTextChange.add((cur, input) ->
 		{
 			curWeek.diffs = cur.split(",").map(s -> s.trim());
 		});
 		dataWindow.add(diffs);
 
-		var storyDiffs:PsychUIInputText;
-		storyDiffs = new PsychUIInputText(getX("margin_second"), getY(4), 210, "", 14);
-		storyDiffs.onChange.add((old, cur, input) ->
+		var storyDiffs:DoidoInputText;
+		storyDiffs = new DoidoInputText(getX("margin_second"), getY(4), 210, "");
+		storyDiffs.onTextChange.add((cur, input) ->
 		{
 			curWeek.storyDiffs = cur.split(",").map(s -> s.trim());
 			storyMenu.reload();
 		});
 		dataWindow.add(storyDiffs);
 
-		var storyColor:PsychUIInputText;
-		storyColor = new PsychUIInputText(getX("margin_second"), getY(5), 210, "", 14);
-		storyColor.onChange.add((old, cur, input) ->
+		var storyColor:DoidoInputText;
+		storyColor = new DoidoInputText(getX("margin_second"), getY(5), 210, "");
+		storyColor.onTextChange.add((cur, input) ->
 		{
 			curWeek.storyColor = cur;
 			storyMenu.reload();
@@ -369,7 +370,7 @@ class WeekEditorSubState extends MusicBeatSubState
 	{
 		super.update(elapsed);
 
-		if (PsychUIInputText.focusOn == null)
+		if (!EditorUtil.isTyping)
 		{
 			if (Controls.justPressed(BACK))
 				close();
