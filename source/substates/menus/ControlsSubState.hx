@@ -150,10 +150,15 @@ class ControlsSubState extends MusicBeatSubState
 			}
 		}
 		respawnBinds();
+
+		onInputChange.add((inputType) -> {
+			respawnBinds();
+		});
 	}
 
 	public function respawnBinds()
 	{
+		isGamepad = (Controls.lastInput == GAMEPAD);
 		for (j in 0...2)
 		{
 			for (i in 0...strumline.strums.length)
@@ -165,15 +170,7 @@ class ControlsSubState extends MusicBeatSubState
 					reloadKey(key, getSaveBind(i, j));
 			}
 		}
-
-		/*
-			Controls.bindMap.get(options[curSelectedX]).gamepad[curSelectedY] = daKey;
-			Controls.save();
-
-			Controls.bindMap.get(options[curSelectedX]).keyboard[curSelectedY] = daKey;
-			Controls.save();
-		 */
-
+		
 		changeOption();
 		changeBind();
 	}
@@ -254,24 +251,49 @@ class ControlsSubState extends MusicBeatSubState
 		}
 		else if (curMode == EDIT_WAITING)
 		{
-			/*if (curBindSpr != null)
-				bindSquare.setPosition(curBindSpr.x, curBindSpr.y); */
 			awaitingTxt.visible = true;
 
-			if (FlxG.keys.justPressed.ANY)
+			if (!isGamepad)
 			{
-				awaitingTxt.visible = false;
-				if (FlxG.keys.justPressed.ESCAPE || FlxG.keys.anyJustPressed(bannedKeys))
+				if (FlxG.keys.justPressed.ANY)
 				{
-					reloadKey(curBindSpr, getSaveBind());
-					changeMenu(EDIT_CHOOSING, "cancel");
+					awaitingTxt.visible = false;
+					if (FlxG.keys.justPressed.ESCAPE || FlxG.keys.anyJustPressed(bannedKeys))
+					{
+						reloadKey(curBindSpr, getSaveBind());
+						changeMenu(EDIT_CHOOSING, "cancel");
+					}
+					else
+					{
+						var key = FlxG.keys.firstJustPressed();
+						setSaveBind(key);
+						reloadKey(curBindSpr, key);
+						changeMenu(EDIT_CHOOSING, "confirm");
+					}
 				}
-				else
+			}
+			else
+			{
+				var curGamepad = FlxG.gamepads.lastActive;
+				if (curGamepad != null)
 				{
-					var key = FlxG.keys.firstJustPressed();
-					setSaveBind(key);
-					reloadKey(curBindSpr, key);
-					changeMenu(EDIT_CHOOSING, "confirm");
+					if (curGamepad.justPressed.ANY)
+					{
+						awaitingTxt.visible = false;
+						//if (curGamepad.justPressed.BACK || curGamepad.anyJustPressed(bannedKeys))
+						if (false)
+						{
+							reloadPad(curBindSpr, getSaveBind());
+							changeMenu(EDIT_CHOOSING, "cancel");
+						}
+						else
+						{
+							var key = curGamepad.firstJustPressedID();
+							setSaveBind(key);
+							reloadPad(curBindSpr, key);
+							changeMenu(EDIT_CHOOSING, "confirm");
+						}
+					}
 				}
 			}
 		}
@@ -288,17 +310,28 @@ class ControlsSubState extends MusicBeatSubState
 				{
 					case CLEARING:
 						FlxG.sound.play(Assets.sound('cancel'));
-						setSaveBind(FlxKey.NONE);
-						reloadKey(curBindSpr);
+						if (!isGamepad) {
+							setSaveBind(FlxKey.NONE);
+							reloadKey(curBindSpr);
+						} else {
+							setSaveBind(FlxPad.NONE);
+							reloadPad(curBindSpr);
+						}
 
 					case RESETTING:
 						FlxG.sound.play(Assets.sound('cancel'));
 						var key = getSaveBind(true);
 						setSaveBind(key);
-						reloadKey(curBindSpr, key);
+						if (isGamepad)
+							reloadPad(curBindSpr, key);
+						else
+							reloadKey(curBindSpr, key);
 
 					default:
-						reloadKey(curBindSpr);
+						if (!isGamepad)
+							reloadKey(curBindSpr);
+						else
+							reloadPad(curBindSpr);
 						changeMenu(EDIT_WAITING, "scroll");
 				}
 			}
@@ -461,6 +494,41 @@ class BindSprite extends FlxSprite
 				}
 				label.flipX = key == "BACKSLASH";
 			}
+		}
+		else
+		{
+			// KEY ANIMATION
+			animation.play(switch (key.toUpperCase())
+			{
+				case "DPAD_LEFT" | "DPAD_DOWN" | "DPAD_UP" | "DPAD_RIGHT": key.toLowerCase().replace("_", " ");
+
+				case "X": "face left";
+				case "A": "face down";
+				case "Y": "face up";
+				case "B": "face right";
+
+				case "START": "start";
+				case "BACK": "select";
+				
+				case "LEFT_STICK_DIGITAL_LEFT": "L joystick left";
+				case "LEFT_STICK_DIGITAL_DOWN": "L joystick down";
+				case "LEFT_STICK_DIGITAL_UP": 	"L joystick up";
+				case "LEFT_STICK_DIGITAL_RIGHT":"L joystick right";
+				case "LEFT_STICK_CLICK": "L joystick click";
+
+				case "RIGHT_STICK_DIGITAL_LEFT": "R joystick left";
+				case "RIGHT_STICK_DIGITAL_DOWN": "R joystick down";
+				case "RIGHT_STICK_DIGITAL_UP": 	 "R joystick up";
+				case "RIGHT_STICK_DIGITAL_RIGHT":"R joystick right";
+				case "RIGHT_STICK_CLICK": "R joystick click";
+
+				case "LEFT_SHOULDER": "L bumper";
+				case "LEFT_TRIGGER": "L shoulder";
+				case "RIGHT_SHOULDER": "R bumper";
+				case "RIGHT_TRIGGER": "R shoulder";
+
+				default: "key empty";
+			});
 		}
 		scale.set(0.7, 0.7);
 		updateHitbox();
