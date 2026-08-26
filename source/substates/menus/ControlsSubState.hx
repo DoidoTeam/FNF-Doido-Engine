@@ -170,7 +170,7 @@ class ControlsSubState extends MusicBeatSubState
 					reloadKey(key, getSaveBind(i, j));
 			}
 		}
-		
+
 		changeOption();
 		changeBind();
 	}
@@ -253,12 +253,14 @@ class ControlsSubState extends MusicBeatSubState
 		{
 			awaitingTxt.visible = true;
 
+			var curGamepad = FlxG.gamepads.lastActive;
 			if (!isGamepad)
 			{
-				if (FlxG.keys.justPressed.ANY)
+				if (FlxG.keys.justPressed.ANY || curGamepad?.justPressed.ANY)
 				{
+					Controls.inputDelay = 2;
 					awaitingTxt.visible = false;
-					if (FlxG.keys.justPressed.ESCAPE || FlxG.keys.anyJustPressed(bannedKeys))
+					if (FlxG.keys.justPressed.ESCAPE || FlxG.keys.anyJustPressed(bannedKeys) || curGamepad?.justPressed.ANY)
 					{
 						reloadKey(curBindSpr, getSaveBind());
 						changeMenu(EDIT_CHOOSING, "cancel");
@@ -274,14 +276,13 @@ class ControlsSubState extends MusicBeatSubState
 			}
 			else
 			{
-				var curGamepad = FlxG.gamepads.lastActive;
 				if (curGamepad != null)
 				{
-					if (curGamepad.justPressed.ANY)
+					if (curGamepad.justPressed.ANY || FlxG.keys.justPressed.ANY)
 					{
+						Controls.inputDelay = 2;
 						awaitingTxt.visible = false;
-						//if (curGamepad.justPressed.BACK || curGamepad.anyJustPressed(bannedKeys))
-						if (false)
+						if (FlxG.keys.justPressed.ANY)
 						{
 							reloadPad(curBindSpr, getSaveBind());
 							changeMenu(EDIT_CHOOSING, "cancel");
@@ -289,6 +290,33 @@ class ControlsSubState extends MusicBeatSubState
 						else
 						{
 							var key = curGamepad.firstJustPressedID();
+							// checking joystick input!!
+							var joysticksJustPressed = [
+								curGamepad.getXAxis(FlxPad.LEFT_ANALOG_STICK) <= -curGamepad.deadZone,
+								curGamepad.getYAxis(FlxPad.LEFT_ANALOG_STICK) >= curGamepad.deadZone,
+								curGamepad.getYAxis(FlxPad.LEFT_ANALOG_STICK) <= -curGamepad.deadZone,
+								curGamepad.getXAxis(FlxPad.LEFT_ANALOG_STICK) >= curGamepad.deadZone,
+								
+								curGamepad.getXAxis(FlxPad.RIGHT_ANALOG_STICK) <= -curGamepad.deadZone,
+								curGamepad.getYAxis(FlxPad.RIGHT_ANALOG_STICK) >= curGamepad.deadZone,
+								curGamepad.getYAxis(FlxPad.RIGHT_ANALOG_STICK) <= -curGamepad.deadZone,
+								curGamepad.getXAxis(FlxPad.RIGHT_ANALOG_STICK) >= curGamepad.deadZone,
+							];
+							var joysticksID:Array<FlxPad> = [
+								LEFT_STICK_DIGITAL_LEFT,
+								LEFT_STICK_DIGITAL_DOWN,
+								LEFT_STICK_DIGITAL_UP,
+								LEFT_STICK_DIGITAL_RIGHT,
+
+								RIGHT_STICK_DIGITAL_LEFT,
+								RIGHT_STICK_DIGITAL_DOWN,
+								RIGHT_STICK_DIGITAL_UP,
+								RIGHT_STICK_DIGITAL_RIGHT,
+							];
+							if (joysticksJustPressed.contains(true)) {
+								key = joysticksID[joysticksJustPressed.indexOf(true)];
+							}
+
 							setSaveBind(key);
 							reloadPad(curBindSpr, key);
 							changeMenu(EDIT_CHOOSING, "confirm");

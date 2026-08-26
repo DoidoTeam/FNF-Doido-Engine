@@ -8,14 +8,14 @@
 	<SubTexture name="L joystick left0000" x="519" y="3" width="161" height="154"/>
 	<SubTexture name="L joystick right0000" x="683" y="3" width="161" height="154"/>
 	<SubTexture name="L joystick up0000" x="847" y="3" width="155" height="161"/>
-	<SubTexture name="L shoulder0000" x="1005" y="3" width="119" height="156"/>
+	<SubTexture name="L shoulder0000" x="1005" y="3" width="119" height="155"/>
 	<SubTexture name="R bumper0000" x="3" y="194" width="145" height="81"/>
 	<SubTexture name="R joystick click0000" x="151" y="194" width="207" height="188"/>
 	<SubTexture name="R joystick down0000" x="361" y="194" width="155" height="140"/>
 	<SubTexture name="R joystick left0000" x="519" y="194" width="161" height="154"/>
 	<SubTexture name="R joystick right0000" x="683" y="194" width="161" height="154"/>
 	<SubTexture name="R joystick up0000" x="847" y="194" width="155" height="161"/>
-	<SubTexture name="R shoulder0000" x="1005" y="194" width="119" height="156"/>
+	<SubTexture name="R shoulder0000" x="1005" y="194" width="119" height="155"/>
 	<SubTexture name="arrow down0000" x="3" y="385" width="149" height="149"/>
 	<SubTexture name="arrow left0000" x="155" y="385" width="149" height="149"/>
 	<SubTexture name="arrow right0000" x="307" y="385" width="149" height="149"/>
