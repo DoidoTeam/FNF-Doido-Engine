@@ -1,36 +1,57 @@
 @echo off
 
-cd /d "%~dp0"
-cd ..
-cd ..
+cd /d "%~dp0..\.."
 
-::
-:: RUN HXPKG INSTALL
-::
 haxelib --global install hxpkg
+echo.
+
+:askProfile
+echo Available Profiles:
+echo    [1] Default
+echo    [2] Default + Video
+echo    [3] Default + Android
+echo    [4] Full Install
+echo.
+set /p i0="Select profile [1-4]: "
+
+set profile=
+if "%i0%"=="1" (
+    set profile=
+) else if "%i0%"=="2" (
+    set profile=video
+) else if "%i0%"=="3" (
+    set profile=android
+) else if "%i0%"=="4" (
+    set profile=video android
+) else (
+    echo Invalid selection
+    echo.
+    goto askProfile
+)
+echo.
 
 :askGlobal
-set /p i1= "Would you like to install these libraries globally (might interfere with other mods) [y/n] ? "
+set /p i1= "Would you like to install these libraries globally (might interfere with other mods) [y/n]: "
 
-::
-:: INSTALL EITHER LOCALLY OR GLOBALLY
-::
+set global=
 if "%i1%"=="n" (
-    haxelib --global run hxpkg install --force
+    set global=
 ) else if "%i1%"=="y" (
-    haxelib --global run hxpkg install --force --global
+    set global=--global
 ) else (
+    echo Invalid selection
+    echo.
     goto askGlobal
 )
 
-:: TO-DO! Better video support solution...
-:: Or maybe we force everyone to use hxvlc? :fearful:
+haxelib --global run hxpkg install --force %global% %profile%
+echo.
 
 :askBuild
-set /p i3= "All versions set!! Would you like to build the game now [y/n] ? "
-if "%i3%"=="y" (
+set /p i2= "All versions set!! Would you like to build the game now [y/n]: "
+if "%i2%"=="y" (
     haxelib run lime test windows
-) else if not "%i3%"=="n" (
+) else if not "%i2%"=="n" (
     goto askBuild
 )
 

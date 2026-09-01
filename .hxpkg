@@ -50,10 +50,25 @@
 				"name": "thx.semver",
 				"link": "https://github.com/fponticelli/thx.semver",
 				"branch": "bdb191fe7cf745c02a980749906dbf22719e200b"
-			},
+			}
+		]
+	},
+	{
+		"profile": "android",
+		"pkgs": [
 			{
 				"name": "extension-androidtools",
 				"version": "2.2.2"
+			}
+		]
+	},
+	{
+		"profile": "video",
+		"pkgs": [
+			{
+				"name": "hxvlc",
+				"link": "https://github.com/MAJigsaw77/hxvlc",
+				"branch": "d4c46a95e663b9506981278b8e956072a2d4b450"
 			}
 		]
 	}
