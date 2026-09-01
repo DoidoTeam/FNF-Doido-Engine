@@ -52,7 +52,7 @@ jobs:
       - name: Install Haxelib
         run: |
           haxelib --global install hxpkg
-          haxelib --global run hxpkg install --force
+          haxelib --global run hxpkg install --force android
       - name: Configure Android
         run: |
           haxelib run lime config ANDROID_SDK $ANDROID_HOME
