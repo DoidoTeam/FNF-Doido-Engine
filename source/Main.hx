@@ -28,7 +28,7 @@ class Main extends Sprite
 
 	public static final sysPath:String = "DoidoEngine";
 	public static final savePath:String = "DiogoTV/DEPudim";
-	public static final internalVer:String = "Alpha 1";
+	public static final internalVer:String = "Alpha 2";
 	public static var fpsCounter:FPSCounter;
 	public static var globalFont:String;
 

@@ -3,7 +3,7 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="FNF: Doido Engine" file="DoidoEngine" packageName="com.diogotv.doidoengine" package="com.diogotv.doidoengine" main="Main" version="0.0.1" company="DiogoTV" />
+	<app title="FNF: Doido Engine" file="DoidoEngine" packageName="com.diogotv.doidoengine" package="com.diogotv.doidoengine" main="Main" version="0.0.2" company="DiogoTV" />
 	
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
@@ -37,7 +37,7 @@
 	<define name="EXTERNAL_PATH" 	    if="MODS_FOLDER" unless="desktop"/>
 
 	<!--Comment-this-to-disable-videos-in-your-mod-->
-	<define name="VIDEOS_ALLOWED" 		if="desktop || android || html5"/>
+	<!--<define name="VIDEOS_ALLOWED" 		if="desktop || android || html5"/>-->
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 

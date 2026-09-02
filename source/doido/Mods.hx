@@ -72,7 +72,7 @@ class Mods
 	public static var invalidMods:Map<String, String> = []; // id -> error
 	public static var initialized:Bool = false;
 
-	public static final API_VERSION:Version = "0.2.6";
+	public static final API_VERSION:Version = "0.3.0";
 	public static final MOD_ROOT:String = "mods";
 	public static final ASSETS_ROOT:Null<String> = null; // null defaults to assets, android only works like this
 	public static final VERSION_RULE:VersionRule = '>=${API_VERSION.major}.${API_VERSION.minor}.0 <=${API_VERSION}';
