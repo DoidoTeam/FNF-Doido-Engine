@@ -1,6 +1,7 @@
 package states.editors;
 
 import doido.objects.ui.DoidoInputText;
+import doido.objects.ui.DoidoInputText2;
 import doido.objects.ui.PsychUIInputText;
 import flixel.FlxSprite;
 
@@ -21,7 +22,11 @@ class InputTestState extends MusicBeatState
 		add(field1);
 
 		var field2:DoidoInputText;
-		field2 = new DoidoInputText(100, 300, 145, "test flixel");
+		field2 = new DoidoInputText(100, 200, 145, "test flixel");
 		add(field2);
+
+		var field3:DoidoInputText2;
+		field3 = new DoidoInputText2(100, 300, 145, "test flixel");
+		add(field3);
 	}
 }

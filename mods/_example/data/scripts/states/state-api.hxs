@@ -1,0 +1,65 @@
+/*
+* =========================
+* =                       =
+* =                       =
+* =      FUNCTIONS        =
+* =                       =
+* =                       =
+* =========================
+*/
+function new() {}
+function create() {}
+function update(elapsed:Float) {}
+function destroy() {}
+
+function stepHit(curStep:Int) {}
+function beatHit(curBeat:Int) {}
+
+/*
+* =========================
+* =                       =
+* =                       =
+* =         USAGE         =
+* =                       =
+* =                       =
+* =========================
+*/
+
+MusicBeat.switchState(target:MusicBeatState, tOut:String = 'funkin', ?tIn:String);
+MusicBeat.resetState();
+MusicBeat.activateTimers(enabled:Bool = true)
+MusicBeat.openURL(url:String);
+openSubState(subState:FlxSubState);
+setFpsPos(x:Float = 5, y:Float = 5);
+
+/*
+* =========================
+* =                       =
+* =                       =
+* =       CONTROLS        =
+* =                       =
+* =                       =
+* =========================
+*/
+
+Controls.justPressed()
+Controls.pressed()
+Controls.released()
+
+// gameplay
+LEFT = "left"
+DOWN = "down"
+UP = "up"
+RIGHT = "right"
+RESET = "reset"
+// ui
+UI_LEFT = "ui_left"
+UI_DOWN = "ui_down"
+UI_UP = "ui_up"
+UI_RIGHT = "ui_right"
+ACCEPT = "accept"
+BACK = "back"
+PAUSE = "pause"
+// other
+ANY = "any"
+NONE = "none"

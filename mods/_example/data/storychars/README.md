@@ -1,0 +1,1 @@
+Story chars use the same format as regular characters. There is currently no editor for them but in the meantime you can use the regular character editor.
