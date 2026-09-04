@@ -185,7 +185,9 @@ class ControlsSubState extends MusicBeatSubState
 
 		bindOptions.forEach((option) ->
 		{
-			option.alpha = (option.ID == curOption ? 1.0 : 0.4);
+			option.color = optionsSubState.disabledColor;
+			if (option.ID == curOption)
+				option.color = optionsSubState.enabledColor;
 		});
 	}
 

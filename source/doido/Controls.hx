@@ -156,6 +156,13 @@ class Controls
 
 	private static function setLastInput(v:InputType)
 	{
+		if (lastInput == GAMEPAD)
+		{
+			var curGamepad = FlxG.gamepads.lastActive;
+			if (curGamepad != null)
+				curGamepad.deadZone = Save.data.gamepadDeadzone;
+		}
+		
 		if (lastInput != v)
 		{
 			lastInput = v;

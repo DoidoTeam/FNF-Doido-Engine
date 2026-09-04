@@ -43,7 +43,7 @@ class OptionsSubState extends MusicBeatSubState
 	public var playState:PlayState = null;
 	public var resetMenu:Bool = false;
 
-	public var optionOrder:Array<String> = ["Gameplay", "Preferences", "Graphics", #if TOUCH_CONTROLS "Mobile", #end];
+	public var optionOrder:Array<String> = ["Gameplay", "Input", "Preferences", "Graphics", #if TOUCH_CONTROLS "Mobile", #end];
 	public var optionList:Map<String, Array<OptionData>> = [];
 
 	public var bg:FlxSprite;
@@ -83,28 +83,6 @@ class OptionsSubState extends MusicBeatSubState
 
 		optionList = [
 			"Gameplay" => [
-				{
-					name: "Ghost Tapping",
-					get: () -> Save.data.ghostTapping,
-					set: (s:String) -> Save.data.ghostTapping = s,
-					options: ["off", "idle", "on"],
-					/*display: (s:String) -> {
-						return switch(s) {
-							case "idle": "IDLE";
-							default: s.toUpperCase();
-						}
-					},*/
-					desc: (s:String) ->
-					{
-						return switch (s.toLowerCase())
-						{
-							case "on": "You can press inputs freely.";
-							case "idle": "If you press a wrong input while notes are near\nyour strumline, you will suffer a penalty.";
-							default: "If you press a wrong input,\nyou will suffer a penalty.";
-						}
-					},
-					playStateWarning: true,
-				},
 				{
 					name: "Splash Notes",
 					get: () -> Save.data.splashNotes,
@@ -211,6 +189,54 @@ class OptionsSubState extends MusicBeatSubState
 						else
 							return "Unpausing the game will make the song\nresume instantaneously.";
 					},
+				},
+			],
+			"Input" => [
+				{
+					name: "Ghost Tapping",
+					get: () -> Save.data.ghostTapping,
+					set: (s:String) -> Save.data.ghostTapping = s,
+					options: ["off", "idle", "on"],
+					/*display: (s:String) -> {
+						return switch(s) {
+							case "idle": "IDLE";
+							default: s.toUpperCase();
+						}
+					},*/
+					desc: (s:String) ->
+					{
+						return switch (s.toLowerCase())
+						{
+							case "on": "You can press inputs freely.";
+							case "idle": "If you press a wrong input while notes are near\nyour strumline, you will suffer a penalty.";
+							default: "If you press a wrong input,\nyou will suffer a penalty.";
+						}
+					},
+					playStateWarning: true,
+				},
+				{
+					name: "Music Offset",
+					get: () -> Save.data.musicOffset,
+					set: (i:Int) -> Save.data.musicOffset = i,
+					limits: [-500, 500],
+					step: 1,
+					hold: 10
+				},
+				{
+					name: "Input Offset",
+					get: () -> Save.data.inputOffset,
+					set: (i:Int) -> Save.data.inputOffset = i,
+					limits: [-500, 500],
+					step: 1,
+					hold: 10
+				},
+				{
+					name: "Gamepad Deadzone",
+					get: () -> Save.data.gamepadDeadzone,
+					set: (f:Float) -> Save.data.gamepadDeadzone = f,
+					limits: [0.05, 0.9],
+					step: 0.05,
+					hold: 0.1
 				},
 				{
 					name: "Change Controls",

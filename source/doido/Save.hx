@@ -12,11 +12,16 @@ class SaveVariables
 	public var modData:Map<String, Dynamic> = [];
 
 	// gameplay
-	public var ghostTapping:String = "idle";
 	public var downscroll:Bool = false;
 	public var middlescroll:Bool = false;
 	public var quantNotes:Bool = false;
 	public var slowdownUnpause:Bool = true;
+	
+	// input
+	public var ghostTapping:String = "idle";
+	public var musicOffset:Int = 0;
+	public var inputOffset:Int = 0;
+	public var gamepadDeadzone:Float = 0.15;
 
 	// preferences
 	public var darkMode:Bool = true;
