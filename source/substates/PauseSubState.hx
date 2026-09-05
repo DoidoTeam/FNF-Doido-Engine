@@ -15,6 +15,11 @@ class PauseSubState extends MusicBeatSubState
 	var optionText:Array<Alphabet> = [];
 	var curSelected:Int = 0;
 
+	var gamepadDisconnected:Bool = false;
+	var gamepadBG:FlxSprite;
+	var gamepadWarning1:Alphabet;
+	var gamepadWarning2:Alphabet;
+
 	var metadata:Array<FlxText> = [];
 	var title:FlxText;
 	var creditsText:FlxText;
@@ -22,9 +27,10 @@ class PauseSubState extends MusicBeatSubState
 	var blueballText:FlxText;
 	var bottomTxt:FlxText;
 
-	public function new()
+	public function new(?gamepadDisconnected:Bool = false)
 	{
 		super();
+		this.gamepadDisconnected = gamepadDisconnected;
 		persistentUpdate = false;
 		persistentDraw = true;
 
@@ -86,6 +92,27 @@ class PauseSubState extends MusicBeatSubState
 		drawCreditsText();
 		drawBottom();
 		creditsFade();
+
+		if (gamepadDisconnected)
+		{
+			gamepadBG = new FlxSprite().makeColor(FlxG.width + 10, FlxG.height + 10, 0xFF000000);
+			gamepadBG.alpha = 0.9;
+			add(gamepadBG);
+
+			gamepadWarning1 = new Alphabet(FlxG.width / 2, 0, '<color value=#FF2020>GAMEPAD DISCONNECTED</color>', false);
+			gamepadWarning1.align = CENTER;
+			gamepadWarning1.y = (FlxG.height - gamepadWarning1.height) / 2 - 80;
+			add(gamepadWarning1);
+
+			gamepadWarning2 = new Alphabet(FlxG.width / 2, 0, '<color value=#FFFFFF>press a key to resume the game</color>', false);
+			gamepadWarning2.scale.set(0.6, 0.6);
+			gamepadWarning2.updateHitbox();
+			gamepadWarning2.align = CENTER;
+			gamepadWarning2.y = gamepadWarning1.y + gamepadWarning1.height + 8;
+			add(gamepadWarning2);
+
+			FlxG.sound.play(Assets.sound('crash'));
+		}
 	}
 
 	function addMeta()
@@ -145,47 +172,64 @@ class PauseSubState extends MusicBeatSubState
 	{
 		super.update(elapsed);
 
-		if (Controls.justPressed(UI_UP))
-			changeSelection(-1);
-		if (Controls.justPressed(UI_DOWN))
-			changeSelection(1);
-
-		if (Controls.justPressed(ACCEPT))
+		if (gamepadDisconnected)
 		{
-			switch (options[curSelected].toLowerCase())
+			if (FlxG.keys.justPressed.ANY || FlxG.gamepads?.lastActive?.justPressed.ANY)
 			{
-				case 'resume':
-					close();
-
-				case 'restart song':
-					MusicBeat.skip = true;
-					MusicBeat.switchState(new states.PlayState());
-
-				case 'botplay':
-					FlxG.sound.play(Assets.sound("cancel"));
-					PlayState.instance.botplay = !PlayState.instance.botplay;
-					PlayState.instance.practice = false;
-					drawBottom();
-
-				case 'practice mode':
-					FlxG.sound.play(Assets.sound("cancel"));
-					PlayState.instance.practice = !PlayState.instance.practice;
-					PlayState.instance.botplay = false;
-					drawBottom();
-
-				case 'options':
-					openSubState(new OptionsSubState(PlayState.instance));
-
-				case 'exit to menu':
-					PlayState.instance.goToMenu();
-
-				default:
-					FlxG.sound.play(Assets.sound("cancel"));
+				gamepadDisconnected = false;
+				FlxG.sound.play(Assets.sound('cancel'));
+				for(item in [gamepadBG, gamepadWarning1, gamepadWarning2])
+				{
+					remove(item);
+					item.destroy();
+				}
 			}
 		}
+		else
+		{
+			if (Controls.justPressed(UI_UP))
+				changeSelection(-1);
 
-		if (Controls.justPressed(BACK))
-			close();
+			if (Controls.justPressed(UI_DOWN))
+				changeSelection(1);
+
+			if (Controls.justPressed(ACCEPT))
+			{
+				switch (options[curSelected].toLowerCase())
+				{
+					case 'resume':
+						close();
+
+					case 'restart song':
+						MusicBeat.skip = true;
+						MusicBeat.switchState(new states.PlayState());
+
+					case 'botplay':
+						FlxG.sound.play(Assets.sound("cancel"));
+						PlayState.instance.botplay = !PlayState.instance.botplay;
+						PlayState.instance.practice = false;
+						drawBottom();
+
+					case 'practice mode':
+						FlxG.sound.play(Assets.sound("cancel"));
+						PlayState.instance.practice = !PlayState.instance.practice;
+						PlayState.instance.botplay = false;
+						drawBottom();
+
+					case 'options':
+						openSubState(new OptionsSubState(PlayState.instance));
+
+					case 'exit to menu':
+						PlayState.instance.goToMenu();
+
+					default:
+						FlxG.sound.play(Assets.sound("cancel"));
+				}
+			}
+
+			if (Controls.justPressed(BACK))
+				close();
+		}
 	}
 
 	override function close()

@@ -558,8 +558,15 @@ class PlayState extends MusicBeatState implements Playable
 		if (Save.data.developerMode)
 			debugKeys();
 
-		if (canPause && Controls.justPressed(PAUSE) #if TOUCH_CONTROLS || pauseButton.justPressed #end)
-			pauseSong();
+		if (canPause)
+		{
+			if (Controls.justPressed(PAUSE) #if TOUCH_CONTROLS || pauseButton.justPressed #end)
+				pauseSong();
+
+			// gamepad disconnected
+			if (Controls.lastInput == GAMEPAD && FlxG.gamepads.lastActive == null)
+				pauseSong(true);
+		}
 
 		if (!paused)
 		{
@@ -816,7 +823,7 @@ class PlayState extends MusicBeatState implements Playable
 		startedSong = true;
 	}
 
-	public function pauseSong()
+	public function pauseSong(?gamepadDisconnected:Bool = false)
 	{
 		paused = true;
 		for (snd in FlxG.sound.list)
@@ -826,7 +833,7 @@ class PlayState extends MusicBeatState implements Playable
 		audio.pause();
 		audio.speed = 0.0;
 		MusicBeat.activateTimers(false);
-		openSubState(new PauseSubState());
+		openSubState(new PauseSubState(gamepadDisconnected));
 	}
 
 	public function unpauseSong()
