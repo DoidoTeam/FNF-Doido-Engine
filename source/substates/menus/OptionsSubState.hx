@@ -220,7 +220,7 @@ class OptionsSubState extends MusicBeatSubState
 					set: (i:Int) -> Save.data.musicOffset = i,
 					limits: [-500, 500],
 					step: 1,
-					hold: 10,
+					hold: 5,
 					updatePlayState: (playState) ->
 					{
 						playState.playField.updateNotes();
@@ -232,7 +232,7 @@ class OptionsSubState extends MusicBeatSubState
 					set: (i:Int) -> Save.data.inputOffset = i,
 					limits: [-80, 80],
 					step: 1,
-					hold: 10
+					hold: 2
 				},
 				{
 					name: "Gamepad Deadzone",
