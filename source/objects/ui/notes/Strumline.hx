@@ -138,7 +138,7 @@ class Strumline extends FlxGroup
 			var noteSpeed:Float = note.noteSpeed ?? scrollSpeed;
 			noteSpeed *= note.noteSpeedMult;
 
-			var noteTime:Float = (note.data.stepTime - curStepFloat);
+			var noteTime:Float = (note.stepTime - curStepFloat);
 			if (note.isHold)
 				noteTime += note.holdIndex;
 
@@ -173,7 +173,7 @@ class Strumline extends FlxGroup
 
 			if (!hold.missed)
 			{
-				var holdHitLength = (curStepFloat - hold.data.stepTime);
+				var holdHitLength = (curStepFloat - hold.stepTime);
 				var daRect = (hold.clipRect ?? new FlxRect());
 				daRect.set(0, 0, hold.frameWidth, hold.frameHeight);
 

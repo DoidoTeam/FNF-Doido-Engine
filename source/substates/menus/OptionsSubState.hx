@@ -220,13 +220,17 @@ class OptionsSubState extends MusicBeatSubState
 					set: (i:Int) -> Save.data.musicOffset = i,
 					limits: [-500, 500],
 					step: 1,
-					hold: 10
+					hold: 10,
+					updatePlayState: (playState) ->
+					{
+						playState.playField.updateNotes();
+					}
 				},
 				{
 					name: "Input Offset",
 					get: () -> Save.data.inputOffset,
 					set: (i:Int) -> Save.data.inputOffset = i,
-					limits: [-500, 500],
+					limits: [-80, 80],
 					step: 1,
 					hold: 10
 				},

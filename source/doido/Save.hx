@@ -1,5 +1,6 @@
 package doido;
 
+import doido.song.Conductor;
 import doido.system.Discord.DiscordIO;
 import flixel.util.FlxSave;
 
@@ -107,6 +108,9 @@ class Save
 
 		if (Main.fpsCounter != null)
 			Main.fpsCounter.visible = data.fpsCounter;
+
+		Conductor.musicOffset = data.musicOffset;
+		Conductor.inputOffset = data.inputOffset;
 
 		DiscordIO.check();
 	}

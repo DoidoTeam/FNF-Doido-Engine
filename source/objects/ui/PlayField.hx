@@ -138,12 +138,12 @@ class PlayField extends FlxGroup
 				if (!note.isHold)
 				{
 					// if theres a note near your strumline, you're not idling
-					if (Math.abs(note.data.stepTime - curStepFloat) <= 2)
+					if (Math.abs(note.stepTime - curStepFloat) <= 2)
 						strumline.ghostTappingIdle = false;
 
 					if (strumline.botplay)
 					{
-						if (curStepFloat > note.data.stepTime)
+						if (curStepFloat > note.stepTime)
 						{
 							if (!note.gotHit && !note.missed)
 								_onNoteHit(note, strumline);
@@ -158,12 +158,12 @@ class PlayField extends FlxGroup
 				else
 				{
 					// if you're pressing a hold note, you're not idling
-					if (note.data.stepTime + note.data.length >= curStepFloat && !note.missed && note.holdHitPercent > 0.0)
+					if (note.stepTime + note.data.length >= curStepFloat && !note.missed && note.holdHitPercent > 0.0)
 						strumline.ghostTappingIdle = false;
 				}
 
 				var despawnStep:Float = strumline.despawnStep; // kills after 12 steps
-				if (curStepFloat > note.data.stepTime + note.data.length + despawnStep)
+				if (curStepFloat > note.stepTime + note.data.length + despawnStep + (Conductor.inputOffset / Conductor.stepCrochet))
 					strumline.killNote(note);
 			}
 
@@ -237,7 +237,7 @@ class PlayField extends FlxGroup
 							{
 								for (note in possibleHitNotes)
 								{
-									if (note.data.stepTime < canHitNote.data.stepTime)
+									if (note.stepTime < canHitNote.stepTime)
 										canHitNote = note;
 								}
 
@@ -261,7 +261,7 @@ class PlayField extends FlxGroup
 				{
 					if (holdParent.gotHit && !holdParent.missed)
 					{
-						var holdHitLength = (curStepFloat - hold.data.stepTime);
+						var holdHitLength = (curStepFloat - hold.stepTime);
 						var holdPercent:Float = Math.min((holdHitLength / hold.data.length), 1.0);
 
 						// hold input
@@ -317,9 +317,9 @@ class PlayField extends FlxGroup
 
 	inline public function noteDiffStep(note:NoteData):Float
 	{
-		return (note.stepTime - curStepFloat);
+		return (note.stepTime + ((Conductor.musicOffset + Conductor.inputOffset) / Conductor.stepCrochet) - curStepFloat);
 	}
-
+	
 	inline public function noteDiff(note:NoteData):Float
 	{
 		return noteDiffStep(note) * Conductor.stepCrochet;

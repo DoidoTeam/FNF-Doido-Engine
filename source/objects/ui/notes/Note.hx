@@ -1,8 +1,9 @@
 package objects.ui.notes;
 
+import doido.song.Conductor;
+import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import shaders.RGBPalette;
-import flixel.FlxSprite;
 
 class Note extends FlxSprite
 {
@@ -11,6 +12,11 @@ class Note extends FlxSprite
 	public var skin:String = "base";
 	public var gotHit:Bool = false;
 	public var missed:Bool = false;
+
+	public var stepTime(get, null):Float;
+	public function get_stepTime():Float {
+		return data.stepTime + (Conductor.musicOffset / Conductor.stepCrochet);
+	}
 
 	// hold parenting
 	public var holdParent:Note = null;

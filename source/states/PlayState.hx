@@ -581,7 +581,7 @@ class PlayState extends MusicBeatState implements Playable
 					continue;
 
 				var eventData = spawnEvents[curEventCount];
-				if ((eventData.stepTime - curStepFloat) <= 0)
+				if ((eventData.stepTime + (Conductor.musicOffset / Conductor.stepCrochet) - curStepFloat) <= 0)
 				{
 					playEvent(eventData.name, eventData.data);
 					curEventCount++;
