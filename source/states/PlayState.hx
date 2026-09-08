@@ -1109,6 +1109,11 @@ class PlayState extends MusicBeatState implements Playable
 			loadSong(CHART.song, songDiff, isStoryMode);
 		super.resetState();
 	}
+
+	public var curSong(get, never):String;
+	
+	public function get_curSong():String
+		return CHART.song;
 }
 
 interface Playable
