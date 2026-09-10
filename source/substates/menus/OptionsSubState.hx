@@ -191,66 +191,6 @@ class OptionsSubState extends MusicBeatSubState
 					},
 				},
 			],
-			"Input" => [
-				{
-					name: "Ghost Tapping",
-					get: () -> Save.data.ghostTapping,
-					set: (s:String) -> Save.data.ghostTapping = s,
-					options: ["off", "idle", "on"],
-					/*display: (s:String) -> {
-						return switch(s) {
-							case "idle": "IDLE";
-							default: s.toUpperCase();
-						}
-					},*/
-					desc: (s:String) ->
-					{
-						return switch (s.toLowerCase())
-						{
-							case "on": "You can press inputs freely.";
-							case "idle": "If you press a wrong input while notes are near\nyour strumline, you will suffer a penalty.";
-							default: "If you press a wrong input,\nyou will suffer a penalty.";
-						}
-					},
-					playStateWarning: true,
-				},
-				{
-					name: "Music Offset",
-					get: () -> Save.data.musicOffset,
-					set: (i:Int) -> Save.data.musicOffset = i,
-					limits: [-500, 500],
-					step: 1,
-					hold: 5,
-					updatePlayState: (playState) ->
-					{
-						playState.playField.updateNotes();
-					}
-				},
-				{
-					name: "Input Offset",
-					get: () -> Save.data.inputOffset,
-					set: (i:Int) -> Save.data.inputOffset = i,
-					limits: [-80, 80],
-					step: 1,
-					hold: 2
-				},
-				{
-					name: "Gamepad Deadzone",
-					get: () -> Save.data.gamepadDeadzone,
-					set: (f:Float) -> Save.data.gamepadDeadzone = f,
-					limits: [0.05, 0.9],
-					step: 0.05,
-					hold: 0.1
-				},
-				{
-					name: "Change Controls",
-					get: () -> null,
-					set: (s:String) ->
-					{
-						openSubState(new ControlsSubState(this));
-					},
-				},
-			],
 			"Preferences" => [
 				#if windows
 				{
@@ -443,6 +383,66 @@ class OptionsSubState extends MusicBeatSubState
 							return "";
 					},
 					playStateWarning: true
+				},
+			],
+			"Input" => [
+				{
+					name: "Ghost Tapping",
+					get: () -> Save.data.ghostTapping,
+					set: (s:String) -> Save.data.ghostTapping = s,
+					options: ["off", "idle", "on"],
+					/*display: (s:String) -> {
+						return switch(s) {
+							case "idle": "IDLE";
+							default: s.toUpperCase();
+						}
+					},*/
+					desc: (s:String) ->
+					{
+						return switch (s.toLowerCase())
+						{
+							case "on": "You can press inputs freely.";
+							case "idle": "If you press a wrong input while notes are near\nyour strumline, you will suffer a penalty.";
+							default: "If you press a wrong input,\nyou will suffer a penalty.";
+						}
+					},
+					playStateWarning: true,
+				},
+				{
+					name: "Music Offset",
+					get: () -> Save.data.musicOffset,
+					set: (i:Int) -> Save.data.musicOffset = i,
+					limits: [-500, 500],
+					step: 1,
+					hold: 5,
+					updatePlayState: (playState) ->
+					{
+						playState.playField.updateNotes();
+					}
+				},
+				{
+					name: "Input Offset",
+					get: () -> Save.data.inputOffset,
+					set: (i:Int) -> Save.data.inputOffset = i,
+					limits: [-80, 80],
+					step: 1,
+					hold: 2
+				},
+				{
+					name: "Gamepad Deadzone",
+					get: () -> Save.data.gamepadDeadzone,
+					set: (f:Float) -> Save.data.gamepadDeadzone = f,
+					limits: [0.05, 0.9],
+					step: 0.05,
+					hold: 0.1
+				},
+				{
+					name: "Change Controls",
+					get: () -> null,
+					set: (s:String) ->
+					{
+						openSubState(new ControlsSubState(this));
+					},
 				},
 			],
 			#if MODS_FOLDER
