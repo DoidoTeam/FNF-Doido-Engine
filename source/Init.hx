@@ -33,7 +33,10 @@ class Init extends MusicBeatState
 		Mods.init();
 		#end
 
-		flagState();
+		if(!Save.data.warned)
+			MusicBeat.switchState(new WarningState());
+		else
+			flagState();
 
 		#if android
 		FlxG.android.preventDefaultKeys = [BACK];

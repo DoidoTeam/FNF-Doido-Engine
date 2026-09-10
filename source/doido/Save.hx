@@ -48,9 +48,10 @@ class SaveVariables
 	public var invertX:Bool = false;
 	public var invertY:Bool = false;
 
-	// sound
+	// system
 	public var volume:Float = 1.0;
 	public var muted:Bool = false;
+	public var warned:Bool = false;
 }
 
 class Save
