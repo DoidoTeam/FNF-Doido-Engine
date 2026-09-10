@@ -225,16 +225,6 @@ class ChartingState extends MusicBeatState
 		if (NoteUtil.directions.length == 0)
 			NoteUtil.setUpDirections(4);
 
-		// areas excluded from mouse dragging
-		// [x, y], [width, height]
-		var borderList:Array<Array<Array<Int>>> = [[[0, 0], [338, 51]], [[0, 597], [338, 123]], [[803, 0], [477, 720]]];
-		borderAreas = new FlxGroup();
-		for (border in borderList)
-		{
-			var borderHbx = new FlxObject(border[0][0], border[0][1], border[1][0], border[1][1]);
-			borderAreas.add(borderHbx);
-		}
-
 		bgLight = new FlxSprite().loadGraphic(Assets.image('editors/charting/bg/light'));
 		add(bgLight);
 
@@ -321,6 +311,16 @@ class ChartingState extends MusicBeatState
 		add(iconBf);
 		add(iconDad);
 		reloadIcons();
+
+		// areas excluded from mouse dragging
+		// [x, y], [width, height]
+		var borderList:Array<Array<Array<Int>>> = [[[-100, -100], [438, 151]], [[-100, 597], [438, 223]], [[803, -100], [477, 920]], [[Std.int(grid.gridX), 0], [GRID_SIZE * 4, 60]]];
+		borderAreas = new FlxGroup();
+		for (border in borderList)
+		{
+			var borderHbx = new FlxObject(border[0][0], border[0][1], border[1][0], border[1][1]);
+			borderAreas.add(borderHbx);
+		}
 	}
 
 	override function destroy()
@@ -385,6 +385,7 @@ class ChartingState extends MusicBeatState
 				PlayState.SONG = {
 					CHART: {
 						song: newSong,
+						postfix: "",
 						notes: [],
 						bpm: 100,
 						speed: 2

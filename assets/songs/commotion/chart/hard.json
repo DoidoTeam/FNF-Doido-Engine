@@ -1,7 +1,7 @@
 {
 	"song": {
 		"sectionLengths": [],
-		"player1": "nila",
+		"player1": "bf",
 		"gfVersion": "stage-set",
 		"notes": [
 			{
@@ -6633,7 +6633,7 @@
 				"mustHitSection": true
 			}
 		],
-		"player2": "watts",
+		"player2": "face",
 		"song": "commotion",
 		"sections": 0,
 		"needsVoices": true,

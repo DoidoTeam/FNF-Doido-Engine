@@ -178,8 +178,8 @@ class CharacterEditor extends MusicBeatState
 		editWindow.addButton("Paste Offset", "Ctrl + V", paste);
 		editWindow.addSeparator();
 		editWindow.addButton("Delete Offset", "Delete", delete);
-		editWindow.addSeparator();
-		editWindow.addButton("Edit Icon", () -> openSubState(new IconEditorSubState("face")));
+		//editWindow.addSeparator();
+		//editWindow.addButton("Edit Icon", () -> openSubState(new IconEditorSubState("face")));
 		editWindow.updateBg();
 
 		var menuBox = new DoidoBox(x, y, width, height, 0, false, [fileWindow, editWindow /*, viewWindow*/], null);
@@ -233,7 +233,7 @@ class CharacterEditor extends MusicBeatState
 
 		var player:DoidoCheckmark = new DoidoCheckmark(isPlayer);
 		player.x = getX("margin_right", player.width);
-		player.y = getY(1) - 2;
+		player.y = getY(2) - 2;
 		player.onUp.add(() ->
 		{
 			isPlayer = player.value;
@@ -242,18 +242,7 @@ class CharacterEditor extends MusicBeatState
 			flipCheck(ghost);
 		});
 		tab.add(player);
-		tab.add(createText(player.x - 60, getY(1) + 2, "Player:", 0xFFD8DAF6));
-
-		var ghostFlip:DoidoCheckmark = new DoidoCheckmark(ghost.isPlayer);
-		ghostFlip.x = player.x - 60 - ghostFlip.width - 5;
-		ghostFlip.y = getY(1) - 2;
-		ghostFlip.onUp.add(() ->
-		{
-			ghost.isPlayer = ghostFlip.value;
-			flipCheck(ghost);
-		});
-		tab.add(ghostFlip);
-		tab.add(createText(ghostFlip.x - 55, getY(1) + 2, "Ghost:", 0xFFD8DAF6));
+		tab.add(createText(player.x - 45, getY(2) + 2, "FlipX:", 0xFFD8DAF6));
 
 		var reload = new DoidoTextButton("Reload Sprite", "small");
 		reload.x = getX("margin_right", reload.width);
@@ -281,32 +270,9 @@ class CharacterEditor extends MusicBeatState
 		tab.add(pixel);
 		tab.add(createText(pixel.x - 45, getY(3) + 2, "Pixel:", 0xFFD8DAF6));
 
-		var ghostOver:DoidoCheckmark = new DoidoCheckmark(ghostOverlay);
-		ghostOver.x = pixel.x - 60 - ghostOver.width - 5;
-		ghostOver.y = getY(3) - 2;
-		ghostOver.onUp.add(() ->
-		{
-			ghostOverlay = ghostOver.value;
-			ghost.zIndex = ghostOverlay ? 11 : 9;
-			sort(ZIndex.sort);
-		});
-		tab.add(ghostOver);
-		tab.add(createText(ghostOver.x - 55, getY(3) + 2, "Over:", 0xFFD8DAF6));
-
-		var tintCheck:DoidoCheckmark = new DoidoCheckmark(true);
-		tintCheck.x = getX("margin_right", tintCheck.width);
-		tintCheck.y = getY(4) - 2;
-		tintCheck.onUp.add(() ->
-		{
-			tint = tintCheck.value;
-			ghost.color = tint ? 0xFF0000FF : 0xFFFFFFFF;
-		});
-		tab.add(tintCheck);
-		tab.add(createText(tintCheck.x - 45, getY(4) + 2, "Tint:", 0xFFD8DAF6));
-
 		// getX() + 120
 		var spriteType:PsychUIDropDownMenu;
-		spriteType = new PsychUIDropDownMenu(getX("margin_right", 130), getY(2), ["SPARROW", "ATLAS", "PACKER", "ASEPRITE"], (i, s) ->
+		spriteType = new PsychUIDropDownMenu(getX("margin_right", 130), getY(1), ["SPARROW", "ATLAS", "PACKER", "ASEPRITE"], (i, s) ->
 		{
 			char.data.spriteType = s;
 		}, 130, false);
@@ -314,9 +280,9 @@ class CharacterEditor extends MusicBeatState
 		spriteType.cameras = [camHUD];
 		tab.add(spriteType);
 
-		tab.add(createText(getX(), getY(2) + 3, "Idles:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(1) + 3, "Idles:", 0xFFD8DAF6));
 		var idles:DoidoInputText;
-		idles = new DoidoInputText(getX("margin_first"), getY(2), textWidth, char.idleAnims.join(", "));
+		idles = new DoidoInputText(getX("margin_first"), getY(1), textWidth, char.idleAnims.join(", "));
 		idles.onTextChange.add((cur, input) ->
 		{
 			char.idleAnims = cur.split(",").map(s -> s.trim());
@@ -326,8 +292,8 @@ class CharacterEditor extends MusicBeatState
 		idles.cameras = [camHUD];
 		tab.add(idles);
 
-		tab.add(createText(getX(), getY(3) + 3, "Scale:", 0xFFD8DAF6));
-		var scaleX = new PsychUINumericStepper(getX("margin_first"), getY(3), 0.1, char.data.scale.x, 0.1, 10, 2);
+		tab.add(createText(getX(), getY(2) + 3, "Scale:", 0xFFD8DAF6));
+		var scaleX = new PsychUINumericStepper(getX("margin_first"), getY(2), 0.1, char.data.scale.x, 0.1, 10, 2);
 		scaleX.onValueChange = () ->
 		{
 			char.data.scale.x = scaleX.value;
@@ -339,7 +305,7 @@ class CharacterEditor extends MusicBeatState
 		scaleX.cameras = [camHUD];
 		tab.add(scaleX);
 
-		var scaleY = new PsychUINumericStepper(getX("margin_first") + 105, getY(3), 0.1, char.data.scale.y, 0.1, 10, 2);
+		var scaleY = new PsychUINumericStepper(getX("margin_first") + 105, getY(2), 0.1, char.data.scale.y, 0.1, 10, 2);
 		scaleY.onValueChange = () ->
 		{
 			char.data.scale.y = scaleY.value;
@@ -351,48 +317,34 @@ class CharacterEditor extends MusicBeatState
 		scaleY.cameras = [camHUD];
 		tab.add(scaleY);
 
-		var characterList = Assets.list("data/characters/", true, JSON).concat(["face"]);
-
-		var ghosts:PsychUIDropDownMenu;
-		ghosts = new PsychUIDropDownMenu(getX() + 120, getY(1), characterList, (i, s) ->
-		{
-			ghost.curChar = s;
-			syncGhost();
-			updatePos(ghost);
-			ghostAnims.options = ghost.animList;
-			updateAnim(false);
-		}, 100, false);
-		ghosts.selectedLabel = char.curChar;
-		ghosts.cameras = [camHUD];
-		tab.add(ghosts);
-
-		var characters:PsychUIDropDownMenu;
+	
+		/*var characters:PsychUIDropDownMenu;
 		characters = new PsychUIDropDownMenu(getX(), getY(1), characterList, (i, s) ->
 		{
 			MusicBeat.switchState(new CharacterEditor(s, isPlayer, wasPlayState));
-			/*
-				if (ghost.curChar == char.curChar)
-				{
-					ghost.curChar = s;
-					ghosts.selectedLabel = s;
-				}
+			
+				//if (ghost.curChar == char.curChar)
+				//{
+				//	ghost.curChar = s;
+				//	ghosts.selectedLabel = s;
+				//}
 
-				char.curChar = s;
-				char.clearAnims();
-				char.loadCharacter(false);
-				updatePos(char);
-				syncGhost();
-				updatePos(ghost);
+				//char.curChar = s;
+				//char.clearAnims();
+				//char.loadCharacter(false);
+				//updatePos(char);
+				//syncGhost();
+				//updatePos(ghost);
 
-				sprite.text = char.data.spritesheet;
-				spriteType.selectedLabel = char.data.spriteType ?? "SPARROW";
-				anims.options = char.animList.concat(["Add New"]);
-				updateAnim(false);
-			 */
+				//sprite.text = char.data.spritesheet;
+				//spriteType.selectedLabel = char.data.spriteType ?? "SPARROW";
+				//anims.options = char.animList.concat(["Add New"]);
+				//updateAnim(false);
+			 
 		}, 100, false);
 		characters.selectedLabel = char.curChar;
 		characters.cameras = [camHUD];
-		tab.add(characters);
+		tab.add(characters);*/
 
 		/*
 			var atlasType:PsychUIDropDownMenu;
@@ -410,15 +362,15 @@ class CharacterEditor extends MusicBeatState
 
 	function createGhost()
 	{
-		var tab = createBasic("Ghost");
+		var tab = createBasic("Ghost (WIP)");
 
 		function getX(place:String = "margin_left", width:Float = 0)
 		{
 			return switch (place)
 			{
-				case "margin_first": tab.bg.x + 80;
+				case "margin_first": tab.bg.x + 65;
 				case "margin_first_search": tab.bg.x + 80;
-				case "margin_second": tab.bg.x + 229 + 8;
+				case "margin_second": tab.bg.x + 100;
 				case "margin_right": tab.bg.x + tab.bg.width - width - 8;
 				case "center": tab.bg.x + (tab.bg.width / 2) - (width / 2);
 				case "center_left": tab.bg.x + (tab.bg.width / 4) - (width / 2);
@@ -465,20 +417,20 @@ class CharacterEditor extends MusicBeatState
 		balls.setPosition(getX("center", balls.width), getY(bottomY - 5) + 12);
 		tab.add(balls);
 
-		tab.add(createText(getX(), getY(bottomY) + 3, "Alpha:", 0xFFD8DAF6));
+		tab.add(createText(getX(), getY(bottomY - 4) + 3, "Alpha:", 0xFFD8DAF6));
 		var ghostVis:DoidoCheckmark = new DoidoCheckmark(true);
 		ghostVis.onUp.add(() ->
 		{
 			ghost.visible = ghostVis.value;
 		});
 		ghostVis.x = getX("margin_first");
-		ghostVis.y = getY(bottomY) - 1;
+		ghostVis.y = getY(bottomY - 4) - 1;
 		tab.add(ghostVis);
 
-		var ghostStepper = new PsychUINumericStepper(getX("margin_right", 100), getY(bottomY), 0.1, ghost.ghostAlpha, 0, 1.0, 1, 100, false);
+		var ghostStepper = new PsychUINumericStepper(getX("margin_right", 100), getY(bottomY - 4), 0.1, ghost.ghostAlpha, 0, 1.0, 1, 100, false);
 		tab.add(ghostStepper);
 
-		var ghostSlider:DoidoSlider = new DoidoSlider(getX("margin_second"), getY(bottomY) + 9, 160, 6, ghost.ghostAlpha, 0, 1, 3, 0.02);
+		var ghostSlider:DoidoSlider = new DoidoSlider(getX("margin_second"), getY(bottomY - 4) + 9, 230, 6, ghost.ghostAlpha, 0, 1, 3, 0.02);
 		ghostSlider.onScrub.add((sld) ->
 		{
 			ghost.visible = true;
@@ -495,6 +447,59 @@ class CharacterEditor extends MusicBeatState
 			ghostStepper.value = ghostStepper.value;
 			ghost.ghostAlpha = ghostStepper.value;
 		});
+
+		tab.add(createText(getX(), getY(bottomY - 3) + 3, "FlipX:", 0xFFD8DAF6));
+
+		var ghostFlip:DoidoCheckmark = new DoidoCheckmark(ghost.isPlayer);
+		ghostFlip.x = getX("margin_first");
+		ghostFlip.y = getY(bottomY - 3) - 2;
+		ghostFlip.onUp.add(() ->
+		{
+			ghost.isPlayer = ghostFlip.value;
+			flipCheck(ghost);
+		});
+		tab.add(ghostFlip);
+
+		tab.add(createText(getX(), getY(bottomY - 2) + 3, "Over:", 0xFFD8DAF6));
+
+		var ghostOver:DoidoCheckmark = new DoidoCheckmark(ghostOverlay);
+		ghostOver.x = getX("margin_first");
+		ghostOver.y = getY(bottomY - 2) - 2;
+		ghostOver.onUp.add(() ->
+		{
+			ghostOverlay = ghostOver.value;
+			ghost.zIndex = ghostOverlay ? 11 : 9;
+			sort(ZIndex.sort);
+		});
+		tab.add(ghostOver);
+
+		tab.add(createText(getX(), getY(bottomY - 1) + 3, "Tint:", 0xFFD8DAF6));
+
+		var tintCheck:DoidoCheckmark = new DoidoCheckmark(true);
+		tintCheck.x = getX("margin_first");
+		tintCheck.y = getY(bottomY - 1) - 2;
+		tintCheck.onUp.add(() ->
+		{
+			tint = tintCheck.value;
+			ghost.color = tint ? 0xFF0000FF : 0xFFFFFFFF;
+		});
+		tab.add(tintCheck);
+
+		tab.add(createText(getX(), getY(bottomY) + 3, "Char:", 0xFFD8DAF6));
+		var characterList = Assets.list("data/characters/", true, JSON).concat(["face"]);
+
+		var ghosts:PsychUIDropDownMenu;
+		ghosts = new PsychUIDropDownMenu(getX("margin_first"), getY(bottomY), characterList, (i, s) ->
+		{
+			ghost.curChar = s;
+			syncGhost();
+			updatePos(ghost);
+			ghostAnims.options = ghost.animList;
+			updateAnim(false);
+		}, 100, false);
+		ghosts.selectedLabel = char.curChar;
+		ghosts.cameras = [camHUD];
+		tab.add(ghosts);
 
 		return tab;
 	}
@@ -1344,7 +1349,7 @@ class Ghost extends Character
 	{
 		super(char.curChar);
 		this.char = char;
-		ghostAlpha = 0.4;
+		ghostAlpha = 0.5;
 		syncGhost();
 	}
 
