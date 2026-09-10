@@ -43,7 +43,7 @@ class OptionsSubState extends MusicBeatSubState
 	public var playState:PlayState = null;
 	public var resetMenu:Bool = false;
 
-	public var optionOrder:Array<String> = ["Gameplay", "Input", "Preferences", "Graphics", #if TOUCH_CONTROLS "Mobile", #end];
+	public var optionOrder:Array<String> = ["Gameplay", "Preferences", "Graphics", "Input", #if TOUCH_CONTROLS "Mobile", #end];
 	public var optionList:Map<String, Array<OptionData>> = [];
 
 	public var bg:FlxSprite;
