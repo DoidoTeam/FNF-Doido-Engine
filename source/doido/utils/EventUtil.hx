@@ -92,8 +92,8 @@ class EventUtil
 					name: "X Offset",
 					info: "Offset along the x axis.",
 					defaultValue: 0,
-					min: 0,
-					max: 2000,
+					min: -10000,
+					max: 10000,
 					step: 10,
 					decimals: 0
 				},
@@ -101,8 +101,8 @@ class EventUtil
 					name: "Y Offset",
 					info: "Offset along the y axis.",
 					defaultValue: 0,
-					min: 0,
-					max: 2000,
+					min: -10000,
+					max: 10000,
 					step: 10,
 					decimals: 0
 				}
@@ -110,14 +110,14 @@ class EventUtil
 		},
 		{
 			name: "Camera Position",
-			desc: "Set the position of a specific character.",
+			desc: "Set the position of the camera.",
 			values: [
 				{
 					name: "X Position",
 					info: "Offset along the x axis.",
 					defaultValue: 0,
-					min: 0,
-					max: 2000,
+					min: -10000,
+					max: 10000,
 					step: 10,
 					decimals: 0
 				},
@@ -125,8 +125,8 @@ class EventUtil
 					name: "Y Position",
 					info: "Offset along the y axis.",
 					defaultValue: 0,
-					min: 0,
-					max: 2000,
+					min: -10000,
+					max: 10000,
 					step: 10,
 					decimals: 0
 				},
