@@ -12,27 +12,29 @@ class SaveVariables
 	public var test:String = 'bullshit';
 	public var modData:Map<String, Dynamic> = [];
 
-	// gameplay
-	public var downscroll:Bool = false;
-	public var middlescroll:Bool = false;
-	public var quantNotes:Bool = false;
-	public var slowdownUnpause:Bool = true;
-	
 	// input
 	public var ghostTapping:String = "idle";
 	public var musicOffset:Int = 0;
 	public var inputOffset:Int = 0;
 	public var gamepadDeadzone:Float = 0.15;
 
+	// gameplay
+	public var splashNotes:String = "ALWAYS";
+	public var songTimer:String = "TIME ELAPSED";
+	public var showTimerMS:Bool = false;
+	public var downscroll:Bool = false;
+	public var middlescroll:Bool = false;
+	public var quantNotes:Bool = false;
+	public var slowdownUnpause:Bool = true;
+
 	// preferences
 	public var darkMode:Bool = true;
-	public var discordRPC:Bool = #if DISCORD_RPC true #else false #end;
 	public var fpsCounter:Bool = #if desktop true #else false #end;
+	public var discordRPC:Bool = #if DISCORD_RPC true #else false #end;
 	public var fasterTransitions:Bool = false;
 	public var hitsound:String = "OFF";
 	public var hitsoundVolume:Float = 0.4;
 	public var flashingLights:String = "ON";
-	public var splashNotes:String = "ALWAYS";
 	public var developerMode:Bool = false;
 
 	// graphics

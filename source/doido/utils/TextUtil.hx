@@ -22,10 +22,10 @@ class TextUtil
 		text.setPosition(Math.floor(text.x), Math.floor(text.y));
 	}
 
-	public static function posToTimer(mil:Float = 0):String
+	public static function posToTimer(mil:Float = 0, showMS:Bool = false):String
 	{
-		if (mil < 0)
-			mil = 0;
+		if (mil < 0) mil = 0;
+		
 		// gets song pos and makes a timer out of it
 		var sec:Int = Math.floor(mil / 1000);
 		var min:Int = Math.floor(sec / 60);
@@ -39,7 +39,14 @@ class TextUtil
 
 		var disSec:String = forceZero('${sec % 60}');
 		var disMin:String = '$min';
-		return '$disMin:$disSec';
+
+		var result:String = '$disMin:$disSec';
+		if (showMS)
+		{
+			var milliseconds:Int = Math.floor((mil % 1000) / 10);
+			result += '.' + forceZero('$milliseconds');
+		}
+		return result;
 	}
 
 	public static function titleCase(str:String):String

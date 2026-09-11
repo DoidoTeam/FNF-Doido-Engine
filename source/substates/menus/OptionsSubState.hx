@@ -101,6 +101,33 @@ class OptionsSubState extends MusicBeatSubState
 					},
 				},
 				{
+					name: "Song Timer",
+					get: () -> Save.data.songTimer,
+					set: (s:String) -> Save.data.songTimer = s,
+					options: ["TIME ELAPSED", "TIME LEFT", "OFF"],
+					updatePlayState: (playState) ->
+					{
+						playState.hudClass.updatePositions();
+					},
+				},
+				// showTimerMS
+				{
+					name: "Show Timer MS",
+					get: () -> Save.data.showTimerMS,
+					set: (b:Bool) -> Save.data.showTimerMS = b,
+					desc: (b:Bool) ->
+					{
+						if (b)
+							return "Also shows milliseconds on the song timer.";
+						else
+							return "If enabled, will also show milliseconds on the song timer.";
+					},
+					updatePlayState: (playState) ->
+					{
+						playState.hudClass.updatePositions();
+					}
+				},
+				{
 					name: "Downscroll",
 					get: () -> Save.data.downscroll,
 					set: (b:Bool) -> Save.data.downscroll = b,

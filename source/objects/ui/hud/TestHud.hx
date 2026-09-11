@@ -81,8 +81,9 @@ class TestHud extends ClassHud
 	override function updatePositions()
 	{
 		super.updatePositions();
+		scoreTxt.screenCenter(X);
 		scoreTxt.y = (play.downscroll ? 15 : FlxG.height - scoreTxt.height - 15);
-		updateTimeTxt();
+		timeTxt.screenCenter(X);
 		timeTxt.y = play.downscroll ? (FlxG.height - timeTxt.height - 14) : (14);
 	}
 
@@ -91,20 +92,17 @@ class TestHud extends ClassHud
 		var scoreText:String = "";
 		scoreText = 'Accuracy: ${Timings.accuracy}%' + ' -- Step: ${play.curStep}\n';
 		scoreText += 'Hits: ${Timings.notesHit} -- Misses: ${Timings.misses}';
-
 		scoreTxt.text = scoreText;
-		scoreTxt.screenCenter(X);
 	}
 
-	public var songTime:Float = 0.0;
-
-	function updateTimeTxt()
+	override function updateTimeTxt()
 	{
+		timeTxt.visible = (Save.data.songTimer != "OFF");
 		if (!timeTxt.visible)
 			return;
-		songTime = FlxMath.bound(Conductor.songPos, 0, play.songLength);
-		timeTxt.text = TextUtil.posToTimer(songTime) + " / " + TextUtil.posToTimer(play.songLength);
-		timeTxt.screenCenter(X);
+
+		super.updateTimeTxt();
+		timeTxt.text = defaultTimeText;
 	}
 
 	override function update(elapsed:Float)

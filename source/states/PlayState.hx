@@ -319,7 +319,7 @@ class PlayState extends MusicBeatState implements Playable
 
 			if (rating != "miss")
 				hudClass.popUpRating(rating, META.assets.ratings);
-			hudClass.updateScoreTxt();
+			hudClass.updatePositions();
 		}
 
 		function muteVoices()
@@ -369,7 +369,7 @@ class PlayState extends MusicBeatState implements Playable
 				updateScore(note, playField.noteDiff(note.data));
 
 				// cool thingy
-				if (Timings.combo > 0 && Timings.combo % 50 == 0)
+				if (Timings.combo > 0 && Timings.combo % 50 == 0 && !note.isHold)
 				{
 					// nene weekend 1 support
 					if (Timings.combo % 200 == 0 && gf.animExists("horny"))
@@ -478,7 +478,7 @@ class PlayState extends MusicBeatState implements Playable
 						char.playSingAnim(lane, true);
 					}
 				}
-				hudClass.updateScoreTxt();
+				hudClass.updatePositions();
 			}
 			callScript("onGhostTap", [lane, strumline, punished]);
 

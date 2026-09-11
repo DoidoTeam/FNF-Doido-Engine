@@ -50,11 +50,31 @@ class ClassHud extends FlxGroup
 		updateScoreTxt();
 	}
 
-	public function updateScoreTxt() {}
+	public var defaultScoreText:String = "";
+	public function updateScoreTxt() {
+		var scoreText:String = "";
+		scoreText += 'Misses: ' + Timings.misses + separator;
+		scoreText += 'Accuracy: ' + Timings.accuracy + "%" + ' [${Timings.getRank()}]' + separator;
+		scoreText += 'Score: ' + FlxStringUtil.formatMoney(Timings.score, false, true);
+		defaultScoreText = scoreText;
+	}
+
+	public var defaultTimeText:String = "";
+	public function updateTimeTxt() {
+		var songTime:Float = FlxMath.bound(Conductor.songPos, 0, play.songLength);
+		var showMS:Bool = Save.data.showTimerMS;
+
+		var postfix:String = " / " + TextUtil.posToTimer(play.songLength, showMS);
+		if (Save.data.songTimer == "TIME LEFT")
+			defaultTimeText = "-" + TextUtil.posToTimer(play.songLength - songTime, showMS) + postfix;
+		else
+			defaultTimeText = TextUtil.posToTimer(songTime, showMS) + postfix;
+	}
 
 	public function updatePositions()
 	{
 		updateScoreTxt();
+		updateTimeTxt();
 	}
 
 	public function changeIcon(newIcon:String = "face", type:IconChange = ENEMY) {}

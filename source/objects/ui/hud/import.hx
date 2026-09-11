@@ -1,7 +1,8 @@
-import doido.song.Timings;
 import doido.objects.ui.DoidoBar;
-import flixel.text.FlxBitmapText;
+import doido.song.Timings;
+import doido.song.Conductor;
 import flixel.group.FlxGroup;
+import flixel.text.FlxBitmapText;
 import flixel.util.FlxStringUtil;
 import objects.ui.Rating.ComboSprite;
 import objects.ui.Rating.RatingSprite;

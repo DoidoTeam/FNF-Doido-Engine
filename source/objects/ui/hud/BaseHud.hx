@@ -4,7 +4,6 @@ import flixel.util.FlxColor;
 import doido.objects.Alphabet;
 import flixel.math.FlxMath;
 import objects.ui.hud.ClassHud.IconChange;
-import doido.song.Conductor;
 
 class BaseHud extends ClassHud
 {
@@ -106,9 +105,9 @@ class BaseHud extends ClassHud
 		healthBar.x = (FlxG.width / 2) - (healthBar.border.width / 2);
 		healthBar.y = (play.downscroll ? 70 : FlxG.height - healthBar.border.height - 50);
 
+		scoreTxt.screenCenter(X);
 		scoreTxt.y = healthBar.y + healthBar.border.height + 8;
-
-		updateTimeTxt();
+		timeTxt.screenCenter(X);
 		timeTxt.y = play.downscroll ? (FlxG.height - timeTxt.height - 14) : (14);
 
 		updateIconPos();
@@ -117,26 +116,24 @@ class BaseHud extends ClassHud
 	override function updateScoreTxt()
 	{
 		if (!validScore)
+		{
+			scoreTxt.text = badScoreText;
+			scoreTxt.color = FlxColor.RED;
 			return;
+		}
 
-		var scoreText:String = "";
-		scoreText += 'Misses: ' + Timings.misses + separator;
-		scoreText += 'Accuracy: ' + Timings.accuracy + "%" + ' [${Timings.getRank()}]' + separator;
-		scoreText += 'Score: ' + FlxStringUtil.formatMoney(Timings.score, false, true);
-
-		scoreTxt.text = scoreText;
-		scoreTxt.screenCenter(X);
+		super.updateScoreTxt();
+		scoreTxt.text = defaultScoreText;
 	}
 
-	public var songTime:Float = 0.0;
-
-	function updateTimeTxt()
+	override function updateTimeTxt()
 	{
+		timeTxt.visible = (Save.data.songTimer != "OFF");
 		if (!timeTxt.visible)
 			return;
-		songTime = FlxMath.bound(Conductor.songPos, 0, play.songLength);
-		timeTxt.text = TextUtil.posToTimer(songTime) + " / " + TextUtil.posToTimer(play.songLength);
-		timeTxt.screenCenter(X);
+
+		super.updateTimeTxt();
+		timeTxt.text = defaultTimeText;
 	}
 
 	override function update(elapsed:Float)
@@ -145,12 +142,9 @@ class BaseHud extends ClassHud
 		healthBar.percent = (health * 50);
 
 		botplayTxt.visible = play.botplay;
-		if (validScore && !play.validScore)
-		{
+		if (validScore && !play.validScore) {
 			validScore = false;
-			scoreTxt.text = badScoreText;
-			scoreTxt.color = FlxColor.RED;
-			scoreTxt.screenCenter(X);
+			updatePositions();
 		}
 		/*if(botplayTxt.visible)
 			{
