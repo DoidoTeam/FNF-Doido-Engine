@@ -1,5 +1,6 @@
 package doido;
 
+import flixel.FlxBasic;
 import flixel.input.FlxInput.FlxInputState;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID as FlxPad;
@@ -10,12 +11,15 @@ import doido.mobile.TouchHandler;
 
 enum abstract DoidoKey(String)
 {
-	// gameplay
+	// notes
 	var LEFT = "left";
 	var DOWN = "down";
 	var UP = "up";
 	var RIGHT = "right";
+	// gameplay
 	var RESET = "reset";
+	var PAUSE = "pause";
+	var DIALOGUE_HISTORY = "dialogue_history";
 	// ui
 	var UI_LEFT = "ui_left";
 	var UI_DOWN = "ui_down";
@@ -23,7 +27,10 @@ enum abstract DoidoKey(String)
 	var UI_RIGHT = "ui_right";
 	var ACCEPT = "accept";
 	var BACK = "back";
-	var PAUSE = "pause";
+	// volume
+	var VOLUME_UP = "volume_up";
+	var VOLUME_DOWN = "volume_down";
+	var VOLUME_MUTE = "volume_mute";
 	// other
 	var ANY = "any";
 	var NONE = "none";
@@ -33,7 +40,6 @@ typedef Binds =
 {
 	var keyboard:Array<FlxKey>;
 	var gamepad:Array<FlxPad>;
-	var rebindable:Bool;
 }
 
 enum InputType
@@ -43,7 +49,7 @@ enum InputType
 	TOUCH;
 }
 
-class InputDelayHandler extends flixel.FlxBasic
+class InputDelayHandler extends FlxBasic
 {
 	public function new()
 	{
@@ -58,90 +64,111 @@ class InputDelayHandler extends flixel.FlxBasic
 	}
 }
 
+class SoundInput extends FlxBasic
+{
+    public static var canChangeVolume:Bool = true;
+
+	public function new() {
+		super();
+		FlxG.sound.muteKeys = [];
+		FlxG.sound.volumeUpKeys = [];
+		FlxG.sound.volumeDownKeys = [];
+	}
+    
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+        if (!canChangeVolume) return;
+
+        if (Controls.justPressed(VOLUME_MUTE))
+            FlxG.sound.toggleMuted();
+        else if (Controls.justPressed(VOLUME_UP))
+            FlxG.sound.changeVolume(0.1);
+        else if (Controls.justPressed(VOLUME_DOWN))
+            FlxG.sound.changeVolume(-0.1);
+	}
+}
+
 class Controls
 {
 	public static var defaultBindMap:Map<DoidoKey, Binds> = [];
 	public static var bindMap:Map<DoidoKey, Binds> = [
-		// GAMEPLAY
+		// NOTES
 		LEFT => {
 			keyboard: [FlxKey.A, FlxKey.LEFT],
 			gamepad: [FlxPad.LEFT_TRIGGER, FlxPad.DPAD_LEFT],
-			rebindable: true
 		},
 		DOWN => {
 			keyboard: [FlxKey.S, FlxKey.DOWN],
 			gamepad: [FlxPad.LEFT_SHOULDER, FlxPad.DPAD_DOWN],
-			rebindable: true
 		},
 		UP => {
 			keyboard: [FlxKey.W, FlxKey.UP],
 			gamepad: [FlxPad.RIGHT_SHOULDER, FlxPad.DPAD_UP],
-			rebindable: true
 		},
 		RIGHT => {
 			keyboard: [FlxKey.D, FlxKey.RIGHT],
 			gamepad: [FlxPad.RIGHT_TRIGGER, FlxPad.DPAD_RIGHT],
-			rebindable: true
 		},
+
+		// GAMEPLAY
 		RESET => {
 			keyboard: [FlxKey.R, FlxKey.NONE],
 			gamepad: [FlxPad.BACK, FlxPad.NONE],
-			rebindable: true
-		},
-		// UI
-		UI_LEFT => {
-			keyboard: [FlxKey.A, FlxKey.LEFT],
-			gamepad: [FlxPad.LEFT_STICK_DIGITAL_LEFT, FlxPad.DPAD_LEFT],
-			rebindable: false
-		},
-		UI_DOWN => {
-			keyboard: [FlxKey.S, FlxKey.DOWN],
-			gamepad: [FlxPad.LEFT_STICK_DIGITAL_DOWN, FlxPad.DPAD_DOWN],
-			rebindable: false
-		},
-		UI_UP => {
-			keyboard: [FlxKey.W, FlxKey.UP],
-			gamepad: [FlxPad.LEFT_STICK_DIGITAL_UP, FlxPad.DPAD_UP],
-			rebindable: false
-		},
-		UI_RIGHT => {
-			keyboard: [FlxKey.D, FlxKey.RIGHT],
-			gamepad: [FlxPad.LEFT_STICK_DIGITAL_RIGHT, FlxPad.DPAD_RIGHT],
-			rebindable: false
-		},
-		ACCEPT => {
-			keyboard: [FlxKey.SPACE, FlxKey.ENTER],
-			gamepad: [FlxPad.A, FlxPad.X, FlxPad.START],
-			rebindable: false
-		},
-		BACK => {
-			keyboard: [FlxKey.BACKSPACE, FlxKey.ESCAPE],
-			gamepad: [FlxPad.B],
-			rebindable: false
 		},
 		PAUSE => {
 			// temp
 			keyboard: [/*FlxKey.ESCAPE,*/ FlxKey.ENTER],
 			gamepad: [FlxPad.START],
-			rebindable: false
 		},
-	];
+		DIALOGUE_HISTORY => {
+			// temp
+			keyboard: [FlxKey.TAB],
+			gamepad: [FlxPad.Y],
+		},
 
-	public static function setSoundKeys(?empty:Bool = false)
-	{
-		if (empty)
-		{
-			FlxG.sound.muteKeys = [];
-			FlxG.sound.volumeDownKeys = [];
-			FlxG.sound.volumeUpKeys = [];
-		}
-		else
-		{
-			FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
-			FlxG.sound.volumeDownKeys = [MINUS, NUMPADMINUS];
-			FlxG.sound.volumeUpKeys = [PLUS, NUMPADPLUS];
-		}
-	}
+		// UI
+		UI_LEFT => {
+			keyboard: [FlxKey.A, FlxKey.LEFT],
+			gamepad: [FlxPad.LEFT_STICK_DIGITAL_LEFT, FlxPad.DPAD_LEFT],
+		},
+		UI_DOWN => {
+			keyboard: [FlxKey.S, FlxKey.DOWN],
+			gamepad: [FlxPad.LEFT_STICK_DIGITAL_DOWN, FlxPad.DPAD_DOWN],
+		},
+		UI_UP => {
+			keyboard: [FlxKey.W, FlxKey.UP],
+			gamepad: [FlxPad.LEFT_STICK_DIGITAL_UP, FlxPad.DPAD_UP],
+		},
+		UI_RIGHT => {
+			keyboard: [FlxKey.D, FlxKey.RIGHT],
+			gamepad: [FlxPad.LEFT_STICK_DIGITAL_RIGHT, FlxPad.DPAD_RIGHT],
+		},
+		ACCEPT => {
+			keyboard: [FlxKey.SPACE, FlxKey.ENTER],
+			gamepad: [FlxPad.A, FlxPad.X, FlxPad.START],
+		},
+		BACK => {
+			keyboard: [FlxKey.BACKSPACE, FlxKey.ESCAPE],
+			gamepad: [FlxPad.B],
+		},
+
+		// VOLUME
+		VOLUME_UP => {
+			keyboard: [FlxKey.PLUS, FlxKey.NUMPADPLUS],
+			gamepad: [FlxPad.RIGHT_STICK_DIGITAL_UP, FlxPad.RIGHT_STICK_DIGITAL_RIGHT],
+		},
+		VOLUME_DOWN => {
+			keyboard: [FlxKey.MINUS, FlxKey.NUMPADMINUS],
+			gamepad: [FlxPad.RIGHT_STICK_DIGITAL_DOWN, FlxPad.RIGHT_STICK_DIGITAL_LEFT],
+		},
+		VOLUME_MUTE => {
+			keyboard: [FlxKey.ZERO, FlxKey.NUMPADZERO],
+			gamepad: [FlxPad.RIGHT_STICK_CLICK],
+		},
+
+		// DEBUG
+	];
 
 	public static inline function justPressed(bind:DoidoKey):Bool
 		return checkBind(bind, JUST_PRESSED);

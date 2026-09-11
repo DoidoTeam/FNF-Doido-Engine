@@ -128,6 +128,7 @@ class Main extends Sprite
 
 		// PLUGINS!!
 		FlxG.plugins.addPlugin(new InputDelayHandler());
+		FlxG.plugins.addPlugin(new SoundInput());
 		#if SCREENSHOT_FEATURE
 		FlxG.plugins.addPlugin(new doido.system.Screenshot());
 		#end

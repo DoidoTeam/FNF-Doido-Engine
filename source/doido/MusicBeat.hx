@@ -192,7 +192,7 @@ class MusicBeatState extends FlxUIState
 		persistentUpdate = false;
 		FlxG.animationTimeScale = 1.0;
 
-		Controls.setSoundKeys();
+		SoundInput.canChangeVolume = true;
 
 		if (!MusicBeat.skipClearCache)
 			Cache.clearCache();
