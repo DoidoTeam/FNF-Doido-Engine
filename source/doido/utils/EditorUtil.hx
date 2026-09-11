@@ -1,5 +1,6 @@
 package doido.utils;
 
+import doido.objects.ui.PsychUIInputText;
 import flixel.text.FlxInputText;
 import lime.app.Application;
 import lime.ui.MouseCursor;
@@ -120,5 +121,5 @@ class EditorUtil
 	public static var isTyping(get, never):Bool;
 
 	public static function get_isTyping()
-		return FlxInputText.globalManager.isTyping;
+		return FlxInputText.globalManager.isTyping || PsychUIInputText.focusOn != null;
 }

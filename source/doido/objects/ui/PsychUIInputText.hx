@@ -428,11 +428,6 @@ class PsychUIInputText extends FlxSpriteGroup
 		}
 		focusOn = v;
 
-		if (focusOn != null)
-			SoundInput.canChangeVolume = false;
-		else
-			SoundInput.canChangeVolume = true;
-
 		return focusOn;
 	}
 

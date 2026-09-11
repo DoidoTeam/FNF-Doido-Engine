@@ -1,5 +1,6 @@
 package doido;
 
+import doido.utils.EditorUtil;
 import flixel.FlxBasic;
 import flixel.input.FlxInput.FlxInputState;
 import flixel.input.keyboard.FlxKey;
@@ -78,7 +79,7 @@ class SoundInput extends FlxBasic
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-        if (!canChangeVolume) return;
+        if (!canChangeVolume || EditorUtil.isTyping) return;
 
         if (Controls.justPressed(VOLUME_MUTE))
             FlxG.sound.toggleMuted();
