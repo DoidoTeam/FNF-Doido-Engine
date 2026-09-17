@@ -117,7 +117,7 @@ class DiffSelector extends FlxGroup
 		diffSpr.updateHitbox();
 
 		dots.killMembers();
-		if (count > 1)
+		if (count >= 1)
 		{
 			for (i in 0...count + 1)
 			{
@@ -130,7 +130,7 @@ class DiffSelector extends FlxGroup
 		}
 
 		for (arrow in [arrowL, arrowR])
-			arrow.alpha = (count > 1 ? 1.0 : 0.0001);
+			arrow.alpha = (count >= 1 ? 1.0 : 0.0001);
 
 		if (storedY == -1)
 			storedY = diffSpr.y;
