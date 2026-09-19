@@ -1,5 +1,6 @@
 package substates.menus;
 
+import subStates.cutscenes.VideoPlayerSubState;
 import states.editors.InputTestState;
 import doido.objects.ui.DoidoRadio;
 import doido.objects.ui.PsychUIDropDownMenu;
@@ -61,7 +62,7 @@ class DebugSubState extends MusicBeatSubState
 		addOption("character editor", characterEditor);
 		addOption("week editor", () -> MusicBeat.switchState(new StoryMenuState(true)));
 		addOption("scripted state", scriptedState);
-		//addOption("input test", () -> MusicBeat.switchState(new InputTestState()));
+		addOption("video test", () -> openSubState(new VideoPlayerSubState("test")));
 
 		displayGrp = new FlxTypedGroup<Alphabet>();
 		for (i in 0...options.length)

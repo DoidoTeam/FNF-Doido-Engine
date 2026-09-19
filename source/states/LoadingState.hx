@@ -1,5 +1,6 @@
 package states;
 
+import doido.objects.DoidoVideo;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import doido.song.SongHandler.NoteData;
 import objects.ui.notes.Note;
@@ -36,6 +37,10 @@ class LoadingState extends MusicBeatState
 	var loadingPercent:Float = 0.0;
 	var doingWhat:String = "";
 	var loadingBar:FlxSprite;
+
+	var videoList:Array<String> = [];
+	var videoCount:Int = 0;
+	var loadedVideos:Bool = false;
 
 	override function create()
 	{
@@ -96,6 +101,17 @@ class LoadingState extends MusicBeatState
 			loadNotes();
 			loadingPercent = 0.9;
 
+			#if VIDEOS_ALLOWED
+			if (videoList.length > 0)
+			{
+				doingWhat = "Loading Videos";
+				loadVideos();
+				loadingPercent = 0.95;
+			}
+			else
+			#end
+			loadedVideos = true;
+
 			doingWhat = "Finishing...";
 			// Add other assets here, if you need
 			switch (CHART.song)
@@ -103,6 +119,7 @@ class LoadingState extends MusicBeatState
 				default:
 					//
 			}
+
 			loadingPercent = 1.0;
 
 			doingWhat = "Done!";
@@ -143,6 +160,10 @@ class LoadingState extends MusicBeatState
 
 					if (!gfList.contains(stageBuild.gfVersion) || stageBuild.gfVersion != "")
 						gfList.push(stageBuild.gfVersion);
+
+				case "Play Video":
+					if (!videoList.contains(event.data[0]))
+						videoList.push(event.data[0]);
 			}
 		}
 
@@ -313,6 +334,27 @@ class LoadingState extends MusicBeatState
 		}
 	}
 
+	#if VIDEOS_ALLOWED
+	function loadVideos()
+	{
+		for (key in videoList)
+		{
+			var video = new DoidoVideo();
+			video.bitmap.onFormatSetup.add(() ->
+			{
+				Logs.print('Loaded video: $key');
+				videoCount++;
+				if (videoCount == videoList.length)
+					loadedVideos = true;
+			});
+			video.bitmap.volume = 0;
+			video.load(Assets.video(key));
+			video.play();
+			video.pause();
+		}
+	}
+	#end
+
 	override function destroy()
 	{
 		Assets.clearImage(bgFile);
@@ -334,7 +376,7 @@ class LoadingState extends MusicBeatState
 		if (loadingTxt.text != doingWhat)
 			loadingTxt.text = '<color value=#${loadingTxtColor}><wave intensity=2 speed=5>${doingWhat}</wave></color>';
 
-		if (!threadActive && !byeLol)
+		if (!threadActive && !byeLol && loadedVideos)
 		{
 			byeLol = true;
 			MusicBeat.skipClearCache = true;

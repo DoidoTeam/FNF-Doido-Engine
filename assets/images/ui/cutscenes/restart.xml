@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="VideoHUD.png">
+	<!-- Created with Adobe Animate version 24.0.5.40 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="click0000" x="4" y="4" width="177" height="177"/>
+	<SubTexture name="click0001" x="4" y="4" width="177" height="177"/>
+	<SubTexture name="click0002" x="185" y="4" width="177" height="177"/>
+	<SubTexture name="click0003" x="185" y="4" width="177" height="177"/>
+	<SubTexture name="click0004" x="366" y="4" width="177" height="177"/>
+	<SubTexture name="click0005" x="366" y="4" width="177" height="177"/>
+	<SubTexture name="idle0000" x="547" y="4" width="177" height="177"/>
+	<SubTexture name="idle0001" x="547" y="4" width="177" height="177"/>
+	<SubTexture name="idle0002" x="728" y="4" width="177" height="177"/>
+	<SubTexture name="idle0003" x="728" y="4" width="177" height="177"/>
+</TextureAtlas>

@@ -38,7 +38,7 @@ class EventUtil
 		"Screen" => ["Flash Screen", "Fade Screen", "Shake Screen", "Beat Screen", "Auto Beat Screen"],
 		"Gameplay" => ["Change Note Speed", "Freeze Notes"],
 		"Song" => ["BPM Change"],
-		"Misc" => ["Trigger Tag"]
+		"Misc" => ["Play Video", "Trigger Tag"]
 	];
 
 	public static var events:Array<Event> = [
@@ -508,6 +508,23 @@ class EventUtil
 					info: "Modifier that declares where the easing is applied to the tween.",
 					defaultValue: "InOut",
 					options: TweenUtil.availableModifiers
+				}
+			]
+		},
+		{
+			name: "Play Video",
+			desc: "Plays a video cutscene.",
+			values: [
+				{
+					name: "Video",
+					info: "Which video file to play.",
+					defaultValue: ""
+				},
+				{
+					name: "Camera",
+					info: "Which camera to overlay the video on.",
+					defaultValue: "Other",
+					options: PlayState.availableCameras
 				}
 			]
 		},

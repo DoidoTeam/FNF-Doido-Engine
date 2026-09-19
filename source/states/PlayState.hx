@@ -1,5 +1,6 @@
 package states;
 
+import substates.cutscenes.CutscenePauseSubState;
 import doido.utils.TweenUtil;
 import shaders.ShaderCache;
 import doido.objects.DoidoCamera;
@@ -26,6 +27,9 @@ import substates.PauseSubState;
 import doido.song.Week.WeekData;
 #if TOUCH_CONTROLS
 import doido.objects.DoidoHitbox;
+#end
+#if VIDEOS_ALLOWED
+import doido.objects.DoidoVideo;
 #end
 
 using doido.utils.ScriptUtil;
@@ -96,6 +100,15 @@ class PlayState extends MusicBeatState implements Playable
 	public var middlescroll:Bool;
 	public var validScore:Bool = true;
 	public var practice:Bool = false;
+
+	// helps avoid sync issues when pausing
+	public var canTweenSpeed:Bool = true;
+	public var inCutscene:Bool = false;
+
+	// callbacks for cutscene pausing
+	public var pauseCallback:Bool->Void;
+	public var skipCallback:Void->Void;
+	public var restartCallback:Void->Void;
 
 	#if TOUCH_CONTROLS
 	var pauseButton:DoidoHitbox;
@@ -256,6 +269,8 @@ class PlayState extends MusicBeatState implements Playable
 			audio.play(Conductor.songPos);
 			startedSong = true;
 			startedCountdown = true;
+			paused = false;
+			canPause = true;
 			updateStep();
 
 			for (note in CHART.notes)
@@ -279,6 +294,8 @@ class PlayState extends MusicBeatState implements Playable
 					strum.alpha = 0.0001;
 				}
 			}
+
+			startCountdown();
 		}
 
 		followCamera("dad");
@@ -644,6 +661,13 @@ class PlayState extends MusicBeatState implements Playable
 		callScript("playEvent", [name, data]);
 		switch (name)
 		{
+			case "Play Video":
+				#if VIDEOS_ALLOWED
+				playVideo(data[0], strToCam(data[1]));
+				#else
+				Logs.print('Videos are disabled!!! Enable them in your Project.xml to play "${data[0]}"', WARNING);
+				#end
+
 			case "Play Animation":
 				var char = strToChar(data[0]);
 				char.playAnim(data[1], true);
@@ -821,11 +845,11 @@ class PlayState extends MusicBeatState implements Playable
 	{
 		audio.play();
 		startedSong = true;
+		callScript("startSong");
 	}
 
 	public function pauseSong(?gamepadDisconnected:Bool = false)
 	{
-		paused = true;
 		for (snd in FlxG.sound.list)
 		{
 			snd.pause();
@@ -833,12 +857,42 @@ class PlayState extends MusicBeatState implements Playable
 		audio.pause();
 		audio.speed = 0.0;
 		MusicBeat.activateTimers(false);
-		openSubState(new PauseSubState(gamepadDisconnected));
+
+		if (inCutscene && pauseCallback != null)
+			pauseCallback(true);
+
+		if (!startingCutscene)
+		{
+			paused = true;
+			openSubState(new PauseSubState(gamepadDisconnected));
+		}
+		else
+		{
+			openSubState(new CutscenePauseSubState((exit) ->
+			{
+				switch (exit)
+				{
+					case SKIP:
+						if (skipCallback != null) skipCallback();
+					case RESTART:
+						if (restartCallback != null) restartCallback();
+					default:
+						// nothin?
+				}
+
+				unpauseSong();
+			}));
+		}
 	}
 
 	public function unpauseSong()
 	{
-		paused = false;
+		if (!startingCutscene)
+			paused = false;
+
+		if (inCutscene && pauseCallback != null)
+			pauseCallback(false);
+
 		for (snd in FlxG.sound.list)
 		{
 			snd.resume();
@@ -850,7 +904,7 @@ class PlayState extends MusicBeatState implements Playable
 				audio.play();
 
 			FlxTween.cancelTweensOf(audio);
-			if (Save.data.slowdownUnpause)
+			if (Save.data.slowdownUnpause && canTweenSpeed)
 				FlxTween.tween(audio, {speed: defaultSongSpeed}, 0.6, {ease: FlxEase.sineIn});
 			else
 				audio.speed = defaultSongSpeed;
@@ -863,6 +917,9 @@ class PlayState extends MusicBeatState implements Playable
 	{
 		if (isDead)
 			return;
+
+		if (inCutscene && pauseCallback != null)
+			pauseCallback(false);
 
 		isDead = true;
 		paused = true;
@@ -961,11 +1018,84 @@ class PlayState extends MusicBeatState implements Playable
 		hudClass.stepHit(curStep);
 	}
 
+	#if VIDEOS_ALLOWED
+	public var video:DoidoVideo;
+
+	public function playVideo(key:String, ?cam:DoidoCamera):Void
+	{
+		if (inCutscene || !Assets.fileExists('videos/$key', VIDEO))
+			return;
+
+		cam ??= camOther;
+
+		if (!startedSong)
+			paused = true;
+
+		inCutscene = true;
+		canTweenSpeed = false;
+
+		video = new DoidoVideo();
+		video.antialiasing = Save.data.antialiasing;
+		video.cameras = [cam];
+		video.load(Assets.video(key));
+		add(video);
+
+		video.exitSignal.add(() ->
+		{
+			video.destroy();
+			paused = false;
+			inCutscene = false;
+			canTweenSpeed = true;
+
+			pauseCallback = null;
+			skipCallback = null;
+			restartCallback = null;
+		});
+
+		pauseCallback = (paused) ->
+		{
+			// ???????????
+			if (!paused)
+				video.resume();
+			else
+				video.pause();
+		};
+
+		skipCallback = () ->
+		{
+			video.finish();
+		};
+
+		restartCallback = () ->
+		{
+			video.restart();
+		};
+
+		video.play();
+
+		/*
+			// regular cutscene, with pause enabled
+			// NOTE: DONT FORGET TO FIGURE OUT SONG END CUTSCENE
+			paused = true;
+			canPause = false;
+			openSubState(new VideoPlayerSubState(key, function() {
+				paused = false;
+				canPause = true;
+				inCutscene = false;
+		}));*/
+	}
+	#end
+
+	public function startCountdown()
+	{
+		startedCountdown = true;
+		paused = false;
+		canPause = true;
+		callScript("startCountdown");
+	}
+
 	public function countDown(count:Int)
 	{
-		if (!startedCountdown)
-			startedCountdown = true;
-
 		switch (count)
 		{
 			case 0:
@@ -1007,6 +1137,8 @@ class PlayState extends MusicBeatState implements Playable
 				});
 			}
 		}
+
+		callScript("countDown", [count]);
 	}
 
 	public function noteIntro()
@@ -1064,6 +1196,11 @@ class PlayState extends MusicBeatState implements Playable
 		return retValues;
 	}
 
+	public var startingCutscene(get, never):Bool;
+
+	public function get_startingCutscene():Bool
+		return inCutscene && !startedSong;
+
 	public var player1(get, never):String;
 
 	public function get_player1():String
@@ -1111,7 +1248,7 @@ class PlayState extends MusicBeatState implements Playable
 	}
 
 	public var curSong(get, never):String;
-	
+
 	public function get_curSong():String
 		return CHART.song;
 }
