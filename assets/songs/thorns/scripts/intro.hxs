@@ -49,16 +49,23 @@ function createPost()
 
     pauseCallback = (isPause:Bool) -> {
         if(isPause)
+        {
             senpaiDies.pause();
+            ambiance.pause();
+        }
         else
+        {
             senpaiDies.resume();
+            ambiance.resume();
+        }
+           
     };
 
     senpaiDies = new FlxSound();
     senpaiDies.loadEmbedded(Assets.sound('senpai_dies'), false, true, skipCallback);
 
     ambiance = new FlxSound();
-    ambiance.loadEmbedded(Assets.music('lunchbox-scary'));
+    ambiance.loadEmbedded(Assets.music('lunchbox-scary'), true);
     ambiance.play();
 }
 
