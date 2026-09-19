@@ -1,14 +1,33 @@
 package doido.objects;
 
+import flixel.util.FlxSignal;
+
 #if hxvlc
 import hxvlc.flixel.FlxVideoSprite;
 
-// To-Do: Figure out if we need to change anything
 class DoidoVideo extends FlxVideoSprite
 {
-	/**
-	 * Restarts video from the beginning
-	 */
+	public var exitSignal:FlxSignal = new FlxSignal();
+
+	public function new()
+	{
+		super();
+
+		bitmap.onEndReached.add(exitSignal.dispatch);
+		bitmap.onFormatSetup.add(function():Void {
+			if (bitmap != null && bitmap.bitmapData != null) {
+				setGraphicSize(FlxG.width, FlxG.height);
+				updateHitbox();
+				screenCenter();
+			}
+		});
+	}
+
+	public function finish():Void
+	{
+		exitSignal.dispatch();
+	}
+	
 	public inline function restart():Void
 	{
 		if (bitmap != null)
@@ -25,27 +44,15 @@ import openfl.net.NetConnection;
 import openfl.net.NetStream;
 import flixel.FlxSprite;
 
-/**
- * Taken from base game.
- * To-Do: Figure out what to improve
- */
 class DoidoVideo extends FlxSprite
 {
-	var video:Video;
-	var netStream:NetStream;
-	var videoPath:String;
+	private var video:Video;
+	private var netStream:NetStream;
+	private var videoPath:String;
 
-	/**
-	 * A callback to execute when the video finishes.
-	 */
-	public var finishCallBack:Void->Void;
+	public var exitSignal:FlxSignal = new FlxSignal();
 
-	/**
-	 * A callback meant to close the video when it finishes.
-	 */
-	public var closeCallBack:Void->Void;
-
-	public function new(videoPath:String)
+	public function new()
 	{
 		super();
 
@@ -57,33 +64,43 @@ class DoidoVideo extends FlxSprite
 		video.alpha = 0;
 
 		FlxG.game.addChild(video);
+	}
+
+	public function load(videoPath:String)
+	{
+		this.videoPath = videoPath;
 
 		var netConnection:NetConnection = new NetConnection();
 		netConnection.connect(null);
-
 		netStream = new NetStream(netConnection);
-		netStream.client = {onMetaData: onClientMetaData};
-		netConnection.addEventListener(NetStatusEvent.NET_STATUS, onNetConnectionNetStatus);
+		netStream.client = {onMetaData: onMetaData};
+		netConnection.addEventListener(NetStatusEvent.NET_STATUS, onStatusEvent);
+	}
+
+	public function play():Void
+	{
 		netStream.play(videoPath);
 	}
 
-	/**
-	 * Tell the DoidoVideoSprite to pause playback.
-	 */
 	public function pause():Void
 	{
 		if (netStream != null)
 			netStream.pause();
 	}
 
-	/**
-	 * Tell the DoidoVideoSprite to resume if it is paused.
-	 */
 	public function resume():Void
 	{
-		// Resume playing the video.
 		if (netStream != null)
 			netStream.resume();
+	}
+
+	public function restart():Void
+	{
+		if (netStream != null)
+		{
+			netStream.seek(0);
+			netStream.play(videoPath);
+		}
 	}
 
 	var videoAvailable:Bool = false;
@@ -103,33 +120,15 @@ class DoidoVideo extends FlxSprite
 
 		if (videoAvailable)
 			frameTimer += elapsed;
+
+		if (Controls.justPressed(VOLUME_MUTE) || Controls.justPressed(VOLUME_UP) || Controls.justPressed(VOLUME_DOWN))
+			updateVolume();
 	}
 
-	/**
-	 * Tell the DoidoVideoSprite to seek to the beginning.
-	 */
-	public function restart():Void
-	{
-		// Seek to the beginning of the video.
-		if (netStream != null)
-		{
-			netStream.seek(0);
-			netStream.play(videoPath);
-		}
-	}
-
-	/**
-	 * Tell the DoidoVideoSprite to end.
-	 */
 	public function finish():Void
 	{
 		FlxG.removeChild(video);
-
-		if (finishCallBack != null)
-			finishCallBack();
-
-		if (closeCallBack != null)
-			closeCallBack();
+		exitSignal.dispatch();
 	}
 
 	public override function destroy():Void
@@ -141,35 +140,27 @@ class DoidoVideo extends FlxSprite
 			if (FlxG.game.contains(video))
 				FlxG.game.removeChild(video);
 		}
+
 		super.destroy();
 	}
 
-	/**
-	 * Callback executed when the video stream loads.
-	 * @param metaData The metadata of the video
-	 */
-	public function onClientMetaData(metaData:Dynamic):Void
+	public function updateVolume():Void
 	{
-		video.attachNetStream(netStream);
-		onVideoReady();
+		netStream.soundTransform = new SoundTransform(FlxG.sound.muted ? 0 : FlxG.sound.volume);
 	}
 
-	function onVideoReady():Void
+	public function onMetaData(metaData:Dynamic)
 	{
+		video.attachNetStream(netStream);
 		video.width = FlxG.width;
 		video.height = FlxG.height;
 		videoAvailable = true;
-
-		onVolumeChanged(FlxG.sound.muted ? 0 : FlxG.sound.volume);
+		
 		makeGraphic(Std.int(video.width), Std.int(video.height), FlxColor.TRANSPARENT);
+		updateVolume();
 	}
 
-	function onVolumeChanged(volume:Float):Void
-	{
-		netStream.soundTransform = new SoundTransform(volume);
-	}
-
-	function onNetConnectionNetStatus(event:NetStatusEvent):Void
+	public function onStatusEvent(event:NetStatusEvent)
 	{
 		if (event.info.code == 'NetStream.Play.Complete')
 			finish();

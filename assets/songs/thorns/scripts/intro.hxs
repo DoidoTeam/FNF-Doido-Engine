@@ -1,0 +1,84 @@
+import flixel.sound.FlxSound;
+import flixel.util.FlxTimer;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
+
+var senpaiDies:FlxSound;
+var ambiance:FlxSound;
+var red:FlxSprite;
+var spirit:FlxSprite;
+var senpaiDies:FlxSound;
+
+function createPost()
+{
+    red = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFFff1b31);
+    red.cameras = [camHUD];
+    red.scrollFactor.set();
+    red.screenCenter();
+    add(red);
+    
+    spirit = new FlxSprite();
+    spirit.frames = Assets.sparrow('stages/school/senpaiCrazy');
+    spirit.animation.addByPrefix('dies', 'Senpai Pre Explosion', 24, false);
+    spirit.antialiasing = false;
+    spirit.scale.set(5,5);
+    spirit.updateHitbox();
+    spirit.cameras = [camHUD];
+    spirit.scrollFactor.set();
+    spirit.screenCenter();
+    spirit.x += 80;
+    spirit.y -= 20;
+    add(spirit);
+    
+    spirit.alpha = 0;
+
+    skipCallback = () -> {
+        MusicBeat.flash(camHUD, 0.6, 0xFFff1b31, true);
+        senpaiDies.stop();
+    
+        remove(red);
+        remove(spirit);
+        remove(senpaiDies);
+
+        new FlxTimer().start(0.8, function(tmr:FlxTimer)
+        {
+            inCutscene = false;
+            paused = false;
+        });
+    };
+
+    pauseCallback = (isPause:Bool) -> {
+        if(isPause)
+            senpaiDies.pause();
+        else
+            senpaiDies.resume();
+    };
+
+    senpaiDies = new FlxSound();
+    senpaiDies.loadEmbedded(Assets.sound('senpai_dies'), false, true, skipCallback);
+
+    ambiance = new FlxSound();
+    ambiance.loadEmbedded(Assets.music('lunchbox-scary'));
+    ambiance.play();
+}
+
+function startCountdown()
+{
+    // stop the countdown from happening
+    paused = true;
+    inCutscene = true;
+
+    new FlxTimer().start(0.6, function(tmr:FlxTimer)
+    {
+        spirit.animation.play('dies');
+        FlxTween.tween(spirit, {alpha: 1}, 0.5);
+        FlxTween.tween(spirit, {alpha: 0}, 1.0, {startDelay: 3.2});
+
+        senpaiDies.play();
+    });
+}
+
+function startSong()
+{
+    ambiance.stop();
+}

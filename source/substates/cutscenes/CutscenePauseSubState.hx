@@ -33,17 +33,17 @@ class CutscenePauseSubState extends MusicBeatSubState
 	private var lockMovement:Bool = true;
 	private var holdSkip:Bool = false;
 	private var skipProgress:Float = 0.0;
-	private var exiting:Bool = false;
 
-	private var finishCallBack:ExitSignal = new ExitSignal();
+	private var exitSignal:ExitSignal = new ExitSignal();
 
 	public function new(?finishCallBack:PauseExit->Void)
 	{
 		super();
-		this.finishCallBack.add(finishCallBack);
 		this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 		FlxG.sound.music?.pause();
-		FlxG.sound.play(Assets.sound('menu/cancelMenu'), 0.7);
+
+		if(finishCallBack != null)
+			exitSignal.add(finishCallBack);
 
 		darkBG = new FlxSprite().makeGraphic(FlxG.width + 10, FlxG.height + 10, 0xFF000000);
 		darkBG.alpha = 0.0001;
@@ -83,19 +83,14 @@ class CutscenePauseSubState extends MusicBeatSubState
 					btn.animation.play(finishAnim);
 			}
 
-			#if (flixel < "5.9.0")
-			btn.animation.finishCallback = endAnim;
-			#else
 			btn.animation.onFinish.add(endAnim);
-			#end
-
 			btn.ID = i;
 			btn.animation.play('idle');
 			buttons.add(btn);
 		}
 		changeSelection(0);
 
-		pieDial = new FlxPieDial(0, 0, 48, FlxColor.WHITE, 72, CIRCLE, false);
+		pieDial = new FlxPieDial(0, 0, 48, FlxColor.WHITE, 72, CIRCLE, false, 28);
 		pieDial.x = 80 + (170 * buttons.members.length);
 		pieDial.y = (FlxG.height - 184 - 30 + (pieDial.height / 2));
 		pieDial.replaceColor(FlxColor.BLACK, FlxColor.TRANSPARENT);
@@ -107,7 +102,6 @@ class CutscenePauseSubState extends MusicBeatSubState
 
 	public function moveButtons(moveIn:Bool)
 	{
-		lockControls = true;
 		lockMovement = true;
 
 		for (btn in buttons.members)
@@ -145,7 +139,7 @@ class CutscenePauseSubState extends MusicBeatSubState
 		{
 			curSelected += change;
 			curSelected = FlxMath.wrap(curSelected, 0, buttonNames.length - 1);
-			FlxG.sound.play(Assets.sound('menu/scrollMenu'), 0.7);
+			FlxG.sound.play(Assets.sound('scroll'), 0.7);
 
 			if (!lockMovement)
 			{
@@ -190,7 +184,7 @@ class CutscenePauseSubState extends MusicBeatSubState
 
 			if (Controls.justPressed(BACK))
 			{
-				FlxG.sound.play(Assets.sound('menu/cancelMenu'), 0.7);
+				FlxG.sound.play(Assets.sound('cancel'), 0.7);
 				moveButtons(false);
 				end(UNPAUSE, 0.9);
 			}
@@ -202,18 +196,18 @@ class CutscenePauseSubState extends MusicBeatSubState
 					if (Controls.justPressed(ACCEPT))
 					{
 						curBtn.animation.play('hold');
-						FlxG.sound.play(Assets.sound('menu/scrollMenu'), 0.7);
+						FlxG.sound.play(Assets.sound('scroll'), 0.7);
 					}
 					if (Controls.released(ACCEPT))
 					{
 						curBtn.animation.play('release');
-						FlxG.sound.play(Assets.sound('menu/scrollMenu'), 0.7);
+						FlxG.sound.play(Assets.sound('scroll'), 0.7);
 					}
 				case "restart":
-					if (Controls.justPressed(ACCEPT) && !exiting)
+					if (Controls.justPressed(ACCEPT))
 					{
 						curBtn.animation.play('click');
-						FlxG.sound.play(Assets.sound('menu/cancelMenu'), 0.7);
+						FlxG.sound.play(Assets.sound('scroll'), 0.7);
 
 						var time:Float = 0.3;
 
@@ -233,7 +227,7 @@ class CutscenePauseSubState extends MusicBeatSubState
 					if (Controls.justPressed(ACCEPT))
 					{
 						curBtn.animation.play('click');
-						FlxG.sound.play(Assets.sound('menu/cancelMenu'), 0.7);
+						FlxG.sound.play(Assets.sound('cancel'), 0.7);
 						moveButtons(false);
 						end(UNPAUSE, 0.9);
 					}
@@ -253,14 +247,14 @@ class CutscenePauseSubState extends MusicBeatSubState
 
 	private function end(type:PauseExit, timer:Float = 0)
 	{
-		if (exiting)
+		if (lockControls)
 			return;
-		exiting = true;
+		lockControls = true;
 
 		function exit(type:PauseExit)
 		{
-			if (finishCallBack != null)
-				finishCallBack.dispatch(type);
+			if (exitSignal != null)
+				exitSignal.dispatch(type);
 			close();
 		}
 

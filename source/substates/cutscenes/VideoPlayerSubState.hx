@@ -22,54 +22,30 @@ class VideoPlayerSubState extends MusicBeatSubState
         this.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
         FlxG.sound.music?.pause();
 
-        #if hxvlc
         video = new DoidoVideo();
-		video.antialiasing = Save.data.antialiasing;
-
-		video.bitmap.onFormatSetup.add(function():Void {
-			if (video.bitmap != null && video.bitmap.bitmapData != null) {
-				video.setGraphicSize(FlxG.width, FlxG.height);
-				video.updateHitbox();
-				video.screenCenter();
-			}
-		});
-
-        video.bitmap.onEndReached.add(function():Void {
+        video.antialiasing = Save.data.antialiasing;
+        video.exitSignal.add(() -> {
+            if(finishCallBack != null)
+                finishCallBack();
             close();
         });
-
-        if(finishCallBack != null) 
-            video.bitmap.onEndReached.add(finishCallBack);
-
         video.load(Assets.video(key));
         add(video);
-        
+
         new FlxTimer().start(0.001, function(tmr) {
             video.play();
         });
-        #else
-        video = new DoidoVideo(Paths.video(key));
-		add(video);
-
-        video.closeCallBack = close;
-        
-        if(finishCallBack != null) 
-            video.finishCallBack = finishCallBack;
-        #end
     }
 
     public function pauseVideo()
     {
-        FlxG.sound.play(Assets.sound('menu/cancelMenu'), 0.7);
+        FlxG.sound.play(Assets.sound('cancel'), 0.7);
         video.pause();
         
         openSubState(new CutscenePauseSubState(function(exit:PauseExit) {
             switch(exit) {
                 case SKIP:
-                    #if html5
                     video.finish();
-                    #end
-                    
                     close();
                 case RESTART:
                     video.restart();
@@ -101,7 +77,7 @@ class VideoPlayerSubState extends MusicBeatSubState
     public function new(key:String)
     {
         super();
-        Logs.print('Videos are disabled!! Enable them at "Project.xml" to play "${key}"', WARNING);
+        Logs.print('Videos are disabled!!! Enable them in your Project.xml to play "${key}"', WARNING);
     }
 
     override function create()
