@@ -37,7 +37,7 @@
 	<define name="EXTERNAL_PATH" 	    if="MODS_FOLDER" unless="desktop"/>
 
 	<!--Comment-this-to-disable-videos-in-your-mod-->
-	<!--<define name="VIDEOS_ALLOWED" 		if="desktop || android || html5"/>-->
+	<define name="VIDEOS_ALLOWED" 		if="desktop || android"/>
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 

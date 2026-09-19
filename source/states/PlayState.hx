@@ -72,8 +72,8 @@ class PlayState extends MusicBeatState implements Playable
 	public var curFocus:String = "";
 	public var maxDisplace:DoidoPoint = {x: 0, y: 0};
 
-	public var paused:Bool = false;
-	public var canPause:Bool = true;
+	public var paused:Bool = true;
+	public var canPause:Bool = false;
 
 	public var audio:AudioHandler;
 	public var countdownSfx:Array<FlxSound> = [];
@@ -256,6 +256,8 @@ class PlayState extends MusicBeatState implements Playable
 			audio.play(Conductor.songPos);
 			startedSong = true;
 			startedCountdown = true;
+			paused = false;
+			canPause = true;
 			updateStep();
 
 			for (note in CHART.notes)
@@ -279,6 +281,13 @@ class PlayState extends MusicBeatState implements Playable
 					strum.alpha = 0.0001;
 				}
 			}
+
+			switch(curSong)
+			{
+				default:
+					startCountdown();
+			}
+			
 		}
 
 		followCamera("dad");
@@ -961,11 +970,15 @@ class PlayState extends MusicBeatState implements Playable
 		hudClass.stepHit(curStep);
 	}
 
+	public function startCountdown()
+	{
+		startedCountdown = true;
+		paused = false;
+		canPause = true;
+	}
+
 	public function countDown(count:Int)
 	{
-		if (!startedCountdown)
-			startedCountdown = true;
-
 		switch (count)
 		{
 			case 0:

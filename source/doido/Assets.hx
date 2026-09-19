@@ -22,6 +22,7 @@ enum Asset
 {
 	IMAGE;
 	SOUND;
+	VIDEO;
 	FONT;
 	TEXT;
 	JSON;
@@ -40,6 +41,7 @@ class Assets
 	public static var extensions:Map<Asset, Array<String>> = [
 		IMAGE => ["png"],
 		SOUND => ["ogg"],
+		VIDEO => ["mp4"],
 		FONT => ["ttf", "otf"],
 		TEXT => ["txt"],
 		JSON => ["json"],
@@ -290,6 +292,9 @@ class Assets
 		}
 		return arr;
 	}
+
+	public static inline function video(key:String, ?library:String = ""):String
+		return getAsset('videos/$key', library, VIDEO, true, false);
 
 	/*
 	 *   AUDIO
