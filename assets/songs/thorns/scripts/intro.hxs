@@ -11,6 +11,11 @@ var senpaiDies:FlxSound;
 
 function createPost()
 {
+    // skipping cutscene if already played
+    if (playedCutscene) {
+        return;
+    }
+    
     red = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFFff1b31);
     red.cameras = [camHUD];
     red.scrollFactor.set();
@@ -42,6 +47,7 @@ function createPost()
 
         new FlxTimer().start(0.8, function(tmr:FlxTimer)
         {
+            ambiance.stop();
             inCutscene = false;
             paused = false;
         });
@@ -71,11 +77,16 @@ function createPost()
 
 function startCountdown()
 {
+    // skipping cutscene if already played
+    if (playedCutscene) {
+        return;
+    }
+
     // stop the countdown from happening
     paused = true;
     inCutscene = true;
 
-    new FlxTimer().start(0.6, function(tmr:FlxTimer)
+    new FlxTimer().start(1.4, function(tmr:FlxTimer)
     {
         spirit.animation.play('dies');
         FlxTween.tween(spirit, {alpha: 1}, 0.5);
@@ -87,5 +98,7 @@ function startCountdown()
 
 function startSong()
 {
-    ambiance.stop();
+    if (!playedCutscene) {
+        ambiance.stop();
+    }
 }

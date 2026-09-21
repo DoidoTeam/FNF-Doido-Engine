@@ -1,3 +1,5 @@
+import states.PlayState;
+
 var bgGirls:FlxSprite;
 
 function create()
@@ -61,11 +63,13 @@ function create()
     }
 }
 
+var leftHit:Bool = false;
 function stepHit(curStep)
 {
     if(curStep % 4 == 0)
     {
-        if(bgGirls.animation.curAnim.name == 'danceLeft')
+        leftHit = !leftHit;
+        if(leftHit)
             bgGirls.animation.play('danceRight', true);
         else
             bgGirls.animation.play('danceLeft', true);
