@@ -1,4 +1,6 @@
 function startCountdown()
 {
-    playVideo("test", camOther);
+    if (!playedCutscene) {
+        playVideo("test", camOther);
+    }
 }

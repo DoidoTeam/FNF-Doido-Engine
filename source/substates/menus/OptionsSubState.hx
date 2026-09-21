@@ -110,7 +110,6 @@ class OptionsSubState extends MusicBeatSubState
 						playState.hudClass.updatePositions();
 					},
 				},
-				// showTimerMS
 				{
 					name: "Show Timer MS",
 					get: () -> Save.data.showTimerMS,

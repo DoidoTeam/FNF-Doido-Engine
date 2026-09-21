@@ -104,7 +104,7 @@ class PlayState extends MusicBeatState implements Playable
 	// helps avoid sync issues when pausing
 	public var canTweenSpeed:Bool = true;
 	public var inCutscene:Bool = false;
-
+	
 	// callbacks for cutscene pausing
 	public var pauseCallback:Bool->Void;
 	public var skipCallback:Void->Void;
@@ -271,6 +271,7 @@ class PlayState extends MusicBeatState implements Playable
 			startedCountdown = true;
 			paused = false;
 			canPause = true;
+			playedCutscene = true;
 			updateStep();
 
 			for (note in CHART.notes)
@@ -573,7 +574,7 @@ class PlayState extends MusicBeatState implements Playable
 			startGameOver();
 
 		if (Save.data.developerMode)
-			debugKeys();
+			debugKeys(elapsed);
 
 		if (canPause)
 		{
@@ -617,7 +618,7 @@ class PlayState extends MusicBeatState implements Playable
 		callScript("updatePost", [elapsed]);
 	}
 
-	function debugKeys()
+	function debugKeys(elapsed:Float = 0)
 	{
 		if (FlxG.keys.justPressed.SEVEN)
 			MusicBeat.switchState(new ChartingState(SONG));
@@ -633,12 +634,14 @@ class PlayState extends MusicBeatState implements Playable
 			MusicBeat.switchState(new CharacterEditor(char.curChar, char == bf, true));
 		}
 
-		if (FlxG.keys.justPressed.ONE)
+		if (FlxG.keys.justPressed.ONE) {
+			validScore = false;
 			endSong();
+		}
 		if (FlxG.keys.justPressed.NINE)
-			camZoom = 0.2;
-		if (FlxG.keys.justPressed.F9)
-			audio.speed = 10;
+			camZoom = (camZoom == 0.2 ? stageBuild.camZoom : 0.2);
+		if (FlxG.keys.pressed.F9)
+			audio.speed = FlxMath.bound(audio.speed + (elapsed * 0.5), 1, 3);
 		if (FlxG.keys.justReleased.F9)
 			audio.speed = defaultSongSpeed;
 	}
@@ -662,11 +665,7 @@ class PlayState extends MusicBeatState implements Playable
 		switch (name)
 		{
 			case "Play Video":
-				#if VIDEOS_ALLOWED
 				playVideo(data[0], strToCam(data[1]));
-				#else
-				Logs.print('Videos are disabled!!! Enable them in your Project.xml to play "${data[0]}"', WARNING);
-				#end
 
 			case "Play Animation":
 				var char = strToChar(data[0]);
@@ -845,6 +844,7 @@ class PlayState extends MusicBeatState implements Playable
 	{
 		audio.play();
 		startedSong = true;
+		playedCutscene = true;
 		callScript("startSong");
 	}
 
@@ -1074,15 +1074,19 @@ class PlayState extends MusicBeatState implements Playable
 		video.play();
 
 		/*
-			// regular cutscene, with pause enabled
-			// NOTE: DONT FORGET TO FIGURE OUT SONG END CUTSCENE
-			paused = true;
-			canPause = false;
-			openSubState(new VideoPlayerSubState(key, function() {
-				paused = false;
-				canPause = true;
-				inCutscene = false;
+		// regular cutscene, with pause enabled
+		// NOTE: DONT FORGET TO FIGURE OUT SONG END CUTSCENE
+		paused = true;
+		canPause = false;
+		openSubState(new VideoPlayerSubState(key, function() {
+			paused = false;
+			canPause = true;
+			inCutscene = false;
 		}));*/
+	}
+	#else
+	public function playVideo(key:String, ?cam:DoidoCamera):Void
+		Logs.print('Videos are disabled!!! Enable them in your Project.xml to play "${data[0]}"', WARNING);
 	}
 	#end
 
