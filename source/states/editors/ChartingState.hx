@@ -218,7 +218,7 @@ class ChartingState extends MusicBeatState
 		quantNotes = EditorSave.data.quantNotes;
 		darkMode = EditorSave.data.darkMode;
 
-		characters = Assets.list("data/characters/", true, JSON).concat(["face"]);
+		characters = Assets.list("data/characters/", true, JSON).concat(["face", "none"]);
 
 		audio = new AudioHandler(CHART.song, CHART.postfix);
 

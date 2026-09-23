@@ -81,6 +81,11 @@ class Character extends DoidoSprite
 
 	public function loadCharacter(reload:Bool = false)
 	{
+		if(curChar == 'none')
+		{
+			kill();
+		}
+
 		if (!reload)
 		{
 			try

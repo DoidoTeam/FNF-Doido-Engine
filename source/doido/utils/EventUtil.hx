@@ -278,7 +278,7 @@ class EventUtil
 					name: "New Character",
 					info: "Which Character to change to.",
 					defaultValue: "face",
-					getOptions: () -> return Assets.list("data/characters/", true, JSON).concat(["face"]),
+					getOptions: () -> return Assets.list("data/characters/", true, JSON).concat(["face", "none"]),
 				},
 			]
 		},
