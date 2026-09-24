@@ -292,7 +292,7 @@ class ChartingState extends MusicBeatState
 		for (char in characters)
 		{
 			var icon:HealthIcon = new HealthIcon();
-			icon.setIcon(char, false, true);
+			icon.setIcon(char, false);
 			icon.destroy();
 		}
 
@@ -332,8 +332,8 @@ class ChartingState extends MusicBeatState
 
 	function reloadIcons()
 	{
-		iconBf.setIcon(META.player1, true, true);
-		iconDad.setIcon(META.player2, false, true);
+		iconBf.setIcon(META.player1, true);
+		iconDad.setIcon(META.player2, false);
 
 		border.setColor(false, iconDad.barColor);
 		border.setColor(true, iconBf.barColor);
