@@ -39,7 +39,7 @@ class HealthIcon extends FlxSprite
 
 	var data:IconData;
 
-	public function setIcon(curIcon:String = "face", isPlayer:Bool = false):HealthIcon
+	public function setIcon(curIcon:String = "face", isPlayer:Bool = false, isEditor:Bool = false):HealthIcon
 	{
 		this.isPlayer = isPlayer;
 		this.curIcon = curIcon;
@@ -52,10 +52,13 @@ class HealthIcon extends FlxSprite
 		catch (e)
 		{
 			if (curIcon.contains('-'))
-				return setIcon(formatChar(curIcon), isPlayer);
+				return setIcon(formatChar(curIcon), isPlayer, isEditor);
 			else
 				data = DEFAULT;
 		}
+
+		if(!isEditor && curIcon == "none")
+			kill();
 
 		var iconPath = data.image ?? curIcon;
 		if (!Assets.fileExists('images/icons/$iconPath', IMAGE))

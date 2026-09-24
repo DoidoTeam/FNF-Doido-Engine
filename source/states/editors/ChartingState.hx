@@ -292,7 +292,7 @@ class ChartingState extends MusicBeatState
 		for (char in characters)
 		{
 			var icon:HealthIcon = new HealthIcon();
-			icon.setIcon(char, false);
+			icon.setIcon(char, false, true);
 			icon.destroy();
 		}
 
@@ -332,8 +332,8 @@ class ChartingState extends MusicBeatState
 
 	function reloadIcons()
 	{
-		iconBf.setIcon(META.player1, true);
-		iconDad.setIcon(META.player2, false);
+		iconBf.setIcon(META.player1, true, true);
+		iconDad.setIcon(META.player2, false, true);
 
 		border.setColor(false, iconDad.barColor);
 		border.setColor(true, iconBf.barColor);
@@ -1241,7 +1241,7 @@ class ChartingState extends MusicBeatState
 		tab.add(createText(getX("margin_right", 145), getY(12) + 10, "Player:", 0xFFD8DAF6));
 
 		var bfIcon = new HealthIcon();
-		bfIcon.setIcon(META.player1, false);
+		bfIcon.setIcon(META.player1, false, true);
 		bfIcon.globalScale = 0.33;
 		bfIcon.setPosition(getX("margin_right", 145) + 145 - bfIcon.width, getY(12) - 10);
 		tab.add(bfIcon);
@@ -1265,7 +1265,7 @@ class ChartingState extends MusicBeatState
 				{
 					test.options = [];
 					bfButton.text = name;
-					bfIcon.setIcon(name, false);
+					bfIcon.setIcon(name, false, true);
 					bfButton.button.setColorTransform(bfIcon.barColor.redFloat, bfIcon.barColor.greenFloat, bfIcon.barColor.blueFloat);
 					META.player1 = name;
 					reloadIcons();
@@ -1281,7 +1281,7 @@ class ChartingState extends MusicBeatState
 		tab.add(bfButton);
 
 		var oppIcon = new HealthIcon();
-		oppIcon.setIcon(META.player2, false);
+		oppIcon.setIcon(META.player2, false, true);
 		oppIcon.globalScale = 0.33;
 		oppIcon.setPosition(getX() + 145 - oppIcon.width, getY(12) - 10);
 		tab.add(oppIcon);
@@ -1305,7 +1305,7 @@ class ChartingState extends MusicBeatState
 				{
 					test.options = [];
 					oppButton.text = name;
-					oppIcon.setIcon(name, false);
+					oppIcon.setIcon(name, false, true);
 					oppButton.button.setColorTransform(oppIcon.barColor.redFloat, oppIcon.barColor.greenFloat, oppIcon.barColor.blueFloat);
 					META.player2 = name;
 					reloadIcons();
@@ -1321,7 +1321,7 @@ class ChartingState extends MusicBeatState
 		tab.add(oppButton);
 
 		var gfIcon = new HealthIcon();
-		gfIcon.setIcon(META.gf, false);
+		gfIcon.setIcon(META.gf, false, true);
 		gfIcon.globalScale = 0.33;
 		gfIcon.setPosition(getX("center", 145) + 145 - gfIcon.width, getY(12) - 10);
 		tab.add(gfIcon);
@@ -1345,7 +1345,7 @@ class ChartingState extends MusicBeatState
 				{
 					test.options = [];
 					gfButton.text = name;
-					gfIcon.setIcon(name, false);
+					gfIcon.setIcon(name, false, true);
 					gfButton.button.setColorTransform(gfIcon.barColor.redFloat, gfIcon.barColor.greenFloat, gfIcon.barColor.blueFloat);
 					META.gf = name;
 					test.buttonId = "";

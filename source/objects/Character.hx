@@ -93,16 +93,14 @@ class Character extends DoidoSprite
 				data = defaultCharacter();
 			}
 		}
-		
-		if(curChar != 'none')
-		{
-			loadSprite();
-		}
-		else
+
+		if(curChar == "none")
 		{
 			kill();
 			return;
 		}
+		
+		loadSprite();
 		
 		for (animData in data.anims)
 			addAnim(animData);
@@ -139,7 +137,7 @@ class Character extends DoidoSprite
 		playAnim(idleAnims[0], true, idleFrames);
 	}
 
-	function loadSprite()
+	public function loadSprite()
 	{
 		spriteType = DoidoSprite.stringToSpriteType(data.spriteType);
 		atlasType = DoidoSprite.stringToAtlasType(data.atlasType);

@@ -268,7 +268,7 @@ class ChooserButton extends FlxSpriteGroup
 		{
 			case CHARACTER:
 				var uhhh = new HealthIcon();
-				uhhh.setIcon(label, false);
+				uhhh.setIcon(label, false, true);
 				icon.loadGraphicFromSprite(uhhh);
 			case EVENT:
 				icon.loadImage(EventUtil.getEventSprite(label));

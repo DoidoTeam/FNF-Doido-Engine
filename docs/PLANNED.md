@@ -7,12 +7,10 @@ If you're unsure about this, or would like to suggest a feature, please [create 
 ## High priority
 - Chart Editor
 - Character Editor
-- Offsets (Music)
 
 ## Medium priority
 - Menus
 - Scriptable HUDs
-- Cutscene support
 - Dialogue support
 - Score Resetting
 - Better UI framework
