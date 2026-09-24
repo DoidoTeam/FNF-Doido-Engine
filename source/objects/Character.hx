@@ -93,18 +93,17 @@ class Character extends DoidoSprite
 				data = defaultCharacter();
 			}
 		}
-
-		spriteType = DoidoSprite.stringToSpriteType(data.spriteType);
-		atlasType = DoidoSprite.stringToAtlasType(data.atlasType);
-
-		var extrasheets:Array<String> = [];
-		if ((data.extrasheets ?? []).length > 0)
+		
+		if(curChar != 'none')
 		{
-			for (sheet in (data.extrasheets ?? []))
-				extrasheets.push('images/$spritePath$sheet');
+			loadSprite();
 		}
-
-		frames = cast Assets.framesCollection('$spritePath${data.spritesheet}', extrasheets, spriteType);
+		else
+		{
+			kill();
+			return;
+		}
+		
 		for (animData in data.anims)
 			addAnim(animData);
 
@@ -138,6 +137,21 @@ class Character extends DoidoSprite
 		updateHitbox();
 
 		playAnim(idleAnims[0], true, idleFrames);
+	}
+
+	function loadSprite()
+	{
+		spriteType = DoidoSprite.stringToSpriteType(data.spriteType);
+		atlasType = DoidoSprite.stringToAtlasType(data.atlasType);
+
+		var extrasheets:Array<String> = [];
+		if ((data.extrasheets ?? []).length > 0)
+		{
+			for (sheet in (data.extrasheets ?? []))
+				extrasheets.push('images/$spritePath$sheet');
+		}
+
+		frames = cast Assets.framesCollection('$spritePath${data.spritesheet}', extrasheets, spriteType);
 	}
 
 	public function singTypeFromString(type:Null<String>)
