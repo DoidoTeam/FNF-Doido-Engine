@@ -93,6 +93,7 @@ class Character extends DoidoSprite
 				data = defaultCharacter();
 			}
 		}
+		
 		if(curChar != 'none')
 		{
 			loadSprite();
@@ -152,7 +153,7 @@ class Character extends DoidoSprite
 
 		frames = cast Assets.framesCollection('$spritePath${data.spritesheet}', extrasheets, spriteType);
 	}
-	
+
 	public function singTypeFromString(type:Null<String>)
 	{
 		singType = switch ((type ?? "").toUpperCase())
