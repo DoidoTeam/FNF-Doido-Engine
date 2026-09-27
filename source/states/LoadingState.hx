@@ -340,6 +340,7 @@ class LoadingState extends MusicBeatState
 		for (key in videoList)
 		{
 			var video = new DoidoVideo();
+			#if hxvlc
 			video.bitmap.onFormatSetup.add(() ->
 			{
 				Logs.print('Loaded video: $key');
@@ -348,6 +349,7 @@ class LoadingState extends MusicBeatState
 					loadedVideos = true;
 			});
 			video.bitmap.volume = 0;
+			#end
 			video.load(Assets.video(key));
 			video.play();
 			video.pause();
