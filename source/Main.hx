@@ -162,6 +162,7 @@ class Main extends Sprite
 		if (e.keyCode == FlxKey.ENTER && e.altKey)
 			e.stopImmediatePropagation();
 		#end
+		
 		#if debug
 		if (e.keyCode == FlxKey.F2 && e.shiftKey)
 			FlxG.debugger.visible = !FlxG.debugger.visible;
