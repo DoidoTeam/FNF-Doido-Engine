@@ -25,12 +25,6 @@ class TitleState extends MusicBeatState
 
 	public static var introEnded:Bool = false;
 
-	public function new()
-	{
-		super();
-		loadScript();
-	}
-
 	override function create()
 	{
 		super.create();
@@ -100,7 +94,6 @@ class TitleState extends MusicBeatState
 		ngSpr.zIndex = 120;
 		add(ngSpr);
 
-		callScript("createPost");
 		sort(ZIndex.sort);
 		addText([]);
 
@@ -133,7 +126,6 @@ class TitleState extends MusicBeatState
 			else
 				skipIntro();
 		}
-		callScript("updatePost", [elapsed]);
 	}
 
 	override function beatHit()
@@ -194,7 +186,6 @@ class TitleState extends MusicBeatState
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.time = (Conductor.crochet * 16);
 
-		callScript("skipIntro", [force]);
 		addText([]);
 		ngSpr.visible = false;
 		MusicBeat.flash(Conductor.crochet * 4 / 1000, 0xFFFFFFFF);

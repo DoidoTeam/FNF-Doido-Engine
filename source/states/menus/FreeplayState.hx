@@ -73,7 +73,6 @@ class FreeplayState extends MusicBeatState
 		super();
 		if (weeks != null)
 			this.weeks = weeks;
-		loadScript();
 	}
 
 	override function create()
@@ -138,7 +137,6 @@ class FreeplayState extends MusicBeatState
 		missesTxt.zIndex = 110;
 		add(missesTxt);
 
-		callScript("createPost");
 		reloadSongs();
 		sort(ZIndex.sort);
 	}
@@ -193,7 +191,6 @@ class FreeplayState extends MusicBeatState
 			return;
 		}
 
-		callScript("reloadSongs");
 		namesGrp.killMembers();
 		var i = 0;
 		for (song in songs)
@@ -211,27 +208,23 @@ class FreeplayState extends MusicBeatState
 			i++;
 		}
 
-		callScript("reloadSongsPost");
 		changeSelection();
 		updatePos();
 	}
 
 	public function updatePos(lerp:Float = 1)
 	{
-		if (callScript("updatePos", [lerp]) ?? true)
+		bg.y = FlxMath.lerp(bg.y, bgPosY, lerp);
+
+		namesGrp.forEachAlive((alphabet) ->
 		{
-			bg.y = FlxMath.lerp(bg.y, bgPosY, lerp);
+			var daPos:Int = (alphabet.ID - curSelected);
 
-			namesGrp.forEachAlive((alphabet) ->
-			{
-				var daPos:Int = (alphabet.ID - curSelected);
+			var xOffset:Float = Math.pow(3, Math.min(Math.abs(daPos), 3)) * 10;
+			var yOffset:Float = (150 * daPos);
 
-				var xOffset:Float = Math.pow(3, Math.min(Math.abs(daPos), 3)) * 10;
-				var yOffset:Float = (150 * daPos);
-
-				alphabet.setPosition(FlxMath.lerp(alphabet.x, 280 - xOffset, lerp), FlxMath.lerp(alphabet.y, (FlxG.height / 2) - 30 + yOffset, lerp));
-			});
-		}
+			alphabet.setPosition(FlxMath.lerp(alphabet.x, 280 - xOffset, lerp), FlxMath.lerp(alphabet.y, (FlxG.height / 2) - 30 + yOffset, lerp));
+		});
 	}
 
 	public function changeSelection(?change:Int = 0)
@@ -240,26 +233,23 @@ class FreeplayState extends MusicBeatState
 		curSelected += change;
 		curSelected = FlxMath.wrap(curSelected, 0, songs.length - 1);
 
-		if (callScript("changeSelection", [change]) ?? true)
+		if (change != 0)
+			FlxG.sound.play(Assets.sound("scroll"));
+
+		namesGrp.forEachAlive((alphabet) ->
 		{
-			if (change != 0)
-				FlxG.sound.play(Assets.sound("scroll"));
+			if (alphabet.ID == curSelected)
+				alphabet.alpha = 1.0;
+			else
+				alphabet.alpha = 0.4;
+		});
 
-			namesGrp.forEachAlive((alphabet) ->
-			{
-				if (alphabet.ID == curSelected)
-					alphabet.alpha = 1.0;
-				else
-					alphabet.alpha = 0.4;
-			});
+		bgPosY = FlxMath.lerp(40, -(bg.height - FlxG.height) - 40, curSelected / (songs.length - 1));
+		curBGColor = curSong.color ?? fallbackColor;
+		updateBGColor();
 
-			bgPosY = FlxMath.lerp(40, -(bg.height - FlxG.height) - 40, curSelected / (songs.length - 1));
-			curBGColor = curSong.color ?? fallbackColor;
-			updateBGColor();
-
-			nameTxt.text = curSong.week.toUpperCase();
-			nameTxt.x = FlxG.width - nameTxt.width - 6;
-		}
+		nameTxt.text = curSong.week.toUpperCase();
+		nameTxt.x = FlxG.width - nameTxt.width - 6;
 
 		if (diff != prevDiff)
 		{
@@ -274,12 +264,9 @@ class FreeplayState extends MusicBeatState
 
 	public function updateBGColor()
 	{
-		if (callScript("updateBGColor") ?? true)
-		{
-			FlxTween.cancelTweensOf(bg);
-			if (curBGColor != null)
-				FlxTween.color(bg, 0.4, bg.color, curBGColor);
-		}
+		FlxTween.cancelTweensOf(bg);
+		if (curBGColor != null)
+			FlxTween.color(bg, 0.4, bg.color, curBGColor);
 	}
 
 	public function changeDiff(change:Int = 0)
@@ -291,38 +278,35 @@ class FreeplayState extends MusicBeatState
 		curDiff += change;
 		curDiff = FlxMath.wrap(curDiff, 0, diffLength);
 
-		if (callScript("changeDiff", [change]) ?? true)
+		if (change != 0 && diffLength > 0)
+			FlxG.sound.play(Assets.sound('scroll'));
+
+		diffSelector.changeDiff(diff, curDiff, diffLength, change);
+		namesGrp.forEachAlive((alphabet) ->
 		{
-			if (change != 0 && diffLength > 0)
-				FlxG.sound.play(Assets.sound('scroll'));
+			var thisScore:ScoreData = Highscore.getScore(songs[alphabet.ID].name + '-' + songs[alphabet.ID].diffs[curDiff]);
+			var rank = Timings.getRank(thisScore.accuracy, thisScore.misses, false, true);
 
-			diffSelector.changeDiff(diff, curDiff, diffLength, change);
-			namesGrp.forEachAlive((alphabet) ->
+			if (alphabet.ID == curSelected)
 			{
-				var thisScore:ScoreData = Highscore.getScore(songs[alphabet.ID].name + '-' + songs[alphabet.ID].diffs[curDiff]);
-				var rank = Timings.getRank(thisScore.accuracy, thisScore.misses, false, true);
+				curScore = Math.floor(thisScore.score);
+				curAccuracy = thisScore.accuracy;
+				curMisses = thisScore.misses;
+			}
 
-				if (alphabet.ID == curSelected)
-				{
-					curScore = Math.floor(thisScore.score);
-					curAccuracy = thisScore.accuracy;
-					curMisses = thisScore.misses;
-				}
+			var color = switch (rank.toUpperCase())
+			{
+				case "PP": '#FFFD62';
+				case "P": '#FDAAFC';
+				case "S" | "S+": '#EBE9A7';
+				case "A" | "A+": '#94EBEB';
+				case "B" | "B+" | "C" | "C+" | "D" | "D+": '#EFA07F';
+				default: '#7496FF';
+			}
 
-				var color = switch (rank.toUpperCase())
-				{
-					case "PP": '#FFFD62';
-					case "P": '#FDAAFC';
-					case "S" | "S+": '#EBE9A7';
-					case "A" | "A+": '#94EBEB';
-					case "B" | "B+" | "C" | "C+" | "D" | "D+": '#EFA07F';
-					default: '#7496FF';
-				}
-
-				alphabet.rankTxt.visible = (rank != "?");
-				alphabet.rankTxt.text = '<color value=${color}>${rank}</color>';
-			});
-		}
+			alphabet.rankTxt.visible = (rank != "?");
+			alphabet.rankTxt.text = '<color value=${color}>${rank}</color>';
+		});
 	}
 
 	var holdTimer:Float = 0.0;
@@ -408,7 +392,6 @@ class FreeplayState extends MusicBeatState
 		}
 
 		updatePos(elapsed * 8);
-		callScript("updatePost", [elapsed]);
 	}
 
 	public function startSong(charting:Bool = false)
@@ -444,32 +427,30 @@ class FreeplayState extends MusicBeatState
 		}
 
 		disableInputs = true;
-		if (callScript("startSong") ?? true)
+
+		FlxG.sound.play(Assets.sound('confirm'));
+		namesGrp.forEachAlive((alphabet) ->
 		{
-			FlxG.sound.play(Assets.sound('confirm'));
-			namesGrp.forEachAlive((alphabet) ->
+			if (alphabet.ID == curSelected)
 			{
-				if (alphabet.ID == curSelected)
-				{
-					alphabet.icon.setAnim(2);
-					FlxTween.flicker(alphabet, 1.2, 0.1);
-				}
-				else
-				{
-					alphabet.icon.setAnim(0);
-					FlxTween.tween(alphabet, {alpha: 0}, 0.4);
-				}
-			});
-
-			new FlxTimer().start(1.2, (tmr) ->
+				alphabet.icon.setAnim(2);
+				FlxTween.flicker(alphabet, 1.2, 0.1);
+			}
+			else
 			{
-				if (FlxG.keys.pressed.SHIFT)
-					PlayState.startPos = 50000;
+				alphabet.icon.setAnim(0);
+				FlxTween.tween(alphabet, {alpha: 0}, 0.4);
+			}
+		});
 
-				MusicBeat.stopMusic();
-				MusicBeat.switchState(new states.LoadingState());
-			});
-		}
+		new FlxTimer().start(1.2, (tmr) ->
+		{
+			if (FlxG.keys.pressed.SHIFT)
+				PlayState.startPos = 50000;
+
+			MusicBeat.stopMusic();
+			MusicBeat.switchState(new states.LoadingState());
+		});
 	}
 
 	var curSong(get, never):FreeplaySong;

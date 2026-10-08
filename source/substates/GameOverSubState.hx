@@ -33,7 +33,6 @@ class GameOverSubState extends MusicBeatSubState
 	{
 		super.create();
 		cameras = [FlxG.camera];
-		callScript("gameOverCreate");
 
 		Conductor.initialBPM = Std.parseFloat(Assets.text('music/gameover/$folderPath/bpm'));
 		Conductor.mapBPMChanges();
@@ -81,14 +80,11 @@ class GameOverSubState extends MusicBeatSubState
 			ease: FlxEase.cubeOut,
 			startDelay: 0.4
 		});
-
-		callScript("gameOverCreatePost");
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		callScript("gameOverUpdate", [elapsed]);
 
 		if (FlxG.sound.music != null)
 			Conductor.songPos = FlxG.sound.music.time;
@@ -97,14 +93,12 @@ class GameOverSubState extends MusicBeatSubState
 		{
 			if (Controls.justPressed(BACK))
 			{
-				callScript("gameOverLeave");
 				pressedSomething = true;
 				stopThread = true;
 				PlayState.instance.goToMenu();
 			}
 			if (Controls.justPressed(ACCEPT))
 			{
-				callScript("gameOverConfirm");
 				pressedSomething = true;
 				stopThread = true;
 
@@ -124,16 +118,6 @@ class GameOverSubState extends MusicBeatSubState
 				});
 			}
 		}
-	}
-
-	// dont call super because this substate doesnt actually have a script
-	override public function callScript(fun:String, ?args:Array<Dynamic>)
-	{
-		// dont run regular state calls to avoid running unwanted code...
-		if (!fun.startsWith("gameOver"))
-			return;
-
-		PlayState.instance.callScript(fun, args);
 	}
 
 	override function beatHit()

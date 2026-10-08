@@ -46,7 +46,6 @@ class MainMenuState extends MusicBeatState
 		#end
 		addOption("options", () -> openSubState(new substates.menus.OptionsSubState()));
 		addOption("credits", () -> switchState(new states.menus.CreditsState()));
-		loadScript();
 	}
 
 	override function create()
@@ -132,7 +131,6 @@ class MainMenuState extends MusicBeatState
 		splashTxt.zIndex = 20;
 		add(splashTxt);
 
-		callScript("createPost");
 		changeSelection(0);
 		bg.y = bgPosY;
 		bgMag.y = bgPosY;
@@ -208,7 +206,6 @@ class MainMenuState extends MusicBeatState
 
 		bg.y = FlxMath.lerp(bg.y, bgPosY, elapsed * 6);
 		bgMag.setPosition(bg.x, bg.y);
-		callScript("updatePost", [elapsed]);
 	}
 
 	public function switchState(?target:MusicBeatState, tOut:String = 'funkin', ?tIn:String)
@@ -218,19 +215,16 @@ class MainMenuState extends MusicBeatState
 
 		canSelect = false;
 
-		if (callScript("switchState", [target]) ?? true)
+		trace("switching");
+		FlxG.sound.play(Assets.sound('confirm'));
+
+		for (item in grpOptions.members)
 		{
-			trace("switching");
-			FlxG.sound.play(Assets.sound('confirm'));
-
-			for (item in grpOptions.members)
-			{
-				if (item.ID != curSelected)
-					FlxTween.tween(item, {alpha: 0}, 0.4, {ease: FlxEase.cubeOut});
-			}
-
-			new FlxTimer().start(1.2, (tmr) -> MusicBeat.switchState(target, tOut, tIn));
+			if (item.ID != curSelected)
+				FlxTween.tween(item, {alpha: 0}, 0.4, {ease: FlxEase.cubeOut});
 		}
+
+		new FlxTimer().start(1.2, (tmr) -> MusicBeat.switchState(target, tOut, tIn));
 	}
 
 	public function changeSelection(change:Int = 0)
@@ -238,26 +232,23 @@ class MainMenuState extends MusicBeatState
 		curSelected += change;
 		curSelected = FlxMath.wrap(curSelected, 0, options.length - 1);
 
-		if (callScript("changeSelection", [change]) ?? true)
+		if (change != 0)
+			FlxG.sound.play(Assets.sound('scroll'));
+
+		bgPosY = FlxMath.lerp(-bgBounds[0], -(bg.height - FlxG.height) + bgBounds[1], curSelected / (options.length - 1));
+		for (item in grpOptions.members)
 		{
-			if (change != 0)
-				FlxG.sound.play(Assets.sound('scroll'));
+			item.animation.play('idle');
+			if (curSelected == item.ID)
+				item.animation.play('hover');
 
-			bgPosY = FlxMath.lerp(-bgBounds[0], -(bg.height - FlxG.height) + bgBounds[1], curSelected / (options.length - 1));
-			for (item in grpOptions.members)
-			{
-				item.animation.play('idle');
-				if (curSelected == item.ID)
-					item.animation.play('hover');
+			item.updateHitbox();
 
-				item.updateHitbox();
-
-				// makes it offset to its middle point
-				if (centerOptX)
-					item.offset.x += (item.frameWidth * item.scale.x) / 2;
-				if (centerOptY)
-					item.offset.y += (item.frameHeight * item.scale.y) / 2;
-			}
+			// makes it offset to its middle point
+			if (centerOptX)
+				item.offset.x += (item.frameWidth * item.scale.x) / 2;
+			if (centerOptY)
+				item.offset.y += (item.frameHeight * item.scale.y) / 2;
 		}
 	}
 

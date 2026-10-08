@@ -4,7 +4,6 @@ import flixel.FlxObject;
 import flixel.FlxBasic;
 import states.PlayState;
 import flixel.FlxSprite;
-import hscript.iris.Iris;
 import doido.utils.MathUtil;
 
 using doido.utils.ScriptUtil;
@@ -60,31 +59,7 @@ class Stage
 		dadScrollFactor = {x: 1.0, y: 1.0};
 		gfScrollFactor = {x: 1.0, y: 1.0};
 
-		// loading the script
-		var scriptPath:String = 'data/scripts/stages/$curStage';
-		if (Assets.fileExists(scriptPath, SCRIPT))
-			loadScript(scriptPath);
-		else
-		{
-			loadedScript = null;
-			loadCode(curStage);
-		}
-	}
-
-	// to-do: make "new" function to preload assets
-	function loadScript(path:String)
-	{
-		var tempState = playState;
-		playState = null;
-
-		loadedScript = new DoidoIris(path, this, false);
-
-		loadedScript.set("add", stageItems.push);
-		loadedScript.execute();
-		callScript("create");
-
-		// only allow playstate usage after create is ran
-		playState = tempState;
+		loadCode(curStage);
 	}
 
 	function loadCode(cur:String)
@@ -122,20 +97,5 @@ class Stage
 	inline function removeZ(bas:FlxBasic)
 	{
 		Logs.print(ZIndex.deprecatedWarning, WARNING);
-	}
-
-	// Scripts
-	public var loadedScript:Iris = null;
-
-	public function callScript(fun:String, ?args:Array<Dynamic>):Dynamic
-	{
-		var retValue:Dynamic = null;
-		if (loadedScript != null)
-		{
-			var call = loadedScript.call(fun, args);
-			if (call != null && call.returnValue != null)
-				retValue = call.returnValue;
-		}
-		return retValue;
 	}
 }

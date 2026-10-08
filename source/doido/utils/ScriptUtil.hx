@@ -1,5 +1,7 @@
 package doido.utils;
 
+/*
+
 import flixel.input.keyboard.FlxKey;
 import hscript.iris.Iris;
 import flixel.text.FlxText.FlxTextAlign;
@@ -95,3 +97,4 @@ class ScriptedKeys
 	public static inline function toString(k:FlxKey):String
 		return k.toString();
 }
+*/

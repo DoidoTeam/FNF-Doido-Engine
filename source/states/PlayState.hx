@@ -15,7 +15,6 @@ import doido.song.SongHandler.DoidoEvents;
 import doido.utils.NoteUtil;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import hscript.iris.Iris;
 import objects.*;
 import objects.play.*;
 import objects.ui.*;
@@ -31,8 +30,6 @@ import doido.objects.DoidoHitbox;
 #if VIDEOS_ALLOWED
 import doido.objects.DoidoVideo;
 #end
-
-using doido.utils.ScriptUtil;
 
 class PlayState extends MusicBeatState implements Playable
 {
@@ -167,12 +164,6 @@ class PlayState extends MusicBeatState implements Playable
 		persistentUpdate = false;
 		MusicBeat.stopMusic();
 
-		var scriptPaths:Array<String> = Assets.getScriptArray(CHART.song);
-		for (path in scriptPaths)
-			loadScript(path);
-		setScript("playState", instance);
-		callScript("create");
-
 		Conductor.initialBPM = CHART.bpm;
 		Conductor.mapBPMChanges(EVENTS.events);
 		Conductor.songPos = -(Conductor.crochet * 5);
@@ -256,8 +247,6 @@ class PlayState extends MusicBeatState implements Playable
 		pauseButton.cameras = [camOther];
 		add(pauseButton);
 		#end
-
-		callScript("createPost");
 
 		// TO-DO: account for events
 		if (startPos > Conductor.crochet * 8)
@@ -407,7 +396,6 @@ class PlayState extends MusicBeatState implements Playable
 				if (audio.voicesOpp == null)
 					audio.muteVoices = false;
 			}
-			callScript("onNoteHit", [note, strumline]);
 		};
 		playField.onNoteMiss = (note, strumline) ->
 		{
@@ -433,7 +421,6 @@ class PlayState extends MusicBeatState implements Playable
 				muteVoices();
 				updateScore(note, Timings.getTiming("miss").diff);
 			}
-			callScript("onNoteMiss", [note, strumline]);
 		};
 		playField.onNoteHold = (note, strumline) ->
 		{
@@ -466,8 +453,6 @@ class PlayState extends MusicBeatState implements Playable
 
 			if (strumline.isPlayer)
 				health += FlxG.elapsed * 0.25;
-
-			callScript("onNoteHold", [note, strumline]);
 		};
 
 		// doing this so it doesn't update when you change the setting mid-song
@@ -498,7 +483,6 @@ class PlayState extends MusicBeatState implements Playable
 				}
 				hudClass.updatePositions();
 			}
-			callScript("onGhostTap", [lane, strumline, punished]);
 
 			// Logs.print("GHOST TAPPED " + lane, WARNING);
 		};
@@ -615,7 +599,6 @@ class PlayState extends MusicBeatState implements Playable
 		}
 
 		playField.updateNotes(curStepFloat);
-		callScript("updatePost", [elapsed]);
 	}
 
 	function debugKeys(elapsed:Float = 0)
@@ -661,7 +644,6 @@ class PlayState extends MusicBeatState implements Playable
 
 	function playEvent(name:String, data:Array<Dynamic>)
 	{
-		callScript("playEvent", [name, data]);
 		switch (name)
 		{
 			case "Play Video":
@@ -845,7 +827,6 @@ class PlayState extends MusicBeatState implements Playable
 		audio.play();
 		startedSong = true;
 		playedCutscene = true;
-		callScript("startSong");
 	}
 
 	public function pauseSong(?gamepadDisconnected:Bool = false)
@@ -1095,7 +1076,6 @@ class PlayState extends MusicBeatState implements Playable
 		startedCountdown = true;
 		paused = false;
 		canPause = true;
-		callScript("startCountdown");
 	}
 
 	public function countDown(count:Int)
@@ -1141,8 +1121,6 @@ class PlayState extends MusicBeatState implements Playable
 				});
 			}
 		}
-
-		callScript("countDown", [count]);
 	}
 
 	public function noteIntro()
@@ -1188,16 +1166,6 @@ class PlayState extends MusicBeatState implements Playable
 		}
 
 		hudClass.beatHit(curBeat);
-	}
-
-	override public function callScript(fun:String, ?args:Array<Dynamic>):Dynamic
-	{
-		var retValues:Array<Dynamic> = super.callScript(fun, args);
-		if (retValues == null)
-			retValues = [];
-		if (stageBuild != null)
-			retValues.push(stageBuild.callScript(fun, args));
-		return retValues;
 	}
 
 	public var startingCutscene(get, never):Bool;

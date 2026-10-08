@@ -61,9 +61,6 @@
 	<haxelib name="flixel-addons" version="4.0.1" />
 	<haxelib name="flixel-ui" version="2.6.4" />
 	
-	<haxelib name="hscript-iris" />
-	<haxedef name="hscriptPos" />
-	
 	<haxelib name="hxdiscord_rpc" if="DISCORD_RPC" />
 	<haxelib name="flixel-animate" version="1.4.0" />
 	<haxelib name="polymod-lite" if="MODS_FOLDER" />
