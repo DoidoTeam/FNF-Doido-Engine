@@ -92,7 +92,7 @@ class VSliceHud extends ClassHud
 	{
 		if (!validScore)
 			return;
-		scoreTxt.text = 'Score: ' + FlxStringUtil.formatMoney(Timings.score, false, true);
+		scoreTxt.text = 'Score: ' + FlxStringUtil.formatMoney(Math.floor(Timings.score), false, true);
 	}
 
 	override function updateTimeTxt() {}

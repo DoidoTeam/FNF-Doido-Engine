@@ -55,7 +55,7 @@ class ClassHud extends FlxGroup
 		var scoreText:String = "";
 		scoreText += 'Misses: ' + Timings.misses + separator;
 		scoreText += 'Accuracy: ' + Timings.accuracy + "%" + ' [${Timings.getRank()}]' + separator;
-		scoreText += 'Score: ' + FlxStringUtil.formatMoney(Timings.score, false, true);
+		scoreText += 'Score: ' + FlxStringUtil.formatMoney(Math.floor(Timings.score), false, true);
 		defaultScoreText = scoreText;
 	}
 

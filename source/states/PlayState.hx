@@ -314,8 +314,7 @@ class PlayState extends MusicBeatState implements Playable
 			var rating = "sick";
 			if (note.isHold)
 			{
-				Timings.addScoreHold(note);
-				rating = Timings.addAccuracyHold(note.holdHitPercent);
+				rating = Timings.addAccuracyHold(note);
 				if (note.missed)
 					health -= 0.04;
 			}
@@ -386,7 +385,10 @@ class PlayState extends MusicBeatState implements Playable
 
 				updateScore(note, playField.noteDiff(note.data));
 
-				// cool thingy
+				// hold note funky accuracy stuff
+				Timings.checkAccuracyHold(note);
+
+				// cool gf thingy
 				if (Timings.combo > 0 && Timings.combo % 50 == 0 && !note.isHold)
 				{
 					// nene weekend 1 support
@@ -465,7 +467,13 @@ class PlayState extends MusicBeatState implements Playable
 			}
 
 			if (strumline.isPlayer)
-				health += FlxG.elapsed * 0.25;
+			{
+				var elapsed:Float = FlxG.elapsed;
+				health += elapsed * 0.12;
+				Timings.score += elapsed * 250.0;
+				Timings.updateAccuracy();
+				hudClass.updatePositions();
+			}
 
 			callScript("onNoteHold", [note, strumline]);
 		};
@@ -955,13 +963,13 @@ class PlayState extends MusicBeatState implements Playable
 		if (validScore)
 		{
 			Highscore.addScore(CHART.song.toLowerCase() + '-' + songDiff, {
-				score: Timings.score,
+				score: Math.floor(Timings.score),
 				accuracy: Timings.accuracy,
 				misses: Timings.misses,
 			});
 		}
 
-		weekScore += Timings.score;
+		weekScore += Math.floor(Timings.score);
 		playList.remove(playList[0]);
 
 		if (playList.length <= 0)

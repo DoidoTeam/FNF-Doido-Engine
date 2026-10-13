@@ -102,8 +102,9 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 			var rating = "sick";
 			if (note.isHold)
 			{
-				Timings.addScoreHold(note);
-				rating = Timings.addAccuracyHold(note.holdHitPercent);
+				rating = Timings.addAccuracyHold(note);
+				if (note.missed)
+					health -= 0.04;
 			}
 			else
 			{
@@ -139,6 +140,9 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 					audio.muteVoices = false;
 
 				updateScore(note, playField.noteDiff(note.data));
+
+				// hold note funky accuracy stuff
+				Timings.checkAccuracyHold(note);
 			}
 			else
 			{
@@ -155,6 +159,16 @@ class ChartTestSubState extends MusicBeatSubState implements Playable
 			{
 				muteVoices();
 				updateScore(note, Timings.getTiming("miss").diff);
+			}
+		};
+		playField.onNoteHold = (note, strumline) ->
+		{
+			if (strumline.isPlayer)
+			{
+				var elapsed:Float = FlxG.elapsed;
+				Timings.score += elapsed * 250.0;
+				Timings.updateAccuracy();
+				hudClass.updatePositions();
 			}
 		};
 

@@ -49,11 +49,12 @@ class Timings
 	public static var minTiming:Float = timings.get("shit").diff;
 
 	// score and accuracy
-	public static var score:Int = 0;
+	public static var score:Float = 0;
 	public static var accuracy:Float = 0;
 	// accuracy calculation
 	public static var accHit:Int = 0;
 	public static var accJudge:Float = 0;
+	public static var accJudgeHold:Array<Note> = [];
 	// note stuff
 	public static var combo:Int = 0;
 	public static var notesHit:Int = 0;
@@ -67,10 +68,16 @@ class Timings
 		accuracy = 0;
 		accHit = 0;
 		accJudge = 0;
+		accJudgeHold = [];
 		combo = 0;
 		notesHit = 0;
 		misses = 0;
-		ratingCount = ["sick" => 0, "good" => 0, "bad" => 0, "shit" => 0,];
+		ratingCount = [
+			"sick" => 0,
+			"good" => 0,
+			"bad" => 0,
+			"shit" => 0
+		];
 	}
 
 	public static function getTiming(name:String):TimingData
@@ -145,29 +152,18 @@ class Timings
 		else
 		{
 			addCombo(1);
-			if (noteDiff <= 5)
-				score += 100;
-			else
-				score += Math.ceil(FlxMath.remapToRange(noteDiff, 5, getTiming("good").diff, 100, 50));
+			score += switch (noteDiff)
+			{
+				case(_ > minTiming) => true: -100;
+				case(_ < 5) => true: 500;
+				default:
+					// Fancy equation from base game
+					var factor:Float = 1.0 - (1.0 / (1.0 + Math.exp(-0.080 * (noteDiff - 54.99))));
+
+					var result:Int = Std.int(500 * factor + 9);
+					result;
+			}
 		}
-	}
-
-	public static function addScoreHold(hold:Note)
-	{
-		var timing = holdToTiming(hold.holdHitPercent);
-		if (timing.name != "miss")
-			ratingCount.set(timing.name, ratingCount.get(timing.name) + 1);
-
-		var scoreWin:Float = hold.data.length * hold.holdHitPercent;
-		if (hold.missed)
-		{
-			if (hold.holdParent.gotHit)
-				addCombo(-1);
-
-			score -= Math.floor(50 * (hold.data.length - scoreWin));
-		}
-		else
-			score += Math.ceil(50 * scoreWin);
 	}
 
 	public static function addAccuracy(judge:Float)
@@ -184,15 +180,41 @@ class Timings
 		return timing.name;
 	}
 
-	public static function addAccuracyHold(noteHold:Float):String
+	public static function checkAccuracyHold(parentNote:Note)
 	{
-		var timing = holdToTiming(noteHold);
-		addAccuracy(timing.judge);
+		if (parentNote.children.length > 0) {
+			accHit++;
+			accJudgeHold.push(parentNote.children[parentNote.children.length - 1]);
+		}
+	}
+
+	public static function addAccuracyHold(hold:Note):String
+	{
+		var timing = holdToTiming(hold.holdHitPercent);
+		if (timing.name != "miss")
+			ratingCount.set(timing.name, ratingCount.get(timing.name) + 1);
+
+		if (hold.missed)
+		{
+			if (hold.holdParent.gotHit)
+				addCombo(-1);
+		}
+
+		if (accJudgeHold.contains(hold)) {
+			accJudgeHold.remove(hold);
+			accJudge += hold.holdHitPercent;
+			updateAccuracy();
+		}
+
 		return timing.name;
 	}
 
 	public static function updateAccuracy()
 	{
+		var accJudge:Float = Timings.accJudge;
+		for (hold in accJudgeHold) {
+			accJudge += hold.holdHitPercent;
+		}
 		var rawAccuracy:Float = (accJudge / accHit) * 100;
 
 		accuracy = FlxMath.roundDecimal(rawAccuracy, 2);
