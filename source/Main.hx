@@ -148,7 +148,8 @@ class Main extends Sprite
 
 	function keyDown(e:openfl.events.KeyboardEvent)
 	{
-		if (e.keyCode == FlxKey.F3)
+		#if desktop
+		if (fpsCounter != null && e.keyCode == FlxKey.F3)
 		{
 			Save.data.fpsCounter = !Save.data.fpsCounter;
 			fpsCounter.visible = Save.data.fpsCounter;
@@ -164,6 +165,7 @@ class Main extends Sprite
 		#if debug
 		if (e.keyCode == FlxKey.F2 && e.shiftKey)
 			FlxG.debugger.visible = !FlxG.debugger.visible;
+		#end
 		#end
 	}
 

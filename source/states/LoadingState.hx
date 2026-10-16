@@ -101,7 +101,7 @@ class LoadingState extends MusicBeatState
 			loadNotes();
 			loadingPercent = 0.9;
 
-			#if VIDEOS_ALLOWED
+			#if (VIDEOS_ALLOWED && !html5)
 			if (videoList.length > 0)
 			{
 				doingWhat = "Loading Videos";
@@ -334,7 +334,7 @@ class LoadingState extends MusicBeatState
 		}
 	}
 
-	#if VIDEOS_ALLOWED
+	#if (VIDEOS_ALLOWED && !html5)
 	function loadVideos()
 	{
 		for (key in videoList)
